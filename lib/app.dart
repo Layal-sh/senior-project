@@ -193,16 +193,17 @@ class AddInput extends StatelessWidget {
                 //height: 100,
                 width: 400,
 
-                child: Column(
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: 20,
+                      width: 20,
                     ),
-                    Row(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          width: 20,
+                          height: 20,
                         ),
                         Text(
                           'Total Bolus',
@@ -211,15 +212,8 @@ class AddInput extends StatelessWidget {
                               color: Colors.black,
                               fontWeight: FontWeight.w700),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      children: [
                         SizedBox(
-                          width: 20,
+                          height: 5,
                         ),
                         Text(
                           'CALCULATIONS',
@@ -228,10 +222,46 @@ class AddInput extends StatelessWidget {
                               color: const Color.fromARGB(255, 116, 97, 164),
                               fontWeight: FontWeight.w500),
                         ),
+                        SizedBox(
+                          height: 20,
+                        ),
                       ],
                     ),
                     SizedBox(
-                      height: 20,
+                      width: 110,
+                    ),
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          "0",
+                          style: TextStyle(
+                              fontSize: 40,
+                              fontFamily: "Inter",
+                              color: Color.fromARGB(255, 0, 0, 0),
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      width: 40,
+                    ),
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 39,
+                        ),
+                        Text(
+                          "units",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: "Inter",
+                              color: Color.fromARGB(255, 0, 0, 0),
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -239,6 +269,31 @@ class AddInput extends StatelessWidget {
             ),
             const SizedBox(
               height: 20,
+            ),
+            Container(
+              child: SizedBox(
+                //height: 100,
+                width: 400,
+
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 20,
+                    ),
+                    const Text(
+                      'Glucose',
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(
+                      width: 110,
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
