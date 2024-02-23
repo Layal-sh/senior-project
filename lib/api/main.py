@@ -48,10 +48,10 @@ async def read_item(user_id: int):
         return {description[0]: column for description, column in zip(cursor.description, row)}
     
 @app.get("/meals")
-async def read_item(user_id: int):
+async def get_meals():
     cursor.execute("Select * from Meals")
-    row = cursor.fetchall()
-    if row is None:
-        return {"error": "User not found"}
+    rows = cursor.fetchall()
+    if rows is None:
+        return {"error": "No meals found"}
     else:
-        return {description[0]: column for description, column in zip(cursor.description, row)}
+        return [{description[0]: column for description, column in zip(cursor.description, row)} for row in rows]
