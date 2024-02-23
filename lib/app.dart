@@ -35,7 +35,7 @@ class _AppState extends State<App> {
         throw UnimplementedError('no widget for $selectedIndex');
     }
     var mainArea = ColoredBox(
-      color: Color.fromARGB(255, 255, 249, 254),
+      color: const Color.fromARGB(255, 255, 249, 254),
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 200),
         child: page,
@@ -76,7 +76,7 @@ class _AppState extends State<App> {
                         child: Icon(
                           Icons.add,
                           size: 50,
-                          color: const Color.fromARGB(255, 255, 249, 254),
+                          color: Color.fromARGB(255, 255, 249, 254),
                         ),
                       ),
                       activeIcon: CircleAvatar(
@@ -86,7 +86,7 @@ class _AppState extends State<App> {
                         child: Icon(
                           Icons.add_outlined,
                           size: 50,
-                          color: const Color.fromARGB(255, 255, 249, 254),
+                          color: Color.fromARGB(255, 255, 249, 254),
                         ),
                       ),
                       label: 'Add Input',
@@ -219,7 +219,7 @@ class AddInput extends StatelessWidget {
                           'CALCULATIONS',
                           style: TextStyle(
                               fontSize: 15,
-                              color: const Color.fromARGB(255, 116, 97, 164),
+                              color: Color.fromARGB(255, 116, 97, 164),
                               fontWeight: FontWeight.w500),
                         ),
                         SizedBox(
