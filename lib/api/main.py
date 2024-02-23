@@ -40,5 +40,9 @@ def patch():
 
 @app.get("/users/{user_id}")
 async def read_item(user_id: int):
-    row = cursor.execute("Select * from Users WHERE userId = {user_id}")
-    return row.fetchone()
+    cursor.execute("Select * from Users WHERE userId = ?", (user_id,))
+    row = cursor.fetchone()
+    if row is None:
+        return {"error": "User not found"}
+    else:
+        return {description[0]: column for description, column in zip(cursor.description, row)}
