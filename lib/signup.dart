@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sugar_sense/Database/db.dart';
 import 'login.dart';
 
 class SignUp extends StatefulWidget {
@@ -10,7 +11,7 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-
+  SqlDb sqldb = SqlDb();
   final FocusNode _focusNodeEmail = FocusNode();
   final FocusNode _focusNodeDoctorID = FocusNode();
   final FocusNode _focusNodePassword = FocusNode();

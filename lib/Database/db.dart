@@ -32,27 +32,27 @@ _onCreate(Database db, int version) async{
     userId INTEGER AUTOINCREMENT NOT NULL PRIMARY KEY,
     firstName TEXT NOT NULL,
     lastName TEXT NOT NULL,
-    userName TEXT NOT NULL,
+    userName TEXT NULL,
+    email TEXT NOT NULL,
     userPassword TEXT NOT NULL
   );
   ''');
   await db.execute('''
   CREATE TABLE "Doctors"(
-    doctorId INTEGER AUTOINCREMENT NOT NULL PRIMARY KEY ,
+    doctorId INTEGER NOT NULL PRIMARY KEY ,
     FOREIGN KEY(doctorId) REFERENCES Users(userId)
   );
   ''');
   await db.execute('''
-  CREATE TABLE "Patients"(
-    patientId INTEGER AUTOINCREMENT NOT NULL PRIMARY KEY,
-    doctorId INTEGER NULL,
-    email TEXT NOT NULL,
-    phoneNumber INTEGER NOT NULL,
-    profilePhoto TEXT NULL,
-    insulinSensitivity INTEGER NOT NULL,
-    carbRatio INTEGER NOT NULL,
-    FOREIGN KEY(patientId) REFERENCES Users(userId),
-    FOREIGN KEY(doctorId) REFERENCES Doctors(doctorId)
+  CREATE TABLE Patients (
+	  patientID INTEGER PRIMARY KEY NOT NULL,
+	  doctorID INTEGER NULL,
+	  phoneNumber INTEGER NOT NULL,
+	  profilePhoto TEXT NULL, 
+	  insulinSensivity REAL NOT NULL,
+	  carbRatio REAL NOT NULL,
+	  FOREIGN KEY(patientID) REFERENCES Users(userID),
+	  FOREIGN KEY(doctorID) REFERENCES Doctors(doctorID)
   );
   ''');
   await db.execute('''
@@ -60,7 +60,7 @@ _onCreate(Database db, int version) async{
     entryId INTEGER AUTOINCREMENT NOT NULL PRIMARY KEY,
     patientId INTEGER NOT NULL,
     glucoseLevel REAL NOT NULL,
-    insulinDosage INTEGER NOT NULL,
+    insulinDosage INTEGER NULL,
     entryDate TEXT NOT NULL,
     FOREIGN KEY(patientId) REFERENCES Patients(patientId)
   );
@@ -88,13 +88,14 @@ _onCreate(Database db, int version) async{
   );
   ''');
   await db.execute('''
-  CREATE TABLE "HasMeal"(
+  CREATE TABLE "hasMeal"(
     entryId INTEGER NOT NULL,
     mealId INTEGER NOT NULL,
     quantity REAL NOT NULL,
     unit INTEGER NOT NULL,
     FOREIGN KEY(entryId) REFERENCES Entry(entryId),
-    FOREIGN KEY(mealId) REFERENCES Meals(mealId)
+    FOREIGN KEY(mealId) REFERENCES Meals(mealId),
+    PRIMARY KEY(entryID,mealID)
   );
   ''');
   await db.execute('''
@@ -108,7 +109,8 @@ _onCreate(Database db, int version) async{
     patientId INTEGER NOT NULL,
     articleId INTEGER NOT NULL,
     FOREIGN KEY(patientId) REFERENCES Patients(patientId),
-    FOREIGN KEY(articleId) REFERENCES Articles(articleId)
+    FOREIGN KEY(articleId) REFERENCES Articles(articleId),
+    PRIMARY KEY(patientID,articleID)
   );
   ''');
   await db.execute('''
@@ -120,6 +122,25 @@ _onCreate(Database db, int version) async{
   ''');
 }
 //select query
+signUp(String fName,String lName, String email, String password)async{
+  Database? mydb = await db;
+  int response = await mydb!.rawInsert('''
+  INSERT INTO Users (firstName, lastName, email, userPassword)
+  VALUES ($fName, $lName, $email, $password);
+''');
+  print(response);
+  return response;
+}
+
+signUpQuestions(int patientID, double insulinSensivity, double carbRatio)async{
+Database? mydb = await db;
+  int response = await mydb!.rawInsert('''
+  INSERT INTO Patients (patientID, insulinSensitivity, carbRatio)
+  VALUES ($patientID, $insulinSensivity, $carbRatio);
+''');
+return response;
+}
+
 readData(String sql) async{
   Database? mydb = await db;
   List<Map> response = await mydb!.rawQuery(sql);

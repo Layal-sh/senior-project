@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/app.dart';
 import 'package:sugar_sense/values/app_regex.dart';
 import 'signup.dart';
@@ -12,7 +13,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-
+  SqlDb sqlDB = SqlDb();
   final ValueNotifier<bool> passwordNotifier = ValueNotifier(true);
   final ValueNotifier<bool> fieldValidNotifier = ValueNotifier(false);
 
