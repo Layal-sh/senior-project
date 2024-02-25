@@ -238,7 +238,7 @@ class _LoginState extends State<Login> {
                         try {
                           final response = await http
                               .post(
-                                Uri.parse('http://localhost:8000/authenticate'),
+                                Uri.parse('localhost:8000/authenticate'),
                                 headers: <String, String>{
                                   'Content-Type':
                                       'application/json; charset=UTF-8',
@@ -264,6 +264,7 @@ class _LoginState extends State<Login> {
                             );
                           }
                         } catch (e) {
+                            print('Error: $e');
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 content: Text('The server did not respond')),

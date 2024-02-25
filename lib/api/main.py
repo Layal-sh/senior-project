@@ -6,10 +6,24 @@ import sqlalchemy as sal
 import pandas as pd
 import Models.personModel.person as Pmodel
 from passlib.context import CryptContext
-
-
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+
+origins = [
+    "http://localhost:8000",  # Allow requests from your FastAPI server
+    "http://localhost:49581",
+    "http://localhost:3000"  # Allow requests from your Flutter app
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 connectionString = "Server=localhost;Database=SugarSense;Trusted_Connection=True;"
 
@@ -75,14 +89,15 @@ async def read_item(meal_id: int):
     
 
 @app.post("/authenticate")
-async def authenticate(user: User):
+async def authenticate():
     # Query the database for the user
-    cursor.execute("SELECT password FROM Users WHERE email = ?", (user.email,))
-    row = cursor.fetchone()
+    #cursor.execute("SELECT userPassword FROM Users WHERE email = ?", (user.email,))
+    #row = cursor.fetchone()
 
     # If the user doesn't exist or the password is incorrect, return a 401 Unauthorized response
-    if row is None or not pwd_context.verify(user.password, row[0]):
-        raise HTTPException(status_code=401, detail="Invalid email or password")
+    #if row is None or not pwd_context.verify(user.password, row[0]):
+        #raise HTTPException(status_code=401, detail="Invalid email or password")
 
     # If the email and password are correct, return a 200 OK response
     return {"message": "Authenticated successfully"}
+
