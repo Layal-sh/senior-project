@@ -55,3 +55,12 @@ async def get_meals():
         return {"error": "No meals found"}
     else:
         return [{description[0]: column for description, column in zip(cursor.description, row)} for row in rows]
+
+@app.get("/meals/{meal_id}")
+async def read_item(meal_id: int):
+    cursor.execute("Select * from Meals WHERE mealID = ?", (meal_id,))
+    row = cursor.fetchone()
+    if row is None:
+        return {"error": "Meal not found"}
+    else:
+        return {description[0]: column for description, column in zip(cursor.description, row)}
