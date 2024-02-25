@@ -279,7 +279,7 @@ class AddInput extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 40,
                   ),
                   Row(
                     //crossAxisAlignment: CrossAxisAlignment.start,
@@ -292,14 +292,14 @@ class AddInput extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 20,
                             color: Colors.black,
-                            fontWeight: FontWeight.w700),
+                            fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(
-                        width: 90,
+                        width: 110,
                       ),
                       SizedBox(
                         width: MediaQuery.of(context).size.width / 7,
-                        height: 40,
+                        height: 30,
                         child: TextFormField(
                           controller: _GlucoseController,
                           keyboardType: TextInputType.number,
@@ -313,21 +313,131 @@ class AddInput extends StatelessWidget {
                             ),
                             border: UnderlineInputBorder(
                               borderSide: BorderSide(
-                                color: Colors.black, // Specify your color here
-                                width: 100, // Specify your width here
+                                color: Color.fromARGB(
+                                    255, 0, 0, 0), // Specify your color here
+                                width: 100,
+                                // Specify your width here
                               ),
                             ),
                           ),
                         ),
                       ),
-                      /*const Text(
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Text(
                         "mg/dL",
                         style: TextStyle(
                             fontSize: 20,
-                            color: Color.fromARGB(255, 116, 97, 164),
-                            fontWeight: FontWeight.w500),
+                            color: Color.fromARGB(255, 0, 0, 0),
+                            fontWeight: FontWeight.w300),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Icon(
+                        Icons.link_off,
+                        color: Color.fromARGB(255, 38, 20, 84),
+                      ),
+                      /*IconButton(
+                        icon: Icons.link_off,
+                        color: const Color.fromARGB(255, 107, 100, 126),
+                        onPressed: () {
+                            
+                              
+                            
+                        },
+                          
+                        /*icon: _obscurePassword
+                          ? const Icon(Icons.link)
+                          : const Icon(Icons.link_off),*/
                       ),*/
                     ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Divider(
+                    color: Color.fromARGB(255, 215, 215, 215),
+                    //height: 10,
+                    thickness: 1,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    //crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      const Text(
+                        'Total Carbs',
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(
+                        width: 80,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 7,
+                        height: 20,
+                        child: const Text(
+                          '0',
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Text(
+                        "grams",
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Color.fromARGB(255, 0, 0, 0),
+                            fontWeight: FontWeight.w300),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Divider(
+                    color: Color.fromARGB(255, 215, 215, 215),
+                    //height: 10,
+                    thickness: 1,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  InkWell(
+                    onTap: () {},
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 90,
+                          height: 90,
+                          child: Image.asset('assets/AddDish.png'),
+                        ),
+                        const Text(
+                          'Add Meals',
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 38, 20, 84),
+                            fontSize: 20,
+                            fontFamily: 'Ruda',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

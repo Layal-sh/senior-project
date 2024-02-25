@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sugar_sense/Database/db.dart';
+import 'package:sugar_sense/membership.dart';
 import 'login.dart';
 
 class SignUp extends StatefulWidget {
@@ -452,6 +453,10 @@ class _SignUpState extends State<SignUp> {
 
                         //  Navigator.pop(context);
                         //}
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Membership()),
+                        );
                       },
                       child: const Text(
                         "Sign Up",

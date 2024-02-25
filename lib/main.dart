@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sugar_sense/app.dart';
 import 'package:sugar_sense/login.dart';
+import 'package:sugar_sense/membership.dart';
 import 'package:sugar_sense/signup.dart';
 import 'package:sugar_sense/splash.dart';
 import 'package:sugar_sense/startpage.dart';
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
       '/login': (context) => Login(),
       '/signup': (context) => SignUp(),
       '/app': (context) => App(),
+      '/membership': (context) => Membership(),
     });
   }
 }
