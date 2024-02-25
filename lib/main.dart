@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(debugShowCheckedModeBanner: false, routes: {
-      "/": (context) => Splash(),
+      "/": (context) => const Splash(),
       '/start': (context) => Start(),
       '/login': (context) => Login(),
       '/signup': (context) => SignUp(),

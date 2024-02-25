@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -234,28 +235,38 @@ class _LoginState extends State<Login> {
                       onPressed: () async {
                         String email = _emailController.text;
                         String password = _passwordController.text;
+                        try {
+                          final response = await http
+                              .post(
+                                Uri.parse('http://localhost:8000/authenticate'),
+                                headers: <String, String>{
+                                  'Content-Type':
+                                      'application/json; charset=UTF-8',
+                                },
+                                body: jsonEncode(<String, String>{
+                                  'email': email,
+                                  'password': password,
+                                }),
+                              )
+                              .timeout(const Duration(seconds: 10));
 
-                        final response = await http.post(
-                          Uri.parse('http://localhost:8000/authenticate'),
-                          headers: <String, String>{
-                            'Content-Type': 'application/json; charset=UTF-8',
-                          },
-                          body: jsonEncode(<String, String>{
-                            'email': email,
-                            'password': password,
-                          }),
-                        );
-
-                        if (response.statusCode == 200) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const App()),
-                          );
-                        } else {
+                          if (response.statusCode == 200) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const App()),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text('Invalid username or password')),
+                            );
+                          }
+                        } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text('Invalid username or password')),
+                            const SnackBar(
+                                content: Text('The server did not respond')),
                           );
                         }
                       },
@@ -303,7 +314,7 @@ class _LoginState extends State<Login> {
                           child: const Text(
                             'Sign Up',
                             style: TextStyle(
-                              color: const Color.fromARGB(255, 22, 161, 170),
+                              color: Color.fromARGB(255, 22, 161, 170),
                               fontSize: 15,
                               fontFamily: 'InterBold',
                               fontWeight: FontWeight.w800,
