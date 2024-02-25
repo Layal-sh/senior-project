@@ -1,15 +1,37 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 import pyodbc
 import json
 import sqlalchemy as sal
 import pandas as pd
 import Models.personModel.person as Pmodel
-
-
+from passlib.context import CryptContext
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+
+origins = [
+    "http://localhost:8000",  # Allow requests from your FastAPI server
+    "http://localhost:49581",
+    "http://localhost:3000"  # Allow requests from your Flutter app
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 connectionString = "Server=localhost;Database=SugarSense;Trusted_Connection=True;"
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+class User(BaseModel):
+    email: str
+    password: str
 
 conn_str = ("DRIVER={ODBC Driver 17 for SQL Server};"
             "Server=localhost;"
@@ -64,3 +86,20 @@ async def read_item(meal_id: int):
         return {"error": "Meal not found"}
     else:
         return {description[0]: column for description, column in zip(cursor.description, row)}
+    
+
+@app.post("/authenticate")
+async def authenticate(user: User):
+    try:
+        # Query the database for the user
+        cursor.execute("SELECT userPassword FROM Users WHERE userName = ?", (user.email,))
+        row = cursor.fetchone()
+
+        # If the user doesn't exist or the password is incorrect, return a 401 Unauthorized response
+        if row is None or user.password != row[0]:
+            raise HTTPException(status_code=401, detail="Invalid email or password")
+
+        # If the email and password are correct, return a 200 OK response
+        return {"message": "Authenticated successfully"}
+    except Exception as e:
+        return {"error": str(e)}
