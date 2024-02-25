@@ -23,13 +23,10 @@ class _AppState extends State<App> {
         page = AddInput();
         break;
       case 3:
-        //page = FavoritesPage();
+        page = Articles();
         break;
       case 4:
-        //page = GeneratorPage();
-        break;
-      case 5:
-        //page = FavoritesPage();
+        page = Profile();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -123,9 +120,14 @@ class Dashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Dashboard!'), // Replace with your desired text
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Home'),
+        backgroundColor: const Color.fromARGB(255, 38, 20, 84),
+      ),
+      body: const Center(
+        child: Text('Home!'), // Replace with your desired text
       ),
     );
   }
@@ -136,8 +138,13 @@ class Settings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Settings'),
+        backgroundColor: const Color.fromARGB(255, 38, 20, 84),
+      ),
+      body: const Center(
         child: Text('Setting!'), // Replace with your desired text
       ),
     );
@@ -164,139 +171,205 @@ class AddInput extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                InkWell(
-                  onTap: () {},
-                  child: const Text(
-                    'Save',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 38, 20, 84),
-                      fontSize: 20,
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w900,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 0),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      InkWell(
+                        onTap: () {},
+                        child: const Text(
+                          'Save',
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 38, 20, 84),
+                            fontSize: 20,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 50,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    color: const Color.fromARGB(255, 232, 232, 232),
+                    child: const SizedBox(
+                      //height: 100,
+                      width: 400,
+
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                'Total Bolus',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w700),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                'CALCULATIONS',
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Color.fromARGB(255, 116, 97, 164),
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            width: 110,
+                          ),
+                          Column(
+                            children: [
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                "0",
+                                style: TextStyle(
+                                    fontSize: 40,
+                                    fontFamily: "Inter",
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            width: 40,
+                          ),
+                          Column(
+                            children: [
+                              SizedBox(
+                                height: 39,
+                              ),
+                              Text(
+                                "units",
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontFamily: "Inter",
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  width: 50,
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              color: const Color.fromARGB(255, 232, 232, 232),
-              child: const SizedBox(
-                //height: 100,
-                width: 400,
-
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          'Total Bolus',
-                          style: TextStyle(
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    //crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      const Text(
+                        'Glucose',
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      const SizedBox(
+                        width: 90,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 7,
+                        height: 40,
+                        child: TextFormField(
+                          controller: _GlucoseController,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            labelText: '0',
+                            labelStyle: TextStyle(
+                              color: Color.fromARGB(188, 0, 0, 0),
                               fontSize: 20,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700),
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                            ),
+                            border: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.black, // Specify your color here
+                                width: 100, // Specify your width here
+                              ),
+                            ),
+                          ),
                         ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          'CALCULATIONS',
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Color.fromARGB(255, 116, 97, 164),
-                              fontWeight: FontWeight.w500),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: 110,
-                    ),
-                    Column(
-                      children: [
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          "0",
-                          style: TextStyle(
-                              fontSize: 40,
-                              fontFamily: "Inter",
-                              color: Color.fromARGB(255, 0, 0, 0),
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: 40,
-                    ),
-                    Column(
-                      children: [
-                        SizedBox(
-                          height: 39,
-                        ),
-                        Text(
-                          "units",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontFamily: "Inter",
-                              color: Color.fromARGB(255, 0, 0, 0),
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              child: SizedBox(
-                //height: 100,
-                width: 400,
-
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 20,
-                    ),
-                    const Text(
-                      'Glucose',
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(
-                      width: 110,
-                    ),
-                  ],
-                ),
+                      ),
+                      /*const Text(
+                        "mg/dL",
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Color.fromARGB(255, 116, 97, 164),
+                            fontWeight: FontWeight.w500),
+                      ),*/
+                    ],
+                  ),
+                ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class Articles extends StatelessWidget {
+  //const Dashboard({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Articles'),
+        backgroundColor: const Color.fromARGB(255, 38, 20, 84),
+      ),
+      body: const Center(
+        child: Text('Articles!'), // Replace with your desired text
+      ),
+    );
+  }
+}
+
+class Profile extends StatelessWidget {
+  //const Settings({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Profile'),
+        backgroundColor: const Color.fromARGB(255, 38, 20, 84),
+      ),
+      body: const Center(
+        child: Text('Profile!'), // Replace with your desired text
       ),
     );
   }

@@ -22,6 +22,7 @@ class _LoginState extends State<Login> {
   bool _obscurePassword = true;
   void initializeControllers() {
     _emailController = TextEditingController()..addListener(controllerListener);
+
     _passController = TextEditingController()..addListener(controllerListener);
   }
 
@@ -31,12 +32,13 @@ class _LoginState extends State<Login> {
   }
 
   void controllerListener() {
-    final email = _emailController.text;
+    final emailorUsername = _emailController.text;
     final password = _passController.text;
 
-    if (email.isEmpty && password.isEmpty) return;
+    if (emailorUsername.isEmpty && password.isEmpty) return;
 
-    if (AppRegex.emailRegex.hasMatch(email) &&
+    if ((AppRegex.emailRegex.hasMatch(emailorUsername) ||
+            AppRegex.usernameRegex.hasMatch(emailorUsername)) &&
         AppRegex.passwordRegex.hasMatch(password)) {
       fieldValidNotifier.value = true;
     } else {
@@ -109,7 +111,7 @@ class _LoginState extends State<Login> {
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                        labelText: 'Email',
+                        labelText: 'UserName or Email',
                         labelStyle: const TextStyle(
                           color: Color.fromARGB(189, 38, 20, 84),
                           fontSize: 15,
@@ -170,7 +172,7 @@ class _LoginState extends State<Login> {
                               _obscurePassword = !_obscurePassword;
                             });
                           },
-                          color: Color.fromARGB(255, 107, 100, 126),
+                          color: const Color.fromARGB(255, 107, 100, 126),
                           icon: _obscurePassword
                               ? const Icon(Icons.visibility_off_outlined)
                               : const Icon(Icons.visibility_outlined),
@@ -208,7 +210,7 @@ class _LoginState extends State<Login> {
                       child: const Text(
                         'Forget Password?',
                         style: TextStyle(
-                          color: const Color.fromARGB(255, 22, 161, 170),
+                          color: Color.fromARGB(255, 22, 161, 170),
                           fontSize: 15,
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w900,
@@ -248,7 +250,7 @@ class _LoginState extends State<Login> {
                       child: const Text(
                         "Sign In",
                         style: TextStyle(
-                          color: const Color.fromARGB(255, 255, 249, 254),
+                          color: Color.fromARGB(255, 255, 249, 254),
                           fontSize: 22,
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w500,
@@ -258,63 +260,13 @@ class _LoginState extends State<Login> {
                     const SizedBox(
                       height: 150,
                     ),
-                    /*Row(
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            thickness: 0.5,
-                            color: Colors.grey[400],
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Text(
-                            'Or continue with',
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 75, 69, 114),
-                                fontSize: 16),
-                          ),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            thickness: 0.5,
-                            color: Colors.grey[400],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 50,
-                            height: 50,
-                            child: GestureDetector(
-                              onTap: () {},
-                              child: Image.asset("assets/google.png"),
-                            ),
-                          ),
-                          const SizedBox(width: 20),
-                          Container(
-                            width: 50,
-                            height: 50,
-                            child: GestureDetector(
-                              onTap: () {},
-                              child: Image.asset('assets/facebook.png'),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),*/
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
                           'Don’t have an account?',
                           style: TextStyle(
-                            color: const Color.fromARGB(255, 22, 161, 170),
+                            color: Color.fromARGB(255, 22, 161, 170),
                             fontSize: 15,
                             fontFamily: 'Inter',
                             fontWeight: FontWeight.w400,

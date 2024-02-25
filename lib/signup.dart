@@ -16,6 +16,8 @@ class _SignUpState extends State<SignUp> {
   final FocusNode _focusNodeDoctorID = FocusNode();
   final FocusNode _focusNodePassword = FocusNode();
   final FocusNode _focusNodeConfirmPassword = FocusNode();
+  final TextEditingController _controllerFirstname = TextEditingController();
+  final TextEditingController _controllerLastname = TextEditingController();
   final TextEditingController _controllerUsername = TextEditingController();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerDoctorID = TextEditingController();
@@ -42,7 +44,7 @@ class _SignUpState extends State<SignUp> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(
-                height: 100,
+                height: 70,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -74,11 +76,113 @@ class _SignUpState extends State<SignUp> {
                     const SizedBox(
                       height: 30,
                     ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width / 2.3,
+                          child: TextFormField(
+                            controller: _controllerFirstname,
+                            keyboardType: TextInputType.name,
+                            decoration: InputDecoration(
+                              labelText: 'First Name *',
+                              labelStyle: const TextStyle(
+                                color: Color.fromARGB(189, 38, 20, 84),
+                                fontSize: 15,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w600,
+                              ),
+                              /*prefixIcon: const Icon(
+                                Icons.person_2_outlined,
+                                color: Color.fromARGB(255, 38, 20, 84),
+                              ),*/
+                              focusedBorder: const OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15)),
+                                borderSide: BorderSide(
+                                  width: 2,
+                                  color: Color.fromARGB(255, 38, 20, 84),
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  width: 2,
+                                  color: Color.fromARGB(255, 38, 20, 84),
+                                ),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            validator: (String? value) {
+                              if (value == null || value.isEmpty) {
+                                return "Please enter first name.";
+                              } //else if (_boxAccounts.containsKey(value)) {
+                              //return "Username is already registered.";
+                              //}
+
+                              return null;
+                            },
+                            onEditingComplete: () =>
+                                _focusNodeEmail.requestFocus(),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width / 2.3,
+                          child: TextFormField(
+                            controller: _controllerLastname,
+                            keyboardType: TextInputType.name,
+                            decoration: InputDecoration(
+                              labelText: 'Last Name *',
+                              labelStyle: const TextStyle(
+                                color: Color.fromARGB(189, 38, 20, 84),
+                                fontSize: 15,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w600,
+                              ),
+                              /*prefixIcon: const Icon(
+                                Icons.person_2_outlined,
+                                color: Color.fromARGB(255, 38, 20, 84),
+                              ),*/
+                              focusedBorder: const OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15)),
+                                borderSide: BorderSide(
+                                  width: 2,
+                                  color: Color.fromARGB(255, 38, 20, 84),
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  width: 2,
+                                  color: Color.fromARGB(255, 38, 20, 84),
+                                ),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            validator: (String? value) {
+                              if (value == null || value.isEmpty) {
+                                return "Please enter last name.";
+                              } //else if (_boxAccounts.containsKey(value)) {
+                              //return "Username is already registered.";
+                              //}
+
+                              return null;
+                            },
+                            onEditingComplete: () =>
+                                _focusNodeEmail.requestFocus(),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     TextFormField(
                       controller: _controllerUsername,
                       keyboardType: TextInputType.name,
                       decoration: InputDecoration(
-                        labelText: 'Full Name *',
+                        labelText: 'UserName *',
                         labelStyle: const TextStyle(
                           color: Color.fromARGB(189, 38, 20, 84),
                           fontSize: 15,
@@ -104,15 +208,15 @@ class _SignUpState extends State<SignUp> {
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
-                      //validator: (String? value) {
-                      //  if (value == null || value.isEmpty) {
-                      //    return "Please enter username.";
-                      //  } else if (_boxAccounts.containsKey(value)) {
-                      //    return "Username is already registered.";
-                      //  }
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter username.";
+                        } //else if (_boxAccounts.containsKey(value)) {
+                        //return "Username is already registered.";
+                        //}
 
-                      //  return null;
-                      //},
+                        return null;
+                      },
                       onEditingComplete: () => _focusNodeEmail.requestFocus(),
                     ),
                     const SizedBox(
@@ -282,7 +386,7 @@ class _SignUpState extends State<SignUp> {
                               _obscurePassword = !_obscurePassword;
                             });
                           },
-                          color: Color.fromARGB(255, 107, 100, 126),
+                          color: const Color.fromARGB(255, 107, 100, 126),
                           icon: _obscurePassword
                               ? const Icon(Icons.visibility_off_outlined)
                               : const Icon(Icons.visibility_outlined),
@@ -352,7 +456,7 @@ class _SignUpState extends State<SignUp> {
                       child: const Text(
                         "Sign Up",
                         style: TextStyle(
-                          color: const Color.fromARGB(255, 255, 249, 254),
+                          color: Color.fromARGB(255, 255, 249, 254),
                           fontSize: 22,
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w500,
@@ -368,7 +472,7 @@ class _SignUpState extends State<SignUp> {
                         const Text(
                           'Already have an account?',
                           style: TextStyle(
-                            color: const Color.fromARGB(255, 22, 161, 170),
+                            color: Color.fromARGB(255, 22, 161, 170),
                             fontSize: 15,
                             fontFamily: 'Inter',
                             fontWeight: FontWeight.w400,
@@ -393,7 +497,7 @@ class _SignUpState extends State<SignUp> {
                           child: const Text(
                             'Sign in',
                             style: TextStyle(
-                              color: const Color.fromARGB(255, 22, 161, 170),
+                              color: Color.fromARGB(255, 22, 161, 170),
                               fontSize: 15,
                               fontFamily: 'InterBold',
                               fontWeight: FontWeight.w800,
