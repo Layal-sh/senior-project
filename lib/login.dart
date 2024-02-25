@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/app.dart';
@@ -18,22 +20,23 @@ class _LoginState extends State<Login> {
   final ValueNotifier<bool> fieldValidNotifier = ValueNotifier(false);
 
   late final TextEditingController _emailController;
-  late final TextEditingController _passController;
+  late final TextEditingController _passwordController;
   bool _obscurePassword = true;
   void initializeControllers() {
     _emailController = TextEditingController()..addListener(controllerListener);
 
-    _passController = TextEditingController()..addListener(controllerListener);
+    _passwordController = TextEditingController()
+      ..addListener(controllerListener);
   }
 
   void disposeControllers() {
     _emailController.dispose();
-    _passController.dispose();
+    _passwordController.dispose();
   }
 
   void controllerListener() {
     final emailorUsername = _emailController.text;
-    final password = _passController.text;
+    final password = _passwordController.text;
 
     if (emailorUsername.isEmpty && password.isEmpty) return;
 
@@ -151,7 +154,7 @@ class _LoginState extends State<Login> {
                       height: 30,
                     ),
                     TextFormField(
-                      controller: _passController,
+                      controller: _passwordController,
                       obscureText: _obscurePassword,
                       keyboardType: TextInputType.visiblePassword,
                       decoration: InputDecoration(
@@ -228,24 +231,33 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      onPressed: () {
-                        //if (_formKey.currentState?.validate() ?? false) {
-                        //  _boxLogin.put("loginStatus", true);
-                        //  _boxLogin.put("userName", _controllerUsername.text);
+                      onPressed: () async {
+                        String email = _emailController.text;
+                        String password = _passwordController.text;
 
-                        //  Navigator.pushReplacement(
-                        //    context,
-                        //    MaterialPageRoute(
-                        //      builder: (context) {
-                        //        return Home();
-                        //      },
-                        //    ),
-                        //  );
-                        //}
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => App()),
+                        final response = await http.post(
+                          Uri.parse('http://localhost:8000/authenticate'),
+                          headers: <String, String>{
+                            'Content-Type': 'application/json; charset=UTF-8',
+                          },
+                          body: jsonEncode(<String, String>{
+                            'email': email,
+                            'password': password,
+                          }),
                         );
+
+                        if (response.statusCode == 200) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const App()),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text('Invalid username or password')),
+                          );
+                        }
                       },
                       child: const Text(
                         "Sign In",
