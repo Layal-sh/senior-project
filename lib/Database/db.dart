@@ -128,7 +128,6 @@ signUp(String fName,String lName, String email, String password)async{
   INSERT INTO Users (firstName, lastName, email, userPassword)
   VALUES ($fName, $lName, $email, $password);
 ''');
-  print(response);
   return response;
 }
 
