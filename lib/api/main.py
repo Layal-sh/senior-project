@@ -30,7 +30,7 @@ connectionString = "Server=localhost;Database=SugarSense;Trusted_Connection=True
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class User(BaseModel):
-    email: str
+    username: str
     password: str
 
 conn_str = ("DRIVER={ODBC Driver 17 for SQL Server};"
@@ -92,10 +92,18 @@ async def read_item(meal_id: int):
 async def authenticate(user: User):
     try:
         # Query the database for the user
-        cursor.execute("SELECT userPassword FROM Users WHERE userName = ?", (user.email,))
+        cursor.execute("SELECT userPassword FROM Users WHERE userName = ?", (user.username,))
         row = cursor.fetchone()
 
         # If the user doesn't exist or the password is incorrect, return a 401 Unauthorized response
+        print("row:")
+        print(row[0])
+        print("user.password:")
+        print(user.password)
+        print("Type of row[0]:")
+        print(type(row[0]))
+        print("Type of user.password:")
+        print(type(user.password))
         if row is None or user.password != row[0]:
             raise HTTPException(status_code=401, detail="Invalid email or password")
 
