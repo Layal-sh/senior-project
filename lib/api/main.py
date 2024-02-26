@@ -101,9 +101,11 @@ async def authenticate(user: User):
     try:
         # Query the database for the user
         cursor.execute("SELECT userPassword FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(user.username,))
-        row = cursor.fetchone()
+        rowUsername = cursor.fetchone()
+        cursor.execute("SELECT userPassword FROM Users WHERE CAST(email AS VARCHAR(255)) = ?",(user.username,))
+        rowEmail = cursor.fetchone()
         # If the user doesn't exist or the password is incorrect, return a 401 Unauthorized response
-        if row is None or user.password != row[0]:
+        if (rowUsername is None or user.password != rowUsername[0]) and (rowEmail is None or user.password != rowEmail[0]):
             raise HTTPException(status_code=401, detail="Invalid email or password")
 
         # If the email and password are correct, return a 200 OK response
