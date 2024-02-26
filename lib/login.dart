@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -235,40 +237,54 @@ class _LoginState extends State<Login> {
                       onPressed: () async {
                         String email = _emailController.text;
                         String password = _passwordController.text;
-                        try {
-                          final response = await http
-                              .post(
-                                Uri.parse('http://localhost:8000/authenticate'),
-                                headers: <String, String>{
-                                  'Content-Type':
-                                      'application/json; charset=UTF-8',
-                                },
-                                body: jsonEncode(<String, String>{
-                                  'email': email,
-                                  'password': password,
-                                }),
-                              )
-                              .timeout(const Duration(seconds: 10));
+                        if (email == 'admin' && password == 'admin') {
+                          //alowing admins to login without server connection
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const App()),
+                          );
+                        } else {
+                          try {
+                            //server authentication
+                            final response = await http
+                                .post(
+                                  Uri.parse(
+                                      'http://localhost:8000/authenticate'),
+                                  headers: <String, String>{
+                                    'Content-Type':
+                                        'application/json; charset=UTF-8',
+                                  },
+                                  body: jsonEncode(<String, String>{
+                                    'email': email,
+                                    'password': password,
+                                  }),
+                                )
+                                .timeout(const Duration(seconds: 10));
 
-                          if (response.statusCode == 200) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const App()),
-                            );
-                          } else {
+                            if (response.statusCode == 200) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const App()),
+                              );
+                            } else {
+                              //incorrect username or password handling
+                              //for layal you can change this if you want or remove this comment if you think its good
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Invalid username or password')),
+                              );
+                            }
+                          } catch (e) {
+                            // ignore: avoid_print
+                            print('Error: $e');
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                  content:
-                                      Text('Invalid username or password')),
+                                  content: Text('The server did not respond')),
                             );
                           }
-                        } catch (e) {
-                          print('Error: $e');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('The server did not respond')),
-                          );
                         }
                       },
                       child: const Text(
