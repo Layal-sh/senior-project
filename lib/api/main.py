@@ -90,16 +90,16 @@ async def read_item(meal_id: int):
 
 @app.post("/authenticate")
 async def authenticate(user: User):
+    # Query the database for the user
+    cursor.execute("SELECT userPassword FROM Users WHERE userName = ?", (user.email,))
+    row = cursor.fetchone()
+
+    # If the user doesn't exist or the password is incorrect, return a 401 Unauthorized response
+    if row is None or user.password != row[0]:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+
     try:
-        # Query the database for the user
-        cursor.execute("SELECT userPassword FROM Users WHERE userName = ?", (user.email,))
-        row = cursor.fetchone()
-
-        # If the user doesn't exist or the password is incorrect, return a 401 Unauthorized response
-        if row is None or user.password != row[0]:
-            raise HTTPException(status_code=401, detail="Invalid email or password")
-
-        # If the email and password are correct, return a 200 OK response
+        # If the username and password are correct, return a 200 OK response
         return {"message": "Authenticated successfully"}
     except Exception as e:
         return {"error": str(e)}
