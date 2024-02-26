@@ -109,5 +109,7 @@ async def authenticate(user: User):
 
         # If the email and password are correct, return a 200 OK response
         return {"message": "Authenticated successfully"}
+    except HTTPException as e:
+        raise e
     except Exception as e:
         return {"error": str(e)}
