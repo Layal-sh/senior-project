@@ -7,9 +7,12 @@ import pandas as pd
 import Models.personModel.person as Pmodel
 from passlib.context import CryptContext
 from fastapi.middleware.cors import CORSMiddleware
+import logging
+
 
 app = FastAPI()
-
+# Set up logging
+logging.basicConfig(filename='app.log', level=logging.INFO)
 
 origins = [
     "http://localhost:8000",  # Allow requests from your FastAPI server
@@ -96,15 +99,10 @@ async def authenticate(user: User):
         row = cursor.fetchone()
 
         # If the user doesn't exist or the password is incorrect, return a 401 Unauthorized response
-        print("row:")
-        print(row[0])
-        print("user.password:")
-        print(user.password)
-        print("Type of row[0]:")
-        print(type(row[0]))
-        print("Type of user.password:")
-        print(type(user.password))
+        logging.info(f"row: {row}")
+        logging.info(f"user.password: {user.password}")
         if row is None or user.password != row[0]:
+            logging.info("Starting application")
             raise HTTPException(status_code=401, detail="Invalid email or password")
 
         # If the email and password are correct, return a 200 OK response
