@@ -7,12 +7,10 @@ import pandas as pd
 import Models.personModel.person as Pmodel
 from passlib.context import CryptContext
 from fastapi.middleware.cors import CORSMiddleware
-import logging
 
 
 app = FastAPI()
 # Set up logging
-logging.basicConfig(filename='app.log', level=logging.INFO)
 
 origins = [
     "http://localhost:8000",  # Allow requests from your FastAPI server
@@ -51,6 +49,13 @@ print(row.fetchone())
 #sql_query = pd.read_sql_query('SELECT * FROM Users')
 #conn = engine.connect()
 #row = cursor.fetchone()
+
+cursor.execute("SELECT userPassword FROM Users WHERE CAST(userName AS VARCHAR(255)) = 'bsmith'")
+row = cursor.fetchone()
+print(type(row[0]))
+if row is None:
+    print("botato")
+
 @app.get('/')
 def get():
     return {"Hello":"get request"}
@@ -95,14 +100,11 @@ async def read_item(meal_id: int):
 async def authenticate(user: User):
     try:
         # Query the database for the user
-        cursor.execute("SELECT userPassword FROM Users WHERE userName = ?", (user.username,))
+        cursor.execute("SELECT userPassword FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(user.username,))
         row = cursor.fetchone()
-
+        print(row[0])
         # If the user doesn't exist or the password is incorrect, return a 401 Unauthorized response
-        logging.info(f"row: {row}")
-        logging.info(f"user.password: {user.password}")
         if row is None or user.password != row[0]:
-            logging.info("Starting application")
             raise HTTPException(status_code=401, detail="Invalid email or password")
 
         # If the email and password are correct, return a 200 OK response
