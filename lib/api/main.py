@@ -7,6 +7,7 @@ import pandas as pd
 import Models.personModel.person as Pmodel
 from passlib.context import CryptContext
 from fastapi.middleware.cors import CORSMiddleware
+import requests
 
 
 app = FastAPI()
@@ -30,9 +31,20 @@ connectionString = "Server=localhost;Database=SugarSense;Trusted_Connection=True
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+dummypass = "#botato3452"
+
 class User(BaseModel):
     username: str
     password: str
+
+class NewUser(BaseModel):
+    firstName: str
+    lastName: str
+    username: str
+    email: str
+    password: str
+    confirmPassword: str
+
 
 conn_str = ("DRIVER={ODBC Driver 17 for SQL Server};"
             "Server=localhost;"
@@ -50,11 +62,10 @@ print(row.fetchone())
 #conn = engine.connect()
 #row = cursor.fetchone()
 
-cursor.execute("SELECT userPassword FROM Users WHERE CAST(userName AS VARCHAR(255)) = 'bsmith'")
-row = cursor.fetchone()
-print(type(row[0]))
-if row is None:
-    print("botato")
+#cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES ({user.fname}, {user.lname}, {user.username}, {user.email}, {user.password})")
+#row = cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES ('botato', 'sweet', 'sweet botato', 'sweetbotato@gmail.com', 'unsweetbotato')")
+#print(cursor.rowcount)
+#cnxn.commit()
 
 @app.get('/')
 def get():
@@ -114,3 +125,37 @@ async def authenticate(user: User):
         raise e
     except Exception as e:
         return {"error": str(e)}
+    
+@app.post("/register")
+async def registerfunction(user: NewUser):
+    print(user.firstName)
+    try:
+        print('entered register')
+        '''
+        if(checkUsername(user.username)):
+            print('username does not exist')
+            if user.password != user.confirmPassword:
+                print('password not equal')
+                raise HTTPException(status_code=401, detail="password does not match with Confirm Password")
+            else:
+                cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES ('test', 'test', 'test', 'tesst', 'tesst')")
+                cnxn.commit()
+        else:
+            raise HTTPException(status_code=401, detail="Username already exists")
+        '''
+        cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES ('test', 'test', 'test', 'tesst', 'tesst')")
+        cnxn.commit()
+        # If the email and password are correct, return a 200 OK response
+        return {"message": "Registered successfully"}
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        return {"error": str(e)}
+    
+def checkUsername(username):
+    row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(username,)).fetchone()
+    if(row is None):
+        return True
+    else:
+        return False
+

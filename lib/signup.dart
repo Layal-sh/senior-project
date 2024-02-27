@@ -1,7 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/membership.dart';
+import 'package:http/http.dart' as http;
 import 'login.dart';
+import 'dart:convert';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -429,7 +433,7 @@ class _SignUpState extends State<SignUp> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         //if (_formKey.currentState?.validate() ?? false) {
                         //  _boxAccounts.put(
                         //    _controllerUsername.text,
@@ -453,10 +457,64 @@ class _SignUpState extends State<SignUp> {
 
                         //  Navigator.pop(context);
                         //}
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Membership()),
-                        );
+                        String fname = _controllerFirstname.text;
+                        String lname = _controllerLastname.text;
+                        String username = _controllerUsername.text;
+                        String email = _controllerEmail.text;
+                        String password = _controllerPassword.text;
+                        String confirmPassword = _controllerConFirmPassword.text;
+                        try {
+                            //server authentication
+                            final response = await http
+                                .post(
+                                  Uri.parse(
+                                      'http://127.0.0.1:8000/register'),
+                                  headers: <String, String>{
+                                    'Content-Type':
+                                        'application/json; charset=UTF-8',
+                                  },
+                                  body: jsonEncode(<String, String>{
+                                    'firstName': fname,
+                                    'lastName': lname,
+                                    'userName': username,
+                                    'email': email,
+                                    'password': password,
+                                    'confirmPassword': confirmPassword,
+                                  }),
+                                )
+                                .timeout(const Duration(seconds: 10));
+                            if (response.statusCode == 200) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const Membership()),
+                              );
+                              //Navigator.push(
+                                //context,
+                                //MaterialPageRoute(
+                                    //builder: (context) => const App()),
+                              //);
+                              
+                            } else {
+                              print(response.body);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('(signup)Invalid username or password')),
+                              );
+                            }
+                          } catch (e) {
+                            // ignore: avoid_print
+                            print('Error: $e');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('The server did not respond')),
+                            );
+                          }
+                        //Navigator.push(
+                          //context,
+                          //MaterialPageRoute(builder: (context) => Membership()),
+                        //);
                       },
                       child: const Text(
                         "Sign Up",
