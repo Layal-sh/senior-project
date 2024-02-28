@@ -131,18 +131,16 @@ async def registerfunction(user: NewUser):
     try:
         print('entered register')
         
-        if checkUsername(user.username):
-            print('username does not exist')
-            if user.password != user.confirmPassword:
-                print('password not equal')
-                raise HTTPException(status_code=401, detail="password does not match with Confirm Password")
-            else:
-                cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES (?, ?, ?, ?, ?)",
-                               (user.firstName, user.lastName, user.username, user.email, user.password))
-                cnxn.commit()
-                return {"message": "Registered successfully"}
-        else:
+        if not checkUsername(user.username):
             raise HTTPException(status_code=401, detail="Username already exists")
+        
+        if not checkEmail(user.email):
+            raise HTTPException(status_code=401, detail="Email already exists")
+        
+        cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES (?, ?, ?, ?, ?)",
+                       (user.firstName, user.lastName, user.username, user.email, user.password))
+        cnxn.commit()
+        return {"message": "Registered successfully"}
     except HTTPException as e:
         raise e
     except Exception as e:
@@ -150,6 +148,13 @@ async def registerfunction(user: NewUser):
     
 def checkUsername(username):
     row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(username,)).fetchone()
+    if(row is None):
+        return True
+    else:
+        return False
+    
+def checkEmail(email):
+    row = cursor.execute("SELECT userID FROM Users WHERE CAST(email AS VARCHAR(255)) = ?",(email,)).fetchone()
     if(row is None):
         return True
     else:
