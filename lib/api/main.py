@@ -138,10 +138,10 @@ async def registerfunction(user: NewUser):
         if not checkEmail(user.email):
             raise HTTPException(status_code=401, detail="Email already exists")
         
-        hashed_password = pwd_context.hash(user.password)
-        
+        #hashed_password = pwd_context.hash(user.password)
+        #print(hashed_password)
         cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES (?, ?, ?, ?, ?)",
-                       (user.firstName, user.lastName, user.username, user.email, hashed_password))
+                       (user.firstName, user.lastName, user.username, user.email, user.password))
         cnxn.commit()
         return {"message": "Registered successfully"}
     except HTTPException as e:
