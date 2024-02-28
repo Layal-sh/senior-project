@@ -501,7 +501,7 @@ class _SignUpState extends State<SignUp> {
                             var errorMessage =
                                 responseBody['detail'] ?? 'Unknown error';
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('(signup) $errorMessage')),
+                              SnackBar(content: Text('$errorMessage')),
                             );
                           }
                         } catch (e) {
