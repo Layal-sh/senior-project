@@ -476,9 +476,9 @@ class _SignUpState extends State<SignUp> {
                                   body: jsonEncode(<String, String>{
                                     'firstName': fname,
                                     'lastName': lname,
-                                    'userName': username,
+                                    'username': username,
                                     'email': email,
-                                    'userPassword': password,
+                                    'password': password,
                                     'confirmPassword': confirmPassword,
                                   }),
                                 )
