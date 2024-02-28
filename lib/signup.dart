@@ -462,58 +462,59 @@ class _SignUpState extends State<SignUp> {
                         String username = _controllerUsername.text;
                         String email = _controllerEmail.text;
                         String password = _controllerPassword.text;
-                        String confirmPassword = _controllerConFirmPassword.text;
+                        String confirmPassword =
+                            _controllerConFirmPassword.text;
                         try {
-                            //server authentication
-                            final response = await http
-                                .post(
-                                  Uri.parse(
-                                      'http://127.0.0.1:8000/register'),
-                                  headers: <String, String>{
-                                    'Content-Type':
-                                        'application/json; charset=UTF-8',
-                                  },
-                                  body: jsonEncode(<String, String>{
-                                    'firstName': fname,
-                                    'lastName': lname,
-                                    'username': username,
-                                    'email': email,
-                                    'password': password,
-                                    'confirmPassword': confirmPassword,
-                                  }),
-                                )
-                                .timeout(const Duration(seconds: 10));
-                            if (response.statusCode == 200) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
+                          //server authentication
+                          final response = await http
+                              .post(
+                                Uri.parse('http://127.0.0.1:8000/register'),
+                                headers: <String, String>{
+                                  'Content-Type':
+                                      'application/json; charset=UTF-8',
+                                },
+                                body: jsonEncode(<String, String>{
+                                  'firstName': fname,
+                                  'lastName': lname,
+                                  'username': username,
+                                  'email': email,
+                                  'password': password,
+                                  'confirmPassword': confirmPassword,
+                                }),
+                              )
+                              .timeout(const Duration(seconds: 10));
+                          if (response.statusCode == 200) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
                                   builder: (context) => const Membership()),
-                              );
-                              //Navigator.push(
-                                //context,
-                                //MaterialPageRoute(
-                                    //builder: (context) => const App()),
-                              //);
-                              
-                            } else {
-                              print(response.body);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content:
-                                        Text('(signup)Invalid username or password')),
-                              );
-                            }
-                          } catch (e) {
+                            );
+                            //Navigator.push(
+                            //context,
+                            //MaterialPageRoute(
+                            //builder: (context) => const App()),
+                            //);
+                          } else {
                             // ignore: avoid_print
-                            print('Error: $e');
+                            print(response.body);
+                            var responseBody = jsonDecode(response.body);
+                            var errorMessage =
+                                responseBody['detail'] ?? 'Unknown error';
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('The server did not respond')),
+                              SnackBar(content: Text('(signup) $errorMessage')),
                             );
                           }
+                        } catch (e) {
+                          // ignore: avoid_print
+                          print('Error: $e');
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('The server did not respond')),
+                          );
+                        }
                         //Navigator.push(
-                          //context,
-                          //MaterialPageRoute(builder: (context) => Membership()),
+                        //context,
+                        //MaterialPageRoute(builder: (context) => Membership()),
                         //);
                       },
                       child: const Text(
