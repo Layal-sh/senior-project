@@ -478,7 +478,7 @@ class _SignUpState extends State<SignUp> {
                                     'lastName': lname,
                                     'userName': username,
                                     'email': email,
-                                    'password': password,
+                                    'userPassword': password,
                                     'confirmPassword': confirmPassword,
                                   }),
                                 )

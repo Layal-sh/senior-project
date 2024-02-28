@@ -128,7 +128,6 @@ async def authenticate(user: User):
     
 @app.post("/register")
 async def registerfunction(user: NewUser):
-    print(user.firstName)
     try:
         print('entered register')
         '''
@@ -143,7 +142,7 @@ async def registerfunction(user: NewUser):
         else:
             raise HTTPException(status_code=401, detail="Username already exists")
         '''
-        cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES ('test', 'test', 'test', 'tesst', 'tesst')")
+        cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES (?, ?, ?, ?, ?)",(user.firstName, user.lastName, user.username, user.email, user.password))
         cnxn.commit()
         # If the email and password are correct, return a 200 OK response
         return {"message": "Registered successfully"}
