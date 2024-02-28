@@ -557,7 +557,7 @@ class _SignUpState extends State<SignUp> {
                                   responseBody['detail'] ?? 'Unknown error';
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                    content: Text('(signup) $errorMessage')),
+                                    content: Text('$errorMessage')),
                               );
                             }
                           } catch (e) {
