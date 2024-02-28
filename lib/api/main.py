@@ -131,17 +131,18 @@ async def registerfunction(user: NewUser):
     try:
         print('entered register')
         
-        if(checkUsername(user.username)):
+        if checkUsername(user.username):
             print('username does not exist')
             if user.password != user.confirmPassword:
                 print('password not equal')
                 raise HTTPException(status_code=401, detail="password does not match with Confirm Password")
             else:
-                cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES (?, ?, ?, ?, ?)",(user.firstName, user.lastName, user.username, user.email, user.password))
+                cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES (?, ?, ?, ?, ?)",
+                               (user.firstName, user.lastName, user.username, user.email, user.password))
                 cnxn.commit()
+                return {"message": "Registered successfully"}
+        else:
             raise HTTPException(status_code=401, detail="Username already exists")
-        # If the email and password are correct, return a 200 OK response
-        return {"message": "Registered successfully"}
     except HTTPException as e:
         raise e
     except Exception as e:
