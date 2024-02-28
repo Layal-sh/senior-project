@@ -116,7 +116,8 @@ async def authenticate(user: User):
         cursor.execute("SELECT userPassword FROM Users WHERE CAST(email AS VARCHAR(255)) = ?",(user.username,))
         rowEmail = cursor.fetchone()
         # If the user doesn't exist or the password is incorrect, return a 401 Unauthorized response
-        if (rowUsername is None or user.password != rowUsername[0]) and (rowEmail is None or user.password != rowEmail[0]):
+        hashed_password = pwd_context.hash(user.password)
+        if (rowUsername is None or hashed_password != rowUsername[0]) and (rowEmail is None or hashed_password != rowEmail[0]):
             raise HTTPException(status_code=401, detail="Invalid email or password")
 
         # If the email and password are correct, return a 200 OK response
@@ -137,8 +138,10 @@ async def registerfunction(user: NewUser):
         if not checkEmail(user.email):
             raise HTTPException(status_code=401, detail="Email already exists")
         
+        hashed_password = pwd_context.hash(user.password)
+        
         cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES (?, ?, ?, ?, ?)",
-                       (user.firstName, user.lastName, user.username, user.email, user.password))
+                       (user.firstName, user.lastName, user.username, user.email, hashed_password))
         cnxn.commit()
         return {"message": "Registered successfully"}
     except HTTPException as e:
