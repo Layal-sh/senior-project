@@ -8,6 +8,7 @@ import Models.personModel.person as Pmodel
 from passlib.context import CryptContext
 from fastapi.middleware.cors import CORSMiddleware
 import requests
+import hashlib
 
 
 app = FastAPI()
@@ -116,7 +117,7 @@ async def authenticate(user: User):
         cursor.execute("SELECT userPassword FROM Users WHERE CAST(email AS VARCHAR(255)) = ?",(user.username,))
         rowEmail = cursor.fetchone()
         # If the user doesn't exist or the password is incorrect, return a 401 Unauthorized response
-        hashed_password = pwd_context.hash(user.password)
+        hashed_password = hashlib.md5(user.password.encode()).hexdigest()
         if (rowUsername is None or hashed_password != rowUsername[0]) and (rowEmail is None or hashed_password != rowEmail[0]):
             raise HTTPException(status_code=401, detail="Invalid email or password")
 
@@ -138,7 +139,7 @@ async def registerfunction(user: NewUser):
         if not checkEmail(user.email):
             raise HTTPException(status_code=401, detail="Email already exists")
         
-        hashed_password = pwd_context.hash(user.password)
+        hashed_password = hashlib.md5(user.password.encode()).hexdigest()
         
         cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES (?, ?, ?, ?, ?)",
                        (user.firstName, user.lastName, user.username, user.email, hashed_password))
