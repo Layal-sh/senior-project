@@ -7,6 +7,34 @@ import 'package:http/http.dart' as http;
 import 'login.dart';
 import 'dart:convert';
 
+bool isValidEmail(String email) {
+  final RegExp regex =
+      RegExp(r'^[a-zA-Z0-9.a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
+  return regex.hasMatch(email);
+}
+
+bool isValidPassword(String password) {
+  // Check if password is at least 8 characters long
+  if (password.length < 8) {
+    return false;
+  }
+
+  // Check if password contains at least one letter
+  final RegExp hasLetter = RegExp(r'[a-zA-Z]');
+  if (!hasLetter.hasMatch(password)) {
+    return false;
+  }
+
+  // Check if password contains at least one number
+  final RegExp hasNumber = RegExp(r'\d');
+  if (!hasNumber.hasMatch(password)) {
+    return false;
+  }
+
+  // If all checks pass, the password is valid
+  return true;
+}
+
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
 
@@ -464,53 +492,82 @@ class _SignUpState extends State<SignUp> {
                         String password = _controllerPassword.text;
                         String confirmPassword =
                             _controllerConFirmPassword.text;
-                        try {
-                          //server authentication
-                          final response = await http
-                              .post(
-                                Uri.parse('http://127.0.0.1:8000/register'),
-                                headers: <String, String>{
-                                  'Content-Type':
-                                      'application/json; charset=UTF-8',
-                                },
-                                body: jsonEncode(<String, String>{
-                                  'firstName': fname,
-                                  'lastName': lname,
-                                  'username': username,
-                                  'email': email,
-                                  'password': password,
-                                  'confirmPassword': confirmPassword,
-                                }),
-                              )
-                              .timeout(const Duration(seconds: 10));
-                          if (response.statusCode == 200) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Membership()),
-                            );
-                            //Navigator.push(
-                            //context,
-                            //MaterialPageRoute(
-                            //builder: (context) => const App()),
-                            //);
-                          } else {
-                            // ignore: avoid_print
-                            print(response.body);
-                            var responseBody = jsonDecode(response.body);
-                            var errorMessage =
-                                responseBody['detail'] ?? 'Unknown error';
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('$errorMessage')),
-                            );
-                          }
-                        } catch (e) {
-                          // ignore: avoid_print
-                          print('Error: $e');
+
+                        if (username.isEmpty ||
+                            email.isEmpty ||
+                            password.isEmpty ||
+                            confirmPassword.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                                content: Text('The server did not respond')),
+                                content:
+                                    Text('All fields with * must be filled')),
                           );
+                        } else if (!isValidEmail(email)) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('The email is not valid')),
+                          );
+                        } else if (password != confirmPassword) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('The passwords do not match')),
+                          );
+                        } else if (!isValidPassword(password)) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'Password must contains 8 characters including 1 number and 1 letter')),
+                          );
+                        } else {
+                          try {
+                            //server authentication
+                            final response = await http
+                                .post(
+                                  Uri.parse('http://127.0.0.1:8000/register'),
+                                  headers: <String, String>{
+                                    'Content-Type':
+                                        'application/json; charset=UTF-8',
+                                  },
+                                  body: jsonEncode(<String, String>{
+                                    'firstName': fname,
+                                    'lastName': lname,
+                                    'username': username,
+                                    'email': email,
+                                    'password': password,
+                                    'confirmPassword': confirmPassword,
+                                  }),
+                                )
+                                .timeout(const Duration(seconds: 10));
+                            if (response.statusCode == 200) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const Membership()),
+                              );
+                              //Navigator.push(
+                              //context,
+                              //MaterialPageRoute(
+                              //builder: (context) => const App()),
+                              //);
+                            } else {
+                              // ignore: avoid_print
+                              print(response.body);
+                              var responseBody = jsonDecode(response.body);
+                              var errorMessage =
+                                  responseBody['detail'] ?? 'Unknown error';
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text('(signup) $errorMessage')),
+                              );
+                            }
+                          } catch (e) {
+                            // ignore: avoid_print
+                            print('Error: $e');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('The server did not respond')),
+                            );
+                          }
                         }
                         //Navigator.push(
                         //context,
