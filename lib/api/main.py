@@ -91,7 +91,7 @@ async def read_item(user_id: int):
     
 @app.get("/meals")
 async def get_meals():
-    cursor.execute("Select * from Meals")
+    cursor.execute("Select * from Meals") 
     rows = cursor.fetchall()
     if rows is None:
         return {"error": "No meals found"}

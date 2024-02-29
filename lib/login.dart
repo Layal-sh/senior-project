@@ -266,6 +266,8 @@ class _LoginState extends State<Login> {
                                 .timeout(const Duration(seconds: 10));
 
                             if (response.statusCode == 200) {
+                              logger.info(
+                                  "yeah 200 no shit yeah good shit mb3rf");
                               DBHelper dbHelper = DBHelper.instance;
 
                               await dbHelper.syncMeals();
