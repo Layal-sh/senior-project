@@ -1,9 +1,15 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-class SqlDb{
+class DBHelper{
+  
+  DBHelper._privateConstructor();
 
-  static Database? _db;
+  static final DBHelper instance = DBHelper._privateConstructor();
+
+  static Database _db;
 
   Future<Database?> get db async{
     if(_db == null){
@@ -147,6 +153,24 @@ deleteData(String sql) async{
   return response;
 }
 
+Future<void> syncMeals() async {
+  // Fetch data from the server
+  var response = await http.get('https://localhost:8000/meals' as Uri);
 
+  // Parse the response
+  var meals = jsonDecode(response.body);
+
+  // Get a reference to the database
+  final Database? db = await DBHelper().db;
+
+  // Insert all meals into the database
+  for (var meal in meals) {
+    await db?.insert(
+      'Meals',
+      meal,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+}
 
 }

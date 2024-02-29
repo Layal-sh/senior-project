@@ -44,7 +44,6 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  SqlDb sqldb = SqlDb();
   final FocusNode _focusNodeEmail = FocusNode();
   final FocusNode _focusNodeDoctorID = FocusNode();
   final FocusNode _focusNodePassword = FocusNode();

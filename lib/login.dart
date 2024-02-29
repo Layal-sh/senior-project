@@ -9,8 +9,9 @@ import 'package:sugar_sense/app.dart';
 import 'package:sugar_sense/main.dart';
 import 'package:sugar_sense/values/app_regex.dart';
 import 'signup.dart';
-import 'variables.dart';
+import 'Database/db.dart';
 
+final DBHelper db = new DBHelper();
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
   //final PageController controller;
@@ -20,7 +21,6 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  SqlDb sqlDB = SqlDb();
   final ValueNotifier<bool> passwordNotifier = ValueNotifier(true);
   final ValueNotifier<bool> fieldValidNotifier = ValueNotifier(false);
 
@@ -266,6 +266,7 @@ class _LoginState extends State<Login> {
                                 .timeout(const Duration(seconds: 10));
 
                             if (response.statusCode == 200) {
+                              db.syncMeals();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
