@@ -5,7 +5,9 @@ import 'package:sugar_sense/membership.dart';
 import 'package:sugar_sense/signup.dart';
 import 'package:sugar_sense/splash.dart';
 import 'package:sugar_sense/startpage.dart';
+import 'package:logger/src/logger.dart';
 
+  final logger = Logger();
 void main() {
   runApp(MyApp());
 }
