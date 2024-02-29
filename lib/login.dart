@@ -280,10 +280,11 @@ class _LoginState extends State<Login> {
                             } else {
                               //incorrect username or password handling
                               //for layal you can change this if you want or remove this comment if you think its good
+                              var responseBody = jsonDecode(response.body);
+                              var errorMessage =
+                                  responseBody['detail'] ?? 'Unknown error';
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content:
-                                        Text('Invalid username or password')),
+                                SnackBar(content: Text('$errorMessage')),
                               );
                             }
                           } catch (e) {

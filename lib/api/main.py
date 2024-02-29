@@ -119,7 +119,10 @@ async def authenticate(user: User):
         # If the user doesn't exist or the password is incorrect, return a 401 Unauthorized response
         hashed_password = hashlib.md5(user.password.encode()).hexdigest()
         if (rowUsername is None or hashed_password != rowUsername[0]) and (rowEmail is None or hashed_password != rowEmail[0]):
-            raise HTTPException(status_code=401, detail="Invalid email or password")
+            if(rowUsername is None and rowEmail is None):
+                raise HTTPException(status_code=401, detail="Invalid email or username")
+            if(hashed_password != rowUsername[0] and hashed_password != rowEmail[0]):
+                raise HTTPException(status_code=401, detail="Incorrect password")
 
         # If the email and password are correct, return a 200 OK response
         return {"message": "Authenticated successfully"}
