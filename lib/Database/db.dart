@@ -121,24 +121,7 @@ _onCreate(Database db, int version) async{
   );
   ''');
 }
-//select query
-signUp(String fName,String lName, String email, String password)async{
-  Database? mydb = await db;
-  int response = await mydb!.rawInsert('''
-  INSERT INTO Users (firstName, lastName, email, userPassword)
-  VALUES ($fName, $lName, $email, $password);
-''');
-  return response;
-}
 
-signUpQuestions(int patientID, double insulinSensivity, double carbRatio)async{
-Database? mydb = await db;
-  int response = await mydb!.rawInsert('''
-  INSERT INTO Patients (patientID, insulinSensitivity, carbRatio)
-  VALUES ($patientID, $insulinSensivity, $carbRatio);
-''');
-return response;
-}
 
 readData(String sql) async{
   Database? mydb = await db;

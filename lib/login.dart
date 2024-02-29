@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/app.dart';
+import 'package:sugar_sense/main.dart';
 import 'package:sugar_sense/values/app_regex.dart';
 import 'signup.dart';
 import 'variables.dart';
@@ -236,6 +237,7 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       onPressed: () async {
+                        logger.info('he did in fact frfr click da button');
                         String email = _emailController.text;
                         String password = _passwordController.text;
                         if (email == 'admin' && password == 'admin') {
