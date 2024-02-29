@@ -3,13 +3,12 @@ import 'package:path/path.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class DBHelper{
-  
+class DBHelper {
   DBHelper._privateConstructor();
 
   static final DBHelper instance = DBHelper._privateConstructor();
 
-  static Database _db;
+  static Database? _db;
 
   Future<Database?> get db async {
     if (_db == null) {
@@ -152,26 +151,26 @@ class DBHelper{
     int response = await mydb!.rawDelete(sql);
     return response;
   }
-}
 
-Future<void> syncMeals() async {
-  // Fetch data from the server
-  var response = await http.get('https://localhost:8000/meals' as Uri);
+  Future<void> syncMeals() async {
+    DBHelper dbHelper = DBHelper.instance;
 
-  // Parse the response
-  var meals = jsonDecode(response.body);
+// Fetch data from the server
+    var response = await http.get('https://localhost:8000/meals' as Uri);
 
-  // Get a reference to the database
-  final Database? db = await DBHelper().db;
+// Parse the response
+    var meals = jsonDecode(response.body);
 
-  // Insert all meals into the database
-  for (var meal in meals) {
-    await db?.insert(
-      'Meals',
-      meal,
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+// Get a reference to the database
+    final Database? db = await dbHelper.db;
+
+// Insert all meals into the database
+    for (var meal in meals) {
+      await db?.insert(
+        'Meals',
+        meal,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
-}
-
 }

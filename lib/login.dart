@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/app.dart';
 import 'package:sugar_sense/main.dart';
@@ -11,7 +12,6 @@ import 'package:sugar_sense/values/app_regex.dart';
 import 'signup.dart';
 import 'Database/db.dart';
 
-final DBHelper db = new DBHelper();
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
   //final PageController controller;
@@ -266,7 +266,10 @@ class _LoginState extends State<Login> {
                                 .timeout(const Duration(seconds: 10));
 
                             if (response.statusCode == 200) {
-                              db.syncMeals();
+                              DBHelper dbHelper = DBHelper.instance;
+
+                              await dbHelper.syncMeals();
+
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
