@@ -6,6 +6,7 @@ import 'package:sugar_sense/signup.dart';
 import 'package:sugar_sense/splash.dart';
 import 'package:sugar_sense/startpage.dart';
 import 'package:logging/logging.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 final logger = Logger('MyLogger');
 
@@ -17,6 +18,10 @@ void main() {
   });
 
   logger.info('This is an info message');
+  sqfliteFfiInit();
+
+  // Use sqflite_common_ffi's database factory
+  databaseFactory = databaseFactoryFfi;
   runApp(MyApp());
 }
 
