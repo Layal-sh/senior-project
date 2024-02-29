@@ -236,7 +236,7 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       onPressed: () async {
-                        logger.d("");
+                        logger.info('he did in fact frfr click da button');
                         String email = _emailController.text;
                         String password = _passwordController.text;
                         if (email == 'admin' && password == 'admin') {

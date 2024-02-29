@@ -5,10 +5,18 @@ import 'package:sugar_sense/membership.dart';
 import 'package:sugar_sense/signup.dart';
 import 'package:sugar_sense/splash.dart';
 import 'package:sugar_sense/startpage.dart';
-import 'package:logger/src/logger.dart';
+import 'package:logging/logging.dart';
 
-  final logger = Logger();
+final logger = Logger('MyLogger');
+
 void main() {
+  Logger.root.level =
+      Level.ALL; // Set this level to control which log messages are shown
+  Logger.root.onRecord.listen((record) {
+    print('${record.level.name}: ${record.time}: ${record.message}');
+  });
+
+  logger.info('This is an info message');
   runApp(MyApp());
 }
 
