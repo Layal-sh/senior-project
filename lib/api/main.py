@@ -142,7 +142,7 @@ async def registerfunction(user: NewUser):
         hashed_password = hashlib.md5(user.password.encode()).hexdigest()
         
         cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES (?, ?, ?, ?, ?)",
-                       (user.firstName, user.lastName, user.username, user.email, user.password))
+                       (user.firstName, user.lastName, user.username, user.email, hashed_password))
         cnxn.commit()
         return {"message": "Registered successfully"}
     except HTTPException as e:

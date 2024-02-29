@@ -8,6 +8,7 @@ import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/app.dart';
 import 'package:sugar_sense/values/app_regex.dart';
 import 'signup.dart';
+import 'variables.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
