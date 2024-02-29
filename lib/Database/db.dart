@@ -34,7 +34,7 @@ class DBHelper {
   _onCreate(Database db, int version) async {
     await db.execute('''
   CREATE TABLE "Users"(
-    userId INTEGER AUTOINCREMENT NOT NULL PRIMARY KEY,
+    userId INTEGER IDENTITY(1,1) NOT NULL PRIMARY KEY,
     firstName TEXT NOT NULL,
     lastName TEXT NOT NULL,
     userName TEXT NULL,
@@ -62,7 +62,7 @@ class DBHelper {
   ''');
     await db.execute('''
   CREATE TABLE "Entry"(
-    entryId INTEGER AUTOINCREMENT NOT NULL PRIMARY KEY,
+    entryId INTEGER IDENTITY(1,1) NOT NULL PRIMARY KEY,
     patientId INTEGER NOT NULL,
     glucoseLevel REAL NOT NULL,
     insulinDosage INTEGER NULL,
@@ -72,7 +72,7 @@ class DBHelper {
   ''');
     await db.execute('''
   CREATE TABLE "Meals"(
-    mealId INTEGER AUTOINCREMENT NOT NULL PRIMARY KEY,
+    mealId INTEGER IDENTITY(1,1) NOT NULL PRIMARY KEY,
     mealName TEXT NOT NULL,
     mealPicture TEXT NULL,
     unit INTEGER NOT NULL,
@@ -105,7 +105,7 @@ class DBHelper {
   ''');
     await db.execute('''
   CREATE TABLE "Articles"(
-    articleId INTEGER AUTOINCREMENT NOT NULL PRIMARY KEY,
+    articleId INTEGER IDENTITY(1,1) NOT NULL PRIMARY KEY,
     link TEXT NOT NULL
   );
   ''');
@@ -120,7 +120,7 @@ class DBHelper {
   ''');
     await db.execute('''
   CREATE TABLE "Administration"(
-    adminId INTEGER AUTOINCREMENT NOT NULL PRIMARY KEY,
+    adminId INTEGER IDENTITY(1,1) NOT NULL PRIMARY KEY,
     username TEXT NOT NULL,
     adminPassword TEXT NOT NULL
   );
