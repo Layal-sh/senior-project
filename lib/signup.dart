@@ -484,6 +484,8 @@ class _SignUpState extends State<SignUp> {
 
                         //  Navigator.pop(context);
                         //}
+                        DBHelper dbHelper = DBHelper.instance;
+                        dbHelper.initialDb();
                         String fname = _controllerFirstname.text;
                         String lname = _controllerLastname.text;
                         String username = _controllerUsername.text;

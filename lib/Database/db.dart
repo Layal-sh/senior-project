@@ -33,31 +33,20 @@ class DBHelper {
 
   _onCreate(Database db, int version) async {
     await db.execute('''
-  CREATE TABLE "Users"(
-    userId INTEGER IDENTITY(1,1) NOT NULL PRIMARY KEY,
+  CREATE TABLE "Patients"(
+    patientId INTEGER IDENTITY(1,1) NOT NULL PRIMARY KEY,
     firstName TEXT NOT NULL,
     lastName TEXT NOT NULL,
-    userName TEXT NULL,
+    userName TEXT NOT NULL,
     email TEXT NOT NULL,
     userPassword TEXT NOT NULL
-  );
-  ''');
-    await db.execute('''
-  CREATE TABLE "Doctors"(
-    doctorId INTEGER NOT NULL PRIMARY KEY ,
-    FOREIGN KEY(doctorId) REFERENCES Users(userId)
-  );
-  ''');
-    await db.execute('''
-  CREATE TABLE Patients (
-	  patientID INTEGER PRIMARY KEY NOT NULL,
-	  doctorID INTEGER NULL,
-	  phoneNumber INTEGER NOT NULL,
+    doctorId INTEGER NULL,
+	  phoneNumber INTEGER NULL,
 	  profilePhoto TEXT NULL, 
 	  insulinSensivity REAL NOT NULL,
 	  carbRatio REAL NOT NULL,
-	  FOREIGN KEY(patientID) REFERENCES Users(userID),
-	  FOREIGN KEY(doctorID) REFERENCES Doctors(doctorID)
+    carbRatio2 REAL NULL,
+    carbRatio3 REAL NULL
   );
   ''');
     await db.execute('''
@@ -100,7 +89,7 @@ class DBHelper {
     unit INTEGER NOT NULL,
     FOREIGN KEY(entryId) REFERENCES Entry(entryId),
     FOREIGN KEY(mealId) REFERENCES Meals(mealId),
-    PRIMARY KEY(entryID,mealID)
+    PRIMARY KEY(entryId,mealId)
   );
   ''');
     await db.execute('''
@@ -115,14 +104,7 @@ class DBHelper {
     articleId INTEGER NOT NULL,
     FOREIGN KEY(patientId) REFERENCES Patients(patientId),
     FOREIGN KEY(articleId) REFERENCES Articles(articleId),
-    PRIMARY KEY(patientID,articleID)
-  );
-  ''');
-    await db.execute('''
-  CREATE TABLE "Administration"(
-    adminId INTEGER IDENTITY(1,1) NOT NULL PRIMARY KEY,
-    username TEXT NOT NULL,
-    adminPassword TEXT NOT NULL
+    PRIMARY KEY(patientId,articleId)
   );
   ''');
   }
