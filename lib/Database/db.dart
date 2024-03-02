@@ -137,7 +137,8 @@ class DBHelper {
   }
 
   //adding new user info to local database
-   signUp(int pid, String fname,String lname, String uname,String em,String pass, String docid, double insulinSen,double carbRatio) async {
+  signUp(int pid, String fname, String lname, String uname, String em,
+      String pass, String docid, double insulinSen, double carbRatio) async {
     Database? mydb = await db;
     int response = await mydb!.rawInsert('''
   INSERT INTO "Patients" (patientId, firstName, lastName, userName, email, userPassword, doctorId, insulinSensitivity, carboRatio)
@@ -145,23 +146,19 @@ class DBHelper {
   ''');
     return response;
   }
-  
+
   //get all meals from local database for adding inputs
-   selectAllMeals() async {
+  selectAllMeals() async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
   SELECT * FROM "Meals";
    ''');
-<<<<<<< HEAD
-   response.
-=======
-   //print(response);
->>>>>>> d3c545c36deae957f6b983dfdf19cb4da74f12f5
+
     return response;
   }
 
   //create an entry for the insulin dosage
-  createEntry(int pid, double glucose,int insulin, String date) async {
+  createEntry(int pid, double glucose, int insulin, String date) async {
     Database? mydb = await db;
     int response = await mydb!.rawInsert('''
   INSERT INTO "Entry"(patientId, glucodeLevel, insulinDosage, entryDate)
@@ -179,8 +176,6 @@ class DBHelper {
   ''');
     return response;
   }
-
-  
 
   Future<void> syncMeals() async {
     logger.info("we syncin frfr");
