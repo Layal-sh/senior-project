@@ -269,11 +269,8 @@ class _LoginState extends State<Login> {
                                   "yeah 200 no shit yeah good shit mb3rf");
                               DBHelper dbHelper = DBHelper.instance;
 
-                              // await dbHelper.syncMeals();
                               await dbHelper.syncMeals();
-                              logger.info(dbHelper.selectAllMeals());
-
-                              //m.forEach(print);
+                              //print(dbHelper.selectAllMeals());
 
                               Navigator.push(
                                 context,

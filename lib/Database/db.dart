@@ -150,18 +150,37 @@ class DBHelper {
    selectAllMeals() async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
-  SELECT mealName FROM "Meals"
-  WHERE mealId=6;
+  SELECT * FROM "Meals";
    ''');
+<<<<<<< HEAD
    response.
+=======
+   //print(response);
+>>>>>>> d3c545c36deae957f6b983dfdf19cb4da74f12f5
     return response;
   }
 
-  createEntry(String sql) async {
+  //create an entry for the insulin dosage
+  createEntry(int pid, double glucose,int insulin, String date) async {
     Database? mydb = await db;
-    int response = await mydb!.rawInsert(sql);
+    int response = await mydb!.rawInsert('''
+  INSERT INTO "Entry"(patientId, glucodeLevel, insulinDosage, entryDate)
+  VALUES($pid,$glucose,$insulin,$date);
+  ''');
     return response;
   }
+
+  //create hasMeal for each entry
+  createMealForEntry(int entryId, int mealId, int qtty, int unit) async {
+    Database? mydb = await db;
+    int response = await mydb!.rawInsert('''
+  INSERT INTO "hasMeal"(entryId,mealId,quantity,unit)
+  VALUES($entryId,$mealId,$qtty,$unit);
+  ''');
+    return response;
+  }
+
+  
 
   Future<void> syncMeals() async {
     logger.info("we syncin frfr");
