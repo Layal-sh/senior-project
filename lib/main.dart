@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/app.dart';
 import 'package:sugar_sense/application/meals.dart';
 import 'package:sugar_sense/login/signup/login.dart';
@@ -11,7 +12,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 final logger = Logger('MyLogger');
 
-void main() {
+Future<void> main() async {
   Logger.root.level =
       Level.ALL; // Set this level to control which log messages are shown
   Logger.root.onRecord.listen((record) {
@@ -23,6 +24,8 @@ void main() {
 
   // Use sqflite_common_ffi's database factory
   databaseFactory = databaseFactoryFfi;
+  WidgetsFlutterBinding.ensureInitialized();
+  await loadPreferences();
   runApp(MyApp());
 }
 
