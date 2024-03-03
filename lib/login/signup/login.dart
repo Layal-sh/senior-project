@@ -18,7 +18,6 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  SqlDb sqlDB = SqlDb();
   final ValueNotifier<bool> passwordNotifier = ValueNotifier(true);
   final ValueNotifier<bool> fieldValidNotifier = ValueNotifier(false);
 
@@ -269,8 +268,8 @@ class _LoginState extends State<Login> {
                                 logger.info(
                                     "yeah 200 no shit yeah good shit mb3rf");
                                 DBHelper dbHelper = DBHelper.instance;
-
                                 await dbHelper.syncMeals();
+                                dbHelper.selectAllMeals();
                                 //print(dbHelper.selectAllMeals());
 
                                 // ignore: use_build_context_synchronously
