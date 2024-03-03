@@ -6,8 +6,23 @@ import 'package:sugar_sense/application/membership.dart';
 import 'package:sugar_sense/login/signup/signup.dart';
 import 'package:sugar_sense/application/splash.dart';
 import 'package:sugar_sense/application/startpage.dart';
+import 'package:logging/logging.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+final logger = Logger('MyLogger');
 
 void main() {
+  Logger.root.level =
+      Level.ALL; // Set this level to control which log messages are shown
+  Logger.root.onRecord.listen((record) {
+    print('${record.level.name}: ${record.time}: ${record.message}');
+  });
+
+  logger.info('This is an info message');
+  sqfliteFfiInit();
+
+  // Use sqflite_common_ffi's database factory
+  databaseFactory = databaseFactoryFfi;
   runApp(MyApp());
 }
 

@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/application/app.dart';
+import 'package:sugar_sense/main.dart';
 import 'package:sugar_sense/values/app_regex.dart';
 import 'signup.dart';
 
@@ -235,51 +237,68 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                         onPressed: () async {
+                          logger.info('he did in fact frfr click da button');
                           String email = _emailController.text;
                           String password = _passwordController.text;
-                          try {
-                            final response = await http
-                                .post(
-                                  Uri.parse(
-                                      'http://localhost:8000/authenticate'),
-                                  headers: <String, String>{
-                                    'Content-Type':
-                                        'application/json; charset=UTF-8',
-                                  },
-                                  body: jsonEncode(<String, String>{
-                                    'email': email,
-                                    'password': password,
-                                  }),
-                                )
-                                .timeout(const Duration(seconds: 10));
+                          if (email == 'admin' && password == 'admin') {
+                            //alowing admins to login without server connection
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const App()),
+                            );
+                          } else {
+                            try {
+                              //server authentication
+                              final response = await http
+                                  .post(
+                                    Uri.parse(
+                                        'http://127.0.0.1:8000/authenticate'),
+                                    headers: <String, String>{
+                                      'Content-Type':
+                                          'application/json; charset=UTF-8',
+                                    },
+                                    body: jsonEncode(<String, String>{
+                                      'username': email,
+                                      'password': password,
+                                    }),
+                                  )
+                                  .timeout(const Duration(seconds: 10));
 
-                            if (response.statusCode == 200) {
-                              // ignore: use_build_context_synchronously
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const App()),
-                              );
-                            } else {
-                              // ignore: use_build_context_synchronously
+                              if (response.statusCode == 200) {
+                                logger.info(
+                                    "yeah 200 no shit yeah good shit mb3rf");
+                                DBHelper dbHelper = DBHelper.instance;
+
+                                await dbHelper.syncMeals();
+                                //print(dbHelper.selectAllMeals());
+
+                                // ignore: use_build_context_synchronously
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const App()),
+                                );
+                              } else {
+                                //incorrect username or password handling
+                                //for layal you can change this if you want or remove this comment if you think its good
+                                var responseBody = jsonDecode(response.body);
+                                var errorMessage =
+                                    responseBody['detail'] ?? 'Unknown error';
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('$errorMessage')),
+                                );
+                              }
+                            } catch (e) {
+                              // ignore: avoid_print
+                              print('Error: $e');
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content:
-                                        Text('Invalid username or password')),
+                                        Text('The server did not respond')),
                               );
                             }
-                          } catch (e) {
-                            print('Error: $e');
-                            // ignore: use_build_context_synchronously
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('The server did not respond')),
-                            );
                           }
-                          /*Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => App()),
-                          );*/
                         },
                         child: const Text(
                           "Sign In",

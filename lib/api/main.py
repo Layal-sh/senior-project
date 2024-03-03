@@ -7,9 +7,12 @@ import pandas as pd
 import Models.personModel.person as Pmodel
 from passlib.context import CryptContext
 from fastapi.middleware.cors import CORSMiddleware
+import requests
+import hashlib
+
 
 app = FastAPI()
-
+# Set up logging
 
 origins = [
     "http://localhost:8000",  # Allow requests from your FastAPI server
@@ -29,9 +32,20 @@ connectionString = "Server=localhost;Database=SugarSense;Trusted_Connection=True
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+dummypass = "#botato3452"
+
 class User(BaseModel):
+    username: str
+    password: str
+
+class NewUser(BaseModel):
+    firstName: str
+    lastName: str
+    username: str
     email: str
     password: str
+    confirmPassword: str
+
 
 conn_str = ("DRIVER={ODBC Driver 17 for SQL Server};"
             "Server=localhost;"
@@ -48,6 +62,12 @@ print(row.fetchone())
 #sql_query = pd.read_sql_query('SELECT * FROM Users')
 #conn = engine.connect()
 #row = cursor.fetchone()
+
+#cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES ({user.fname}, {user.lname}, {user.username}, {user.email}, {user.password})")
+#row = cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES ('botato', 'sweet', 'sweet botato', 'sweetbotato@gmail.com', 'unsweetbotato')")
+#print(cursor.rowcount)
+#cnxn.commit()
+
 @app.get('/')
 def get():
     return {"Hello":"get request"}
@@ -71,7 +91,7 @@ async def read_item(user_id: int):
     
 @app.get("/meals")
 async def get_meals():
-    cursor.execute("Select * from Meals")
+    cursor.execute("Select * from Meals") 
     rows = cursor.fetchall()
     if rows is None:
         return {"error": "No meals found"}
@@ -92,14 +112,58 @@ async def read_item(meal_id: int):
 async def authenticate(user: User):
     try:
         # Query the database for the user
-        cursor.execute("SELECT userPassword FROM Users WHERE userName = ?", (user.email,))
-        row = cursor.fetchone()
-
+        cursor.execute("SELECT userPassword FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(user.username,))
+        rowUsername = cursor.fetchone()
+        cursor.execute("SELECT userPassword FROM Users WHERE CAST(email AS VARCHAR(255)) = ?",(user.username,))
+        rowEmail = cursor.fetchone()
         # If the user doesn't exist or the password is incorrect, return a 401 Unauthorized response
-        if row is None or user.password != row[0]:
-            raise HTTPException(status_code=401, detail="Invalid email or password")
+        hashed_password = hashlib.md5(user.password.encode()).hexdigest()
+        if (rowUsername is None or hashed_password != rowUsername[0]) and (rowEmail is None or hashed_password != rowEmail[0]):
+            if(rowUsername is None and rowEmail is None):
+                raise HTTPException(status_code=401, detail="Invalid email or username")
+            if(hashed_password != rowUsername[0] and hashed_password != rowEmail[0]):
+                raise HTTPException(status_code=401, detail="Incorrect password")
 
         # If the email and password are correct, return a 200 OK response
         return {"message": "Authenticated successfully"}
+    except HTTPException as e:
+        raise e
     except Exception as e:
         return {"error": str(e)}
+    
+@app.post("/register")
+async def registerfunction(user: NewUser):
+    try:
+        print('entered register')
+        
+        if not checkUsername(user.username):
+            raise HTTPException(status_code=401, detail="Username already exists")
+        
+        if not checkEmail(user.email):
+            raise HTTPException(status_code=401, detail="Email already exists")
+        
+        hashed_password = hashlib.md5(user.password.encode()).hexdigest()
+        
+        cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES (?, ?, ?, ?, ?)",
+                       (user.firstName, user.lastName, user.username, user.email, hashed_password))
+        cnxn.commit()
+        return {"message": "Registered successfully"}
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        return {"error": str(e)}
+    
+def checkUsername(username):
+    row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(username,)).fetchone()
+    if(row is None):
+        return True
+    else:
+        return False
+    
+def checkEmail(email):
+    row = cursor.execute("SELECT userID FROM Users WHERE CAST(email AS VARCHAR(255)) = ?",(email,)).fetchone()
+    if(row is None):
+        return True
+    else:
+        return False
+
