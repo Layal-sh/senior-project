@@ -136,17 +136,6 @@ class DBHelper {
     return response;
   }
 
-  //adding new user info to local database
-  signUp(int pid, String fname, String lname, String uname, String em,
-      String pass, String docid, double insulinSen, double carbRatio) async {
-    Database? mydb = await db;
-    int response = await mydb!.rawInsert('''
-  INSERT INTO "Patients" (patientId, firstName, lastName, userName, email, userPassword, doctorId, insulinSensitivity, carboRatio)
-  VALUES($pid,$fname,$lname,$uname,$em,$pass,$docid,$insulinSen,$carbRatio);
-  ''');
-    return response;
-  }
-
   //get all meals from local database for adding inputs
   selectAllMeals() async {
     Database? mydb = await db;
