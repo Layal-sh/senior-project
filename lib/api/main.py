@@ -45,6 +45,13 @@ class NewUser(BaseModel):
     email: str
     password: str
     confirmPassword: str
+    
+class NewPatient(BaseModel):
+    username: str
+    doctorID: int
+    insulinSensivity: float
+    targetBloodGlucose : int
+    carbRatio : float
 
 
 conn_str = ("DRIVER={ODBC Driver 17 for SQL Server};"
@@ -153,6 +160,19 @@ async def registerfunction(user: NewUser):
     except Exception as e:
         return {"error": str(e)}
     
+@app.post("/regPatient")
+async def registerfunction(user: NewPatient):
+    try:
+        id = getUserById(user.username)
+        cursor.execute("INSERT INTO Patients (patientID, doctorID, insulinSensivity, targetBloodGlucose , carbRatio) VALUES (?, ?, ?, ?, ?)",
+                       (id, user.doctorID, user.insulinSensivity, user.targetBloodGlucose, user.carbRatio))
+        cnxn.commit()
+        return {"message": "Registered successfully"}
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        return {"error": str(e)}
+    
 def checkUsername(username):
     row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(username,)).fetchone()
     if(row is None):
@@ -166,4 +186,6 @@ def checkEmail(email):
         return True
     else:
         return False
-
+def getUserById(username):
+    row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(username,)).fetchone()
+    return row
