@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:sugar_sense/application/create.dart';
 
 class Meals extends StatefulWidget {
   const Meals({Key? key}) : super(key: key);
@@ -16,7 +17,18 @@ class _MealsState extends State<Meals> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Meals'),
+        iconTheme: const IconThemeData(
+          color: Color.fromARGB(255, 255, 255, 255),
+        ),
+        title: const Text(
+          'Meals',
+          style: TextStyle(
+            color: Color.fromARGB(255, 255, 249, 254),
+            fontSize: 17,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w900,
+          ),
+        ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
         elevation: 0,
         actions: [
@@ -32,7 +44,10 @@ class _MealsState extends State<Meals> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
               ),
               onPressed: () {
-                // Handle the button press here
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CreateMeal()),
+                );
               },
               child:
                   const Text('Create', style: TextStyle(color: Colors.white)),
@@ -131,13 +146,16 @@ class MealBox extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const CircleAvatar(
-                radius: 11,
-                backgroundColor: Color.fromARGB(255, 225, 225, 225),
-                child: Icon(
-                  Icons.arrow_forward_ios,
-                  color: Color.fromARGB(255, 255, 255, 255),
-                  size: 14,
+              InkWell(
+                onTap: () {},
+                child: const CircleAvatar(
+                  radius: 11,
+                  backgroundColor: Color.fromARGB(255, 225, 225, 225),
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    size: 14,
+                  ),
                 ),
               ),
             ],

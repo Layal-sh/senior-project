@@ -124,7 +124,15 @@ class Dashboard extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Home'),
+        title: const Text(
+          'Home',
+          style: TextStyle(
+            color: Color.fromARGB(255, 255, 249, 254),
+            fontSize: 17,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w900,
+          ),
+        ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
       body: const SingleChildScrollView(
@@ -144,7 +152,15 @@ class Settings extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Settings'),
+        title: const Text(
+          'Settings',
+          style: TextStyle(
+            color: Color.fromARGB(255, 255, 249, 254),
+            fontSize: 17,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w900,
+          ),
+        ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
       body: const SingleChildScrollView(
@@ -174,7 +190,15 @@ class _AddInputState extends State<AddInput> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Add Input'),
+        title: const Text(
+          'Add Input',
+          style: TextStyle(
+            color: Color.fromARGB(255, 255, 249, 254),
+            fontSize: 17,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w900,
+          ),
+        ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
       body: SingleChildScrollView(
@@ -513,7 +537,15 @@ class Articles extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Articles'),
+        title: const Text(
+          'Articles',
+          style: TextStyle(
+            color: Color.fromARGB(255, 255, 249, 254),
+            fontSize: 17,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w900,
+          ),
+        ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
       body: const SingleChildScrollView(
@@ -533,7 +565,15 @@ class Profile extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Profile'),
+        title: const Text(
+          'Profile',
+          style: TextStyle(
+            color: Color.fromARGB(255, 255, 249, 254),
+            fontSize: 17,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w900,
+          ),
+        ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
       body: const SingleChildScrollView(
