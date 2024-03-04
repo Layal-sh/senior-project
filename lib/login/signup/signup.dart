@@ -540,7 +540,9 @@ class _SignUpState extends State<SignUp> {
                               String confirmPassword =
                                   _controllerConFirmPassword.text;
 
-                              if (username.isEmpty ||
+                              if (fname.isEmpty ||
+                                  lname.isEmpty ||
+                                  username.isEmpty ||
                                   email.isEmpty ||
                                   password.isEmpty ||
                                   confirmPassword.isEmpty) {
