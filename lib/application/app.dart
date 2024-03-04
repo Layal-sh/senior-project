@@ -124,7 +124,15 @@ class Dashboard extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Home'),
+        title: const Text(
+          'Home',
+          style: TextStyle(
+            color: Color.fromARGB(255, 255, 249, 254),
+            fontSize: 17,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w900,
+          ),
+        ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
       body: const SingleChildScrollView(
@@ -144,7 +152,15 @@ class Settings extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Settings'),
+        title: const Text(
+          'Settings',
+          style: TextStyle(
+            color: Color.fromARGB(255, 255, 249, 254),
+            fontSize: 17,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w900,
+          ),
+        ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
       body: const SingleChildScrollView(
@@ -174,7 +190,15 @@ class _AddInputState extends State<AddInput> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Add Input'),
+        title: const Text(
+          'Add Input',
+          style: TextStyle(
+            color: Color.fromARGB(255, 255, 249, 254),
+            fontSize: 17,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w900,
+          ),
+        ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
       body: SingleChildScrollView(
@@ -215,79 +239,69 @@ class _AddInputState extends State<AddInput> {
                       color: const Color.fromARGB(255, 232, 232, 232),
                       child: const SizedBox(
                         //height: 100,
-                        width: 400,
+                        width: double.infinity,
 
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 20,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Text(
-                                  'Total Bolus',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w700),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  'CALCULATIONS',
-                                  style: TextStyle(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              left: 20.0, top: 10, bottom: 10, right: 20),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Total Bolus',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    'CALCULATIONS',
+                                    style: TextStyle(
                                       fontSize: 15,
                                       color: Color.fromARGB(255, 116, 97, 164),
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: 110,
-                            ),
-                            Column(
-                              children: [
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Text(
-                                  "0",
-                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                    "0",
+                                    style: TextStyle(
                                       fontSize: 40,
                                       fontFamily: "Inter",
                                       color: Color.fromARGB(255, 0, 0, 0),
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: 40,
-                            ),
-                            Column(
-                              children: [
-                                SizedBox(
-                                  height: 39,
-                                ),
-                                Text(
-                                  "units",
-                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  SizedBox(
+                                    height: 25,
+                                  ),
+                                  Text(
+                                    "units",
+                                    style: TextStyle(
                                       fontSize: 20,
                                       fontFamily: "Inter",
                                       color: Color.fromARGB(255, 0, 0, 0),
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ],
-                            ),
-                          ],
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -513,7 +527,15 @@ class Articles extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Articles'),
+        title: const Text(
+          'Articles',
+          style: TextStyle(
+            color: Color.fromARGB(255, 255, 249, 254),
+            fontSize: 17,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w900,
+          ),
+        ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
       body: const SingleChildScrollView(
@@ -533,7 +555,15 @@ class Profile extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Profile'),
+        title: const Text(
+          'Profile',
+          style: TextStyle(
+            color: Color.fromARGB(255, 255, 249, 254),
+            fontSize: 17,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w900,
+          ),
+        ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
       body: const SingleChildScrollView(
