@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:flutter/widgets.dart';
+import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/application/create.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:sqflite/sqlite_api.dart';
 
 class Meals extends StatefulWidget {
   const Meals({Key? key}) : super(key: key);
@@ -13,7 +12,7 @@ class Meals extends StatefulWidget {
 
 class _MealsState extends State<Meals> {
   final TextEditingController _filter = TextEditingController();
-
+  DBHelper db = DBHelper.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +89,7 @@ class _MealsState extends State<Meals> {
             ),
           ),
           Expanded(
-            child: GridView.builder(
+            child: /*GridView.builder(
               padding: const EdgeInsets.all(10.0),
               itemCount: meals.length,
               itemBuilder: (ctx, i) => MealBox(meal: meals[i]),
@@ -101,6 +100,37 @@ class _MealsState extends State<Meals> {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
+            ),*/
+
+                FutureBuilder<List<Map>>(
+              future: db.selectAllMeals(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  List<Map> meals = snapshot.data!;
+                  return GridView.builder(
+                    padding: const EdgeInsets.all(10.0),
+                    itemCount: meals.length,
+                    itemBuilder: (ctx, i) => MealBox(
+                      meal: Meal(
+                        name: meals[i]['mealName'],
+                        imageUrl:
+                            meals[i]['mealPicture'] ?? 'default_image_url',
+                      ),
+                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      childAspectRatio: 3 / 3.5,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                    ),
+                  );
+                }
+              },
             ),
           ),
         ],
@@ -130,21 +160,27 @@ class MealBox extends StatelessWidget {
           SizedBox(
             width: 100,
             height: 100,
-            child: Text(meal.imageUrl), //need to change acc to image
+            child: Image.network(meal.imageUrl), //need to change acc to image
           ),
-          Row(
+          Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Text(
-                meal.name,
-                softWrap: true,
-                overflow: TextOverflow.visible,
-                style: const TextStyle(
-                  color: Color.fromARGB(255, 38, 20, 84),
-                  fontSize: 14,
-                  fontFamily: 'Ruda',
-                  letterSpacing: -0.75,
-                  fontWeight: FontWeight.w600,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  child: Text(
+                    meal.name,
+                    softWrap: true,
+                    overflow: TextOverflow.fade,
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 38, 20, 84),
+                      fontSize: 30,
+                      fontFamily: 'Ruda',
+                      letterSpacing: -0.75,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
               InkWell(
@@ -167,13 +203,3 @@ class MealBox extends StatelessWidget {
     );
   }
 }
-
-List<Meal> meals = [
-  Meal(name: 'Meal 1', imageUrl: 'ima'),
-  Meal(name: 'Meal 2', imageUrl: 'im'),
-  Meal(name: 'Meal 3', imageUrl: 'im'),
-  Meal(name: 'Meal 4', imageUrl: 'ima'),
-  Meal(name: 'Meal 5', imageUrl: 'im'),
-  Meal(name: 'Meal 6', imageUrl: 'im'),
-  // Add more meals as needed
-];
