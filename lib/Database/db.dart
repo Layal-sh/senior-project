@@ -137,7 +137,7 @@ class DBHelper {
   }
 
   //get all meals from local database for adding inputs
-  selectAllMeals() async {
+  Future<List<Map>> selectAllMeals() async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
   SELECT * FROM "Meals";
