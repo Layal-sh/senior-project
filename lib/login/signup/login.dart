@@ -116,12 +116,18 @@ class _LoginState extends State<Login> {
                       TextFormField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 38, 20, 84),
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w600,
+                        ),
                         decoration: InputDecoration(
                           labelText: 'UserName or Email',
                           labelStyle: const TextStyle(
                             color: Color.fromARGB(189, 38, 20, 84),
                             fontSize: 15,
-                            fontFamily: 'Poppins',
+                            fontFamily: 'Inter',
                             fontWeight: FontWeight.w600,
                           ),
                           prefixIcon: const Icon(

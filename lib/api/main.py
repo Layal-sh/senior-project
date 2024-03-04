@@ -55,7 +55,7 @@ class NewPatient(BaseModel):
 
 
 conn_str = ("DRIVER={ODBC Driver 17 for SQL Server};"
-            "Server=localhost;"
+            "Server=MSI22\SQLEXPRESS;"
             "Database=SugarSense;"
             "Trusted_Connection=yes;")
 cnxn = pyodbc.connect(conn_str)
