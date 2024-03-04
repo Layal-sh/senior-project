@@ -142,7 +142,7 @@ class DBHelper {
     List<Map> response = await mydb!.rawQuery('''
   SELECT * FROM "Meals";
    ''');
-    print(response);
+    print(response[0]);
     return response;
   }
 
