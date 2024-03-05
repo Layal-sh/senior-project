@@ -154,51 +154,53 @@ class MealBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 100,
-            height: 100,
-            child: Image.network(meal.imageUrl), //need to change acc to image
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  child: Text(
-                    meal.name,
-                    softWrap: true,
-                    overflow: TextOverflow.fade,
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 38, 20, 84),
-                      fontSize: 30,
-                      fontFamily: 'Ruda',
-                      letterSpacing: -0.75,
-                      fontWeight: FontWeight.w600,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 100,
+              height: 100,
+              child: Image.network(meal.imageUrl), //need to change acc to image
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    child: Text(
+                      meal.name,
+                      softWrap: true,
+                      overflow: TextOverflow.fade,
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 38, 20, 84),
+                        fontSize: 30,
+                        fontFamily: 'Ruda',
+                        letterSpacing: -0.75,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              InkWell(
-                onTap: () {},
-                child: const CircleAvatar(
-                  radius: 11,
-                  backgroundColor: Color.fromARGB(255, 225, 225, 225),
-                  child: Icon(
-                    Icons.arrow_forward_ios,
-                    color: Color.fromARGB(255, 255, 255, 255),
-                    size: 14,
+                InkWell(
+                  onTap: () {},
+                  child: const CircleAvatar(
+                    radius: 11,
+                    backgroundColor: Color.fromARGB(255, 225, 225, 225),
+                    child: Icon(
+                      Icons.arrow_forward_ios,
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      size: 14,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          //meal name
-        ],
+              ],
+            ),
+            //meal name
+          ],
+        ),
       ),
     );
   }
