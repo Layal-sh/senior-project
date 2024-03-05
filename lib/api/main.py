@@ -1,13 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import pyodbc
-import json
-import sqlalchemy as sal
-import pandas as pd
 import Models.personModel.person as Pmodel
-from passlib.context import CryptContext
 from fastapi.middleware.cors import CORSMiddleware
-import requests
 import hashlib
 
 
@@ -37,9 +32,6 @@ driver= '{ODBC Driver 17 for SQL Server}'
 
 connection_string = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-dummypass = "#botato3452"
 
 class User(BaseModel):
     username: str
