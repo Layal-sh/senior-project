@@ -1,13 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import pyodbc
-import json
-import sqlalchemy as sal
-import pandas as pd
 import Models.personModel.person as Pmodel
-from passlib.context import CryptContext
 from fastapi.middleware.cors import CORSMiddleware
-import requests
 import hashlib
 
 
@@ -28,11 +23,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-connectionString = "Server=localhost;Database=SugarSense;Trusted_Connection=True;"
+#connectionString = "Server=localhost;Database=SugarSense;Trusted_Connection=True;"
+server = 'sugarsense.database.windows.net'
+database = 'sugarsensedb'
+username = 'sugaradmin'
+password = 'SUG@Rs!!7891'
+driver= '{ODBC Driver 17 for SQL Server}'
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+connection_string = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
 
-dummypass = "#botato3452"
 
 class User(BaseModel):
     username: str
@@ -55,7 +54,7 @@ class NewPatient(BaseModel):
 
 
 conn_str = ("DRIVER={ODBC Driver 17 for SQL Server};"
-            "Server=MSI22\SQLEXPRESS;"
+            "Server=localhost;"
             "Database=SugarSense;"
             "Trusted_Connection=yes;")
 cnxn = pyodbc.connect(conn_str)
