@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_function_literals_in_foreach_calls
+
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'dart:convert';
@@ -25,7 +27,7 @@ class DBHelper {
     String DbPath = await getDatabasesPath();
     String path = join(DbPath, 'SugarSense.db');
     Database database = await openDatabase(path,
-        onCreate: _onCreate, version: 2, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 3, onUpgrade: _onUpgrade);
     return database;
   }
 
@@ -33,30 +35,12 @@ class DBHelper {
 
   _onCreate(Database db, int version) async {
     await db.execute('''
-  CREATE TABLE "Patients"(
-    patientId INTEGER NOT NULL PRIMARY KEY,
-    firstName TEXT NOT NULL,
-    lastName TEXT NOT NULL,
-    userName TEXT NOT NULL,
-    email TEXT NOT NULL,
-    userPassword TEXT NOT NULL,
-    doctorId TEXT NULL,
-	  phoneNumber INTEGER NULL,
-	  profilePhoto TEXT NULL, 
-	  insulinSensivity REAL NOT NULL,
-	  carbRatio REAL NOT NULL,
-    carbRatio2 REAL NULL,
-    carbRatio3 REAL NULL
-  );
-  ''');
-    await db.execute('''
   CREATE TABLE "Entry"(
     entryId INTEGER IDENTITY(1,1) NOT NULL PRIMARY KEY,
     patientId INTEGER NOT NULL,
     glucoseLevel REAL NOT NULL,
     insulinDosage INTEGER NULL,
     entryDate TEXT NOT NULL,
-    FOREIGN KEY(patientId) REFERENCES Patients(patientId)
   );
   ''');
     await db.execute('''
@@ -102,7 +86,6 @@ class DBHelper {
   CREATE TABLE "Favorites"(
     patientId INTEGER NOT NULL,
     articleId INTEGER NOT NULL,
-    FOREIGN KEY(patientId) REFERENCES Patients(patientId),
     FOREIGN KEY(articleId) REFERENCES Articles(articleId),
     PRIMARY KEY(patientId,articleId)
   );
@@ -137,22 +120,68 @@ class DBHelper {
   }
 
   //get all meals from local database for adding inputs
-  selectAllMeals() async {
+  Future<List<Map>> selectAllMeals() async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
   SELECT * FROM "Meals";
    ''');
-    print(response);
+    response.forEach((element) {
+      print(element['mealName']);
+    });
     return response;
   }
 
   //create an entry for the insulin dosage
-  createEntry(int pid, double glucose, int insulin, String date) async {
+  createEntry(int pid, double glucose, int insulin, String date,
+      List<Map> meals) async {
     Database? mydb = await db;
     int response = await mydb!.rawInsert('''
   INSERT INTO "Entry"(patientId, glucodeLevel, insulinDosage, entryDate)
   VALUES($pid,$glucose,$insulin,$date);
   ''');
+    int entryID = getEntryId(pid, date);
+    meals.forEach((element) {
+      mydb.rawInsert('''
+  INSERT INTO "hasMeal"(entryId,mealId,quantity)
+  VALUES($entryID,${element['mealId']},${element['quantity']});
+  ''');
+    });
+    return response;
+  }
+
+  getEntryId(int pid, String date) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+      SELECT entryId from Entry
+      WHERE entryDate like $date and patientID = $pid
+      ''');
+    return response[0]['entryId'];
+  }
+
+  getLatestEntryId() async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+    SELECT * from Entry 
+    ORDER BY entryDate DESC
+    LIMIT 1
+    ''');
+    return response[0]['entryId'];
+  }
+
+  getMealById(int id) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+    SELECT * FROM "Meals" WHERE mealId = $id;
+    ''');
+    return response[0];
+  }
+
+  updateMealById(int mealId, double carbs, double certainty) async {
+    Database? mydb = await db;
+    int response = await mydb!.rawUpdate('''
+    UPDATE Meals SET carbohydrate = $carbs , certainty = $certainty
+    WHERE mealId = $mealId
+    ''');
     return response;
   }
 
@@ -160,8 +189,8 @@ class DBHelper {
   createMealForEntry(int entryId, int mealId, int qtty, int unit) async {
     Database? mydb = await db;
     int response = await mydb!.rawInsert('''
-  INSERT INTO "hasMeal"(entryId,mealId,quantity,unit)
-  VALUES($entryId,$mealId,$qtty,$unit);
+  INSERT INTO "hasMeal"(entryId,mealId,quantity)
+  VALUES($entryId,$mealId,$qtty);
   ''');
     return response;
   }

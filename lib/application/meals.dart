@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:flutter/widgets.dart';
+import 'package:sugar_sense/Database/db.dart';
+import 'package:sugar_sense/application/create.dart';
 
 class Meals extends StatefulWidget {
   const Meals({Key? key}) : super(key: key);
@@ -11,12 +12,23 @@ class Meals extends StatefulWidget {
 
 class _MealsState extends State<Meals> {
   final TextEditingController _filter = TextEditingController();
-
+  DBHelper db = DBHelper.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Meals'),
+        iconTheme: const IconThemeData(
+          color: Color.fromARGB(255, 255, 255, 255),
+        ),
+        title: const Text(
+          'Meals',
+          style: TextStyle(
+            color: Color.fromARGB(255, 255, 249, 254),
+            fontSize: 17,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w900,
+          ),
+        ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
         elevation: 0,
         actions: [
@@ -32,7 +44,10 @@ class _MealsState extends State<Meals> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
               ),
               onPressed: () {
-                // Handle the button press here
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CreateMeal()),
+                );
               },
               child:
                   const Text('Create', style: TextStyle(color: Colors.white)),
@@ -74,7 +89,7 @@ class _MealsState extends State<Meals> {
             ),
           ),
           Expanded(
-            child: GridView.builder(
+            child: /*GridView.builder(
               padding: const EdgeInsets.all(10.0),
               itemCount: meals.length,
               itemBuilder: (ctx, i) => MealBox(meal: meals[i]),
@@ -85,6 +100,37 @@ class _MealsState extends State<Meals> {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
+            ),*/
+
+                FutureBuilder<List<Map>>(
+              future: db.selectAllMeals(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  List<Map> meals = snapshot.data!;
+                  return GridView.builder(
+                    padding: const EdgeInsets.all(10.0),
+                    itemCount: meals.length,
+                    itemBuilder: (ctx, i) => MealBox(
+                      meal: Meal(
+                        name: meals[i]['mealName'],
+                        imageUrl:
+                            meals[i]['mealPicture'] ?? 'default_image_url',
+                      ),
+                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      childAspectRatio: 3 / 3.5,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                    ),
+                  );
+                }
+              },
             ),
           ),
         ],
@@ -114,30 +160,39 @@ class MealBox extends StatelessWidget {
           SizedBox(
             width: 100,
             height: 100,
-            child: Text(meal.imageUrl), //need to change acc to image
+            child: Image.network(meal.imageUrl), //need to change acc to image
           ),
-          Row(
+          Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Text(
-                meal.name,
-                softWrap: true,
-                overflow: TextOverflow.visible,
-                style: const TextStyle(
-                  color: Color.fromARGB(255, 38, 20, 84),
-                  fontSize: 14,
-                  fontFamily: 'Ruda',
-                  letterSpacing: -0.75,
-                  fontWeight: FontWeight.w600,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  child: Text(
+                    meal.name,
+                    softWrap: true,
+                    overflow: TextOverflow.fade,
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 38, 20, 84),
+                      fontSize: 30,
+                      fontFamily: 'Ruda',
+                      letterSpacing: -0.75,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
-              const CircleAvatar(
-                radius: 11,
-                backgroundColor: Color.fromARGB(255, 225, 225, 225),
-                child: Icon(
-                  Icons.arrow_forward_ios,
-                  color: Color.fromARGB(255, 255, 255, 255),
-                  size: 14,
+              InkWell(
+                onTap: () {},
+                child: const CircleAvatar(
+                  radius: 11,
+                  backgroundColor: Color.fromARGB(255, 225, 225, 225),
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    size: 14,
+                  ),
                 ),
               ),
             ],
@@ -148,13 +203,3 @@ class MealBox extends StatelessWidget {
     );
   }
 }
-
-List<Meal> meals = [
-  Meal(name: 'Meal 1', imageUrl: 'ima'),
-  Meal(name: 'Meal 2', imageUrl: 'im'),
-  Meal(name: 'Meal 3', imageUrl: 'im'),
-  Meal(name: 'Meal 4', imageUrl: 'ima'),
-  Meal(name: 'Meal 5', imageUrl: 'im'),
-  Meal(name: 'Meal 6', imageUrl: 'im'),
-  // Add more meals as needed
-];
