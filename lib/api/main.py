@@ -28,7 +28,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-connectionString = "Server=localhost;Database=SugarSense;Trusted_Connection=True;"
+#connectionString = "Server=localhost;Database=SugarSense;Trusted_Connection=True;"
+server = 'sugarsense.database.windows.net'
+database = 'sugarsensedb'
+username = 'sugaradmin'
+password = 'SUG@Rs!!7891'
+driver= '{ODBC Driver 17 for SQL Server}'
+
+connection_string = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
