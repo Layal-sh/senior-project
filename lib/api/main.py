@@ -28,9 +28,10 @@ server = 'sugarsense.database.windows.net'
 database = 'sugarsensedb'
 username = 'sugaradmin'
 password = 'SUG@Rs!!7891'
-driver= '{ODBC Driver 17 for SQL Server}'
+#driver= '{ODBC Driver 17 for SQL Server}'
+driver= '{ODBC Driver 18 for SQL Server}'
 
-connection_string = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
+connection_string = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password};'
 
 
 class User(BaseModel):
@@ -54,7 +55,7 @@ class NewPatient(BaseModel):
 
 
 conn_str = ("DRIVER={ODBC Driver 17 for SQL Server};"
-            "Server=MSI22\SQLEXPRESS;"
+            "Server=localhost;"
             "Database=SugarSense;"
             "Trusted_Connection=yes;")
 cnxn = pyodbc.connect(conn_str)
