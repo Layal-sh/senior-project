@@ -16,6 +16,7 @@ class _MealsState extends State<Meals> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         iconTheme: const IconThemeData(
           color: Color.fromARGB(255, 255, 255, 255),
@@ -63,6 +64,12 @@ class _MealsState extends State<Meals> {
               padding: const EdgeInsets.all(15.0),
               child: TextField(
                 controller: _filter,
+                style: const TextStyle(
+                  color: Color.fromARGB(255, 38, 20, 84),
+                  fontSize: 15,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w600,
+                ),
                 decoration: const InputDecoration(
                   hintText: 'Search Food',
                   prefixIcon: Icon(Icons.search),
@@ -89,20 +96,7 @@ class _MealsState extends State<Meals> {
             ),
           ),
           Expanded(
-            child: /*GridView.builder(
-              padding: const EdgeInsets.all(10.0),
-              itemCount: meals.length,
-              itemBuilder: (ctx, i) => MealBox(meal: meals[i]),
-              // This delegate will create a grid layout with max 3 items per row.
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 3 / 3.5,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
-            ),*/
-
-                FutureBuilder<List<Map>>(
+            child: FutureBuilder<List<Map>>(
               future: db.selectAllMeals(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -118,14 +112,14 @@ class _MealsState extends State<Meals> {
                       meal: Meal(
                         name: meals[i]['mealName'],
                         imageUrl:
-                            meals[i]['mealPicture'] ?? 'default_image_url',
+                            meals[i]['mealPicture'] ?? 'assets/AddDish.png',
                       ),
                     ),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       childAspectRatio: 3 / 3.5,
-                      crossAxisSpacing: 10,
+                      crossAxisSpacing: 7,
                       mainAxisSpacing: 10,
                     ),
                   );
@@ -154,44 +148,61 @@ class MealBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5), // Change this value as needed
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
             width: 100,
             height: 100,
-            child: Image.network(meal.imageUrl), //need to change acc to image
+            child: /*meal.imageUrl != null && meal.imageUrl.startsWith('http')
+                ? Image.network(meal.imageUrl)
+                : */
+                Image.asset('assets/AddDish.png'),
           ),
           Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  child: Text(
-                    meal.name,
-                    softWrap: true,
-                    overflow: TextOverflow.fade,
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 38, 20, 84),
-                      fontSize: 30,
-                      fontFamily: 'Ruda',
-                      letterSpacing: -0.75,
-                      fontWeight: FontWeight.w600,
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 8,
+                  right: 8,
+                ),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    child: Text(
+                      meal.name,
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 38, 20, 84),
+                        fontSize: 35,
+                        fontFamily: 'Ruda',
+                        letterSpacing: -0.75,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
               ),
-              InkWell(
-                onTap: () {},
-                child: const CircleAvatar(
-                  radius: 11,
-                  backgroundColor: Color.fromARGB(255, 225, 225, 225),
-                  child: Icon(
-                    Icons.arrow_forward_ios,
-                    color: Color.fromARGB(255, 255, 255, 255),
-                    size: 14,
+              Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: InkWell(
+                    onTap: () {},
+                    child: const CircleAvatar(
+                      radius: 11,
+                      backgroundColor: Color.fromARGB(170, 64, 205, 215),
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        size: 14,
+                      ),
+                    ),
                   ),
                 ),
               ),
