@@ -147,6 +147,7 @@ class _SignUpState extends State<SignUp> {
                               height: 10,
                             ),
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 SizedBox(
                                   width:
@@ -204,7 +205,7 @@ class _SignUpState extends State<SignUp> {
                                   ),
                                 ),
                                 const SizedBox(
-                                  width: 8,
+                                  width: 3, // 20
                                 ),
                                 SizedBox(
                                   width:
@@ -226,10 +227,6 @@ class _SignUpState extends State<SignUp> {
                                         fontFamily: 'Poppins',
                                         fontWeight: FontWeight.w600,
                                       ),
-                                      /*prefixIcon: const Icon(
-                                        Icons.person_2_outlined,
-                                        color: Color.fromARGB(255, 38, 20, 84),
-                                      ),*/
                                       focusedBorder: const OutlineInputBorder(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(15)),
