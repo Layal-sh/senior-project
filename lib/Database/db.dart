@@ -27,7 +27,7 @@ class DBHelper {
     String DbPath = await getDatabasesPath();
     String path = join(DbPath, 'SugarSense.db');
     Database database = await openDatabase(path,
-        onCreate: _onCreate, version: 3, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 4, onUpgrade: _onUpgrade);
     return database;
   }
 
@@ -90,6 +90,7 @@ class DBHelper {
     PRIMARY KEY(patientId,articleId)
   );
   ''');
+  logger.info("Local Database has been created");
   }
 
   readData(String sql) async {
@@ -125,30 +126,41 @@ class DBHelper {
     List<Map> response = await mydb!.rawQuery('''
   SELECT * FROM "Meals";
    ''');
-    response.forEach((element) {
-      print(element['mealName']);
-    });
+    // response.forEach((element) {
+    //   print(element['mealName']);
+    // });
     return response;
   }
 
   //create an entry for the insulin dosage
   createEntry(int pid, double glucose, int insulin, String date,
       List<Map> meals) async {
+        logger.info("Entered functino");
     Database? mydb = await db;
+    print('$pid $glucose $insulin $date');
     int response = await mydb!.rawInsert('''
-  INSERT INTO "Entry"(patientId, glucodeLevel, insulinDosage, entryDate)
+  INSERT INTO Entry (patientId, glucoseLevel, insulinDosage, entryDate)
   VALUES($pid,$glucose,$insulin,$date);
   ''');
     int entryID = getEntryId(pid, date);
+    print(entryID);
     meals.forEach((element) {
       mydb.rawInsert('''
-  INSERT INTO "hasMeal"(entryId,mealId,quantity)
+  INSERT INTO hasMeal (entryId,mealId,quantity)
   VALUES($entryID,${element['mealId']},${element['quantity']});
   ''');
     });
     return response;
   }
-
+  //this is for testing hasMeal
+  selectAllHasMeals()async{
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+  SELECT * FROM "hasMeal";
+   ''');
+   print(response);
+    return response;
+  }
   getEntryId(int pid, String date) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''

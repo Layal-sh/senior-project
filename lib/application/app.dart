@@ -243,7 +243,7 @@ class _AddInputState extends State<AddInput> {
 
                         child: Padding(
                           padding: EdgeInsets.only(
-                              left: 20.0, top: 10, bottom: 10, right: 20),
+                              left: 20.0, top: 10, bottom: 10, right: 30.0),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -271,32 +271,39 @@ class _AddInputState extends State<AddInput> {
                                   ),
                                 ],
                               ),
-                              Column(
+                              Row(
                                 children: [
-                                  Text(
-                                    "0",
-                                    style: TextStyle(
-                                      fontSize: 40,
-                                      fontFamily: "Inter",
-                                      color: Color.fromARGB(255, 0, 0, 0),
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                  Column(
+                                    children: [
+                                      Text(
+                                        "0",
+                                        style: TextStyle(
+                                          fontSize: 40,
+                                          fontFamily: "Inter",
+                                          color: Color.fromARGB(255, 0, 0, 0),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                              Column(
-                                children: [
                                   SizedBox(
-                                    height: 25,
+                                    width: 20,
                                   ),
-                                  Text(
-                                    "units",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontFamily: "Inter",
-                                      color: Color.fromARGB(255, 0, 0, 0),
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                  Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 15,
+                                      ),
+                                      Text(
+                                        "units",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontFamily: "Inter",
+                                          color: Color.fromARGB(255, 0, 0, 0),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -308,40 +315,39 @@ class _AddInputState extends State<AddInput> {
                     const SizedBox(
                       height: 20,
                     ),
-                    Row(
-                      children: [
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        const Text(
-                          'Selected Carb Ratio',
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        const SizedBox(
-                          width: 70,
-                        ),
-                        DropdownButton(
-                          hint: const Text("Select"),
-                          value: carbRatioSelected,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              carbRatioSelected = newValue;
-                            });
-                          },
-                          items: <String>['x', 'y', 'z']
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(
-                                value,
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0, right: 30.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Selected Carb Ratio',
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          DropdownButton(
+                            hint: const Text("Select"),
+                            value: carbRatioSelected,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                carbRatioSelected = newValue;
+                              });
+                            },
+                            items: <String>['x', 'y', 'z']
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(
+                                  value,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(
                       height: 10,
@@ -354,69 +360,71 @@ class _AddInputState extends State<AddInput> {
                     const SizedBox(
                       height: 20,
                     ),
-                    Row(
-                      children: [
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        const Text(
-                          'Glucose',
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        const SizedBox(
-                          width: 110,
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width / 7,
-                          height: 30,
-                          child: TextFormField(
-                            controller: _GlucoseController,
-                            keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
-                              hintText: '0',
-                              border: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color.fromARGB(255, 0, 0, 0),
-                                  width: 100,
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0, right: 30.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Glucose',
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width / 7,
+                                height: 30,
+                                child: TextFormField(
+                                  controller: _GlucoseController,
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    hintText: '0',
+                                    border: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                        width: 100,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              const Text(
+                                "mg/dL",
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    fontWeight: FontWeight.w300),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              const Icon(
+                                Icons.link_off,
+                                color: Color.fromARGB(255, 38, 20, 84),
+                              ),
+                            ],
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        const Text(
-                          "mg/dL",
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Color.fromARGB(255, 0, 0, 0),
-                              fontWeight: FontWeight.w300),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        const Icon(
-                          Icons.link_off,
-                          color: Color.fromARGB(255, 38, 20, 84),
-                        ),
-                        /*IconButton(
-                          icon: Icons.link_off,
-                          color: const Color.fromARGB(255, 107, 100, 126),
-                          onPressed: () {
-                              
+                          /*IconButton(
+                            icon: Icons.link_off,
+                            color: const Color.fromARGB(255, 107, 100, 126),
+                            onPressed: () {
                                 
+                                  
+                                
+                            },
                               
-                          },
-                            
-                          /*icon: _obscurePassword
-                            ? const Icon(Icons.link)
-                            : const Icon(Icons.link_off),*/
-                        ),*/
-                      ],
+                            /*icon: _obscurePassword
+                              ? const Icon(Icons.link)
+                              : const Icon(Icons.link_off),*/
+                          ),*/
+                        ],
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
