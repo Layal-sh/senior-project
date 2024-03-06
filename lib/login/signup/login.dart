@@ -282,6 +282,13 @@ class _LoginState extends State<Login> {
                                 DBHelper dbHelper = DBHelper.instance;
                                 await dbHelper.syncMeals();
                                 dbHelper.selectAllMeals();
+                                List<Map> meals = [{
+                                  'mealId': 113, 'quantity': 5
+                                },{
+                                  'mealId': 28, 'quantity': 12
+                                }];
+                                print(meals);
+                                dbHelper.createEntry(1, 80.0, 5, "2024-05-03 10:32:50", meals);
                                 //print(dbHelper.selectAllMeals());
 
                                 // ignore: use_build_context_synchronously
