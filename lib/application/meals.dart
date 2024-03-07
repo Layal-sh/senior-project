@@ -214,7 +214,7 @@ class MealBox extends StatelessWidget {
                       );
                     },
                     child: Hero(
-                      tag: 'meal${meal.imageUrl}',
+                      tag: 'meal${meal.name}',
                       child: const CircleAvatar(
                         radius: 11,
                         backgroundColor: Color.fromARGB(170, 64, 205, 215),
