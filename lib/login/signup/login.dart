@@ -322,7 +322,7 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                         const SizedBox(
-                          height: 150,
+                          height: 100,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
