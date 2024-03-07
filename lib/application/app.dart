@@ -206,7 +206,7 @@ class _AddInputState extends State<AddInput> {
           child: Column(
             children: [
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -221,7 +221,7 @@ class _AddInputState extends State<AddInput> {
                             'Save',
                             style: TextStyle(
                               color: Color.fromARGB(255, 38, 20, 84),
-                              fontSize: 20,
+                              fontSize: 18,
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w900,
                             ),
@@ -233,7 +233,7 @@ class _AddInputState extends State<AddInput> {
                       ],
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     Container(
                       color: const Color.fromARGB(255, 232, 232, 232),
@@ -254,7 +254,7 @@ class _AddInputState extends State<AddInput> {
                                   Text(
                                     'Total Bolus',
                                     style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 18,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w700),
                                   ),
@@ -264,7 +264,7 @@ class _AddInputState extends State<AddInput> {
                                   Text(
                                     'CALCULATIONS',
                                     style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 14,
                                       color: Color.fromARGB(255, 116, 97, 164),
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -278,7 +278,7 @@ class _AddInputState extends State<AddInput> {
                                       Text(
                                         "0",
                                         style: TextStyle(
-                                          fontSize: 40,
+                                          fontSize: 35,
                                           fontFamily: "Inter",
                                           color: Color.fromARGB(255, 0, 0, 0),
                                           fontWeight: FontWeight.w500,
@@ -297,7 +297,7 @@ class _AddInputState extends State<AddInput> {
                                       Text(
                                         "units",
                                         style: TextStyle(
-                                          fontSize: 20,
+                                          fontSize: 18,
                                           fontFamily: "Inter",
                                           color: Color.fromARGB(255, 0, 0, 0),
                                           fontWeight: FontWeight.w600,
@@ -313,7 +313,7 @@ class _AddInputState extends State<AddInput> {
                       ),
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 20.0, right: 30.0),
@@ -324,7 +324,7 @@ class _AddInputState extends State<AddInput> {
                           const Text(
                             'Selected Carb Ratio',
                             style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w500),
                           ),
@@ -349,16 +349,13 @@ class _AddInputState extends State<AddInput> {
                         ],
                       ),
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
                     const Divider(
                       color: Color.fromARGB(255, 215, 215, 215),
                       //height: 10,
                       thickness: 1,
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 20.0, right: 30.0),
@@ -368,7 +365,7 @@ class _AddInputState extends State<AddInput> {
                           const Text(
                             'Glucose',
                             style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w500),
                           ),
@@ -376,7 +373,7 @@ class _AddInputState extends State<AddInput> {
                             children: [
                               SizedBox(
                                 width: MediaQuery.of(context).size.width / 7,
-                                height: 30,
+                                height: 20,
                                 child: TextFormField(
                                   controller: _GlucoseController,
                                   keyboardType: TextInputType.number,
@@ -397,7 +394,7 @@ class _AddInputState extends State<AddInput> {
                               const Text(
                                 "mg/dL",
                                 style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 18,
                                     color: Color.fromARGB(255, 0, 0, 0),
                                     fontWeight: FontWeight.w300),
                               ),
@@ -427,7 +424,7 @@ class _AddInputState extends State<AddInput> {
                       ),
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     const Divider(
                       color: Color.fromARGB(255, 215, 215, 215),
@@ -435,52 +432,50 @@ class _AddInputState extends State<AddInput> {
                       thickness: 1,
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
-                    Row(
-                      //crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        const Text(
-                          'Total Carbs',
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        const SizedBox(
-                          width: 80,
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width / 7,
-                          height: 20,
-                          child: const Text(
-                            '0',
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0, right: 30.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Total Carbs',
                             style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 19,
                                 color: Colors.black,
                                 fontWeight: FontWeight.w500),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        const Text(
-                          "grams",
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Color.fromARGB(255, 0, 0, 0),
-                              fontWeight: FontWeight.w300),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                      ],
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width / 7,
+                                //height: 20,
+                                child: const Text(
+                                  '0',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              const Text(
+                                "grams",
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    fontWeight: FontWeight.w300),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     const Divider(
                       color: Color.fromARGB(255, 215, 215, 215),
