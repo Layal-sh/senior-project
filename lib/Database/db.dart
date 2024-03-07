@@ -189,7 +189,7 @@ class DBHelper {
     ''');
     List<Map> ings = [];
     for (Map ing in response) {
-      ings.add(getMealById(ing["childMealId"]));
+      ings.add(await getMealById(ing["childMealId"]));
     }
     return ings;
   }
