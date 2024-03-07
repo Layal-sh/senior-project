@@ -40,7 +40,7 @@ class DBHelper {
     patientId INTEGER NOT NULL,
     glucoseLevel REAL NOT NULL,
     insulinDosage INTEGER NULL,
-    entryDate TEXT NOT NULL,
+    entryDate TEXT NOT NULL
   );
   ''');
     await db.execute('''
@@ -90,7 +90,7 @@ class DBHelper {
     PRIMARY KEY(patientId,articleId)
   );
   ''');
-  logger.info("Local Database has been created");
+    logger.info("Local Database has been created");
   }
 
   readData(String sql) async {
@@ -135,7 +135,7 @@ class DBHelper {
   //create an entry for the insulin dosage
   createEntry(int pid, double glucose, int insulin, String date,
       List<Map> meals) async {
-        logger.info("Entered functino");
+    logger.info("Entered functino");
     Database? mydb = await db;
     print('$pid $glucose $insulin $date');
     int response = await mydb!.rawInsert('''
@@ -152,15 +152,17 @@ class DBHelper {
     });
     return response;
   }
+
   //this is for testing hasMeal
-  selectAllHasMeals()async{
+  selectAllHasMeals() async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
   SELECT * FROM "hasMeal";
    ''');
-   print(response);
+    print(response);
     return response;
   }
+
   getEntryId(int pid, String date) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
