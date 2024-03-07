@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/application/create.dart';
+import 'package:sugar_sense/application/mealDetails.dart';
 
 class Meals extends StatefulWidget {
   const Meals({Key? key}) : super(key: key);
@@ -193,14 +194,35 @@ class MealBox extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: InkWell(
-                    onTap: () {},
-                    child: const CircleAvatar(
-                      radius: 11,
-                      backgroundColor: Color.fromARGB(170, 64, 205, 215),
-                      child: Icon(
-                        Icons.arrow_forward_ios,
-                        color: Color.fromARGB(255, 255, 255, 255),
-                        size: 14,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  MealDetailsPage(
+                            meal: meal,
+                          ),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    child: Hero(
+                      tag: 'meal${meal.name}',
+                      child: const CircleAvatar(
+                        radius: 11,
+                        backgroundColor: Color.fromARGB(170, 64, 205, 215),
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          size: 14,
+                        ),
                       ),
                     ),
                   ),

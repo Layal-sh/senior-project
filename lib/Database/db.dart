@@ -182,6 +182,18 @@ class DBHelper {
     return response[0]['entryId'];
   }
 
+  getMealIngredients(int id) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+    SELECT * FROM "MealComposition" WHERE parentMealId = $id;
+    ''');
+    List<Map> ings = [];
+    for (Map ing in response) {
+      ings.add(await getMealById(ing["childMealId"]));
+    }
+    return ings;
+  }
+
   getMealById(int id) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
