@@ -13,10 +13,11 @@ class MealDetailsPage extends StatefulWidget {
 
 class _MealDetailsPageState extends State<MealDetailsPage> {
   DBHelper db = DBHelper.instance;
+  final TextEditingController _numberOfMeal = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 38, 20, 84),
+      //backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
         centerTitle: true,
@@ -50,94 +51,160 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
       ),
       body: Hero(
         tag: 'meal${widget.meal.name}',
-        child: Stack(
-          alignment: Alignment.topCenter,
+        child: Column(
+          //mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              margin: const EdgeInsets.only(
-                top: 100,
-              ),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height - 20,
-              decoration: const BoxDecoration(
-                color: Colors.white, // Set the box color to white
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(70),
-                  topRight: Radius.circular(70),
-                ), // Give the box rounded corners
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 100, left: 20, right: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.meal.name,
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 38, 20, 84),
-                        fontSize: 20,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    const Text(
-                      'Ingredients',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 38, 20, 84),
-                        fontSize: 17,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Expanded(
-                      child: FutureBuilder<List<Map>>(
-                        future: db.selectAllHasMeals(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else {
-                            List<Map> ingredients = snapshot.data!;
-                            return GridView.builder(
-                              padding: const EdgeInsets.all(10.0),
-                              itemCount: ingredients.length,
-                              itemBuilder: (ctx, i) => IngBox(
-                                ingredient: Ingredient(
-                                  name: ingredients[i]['mealName'],
-                                ),
-                              ),
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                childAspectRatio: 3 / 3.5,
-                                crossAxisSpacing: 7,
-                                mainAxisSpacing: 10,
-                              ),
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              top: 10,
+            Center(
               child: SizedBox(
                 width: 175,
                 height: 175,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Image.asset(
-                    'assets/facebook.png', //Image.network(widget.meal.imageUrl),
+                    'assets/no-pictures.png', //Image.network(widget.meal.imageUrl),
                     fit: BoxFit.cover,
                   ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 10,
+              ),
+              child: Text(
+                widget.meal.name,
+                style: const TextStyle(
+                  color: Color.fromARGB(255, 38, 20, 84),
+                  fontSize: 20,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            const Padding(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+              ),
+              child: Text(
+                'Ingredients',
+                style: TextStyle(
+                  color: Color.fromARGB(255, 38, 20, 84),
+                  fontSize: 17,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            /*Expanded(
+              child: FutureBuilder<List<Map>>(
+                future: db.getMealIngredients(widget.meal.id),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    List<Map> ingredients = snapshot.data!;
+                    return GridView.builder(
+                      padding: const EdgeInsets.all(10.0),
+                      itemCount: ingredients.length,
+                      itemBuilder: (ctx, i) => IngBox(
+                        ingredient: Ingredient(
+                          name: ingredients[i]['mealName'],
+                        ),
+                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 3 / 3.5,
+                        crossAxisSpacing: 7,
+                        mainAxisSpacing: 10,
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),*/
+          ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(
+          left: 25,
+          right: 25,
+          bottom: 40,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Form(
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width / 3,
+                    height: 25,
+                    child: TextFormField(
+                      controller: _numberOfMeal,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                        hintText: 'Choose Amount',
+                        hintStyle: TextStyle(
+                          fontSize: 15,
+                          color: Color.fromARGB(255, 198, 198, 198),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 38, 20, 84),
+                            width: 1.5,
+                          ),
+                        ),
+                        border: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 171, 171, 171),
+                            width: 100,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  const Text(
+                    "grams",
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Color.fromARGB(255, 38, 20, 84),
+                        fontWeight: FontWeight.w400),
+                  ),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                //Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 38, 20, 84),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text(
+                'Add To Meals',
+                style: TextStyle(
+                  color: Color.fromARGB(255, 255, 255, 255),
+                  fontSize: 15,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -175,20 +242,16 @@ class IngBox extends StatelessWidget {
             ),
             child: FittedBox(
               fit: BoxFit.scaleDown,
-              child: SizedBox(
-                width: 100,
-                height: 90,
-                child: Text(
-                  ingredient.name,
-                  softWrap: true,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 38, 20, 84),
-                    fontSize: 35,
-                    fontFamily: 'Ruda',
-                    letterSpacing: -0.75,
-                    fontWeight: FontWeight.w600,
-                  ),
+              child: Text(
+                ingredient.name,
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Color.fromARGB(255, 38, 20, 84),
+                  fontSize: 35,
+                  fontFamily: 'Ruda',
+                  letterSpacing: -0.75,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),

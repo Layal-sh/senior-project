@@ -114,6 +114,7 @@ class _MealsState extends State<Meals> {
                         name: meals[i]['mealName'],
                         imageUrl:
                             meals[i]['mealPicture'] ?? 'assets/AddDish.png',
+                        id: meals[i]['mealId'],
                       ),
                     ),
                     gridDelegate:
@@ -137,8 +138,8 @@ class _MealsState extends State<Meals> {
 class Meal {
   final String name;
   final String imageUrl;
-
-  Meal({required this.name, required this.imageUrl});
+  final int id;
+  Meal({required this.name, required this.imageUrl, required this.id});
 }
 
 class MealBox extends StatelessWidget {
