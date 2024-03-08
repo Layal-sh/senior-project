@@ -278,11 +278,14 @@ class _LoginState extends State<Login> {
 
                                 if (response.statusCode == 200) {
                                   logger.info(
-                                      "yeah 200 no shit yeah good shit mb3rf");
-                                  // DBHelper dbHelper = DBHelper.instance;
-                                  // await dbHelper.syncMeals();
+                                      "syncing meals fro the server to the local database");
+                                  DBHelper dbHelper = DBHelper.instance;
+                                  await dbHelper.syncMeals();
+                                logger.info(
+                                      "synced meals successfully");
+                                 
                                   // dbHelper.selectAllMeals();
-                                  //print(dbHelper.selectAllMeals());
+                                 // print(dbHelper.selectAllMeals());
 
                                   // ignore: use_build_context_synchronously
                                   Navigator.push(

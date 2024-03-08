@@ -106,14 +106,14 @@ class _MealsState extends State<Meals> {
                   return Text('Error: ${snapshot.error}');
                 } else {
                   List<Map> meals = snapshot.data!;
+                  print(meals);
                   return GridView.builder(
                     padding: const EdgeInsets.all(10.0),
                     itemCount: meals.length,
                     itemBuilder: (ctx, i) => MealBox(
                       meal: Meal(
                         name: meals[i]['mealName'],
-                        imageUrl:
-                            meals[i]['mealPicture'] ?? 'assets/AddDish.png',
+                        imageUrl:'assets/' + (meals[i]['mealPicture'] ?? 'AddDish.png'),
                         id: meals[i]['mealId'],
                       ),
                     ),
@@ -159,10 +159,9 @@ class MealBox extends StatelessWidget {
           SizedBox(
             width: 100,
             height: 100,
-            child: /*meal.imageUrl != null && meal.imageUrl.startsWith('http')
+            child: meal.imageUrl != null && meal.imageUrl.startsWith('http')
                 ? Image.network(meal.imageUrl)
-                : */
-                Image.asset('assets/AddDish.png'),
+                : Image.asset(meal.imageUrl),
           ),
           Column(
             children: [
