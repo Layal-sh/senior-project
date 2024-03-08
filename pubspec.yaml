@@ -75,6 +75,183 @@ flutter:
     - assets/badge.png
     - assets/AddDish.png
     - assets/no-pictures.png
+    - assets/afandi.jpg
+    - assets/Albeni.jpeg
+    - assets/apples.jpg
+    - assets/apricots.jpg
+    - assets/Ashta.jpeg
+    - assets/balah.jpeg
+    - assets/Balilah.jpg
+    - assets/bananas.jpg
+    - assets/Batata souffleh.jpg
+    - assets/Beans.jpg
+    - assets/Beer.PNG
+    - assets/berries.jpg
+    - assets/Borma.jpg
+    - assets/bownies.jpg
+    - assets/bread loaf.jpg
+    - assets/Burgul.jpg
+    - assets/cactus.jpg
+    - assets/candies.jpg
+    - assets/carrots.jpg
+    - assets/cheesecake.jpg
+    - assets/cherries.jpg
+    - assets/chestnut.jpg
+    - assets/chickpeas.jpg
+    - assets/chips.jpg
+    - assets/Choco prince.jpeg
+    - assets/chocolate cereal.jpg
+    - assets/concentrated juice (jellab).jpeg
+    - assets/cooked oatmeal.jpg
+    - assets/cooked veggies.jpg
+    - assets/cookies.jpg
+    - assets/Cordon Bleu.jpg
+    - assets/corn.jpg
+    - assets/cornflakes plain.jpg
+    - assets/Crackers.jpg
+    - assets/crepe.jpg
+    - assets/croissant medium.jpg
+    - assets/croissant small.jpg
+    - assets/Custard.jpg
+    - assets/Debess Roman.jpeg
+    - assets/Debess.jpg
+    - assets/diabetic jam.jpg
+    - assets/digestive x2.jpg
+    - assets/donuts.jpg
+    - assets/dried apples.jpg
+    - assets/dried apricots.jpg
+    - assets/dried fig.jpg
+    - assets/dried oatmeal.jpg
+    - assets/eclairs.jpg
+    - assets/Escalope.jpeg
+    - assets/falafel.jpg
+    - assets/Fasoliya.jpg
+    - assets/Fatayir Bl Jobna.jpeg
+    - assets/Fatayir Bl Sabanikh.jpg
+    - assets/fig.jpg
+    - assets/flour.jpg
+    - assets/Foul Mdammas.jpg
+    - assets/french fries.jpg
+    - assets/fruit milkshake.png
+    - assets/fruit salad.jpg
+    - assets/Ghandour 555.jpg
+    - assets/Ghraybeh.jpg
+    - assets/grapefruit.jpg
+    - assets/grapes.jpg
+    - assets/Grilled Potato.jpg
+    - assets/guava.jpg
+    - assets/Halawet El-Jeben.jpg
+    - assets/hamburger bread.jpeg
+    - assets/honey.jpg
+    - assets/hummus.jpg
+    - assets/ice cream.jpg
+    - assets/ikidinyah.jpg
+    - assets/innab.jpg
+    - assets/jam.jpg
+    - assets/Jazarieh.jpg
+    - assets/kaak long.JPG
+    - assets/kaak small.jpeg
+    - assets/kator diabtic.jpeg
+    - assets/kator.jpeg
+    - assets/Kebbe Bl Saniyeh.jpg
+    - assets/ketchup.jpg
+    - assets/kharma.jpeg
+    - assets/khoboz arabi large.jpg
+    - assets/khooboz arabi small.jpeg
+    - assets/Kinders (x2).png
+    - assets/kishk.jpg
+    - assets/kitkat.jpeg
+    - assets/kiwi.jpg
+    - assets/Kol W Chkor.jpg
+    - assets/Koussa Mahshi.jpg
+    - assets/Kunefe.jpg
+    - assets/Laban.jpg
+    - assets/lasagna.jpg
+    - assets/lentil soup.jpg
+    - assets/lentils.jpg
+    - assets/Leo.jpeg
+    - assets/Lion.jpeg
+    - assets/Maamool.jpg
+    - assets/Mafroukeh Bl-Ashta.jpg
+    - assets/makaroni with beef.jpg
+    - assets/Makaroni With Cheese.jpg
+    - assets/Makaroni.jpg
+    - assets/Malfoof Mahshi.jpg
+    - assets/Maltesers.jpg
+    - assets/mango.jpg
+    - assets/Mankousha.jpg
+    - assets/markouk - saj.jpg
+    - assets/Mars.jpeg
+    - assets/melon.jpg
+    - assets/milk.jpg
+    - assets/moajanet.jpeg
+    - assets/Moghrabieh.jpg
+    - assets/moghli.jpeg
+    - assets/Mohalabiyeh.jpg
+    - assets/muffins big.jpg
+    - assets/muffins small.jpg
+    - assets/halawat riz.jpeg
+    - assets/Nammoura.jpg
+    - assets/Natural juice.jpg
+    - assets/Nouba.jpg
+    - assets/Number 1.jpg
+    - assets/nutella.jpg
+    - assets/Onion Soup.jpg
+    - assets/orange.jpg
+    - assets/Oreo x2.jpeg
+    - assets/Osmaliyeh.jpg
+    - assets/pain au lait.jpeg
+    - assets/pancake.jpg
+    - assets/papaya.jpg
+    - assets/Pasta Salad.jpeg
+    - assets/peach.jpg
+    - assets/peanut butter.jpg
+    - assets/pears.jpg
+    - assets/peas.jpg
+    - assets/petit four.jpg
+    - assets/pickup.jpg
+    - assets/pineapple.jpg
+    - assets/pizza.jpg
+    - assets/plums.jpg
+    - assets/pomegranate.jpg
+    - assets/popcorn.jpg
+    - assets/potato.jpg
+    - assets/powdered milk.jpg
+    - assets/pretzels.jpg
+    - assets/quinoa cooked.jpg
+    - assets/raisins.jpg
+    - assets/rice cakes.jpg
+    - assets/rice.jpg
+    - assets/Riz-bi-Haleeb.jpg
+    - assets/roasted nuts.jpg
+    - assets/ruit cocktail.jpeg
+    - assets/safarjal.jpeg
+    - assets/Sambousak Bi jobna.jpg
+    - assets/Smeed.jpg
+    - assets/Snicker.jpeg
+    - assets/Soft Drinks.jpg
+    - assets/strawberry.jpg
+    - assets/sugar.jpg
+    - assets/sushi.jpg
+    - assets/Sweetenedjuice.jpg
+    - assets/tabbouleh.jpg
+    - assets/termos.jpg
+    - assets/Time out.jpg
+    - assets/toast medium.jpg
+    - assets/toast small.jpg
+    - assets/toast soft.jpg
+    - assets/Twirl.jpeg
+    - assets/twix top.png
+    - assets/Twix x2.jpeg
+    - assets/Unica.jpg
+    - assets/veggie soup.jpg
+    - assets/wafers.jpg
+    - assets/Warak Enab.jpg
+    - assets/watermelon.jpg
+    - assets/Wheat.jpg
+    - assets/yogurt with fruits.jpg
+    - assets/Znoud El Set.jpg
+    
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
