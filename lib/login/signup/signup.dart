@@ -633,12 +633,235 @@ class _SignUpState extends State<SignUp> {
                                         //List<Map> m=dbHelper.selectAllMeals();
                                         //m.forEach(print);
               
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const Membership()),
-                                        );
+                                        bool accept = await showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    useRootNavigator: true,
+                                    builder: (context) {
+                                      return SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.9,
+                                        child: Stack(
+                                          //mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            ShaderMask(
+                                              shaderCallback: (Rect bounds) {
+                                                return const LinearGradient(
+                                                  begin: Alignment.topCenter,
+                                                  end: Alignment.bottomCenter,
+                                                  colors: <Color>[
+                                                    Colors.transparent,
+                                                    Colors.white
+                                                  ],
+                                                  stops: <double>[0.75, 0.85],
+                                                ).createShader(bounds);
+                                              },
+                                              blendMode: BlendMode.dstOut,
+                                              child: SingleChildScrollView(
+                                                child: Container(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    left: 30,
+                                                    right: 30,
+                                                    top: 20,
+                                                    bottom: 10,
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      const Text(
+                                                        'AGREEMENT',
+                                                        style: TextStyle(
+                                                          fontSize: 16.0,
+                                                          color: Color.fromARGB(
+                                                              255,
+                                                              173,
+                                                              173,
+                                                              173),
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                          fontFamily: 'Inter',
+                                                        ),
+                                                      ),
+                                                      const Text(
+                                                        'Terms of Service',
+                                                        style: TextStyle(
+                                                          fontSize: 32.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 20.0),
+                                                      const Text(
+                                                        '1. OUR SERVICES',
+                                                        style: TextStyle(
+                                                          fontSize: 18.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      const Text(
+                                                        'The information provided when using the Services is not intended for distribution to or use by any person or entity in any jurisdiction or country where such distribution or use would be contrary to law or regulation or which would subject us to any registration requirement within such jurisdiction or country. Accordingly, those persons who choose to access the Services from other locations do so on their own initiative and are solely responsible for compliance with local laws, if and to the extent local laws are applicable.',
+                                                        style: TextStyle(
+                                                            fontSize: 18.0),
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 10.0),
+                                                      const Text(
+                                                        '2. Use License',
+                                                        style: TextStyle(
+                                                          fontSize: 18.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      const Text(
+                                                        'Subject to your compliance with these Legal Terms, including the "PROHIBITED ACTIVITIES" section below, we grant you a non-exclusive, non-transferable, revocable license to: access the Services; and download or print a copy of any portion of the Content to which you have properly gained access. solely for your personal, non-commercial use or internal business purpose. Except as set out in this section or elsewhere in our Legal Terms, no part of the Services and no Content or Marks may be copied, reproduced, aggregated, ',
+                                                        style: TextStyle(
+                                                            fontSize: 18.0),
+                                                      ),
+                                                      SizedBox(
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.15,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Positioned(
+                                              left: 0,
+                                              right: 0,
+                                              bottom: 0,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                  left: 20,
+                                                  right: 20,
+                                                  bottom: 40,
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  children: [
+                                                    SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.4,
+                                                      child: ElevatedButton(
+                                                        style: ButtonStyle(
+                                                          shape: MaterialStateProperty
+                                                              .all<
+                                                                  RoundedRectangleBorder>(
+                                                            RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10.0),
+                                                              side:
+                                                                  const BorderSide(
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                  255,
+                                                                  49,
+                                                                  205,
+                                                                  215,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          'Decline',
+                                                          style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                              255,
+                                                              49,
+                                                              205,
+                                                              215,
+                                                            ),
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                          ),
+                                                        ),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop(false);
+                                                        },
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.4,
+                                                      child: ElevatedButton(
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                          backgroundColor:
+                                                              const Color
+                                                                  .fromARGB(
+                                                            255,
+                                                            49,
+                                                            205,
+                                                            215,
+                                                          ),
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10), // Change this value as needed
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          'Accept',
+                                                          style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                              255,
+                                                              255,
+                                                              249,
+                                                              254,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop(true);
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                  if (accept == true) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Membership(
+                                          username: _controllerUsername.text,
+                                        ),
+                                      ),
+                                    );
+                                  }
               
                                         //Navigator.push(
                                         //context,
