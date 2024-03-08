@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Membership extends StatefulWidget {
-  const Membership({super.key});
+  final String username;
+  const Membership({super.key, required this.username});
 
   @override
   State<Membership> createState() => _MembershipState();
@@ -76,10 +77,10 @@ class _MembershipState extends State<Membership> {
                 ),
               ),
               const SizedBox(
-                height: 40,
+                height: 30,
               ),
               const Text(
-                'Welcome ' 'Mariam' '!',
+                'Welcome widget.username!',
                 style: TextStyle(
                   color: Color.fromARGB(255, 49, 205, 215),
                   fontSize: 21,

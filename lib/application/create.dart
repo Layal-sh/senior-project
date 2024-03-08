@@ -210,23 +210,24 @@ class _CreateMealState extends State<CreateMeal> {
                       ? Container()
                       : Expanded(
                           child: ListView.builder(
-                            itemCount: allMeals.length,
+                            itemCount: selectedMeals.length,
                             itemBuilder: (context, index) {
-                              return CheckboxListTile(
-                                title: Text(allMeals[index]['mealName']),
-                                value: selectedMeals
-                                    .contains(allMeals[index]['mealId']),
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    if (value == true) {
-                                      selectedMeals
-                                          .add(allMeals[index]['mealId']);
-                                    } else {
-                                      selectedMeals
-                                          .remove(allMeals[index]['mealId']);
-                                    }
-                                  });
-                                },
+                              return Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(allMeals[index]['mealName']),
+                                  const Text('quantity'),
+                                  const Text('unit'),
+                                  IconButton(
+                                    icon: const Icon(Icons.close),
+                                    onPressed: () {
+                                      setState(() {
+                                        //selectedMeals.removeAt(index);
+                                      });
+                                    },
+                                  ),
+                                ],
                               );
                             },
                           ),
