@@ -214,7 +214,7 @@ class _MembershipState extends State<Membership> {
                                           image: AssetImage(
                                             index == 0
                                                 ? 'assets/diamond.png'
-                                                : 'assets/crown.png',
+                                                : 'assets/diamond.png',
                                           ),
                                           fit: BoxFit.contain,
                                         ),
