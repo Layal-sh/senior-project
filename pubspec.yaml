@@ -43,7 +43,7 @@ dependencies:
   logging: ^1.2.0
   sqflite_common_ffi: ^2.3.2+1
   shared_preferences: ^2.2.2
-  adapty_flutter: ^2.9.3
+  url_launcher: ^6.0.12
 
 dev_dependencies:
   flutter_test:
@@ -284,6 +284,9 @@ flutter:
     - family: Rubik
       fonts:
         - asset: fonts/Rubik-Regular.ttf
+    - family: Sarabun
+      fonts:
+        - asset: fonts/Sarabun-Regular.ttf
         
           
         

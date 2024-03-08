@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:adapty_flutter/adapty_flutter.dart';
 import 'package:flutter/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Membership extends StatefulWidget {
   final String username;
@@ -22,9 +22,16 @@ class _MembershipState extends State<Membership> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 20),
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 38, 20, 84),
+          //centerTitle: true,
+          iconTheme: const IconThemeData(
+            color: Color.fromARGB(255, 255, 255, 255),
+            size: 25.0,
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Center(
             child: Column(
               children: [
                 Stack(
@@ -99,7 +106,7 @@ class _MembershipState extends State<Membership> {
                     color: Color.fromARGB(255, 156, 130, 224),
                     fontSize: 14,
                     fontFamily: 'Rubik',
-                    letterSpacing: 1.25,
+                    letterSpacing: 1,
                   ),
                 ),
                 const Text(
@@ -108,11 +115,11 @@ class _MembershipState extends State<Membership> {
                     color: Color.fromARGB(255, 156, 130, 224),
                     fontSize: 14,
                     fontFamily: 'Rubik',
-                    letterSpacing: 1.25,
+                    letterSpacing: 1,
                   ),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 10,
                 ),
                 Stack(
                   alignment: Alignment.center,
@@ -144,8 +151,7 @@ class _MembershipState extends State<Membership> {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(
-                      top: 20, bottom: 20, left: 40, right: 40),
+                  padding: const EdgeInsets.only(top: 20, left: 40, right: 40),
                   child: ListView.builder(
                     shrinkWrap:
                         true, // Add this line to allow ListView in a Column
@@ -163,40 +169,93 @@ class _MembershipState extends State<Membership> {
                               clipBehavior: Clip.none,
                               children: [
                                 Container(
-                                  width: selectedPlanIndex == index
-                                      ? MediaQuery.of(context).size.width * 0.8
-                                      : MediaQuery.of(context).size.width * 0.7,
-                                  height: selectedPlanIndex == index
-                                      ? MediaQuery.of(context).size.height *
-                                          0.11
-                                      : MediaQuery.of(context).size.height *
-                                          0.1,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: selectedPlanIndex == index
-                                        ? const Color.fromARGB(255, 76, 57, 125)
-                                        : const Color.fromARGB(
-                                            255, 76, 57, 125),
-                                    border: Border.all(
+                                    width: selectedPlanIndex == index
+                                        ? MediaQuery.of(context).size.width *
+                                            0.8
+                                        : MediaQuery.of(context).size.width *
+                                            0.7,
+                                    height: selectedPlanIndex == index
+                                        ? MediaQuery.of(context).size.height *
+                                            0.11
+                                        : MediaQuery.of(context).size.height *
+                                            0.1,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
                                       color: selectedPlanIndex == index
-                                          ? Colors.white
+                                          ? const Color.fromARGB(
+                                              255, 76, 57, 125)
                                           : const Color.fromARGB(
-                                              255, 100, 73, 152),
-                                      width: 2,
+                                              255, 76, 57, 125),
+                                      border: Border.all(
+                                        color: selectedPlanIndex == index
+                                            ? Colors.white
+                                            : const Color.fromARGB(
+                                                255, 100, 73, 152),
+                                        width: 2,
+                                      ),
                                     ),
-                                  ),
-                                  child:
-                                      Center(child: Text('Box ${index + 1}')),
-                                ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 30),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.018,
+                                          ),
+                                          Row(
+                                            children: [
+                                              const Text(
+                                                '* ',
+                                                style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 49, 205, 215),
+                                                  fontWeight: FontWeight.w900,
+                                                ),
+                                              ),
+                                              Text(
+                                                index == 0
+                                                    ? 'Standard Plan'
+                                                    : 'Premium Plan',
+                                                style: const TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 156, 130, 224),
+                                                  fontWeight: FontWeight.w400,
+                                                  fontFamily: 'Rubik',
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Text(
+                                            index == 0
+                                                ? '\$1 / Month'
+                                                : '\$80 Lifetime',
+                                            style: const TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 255, 255, 255),
+                                              fontWeight: FontWeight.w600,
+                                              fontFamily: 'sarabun',
+                                              letterSpacing: 2,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )),
                                 Positioned(
                                   right: 15,
                                   bottom: -20,
                                   child: Container(
                                     width: selectedPlanIndex == index
                                         ? MediaQuery.of(context).size.width *
-                                            0.06
+                                            0.07
                                         : MediaQuery.of(context).size.width *
-                                            0.05,
+                                            0.06,
                                     height: selectedPlanIndex == index
                                         ? MediaQuery.of(context).size.height *
                                             0.06
@@ -214,7 +273,7 @@ class _MembershipState extends State<Membership> {
                                           image: AssetImage(
                                             index == 0
                                                 ? 'assets/diamond.png'
-                                                : 'assets/diamond.png',
+                                                : 'assets/crown.png',
                                           ),
                                           fit: BoxFit.contain,
                                         ),
@@ -231,6 +290,119 @@ class _MembershipState extends State<Membership> {
                         ),
                       );
                     },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 30,
+                    right: 30,
+                    top: 5,
+                  ),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 49, 205, 215),
+                      minimumSize: const Size.fromHeight(60),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () async {
+                      /*Navigator.push(
+                          context,
+                        MaterialPageRoute(
+                          builder: (context) => Membership(
+                            username: _controllerUsername.text,
+                          ),
+                        ),
+                      );*/
+                    },
+                    child: const Text(
+                      "Get Now",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        fontSize: 25,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Under 22? ',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        fontSize: 12,
+                        fontFamily: 'Sarabun',
+                      ),
+                    ),
+                    InkWell(
+                      /*onTap: () async {
+                        const url = 'https://www.google.com';
+                        if (await canLaunchUrl(Uri.parse(url))) {
+                          await launchUrl(Uri.parse(url));
+                        } else {
+                          throw 'Could not launch $url';
+                        }
+                      },*/
+                      child: Stack(
+                        children: [
+                          const Text(
+                            'Apply for a free',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 12,
+                              fontFamily: 'Sarabun',
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              height: 0.75,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                InkWell(
+                  /*onTap: () async {
+                        const url = 'https://www.google.com';
+                        if (await canLaunchUrl(Uri.parse(url))) {
+                          await launchUrl(Uri.parse(url));
+                        } else {
+                          throw 'Could not launch $url';
+                        }
+                      },*/
+                  child: Stack(
+                    children: [
+                      const Text(
+                        'membership',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          fontSize: 12,
+                          fontFamily: 'Sarabun',
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          height: 0.75,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
