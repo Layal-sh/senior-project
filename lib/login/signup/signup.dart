@@ -72,47 +72,30 @@ class _SignUpState extends State<SignUp> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          iconTheme: const IconThemeData(
+            color: Color.fromARGB(255, 38, 20, 84),
+            size: 25.0,
+          ),
+          title: const Text(
+            'Back',
+            style: TextStyle(
+              color: Color.fromARGB(255, 38, 20, 84),
+              fontSize: 14,
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          titleSpacing: -10.0,
+        ),
         body: Center(
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.only(top: 20, bottom: 20),
+              padding: const EdgeInsets.only(bottom: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Row(
-                          children: [
-                            Icon(
-                              Icons.arrow_back_ios_new_rounded,
-                              color: Color.fromARGB(255, 38, 20, 84),
-                              size: 25,
-                              weight: 100,
-                            ),
-                            Text(
-                              'Back',
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 38, 20, 84),
-                                fontSize: 15,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w600,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
                   Form(
                     key: _formKey,
                     child: Column(
@@ -133,6 +116,9 @@ class _SignUpState extends State<SignUp> {
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
+                              const SizedBox(
+                                height: 10,
+                              ),
                               const Text(
                                 'Sign Up',
                                 style: TextStyle(
@@ -143,7 +129,7 @@ class _SignUpState extends State<SignUp> {
                                 ),
                               ),
                               const SizedBox(
-                                height: 5,
+                                height: 10,
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -684,10 +670,10 @@ class _SignUpState extends State<SignUp> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => Membership(
-                                              username:
-                                                  _controllerUsername.text,
-                                            )),
+                                      builder: (context) => Membership(
+                                        username: _controllerUsername.text,
+                                      ),
+                                    ),
                                   );
                                 },
                                 child: const Text(
