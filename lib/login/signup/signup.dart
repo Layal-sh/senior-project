@@ -578,7 +578,7 @@ class _SignUpState extends State<SignUp> {
 
                                 //  Navigator.pop(context);
                                 //}
-                                DBHelper dbHelper = DBHelper.instance;
+                                /*DBHelper dbHelper = DBHelper.instance;
                                 dbHelper.initialDb();
                                 String fname = _controllerFirstname.text;
                                 String lname = _controllerLastname.text;
@@ -676,11 +676,14 @@ class _SignUpState extends State<SignUp> {
                                               'The server did not respond')),
                                     );
                                   }
-                                }
-                                //Navigator.push(
-                                //context,
-                                //MaterialPageRoute(builder: (context) => Membership()),
-                                //);
+                                }*/
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Membership(
+                                            username: _controllerUsername.text,
+                                          )),
+                                );
                               },
                               child: const Text(
                                 "Sign Up",

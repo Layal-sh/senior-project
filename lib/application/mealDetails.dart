@@ -189,11 +189,8 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                //Navigator.pop(context);
-              },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 38, 20, 84),
+                backgroundColor: const Color.fromARGB(255, 30, 203, 215),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -207,6 +204,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
+              onPressed: () async {},
             ),
           ],
         ),
