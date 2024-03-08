@@ -28,8 +28,8 @@ server = 'sugarsense.database.windows.net'
 database = 'sugarsensedb'
 username = 'sugaradmin'
 password = 'SUG@Rs!!7891'
-#driver= '{ODBC Driver 17 for SQL Server}'
-driver= '{ODBC Driver 18 for SQL Server}'
+driver= '{ODBC Driver 17 for SQL Server}'
+#driver= '{ODBC Driver 18 for SQL Server}'
 
 connection_string = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password};'
 
