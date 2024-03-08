@@ -69,6 +69,7 @@ flutter:
 
   assets:
     - assets/splash.png
+    - assets/letsgo.png
     - assets/signin.png
     - assets/crown.png
     - assets/diamond.png
@@ -287,6 +288,9 @@ flutter:
     - family: Sarabun
       fonts:
         - asset: fonts/Sarabun-Regular.ttf
+    - family: Inder
+      fonts:
+        - asset: fonts/Inder-Regular.ttf
         
           
         
