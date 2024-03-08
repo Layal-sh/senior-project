@@ -106,21 +106,22 @@ class _MealsState extends State<Meals> {
                   return Text('Error: ${snapshot.error}');
                 } else {
                   List<Map> meals = snapshot.data!;
+                  print(meals);
                   return GridView.builder(
                     padding: const EdgeInsets.all(10.0),
                     itemCount: meals.length,
                     itemBuilder: (ctx, i) => MealBox(
                       meal: Meal(
                         name: meals[i]['mealName'],
-                        imageUrl:
-                            meals[i]['mealPicture'] ?? 'assets/AddDish.png',
+                        imageUrl:'assets/' + (meals[i]['mealPicture'] ?? 'AddDish.png'),
+                        id: meals[i]['mealId'],
                       ),
                     ),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       childAspectRatio: 3 / 3.5,
-                      crossAxisSpacing: 7,
+                      crossAxisSpacing: 5,
                       mainAxisSpacing: 10,
                     ),
                   );
@@ -137,8 +138,8 @@ class _MealsState extends State<Meals> {
 class Meal {
   final String name;
   final String imageUrl;
-
-  Meal({required this.name, required this.imageUrl});
+  final int id;
+  Meal({required this.name, required this.imageUrl, required this.id});
 }
 
 class MealBox extends StatelessWidget {
@@ -158,10 +159,9 @@ class MealBox extends StatelessWidget {
           SizedBox(
             width: 100,
             height: 100,
-            child: /*meal.imageUrl != null && meal.imageUrl.startsWith('http')
+            child: meal.imageUrl != null && meal.imageUrl.startsWith('http')
                 ? Image.network(meal.imageUrl)
-                : */
-                Image.asset('assets/AddDish.png'),
+                : Image.asset(meal.imageUrl),
           ),
           Column(
             children: [

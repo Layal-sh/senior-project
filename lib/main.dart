@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/app.dart';
-import 'package:sugar_sense/application/create.dart';
-import 'package:sugar_sense/application/meals.dart';
 import 'package:sugar_sense/login/signup/login.dart';
-import 'package:sugar_sense/application/membership.dart';
 import 'package:sugar_sense/login/signup/signup.dart';
 import 'package:sugar_sense/application/splash.dart';
 import 'package:sugar_sense/application/startpage.dart';
@@ -39,9 +36,9 @@ class MyApp extends StatelessWidget {
       '/login': (context) => Login(),
       '/signup': (context) => SignUp(),
       '/app': (context) => App(),
-      '/membership': (context) => Membership(),
-      '/meals': (context) => Meals(),
-      '/create': (context) => CreateMeal(),
+      //'/membership': (context) => Membership(),
+      //'/meals': (context) => Meals(),
+      //'/create': (context) => CreateMeal(),
     });
   }
 }

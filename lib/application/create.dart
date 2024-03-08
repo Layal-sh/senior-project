@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sugar_sense/Database/db.dart';
+import 'package:sugar_sense/application/meals.dart';
 
 class CreateMeal extends StatefulWidget {
   const CreateMeal({super.key});
@@ -22,6 +24,21 @@ class _CreateMealState extends State<CreateMeal> {
     setState(() {
       _selectedImage = image;
     });
+  }
+
+  DBHelper dbHelper = DBHelper.instance;
+  List<Map> allMeals = [];
+  List<int> selectedMeals = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadMeals();
+  }
+
+  void loadMeals() async {
+    allMeals = await dbHelper.selectAllMeals();
+    setState(() {});
   }
 
   @override
@@ -63,7 +80,9 @@ class _CreateMealState extends State<CreateMeal> {
                 Row(
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        //dbHelper.createEntry(pid, glucose, insulin, date, selectedMeals);
+                      },
                       child: const Text(
                         'Create',
                         style: TextStyle(
@@ -89,8 +108,8 @@ class _CreateMealState extends State<CreateMeal> {
               child: Stack(
                 children: [
                   Container(
-                    width: 200,
-                    height: 200,
+                    width: 175,
+                    height: 175,
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(40),
@@ -140,7 +159,7 @@ class _CreateMealState extends State<CreateMeal> {
               height: 20,
             ),
             Container(
-              height: MediaQuery.of(context).size.height - 330,
+              height: MediaQuery.of(context).size.height - 280,
               color: const Color.fromARGB(255, 231, 231, 231),
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -186,6 +205,57 @@ class _CreateMealState extends State<CreateMeal> {
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w900,
                     ),
+                  ),
+                  selectedMeals.isEmpty
+                      ? Container()
+                      : Expanded(
+                          child: ListView.builder(
+                            itemCount: selectedMeals.length,
+                            itemBuilder: (context, index) {
+                              return Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(allMeals[index]['mealName']),
+                                  const Text('quantity'),
+                                  const Text('unit'),
+                                  IconButton(
+                                    icon: const Icon(Icons.close),
+                                    onPressed: () {
+                                      setState(() {
+                                        //selectedMeals.removeAt(index);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        color: const Color.fromARGB(255, 38, 20, 84),
+                        iconSize: 30,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Meals()),
+                          );
+                        },
+                      ),
+                      const Text(
+                        'Add Ingredients',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 38, 20, 84),
+                          fontSize: 17,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
