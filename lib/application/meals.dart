@@ -11,6 +11,8 @@ class Meals extends StatefulWidget {
   State<Meals> createState() => _MealsState();
 }
 
+List<Meal> chosenMeals = [];
+
 class _MealsState extends State<Meals> {
   final TextEditingController _filter = TextEditingController();
   DBHelper db = DBHelper.instance;
@@ -113,8 +115,11 @@ class _MealsState extends State<Meals> {
                     itemBuilder: (ctx, i) => MealBox(
                       meal: Meal(
                         name: meals[i]['mealName'],
-                        imageUrl:'assets/' + (meals[i]['mealPicture'] ?? 'AddDish.png'),
+                        imageUrl: 'assets/' +
+                            (meals[i]['mealPicture'] ?? 'AddDish.png'),
                         id: meals[i]['mealId'],
+                        carbohydrates: meals[i]['carbohydrates'],
+                        quantity: 1,
                       ),
                     ),
                     gridDelegate:
@@ -139,8 +144,35 @@ class Meal {
   final String name;
   final String imageUrl;
   final int id;
-  Meal({required this.name, required this.imageUrl, required this.id});
+  final double carbohydrates;
+  final double quantity;
+  Meal(
+      {required this.name,
+      required this.imageUrl,
+      required this.id,
+      required this.carbohydrates,
+      required this.quantity});
+  String toString() {
+    return 'Meal{name: $name, imageUrl: $imageUrl, id: $id, carbs: $carbohydrates, quantity: $quantity}';
+  }
 }
+
+Function addToChosenMeals = (int id, double quantity) async {
+  DBHelper db = DBHelper.instance;
+  Map meal = await db.getMealById(id);
+  var imageUrl = 'assets/' + (meal['mealPicture']);
+  Meal insertedMeal = Meal(
+      name: meal['mealName'],
+      imageUrl: imageUrl,
+      id: id,
+      carbohydrates: meal['carbohydrates'],
+      quantity: quantity);
+  chosenMeals.add(insertedMeal);
+
+  chosenMeals.forEach((meal) {
+    print(meal.toString()); // Print each meal
+  });
+};
 
 class MealBox extends StatelessWidget {
   final Meal meal;

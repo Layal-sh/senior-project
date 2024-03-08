@@ -582,7 +582,7 @@ class _SignUpState extends State<SignUp> {
 
                                   //  Navigator.pop(context);
                                   //}
-                                  /*DBHelper dbHelper = DBHelper.instance;
+                                  DBHelper dbHelper = DBHelper.instance;
                                   dbHelper.initialDb();
                                   String fname = _controllerFirstname.text;
                                   String lname = _controllerLastname.text;
@@ -591,7 +591,7 @@ class _SignUpState extends State<SignUp> {
                                   String password = _controllerPassword.text;
                                   String confirmPassword =
                                       _controllerConFirmPassword.text;
-              
+
                                   if (username.isEmpty ||
                                       email.isEmpty ||
                                       password.isEmpty ||
@@ -610,8 +610,8 @@ class _SignUpState extends State<SignUp> {
                                   } else if (password != confirmPassword) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                          content:
-                                              Text('The passwords do not match')),
+                                          content: Text(
+                                              'The passwords do not match')),
                                     );
                                   } else if (!isValidPassword(password)) {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -636,7 +636,8 @@ class _SignUpState extends State<SignUp> {
                                               'username': username,
                                               'email': email,
                                               'password': password,
-                                              'confirmPassword': confirmPassword,
+                                              'confirmPassword':
+                                                  confirmPassword,
                                             }),
                                           )
                                           .timeout(const Duration(seconds: 10));
@@ -644,14 +645,16 @@ class _SignUpState extends State<SignUp> {
                                         //await dbHelper.syncMeals();
                                         //List<Map> m=dbHelper.selectAllMeals();
                                         //m.forEach(print);
-              
+
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const Membership()),
+                                                  const Membership(
+                                                    username: '',
+                                                  )),
                                         );
-              
+
                                         //Navigator.push(
                                         //context,
                                         //MaterialPageRoute(
@@ -674,13 +677,14 @@ class _SignUpState extends State<SignUp> {
                                     } catch (e) {
                                       // ignore: avoid_print
                                       print('Error: $e');
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         const SnackBar(
                                             content: Text(
                                                 'The server did not respond')),
                                       );
                                     }
-                                  }*/
+                                  }
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

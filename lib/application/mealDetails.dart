@@ -13,6 +13,7 @@ class MealDetailsPage extends StatefulWidget {
 
 class _MealDetailsPageState extends State<MealDetailsPage> {
   DBHelper db = DBHelper.instance;
+
   final TextEditingController _numberOfMeal = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -204,7 +205,33 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              onPressed: () async {},
+              onPressed: () async {
+                print("adding to meals");
+                try {
+                  if (double.parse(_numberOfMeal.text) <= 0) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Text('Cannot input negative or zero values'),
+                        );
+                      },
+                    );
+                  } else {
+                    addToChosenMeals(
+                        widget.meal.id, double.parse(_numberOfMeal.text));
+                  }
+                } catch (e) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        content: Text('Specify the amount as a number'),
+                      );
+                    },
+                  );
+                }
+              },
             ),
           ],
         ),
