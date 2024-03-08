@@ -547,30 +547,7 @@ class _SignUpState extends State<SignUp> {
                                   ),
                                 ),
                                 onPressed: () async {
-                                  //if (_formKey.currentState?.validate() ?? false) {
-                                  //  _boxAccounts.put(
-                                  //    _controllerUsername.text,
-                                  //    _controllerConFirmPassword.text,
-                                  //  );
-
-                                  //  ScaffoldMessenger.of(context).showSnackBar(
-                                  //    SnackBar(
-                                  //      width: 200,
-                                  //      backgroundColor:
-                                  //          Theme.of(context).colorScheme.secondary,
-                                  //      shape: RoundedRectangleBorder(
-                                  //        borderRadius: BorderRadius.circular(10),
-                                  //      ),
-                                  //      behavior: SnackBarBehavior.floating,
-                                  //      content: const Text("Registered Successfully"),
-                                  //    ),
-                                  //  );
-
-                                  //  _formKey.currentState?.reset();
-
-                                  //  Navigator.pop(context);
-                                  //}
-                                  /*DBHelper dbHelper = DBHelper.instance;
+                                  DBHelper dbHelper = DBHelper.instance;
                                   dbHelper.initialDb();
                                   String fname = _controllerFirstname.text;
                                   String lname = _controllerLastname.text;
@@ -579,15 +556,16 @@ class _SignUpState extends State<SignUp> {
                                   String password = _controllerPassword.text;
                                   String confirmPassword =
                                       _controllerConFirmPassword.text;
-              
+
                                   if (username.isEmpty ||
                                       email.isEmpty ||
                                       password.isEmpty ||
                                       confirmPassword.isEmpty) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                          content: Text(
-                                              'All fields with * must be filled')),
+                                        content: Text(
+                                            'All fields with * must be filled'),
+                                      ),
                                     );
                                   } else if (!isValidEmail(email)) {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -598,8 +576,8 @@ class _SignUpState extends State<SignUp> {
                                   } else if (password != confirmPassword) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                          content:
-                                              Text('The passwords do not match')),
+                                          content: Text(
+                                              'The passwords do not match')),
                                     );
                                   } else if (!isValidPassword(password)) {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -624,7 +602,8 @@ class _SignUpState extends State<SignUp> {
                                               'username': username,
                                               'email': email,
                                               'password': password,
-                                              'confirmPassword': confirmPassword,
+                                              'confirmPassword':
+                                                  confirmPassword,
                                             }),
                                           )
                                           .timeout(const Duration(seconds: 10));
@@ -632,242 +611,264 @@ class _SignUpState extends State<SignUp> {
                                         //await dbHelper.syncMeals();
                                         //List<Map> m=dbHelper.selectAllMeals();
                                         //m.forEach(print);
-              
-                                        bool accept = await showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    useRootNavigator: true,
-                                    builder: (context) {
-                                      return SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.9,
-                                        child: Stack(
-                                          //mainAxisAlignment:MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            ShaderMask(
-                                              shaderCallback: (Rect bounds) {
-                                                return const LinearGradient(
-                                                  begin: Alignment.topCenter,
-                                                  end: Alignment.bottomCenter,
-                                                  colors: <Color>[
-                                                    Colors.transparent,
-                                                    Colors.white
-                                                  ],
-                                                  stops: <double>[0.75, 0.85],
-                                                ).createShader(bounds);
-                                              },
-                                              blendMode: BlendMode.dstOut,
-                                              child: SingleChildScrollView(
-                                                child: Container(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                    left: 30,
-                                                    right: 30,
-                                                    top: 20,
-                                                    bottom: 10,
-                                                  ),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      const Text(
-                                                        'AGREEMENT',
-                                                        style: TextStyle(
-                                                          fontSize: 16.0,
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              173,
-                                                              173,
-                                                              173),
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                          fontFamily: 'Inter',
+
+                                        bool accept =
+                                            await showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          useRootNavigator: true,
+                                          builder: (context) {
+                                            return SizedBox(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.9,
+                                              child: Stack(
+                                                //mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  ShaderMask(
+                                                    shaderCallback:
+                                                        (Rect bounds) {
+                                                      return const LinearGradient(
+                                                        begin:
+                                                            Alignment.topCenter,
+                                                        end: Alignment
+                                                            .bottomCenter,
+                                                        colors: <Color>[
+                                                          Colors.transparent,
+                                                          Colors.white
+                                                        ],
+                                                        stops: <double>[
+                                                          0.75,
+                                                          0.85
+                                                        ],
+                                                      ).createShader(bounds);
+                                                    },
+                                                    blendMode: BlendMode.dstOut,
+                                                    child:
+                                                        SingleChildScrollView(
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                          left: 30,
+                                                          right: 30,
+                                                          top: 20,
+                                                          bottom: 10,
                                                         ),
-                                                      ),
-                                                      const Text(
-                                                        'Terms of Service',
-                                                        style: TextStyle(
-                                                          fontSize: 32.0,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                          height: 20.0),
-                                                      const Text(
-                                                        '1. OUR SERVICES',
-                                                        style: TextStyle(
-                                                          fontSize: 18.0,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      const Text(
-                                                        'The information provided when using the Services is not intended for distribution to or use by any person or entity in any jurisdiction or country where such distribution or use would be contrary to law or regulation or which would subject us to any registration requirement within such jurisdiction or country. Accordingly, those persons who choose to access the Services from other locations do so on their own initiative and are solely responsible for compliance with local laws, if and to the extent local laws are applicable.',
-                                                        style: TextStyle(
-                                                            fontSize: 18.0),
-                                                      ),
-                                                      const SizedBox(
-                                                          height: 10.0),
-                                                      const Text(
-                                                        '2. Use License',
-                                                        style: TextStyle(
-                                                          fontSize: 18.0,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      const Text(
-                                                        'Subject to your compliance with these Legal Terms, including the "PROHIBITED ACTIVITIES" section below, we grant you a non-exclusive, non-transferable, revocable license to: access the Services; and download or print a copy of any portion of the Content to which you have properly gained access. solely for your personal, non-commercial use or internal business purpose. Except as set out in this section or elsewhere in our Legal Terms, no part of the Services and no Content or Marks may be copied, reproduced, aggregated, ',
-                                                        style: TextStyle(
-                                                            fontSize: 18.0),
-                                                      ),
-                                                      SizedBox(
-                                                        height: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height *
-                                                            0.15,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Positioned(
-                                              left: 0,
-                                              right: 0,
-                                              bottom: 0,
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                  left: 20,
-                                                  right: 20,
-                                                  bottom: 40,
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceAround,
-                                                  children: [
-                                                    SizedBox(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.4,
-                                                      child: ElevatedButton(
-                                                        style: ButtonStyle(
-                                                          shape: MaterialStateProperty
-                                                              .all<
-                                                                  RoundedRectangleBorder>(
-                                                            RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10.0),
-                                                              side:
-                                                                  const BorderSide(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            const Text(
+                                                              'AGREEMENT',
+                                                              style: TextStyle(
+                                                                fontSize: 16.0,
                                                                 color: Color
                                                                     .fromARGB(
+                                                                        255,
+                                                                        173,
+                                                                        173,
+                                                                        173),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                                fontFamily:
+                                                                    'Inter',
+                                                              ),
+                                                            ),
+                                                            const Text(
+                                                              'Terms of Service',
+                                                              style: TextStyle(
+                                                                fontSize: 32.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                                height: 20.0),
+                                                            const Text(
+                                                              '1. OUR SERVICES',
+                                                              style: TextStyle(
+                                                                fontSize: 18.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            const Text(
+                                                              'The information provided when using the Services is not intended for distribution to or use by any person or entity in any jurisdiction or country where such distribution or use would be contrary to law or regulation or which would subject us to any registration requirement within such jurisdiction or country. Accordingly, those persons who choose to access the Services from other locations do so on their own initiative and are solely responsible for compliance with local laws, if and to the extent local laws are applicable.',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      18.0),
+                                                            ),
+                                                            const SizedBox(
+                                                                height: 10.0),
+                                                            const Text(
+                                                              '2. Use License',
+                                                              style: TextStyle(
+                                                                fontSize: 18.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            const Text(
+                                                              'Subject to your compliance with these Legal Terms, including the "PROHIBITED ACTIVITIES" section below, we grant you a non-exclusive, non-transferable, revocable license to: access the Services; and download or print a copy of any portion of the Content to which you have properly gained access. solely for your personal, non-commercial use or internal business purpose. Except as set out in this section or elsewhere in our Legal Terms, no part of the Services and no Content or Marks may be copied, reproduced, aggregated, ',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      18.0),
+                                                            ),
+                                                            SizedBox(
+                                                              height: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height *
+                                                                  0.15,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                    left: 0,
+                                                    right: 0,
+                                                    bottom: 0,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                        left: 20,
+                                                        right: 20,
+                                                        bottom: 40,
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceAround,
+                                                        children: [
+                                                          SizedBox(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.4,
+                                                            child:
+                                                                ElevatedButton(
+                                                              style:
+                                                                  ButtonStyle(
+                                                                shape: MaterialStateProperty
+                                                                    .all<
+                                                                        RoundedRectangleBorder>(
+                                                                  RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10.0),
+                                                                    side:
+                                                                        const BorderSide(
+                                                                      color: Color
+                                                                          .fromARGB(
+                                                                        255,
+                                                                        49,
+                                                                        205,
+                                                                        215,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              child: const Text(
+                                                                'Decline',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                    255,
+                                                                    49,
+                                                                    205,
+                                                                    215,
+                                                                  ),
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                ),
+                                                              ),
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(false);
+                                                              },
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.4,
+                                                            child:
+                                                                ElevatedButton(
+                                                              style:
+                                                                  ElevatedButton
+                                                                      .styleFrom(
+                                                                backgroundColor:
+                                                                    const Color
+                                                                        .fromARGB(
                                                                   255,
                                                                   49,
                                                                   205,
                                                                   215,
                                                                 ),
+                                                                shape:
+                                                                    RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10), // Change this value as needed
+                                                                ),
                                                               ),
+                                                              child: const Text(
+                                                                'Accept',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                    255,
+                                                                    255,
+                                                                    249,
+                                                                    254,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(true);
+                                                              },
                                                             ),
                                                           ),
-                                                        ),
-                                                        child: const Text(
-                                                          'Decline',
-                                                          style: TextStyle(
-                                                            color:
-                                                                Color.fromARGB(
-                                                              255,
-                                                              49,
-                                                              205,
-                                                              215,
-                                                            ),
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                          ),
-                                                        ),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop(false);
-                                                        },
+                                                        ],
                                                       ),
                                                     ),
-                                                    SizedBox(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.4,
-                                                      child: ElevatedButton(
-                                                        style: ElevatedButton
-                                                            .styleFrom(
-                                                          backgroundColor:
-                                                              const Color
-                                                                  .fromARGB(
-                                                            255,
-                                                            49,
-                                                            205,
-                                                            215,
-                                                          ),
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10), // Change this value as needed
-                                                          ),
-                                                        ),
-                                                        child: const Text(
-                                                          'Accept',
-                                                          style: TextStyle(
-                                                            color:
-                                                                Color.fromARGB(
-                                                              255,
-                                                              255,
-                                                              249,
-                                                              254,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop(true);
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        );
+                                        if (accept == true) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => Membership(
+                                                username:
+                                                    _controllerUsername.text,
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  );
-                                  if (accept == true) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => Membership(
-                                          username: _controllerUsername.text,
-                                        ),
-                                      ),
-                                    );
-                                  }
-              
-                                        //Navigator.push(
-                                        //context,
-                                        //MaterialPageRoute(
-                                        //builder: (context) => const App()),
-                                        //);
+                                          );
+                                        }
                                       } else {
                                         // ignore: avoid_print
                                         print(response.body);
@@ -885,241 +886,13 @@ class _SignUpState extends State<SignUp> {
                                     } catch (e) {
                                       // ignore: avoid_print
                                       print('Error: $e');
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         const SnackBar(
                                             content: Text(
                                                 'The server did not respond')),
                                       );
                                     }
-                                  }*/
-                                  bool accept = await showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    useRootNavigator: true,
-                                    builder: (context) {
-                                      return SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.9,
-                                        child: Stack(
-                                          //mainAxisAlignment:MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            ShaderMask(
-                                              shaderCallback: (Rect bounds) {
-                                                return const LinearGradient(
-                                                  begin: Alignment.topCenter,
-                                                  end: Alignment.bottomCenter,
-                                                  colors: <Color>[
-                                                    Colors.transparent,
-                                                    Colors.white
-                                                  ],
-                                                  stops: <double>[0.75, 0.85],
-                                                ).createShader(bounds);
-                                              },
-                                              blendMode: BlendMode.dstOut,
-                                              child: SingleChildScrollView(
-                                                child: Container(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                    left: 30,
-                                                    right: 30,
-                                                    top: 20,
-                                                    bottom: 10,
-                                                  ),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      const Text(
-                                                        'AGREEMENT',
-                                                        style: TextStyle(
-                                                          fontSize: 16.0,
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              173,
-                                                              173,
-                                                              173),
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                          fontFamily: 'Inter',
-                                                        ),
-                                                      ),
-                                                      const Text(
-                                                        'Terms of Service',
-                                                        style: TextStyle(
-                                                          fontSize: 32.0,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                          height: 20.0),
-                                                      const Text(
-                                                        '1. OUR SERVICES',
-                                                        style: TextStyle(
-                                                          fontSize: 18.0,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      const Text(
-                                                        'The information provided when using the Services is not intended for distribution to or use by any person or entity in any jurisdiction or country where such distribution or use would be contrary to law or regulation or which would subject us to any registration requirement within such jurisdiction or country. Accordingly, those persons who choose to access the Services from other locations do so on their own initiative and are solely responsible for compliance with local laws, if and to the extent local laws are applicable.',
-                                                        style: TextStyle(
-                                                            fontSize: 18.0),
-                                                      ),
-                                                      const SizedBox(
-                                                          height: 10.0),
-                                                      const Text(
-                                                        '2. Use License',
-                                                        style: TextStyle(
-                                                          fontSize: 18.0,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      const Text(
-                                                        'Subject to your compliance with these Legal Terms, including the "PROHIBITED ACTIVITIES" section below, we grant you a non-exclusive, non-transferable, revocable license to: access the Services; and download or print a copy of any portion of the Content to which you have properly gained access. solely for your personal, non-commercial use or internal business purpose. Except as set out in this section or elsewhere in our Legal Terms, no part of the Services and no Content or Marks may be copied, reproduced, aggregated, ',
-                                                        style: TextStyle(
-                                                            fontSize: 18.0),
-                                                      ),
-                                                      SizedBox(
-                                                        height: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height *
-                                                            0.15,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Positioned(
-                                              left: 0,
-                                              right: 0,
-                                              bottom: 0,
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                  left: 20,
-                                                  right: 20,
-                                                  bottom: 40,
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceAround,
-                                                  children: [
-                                                    SizedBox(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.4,
-                                                      child: ElevatedButton(
-                                                        style: ButtonStyle(
-                                                          shape: MaterialStateProperty
-                                                              .all<
-                                                                  RoundedRectangleBorder>(
-                                                            RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10.0),
-                                                              side:
-                                                                  const BorderSide(
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                  255,
-                                                                  49,
-                                                                  205,
-                                                                  215,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        child: const Text(
-                                                          'Decline',
-                                                          style: TextStyle(
-                                                            color:
-                                                                Color.fromARGB(
-                                                              255,
-                                                              49,
-                                                              205,
-                                                              215,
-                                                            ),
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                          ),
-                                                        ),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop(false);
-                                                        },
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.4,
-                                                      child: ElevatedButton(
-                                                        style: ElevatedButton
-                                                            .styleFrom(
-                                                          backgroundColor:
-                                                              const Color
-                                                                  .fromARGB(
-                                                            255,
-                                                            49,
-                                                            205,
-                                                            215,
-                                                          ),
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10), // Change this value as needed
-                                                          ),
-                                                        ),
-                                                        child: const Text(
-                                                          'Accept',
-                                                          style: TextStyle(
-                                                            color:
-                                                                Color.fromARGB(
-                                                              255,
-                                                              255,
-                                                              249,
-                                                              254,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop(true);
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  );
-                                  if (accept == true) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => Membership(
-                                          username: _controllerUsername.text,
-                                        ),
-                                      ),
-                                    );
                                   }
                                 },
                                 child: const Text(
