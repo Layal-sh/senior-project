@@ -98,6 +98,7 @@ class DBHelper {
     List<Map> response = await mydb!.rawQuery(sql);
     return response;
   }
+  //needs a create meal query
 
 //insert query
   insertData(String sql) async {

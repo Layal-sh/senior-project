@@ -121,7 +121,7 @@ class _MealsState extends State<Meals> {
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       childAspectRatio: 3 / 3.5,
-                      crossAxisSpacing: 7,
+                      crossAxisSpacing: 5,
                       mainAxisSpacing: 10,
                     ),
                   );
