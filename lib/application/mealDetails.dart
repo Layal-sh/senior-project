@@ -52,88 +52,93 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
       ),
       body: Hero(
         tag: 'meal${widget.meal.name}',
-        child: Column(
-          //mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: SizedBox(
-                width: 175,
-                height: 175,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.asset(
-                    'assets/no-pictures.png', //Image.network(widget.meal.imageUrl),
-                    fit: BoxFit.cover,
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 20,
+          ),
+          child: Column(
+            //mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: SizedBox(
+                  width: 175,
+                  height: 175,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: Image.asset(
+                      widget.meal.imageUrl,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 20,
-                right: 20,
-                top: 10,
-              ),
-              child: Text(
-                widget.meal.name,
-                style: const TextStyle(
-                  color: Color.fromARGB(255, 38, 20, 84),
-                  fontSize: 20,
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w800,
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  top: 10,
+                ),
+                child: Text(
+                  widget.meal.name,
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 38, 20, 84),
+                    fontSize: 20,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            const Padding(
-              padding: EdgeInsets.only(
-                left: 20,
-                right: 20,
+              const SizedBox(
+                height: 15,
               ),
-              child: Text(
-                'Ingredients',
-                style: TextStyle(
-                  color: Color.fromARGB(255, 38, 20, 84),
-                  fontSize: 17,
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w500,
+              const Padding(
+                padding: EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                ),
+                child: Text(
+                  'Ingredients',
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 38, 20, 84),
+                    fontSize: 17,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
-            /*Expanded(
-              child: FutureBuilder<List<Map>>(
-                future: db.getMealIngredients(widget.meal.id),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    List<Map> ingredients = snapshot.data!;
-                    return GridView.builder(
-                      padding: const EdgeInsets.all(10.0),
-                      itemCount: ingredients.length,
-                      itemBuilder: (ctx, i) => IngBox(
-                        ingredient: Ingredient(
-                          name: ingredients[i]['mealName'],
+              /*Expanded(
+                child: FutureBuilder<List<Map>>(
+                  future: db.getMealIngredients(widget.meal.id),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      List<Map> ingredients = snapshot.data!;
+                      return GridView.builder(
+                        padding: const EdgeInsets.all(10.0),
+                        itemCount: ingredients.length,
+                        itemBuilder: (ctx, i) => IngBox(
+                          ingredient: Ingredient(
+                            name: ingredients[i]['mealName'],
+                          ),
                         ),
-                      ),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        childAspectRatio: 3 / 3.5,
-                        crossAxisSpacing: 7,
-                        mainAxisSpacing: 10,
-                      ),
-                    );
-                  }
-                },
-              ),
-            ),*/
-          ],
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          childAspectRatio: 3 / 3.5,
+                          crossAxisSpacing: 7,
+                          mainAxisSpacing: 10,
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),*/
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: Padding(
