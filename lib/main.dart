@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/app.dart';
 import 'package:sugar_sense/login/signup/login.dart';
@@ -22,11 +21,13 @@ Future<void> main() async {
 
   logger.info('This is an info message');
 
-  if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) {
+  if (kIsWeb) {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
+  } else {
+    DBHelper dbHelper = DBHelper.instance;
+    Database? database = await dbHelper.db;
   }
-
   WidgetsFlutterBinding.ensureInitialized();
   await loadPreferences();
   runApp(MyApp());
