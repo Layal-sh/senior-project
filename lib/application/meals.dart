@@ -160,7 +160,7 @@ class Meal {
 Function addToChosenMeals = (int id, double quantity) async {
   DBHelper db = DBHelper.instance;
   Map meal = await db.getMealById(id);
-  var imageUrl = 'assets/' + (meal['mealPicture']);
+  var imageUrl = 'assets/${meal['mealPicture']}';
   Meal insertedMeal = Meal(
       name: meal['mealName'],
       imageUrl: imageUrl,
