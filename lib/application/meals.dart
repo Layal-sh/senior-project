@@ -11,7 +11,11 @@ class Meals extends StatefulWidget {
   State<Meals> createState() => _MealsState();
 }
 
-List<Meal> chosenMeals = [];
+List<Map> chosenMeals = [];
+List<Map> getChosenMeals() {
+  print(chosenMeals.runtimeType);
+  return chosenMeals;
+}
 
 class _MealsState extends State<Meals> {
   final TextEditingController _filter = TextEditingController();
@@ -21,6 +25,11 @@ class _MealsState extends State<Meals> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => {
+                  Navigator.of(context).pop(),
+                }),
         iconTheme: const IconThemeData(
           color: Color.fromARGB(255, 255, 255, 255),
         ),
@@ -153,25 +162,34 @@ class Meal {
       required this.carbohydrates,
       required this.quantity});
   String toString() {
-    return 'Meal{name: $name, imageUrl: $imageUrl, id: $id, carbs: $carbohydrates, quantity: $quantity}';
+    return 'Meal{name: $name, imageUrl: $imageUrl, id: $id, carbodydrates: $carbohydrates, quantity: $quantity}';
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'imageUrl': imageUrl,
+      'id': id,
+      'carbohydrates': carbohydrates,
+      'quantity': quantity
+    };
   }
 }
 
 Function addToChosenMeals = (int id, double quantity) async {
   DBHelper db = DBHelper.instance;
-  Map meal = await db.getMealById(id);
-  var imageUrl = 'assets/' + (meal['mealPicture']);
-  Meal insertedMeal = Meal(
-      name: meal['mealName'],
-      imageUrl: imageUrl,
-      id: id,
-      carbohydrates: meal['carbohydrates'],
-      quantity: quantity);
-  chosenMeals.add(insertedMeal);
+  List<Map> meal = await db.getMealById(id);
+  var imageUrl = 'assets/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
+  Map<String, dynamic> insertedMeal = {
+    'name': meal[0]['mealName'],
+    'imageUrl': imageUrl,
+    'id': id,
+    'carbohydrates': meal[0]['carbohydrates'],
+    'quantity': quantity
+  };
 
-  chosenMeals.forEach((meal) {
-    print(meal.toString()); // Print each meal
-  });
+  chosenMeals.add(insertedMeal);
+  print(chosenMeals);
 };
 
 class MealBox extends StatelessWidget {
