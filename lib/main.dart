@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/app.dart';
@@ -20,8 +23,11 @@ Future<void> main() async {
   logger.info('This is an info message');
   sqfliteFfiInit();
 
-  // Use sqflite_common_ffi's database factory
-  databaseFactory = databaseFactoryFfi;
+  if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
+
   WidgetsFlutterBinding.ensureInitialized();
   await loadPreferences();
   runApp(MyApp());
