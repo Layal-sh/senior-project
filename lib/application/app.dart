@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sugar_sense/application/meals.dart';
+import 'package:sugar_sense/AI/ai_functions.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -181,10 +182,11 @@ class AddInput extends StatefulWidget {
 
 class _AddInputState extends State<AddInput> {
   //const Settings({Key? key}) : super(key: key);
+  double bolusCalculation = 0.0;
   final TextEditingController _GlucoseController = TextEditingController();
   final TextEditingController _CarbController = TextEditingController();
   String? carbRatioSelected;
-  void calculateBolus() {}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -216,7 +218,20 @@ class _AddInputState extends State<AddInput> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            print(double.parse(_GlucoseController.text));
+                            double glucoseLevel =
+                                double.parse(_GlucoseController.text);
+                            print(glucoseLevel.runtimeType);
+                            if (getChosenMeals().isNotEmpty &&
+                                _GlucoseController.text.isNotEmpty) {
+                              bolusCalculation = calculateDosage(
+                                  getChosenMeals(), glucoseLevel);
+                              print(bolusCalculation);
+                            } else {
+                              print("NO WORKY");
+                            }
+                          },
                           child: const Text(
                             'Save',
                             style: TextStyle(
