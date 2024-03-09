@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sugar_sense/Database/db.dart';
@@ -189,11 +191,43 @@ class MealBox extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            width: 100,
-            height: 100,
-            child: meal.imageUrl != null && meal.imageUrl.startsWith('http')
-                ? Image.network(meal.imageUrl)
-                : Image.asset(meal.imageUrl),
+            height: 120,
+            child: FutureBuilder<ByteData>(
+              future: DefaultAssetBundle.of(context).load(meal.imageUrl),
+              builder:
+                  (BuildContext context, AsyncSnapshot<ByteData> snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasError) {
+                    //print('No');
+                    return ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(5),
+                        topRight: Radius.circular(5),
+                      ),
+                      child: Image.asset(
+                        'assets/AddDish.png',
+                        width: MediaQuery.of(context).size.width,
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  } else {
+                    return ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(5),
+                        topRight: Radius.circular(5),
+                      ),
+                      child: Image.asset(
+                        meal.imageUrl,
+                        width: MediaQuery.of(context).size.width,
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  }
+                } else {
+                  return const CircularProgressIndicator(); // Show a loading spinner while waiting for the asset to load
+                }
+              },
+            ),
           ),
           Column(
             children: [
