@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:sugar_sense/application/thanks.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Membership extends StatefulWidget {
@@ -307,14 +308,32 @@ class _MembershipState extends State<Membership> {
                       ),
                     ),
                     onPressed: () async {
-                      /*Navigator.push(
+                      if (selectedPlanIndex == -1) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('No plan is selected'),
+                              content: const Text('Please select a plan.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        Navigator.push(
                           context,
-                        MaterialPageRoute(
-                          builder: (context) => Membership(
-                            username: _controllerUsername.text,
+                          MaterialPageRoute(
+                            builder: (context) => ThankYou(),
                           ),
-                        ),
-                      );*/
+                        );
+                      }
                     },
                     child: const Text(
                       "Get Now",

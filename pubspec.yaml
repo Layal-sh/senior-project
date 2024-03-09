@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   sqflite: ^2.3.2
-  path: 1.8.3
+  path: 1.9.0
   english_words: ^4.0.0
   provider: ^6.0.0
   image_picker: ^1.0.7
@@ -69,6 +69,7 @@ flutter:
 
   assets:
     - assets/splash.png
+    - assets/letsgo.png
     - assets/signin.png
     - assets/crown.png
     - assets/diamond.png
@@ -84,7 +85,7 @@ flutter:
     - assets/balah.jpeg
     - assets/Balilah.jpg
     - assets/bananas.jpg
-    - assets/Batata souffleh.jpg
+    - assets/Batata Souffleh.jpg
     - assets/Beans.jpg
     - assets/Beer.PNG
     - assets/berries.jpg
@@ -147,7 +148,7 @@ flutter:
     - assets/hummus.jpg
     - assets/ice cream.jpg
     - assets/ikidinyah.jpg
-    - assets/innab.jpg
+    - assets/innab.jpeg
     - assets/jam.jpg
     - assets/Jazarieh.jpg
     - assets/kaak long.JPG
@@ -158,7 +159,7 @@ flutter:
     - assets/ketchup.jpg
     - assets/kharma.jpeg
     - assets/khoboz arabi large.jpg
-    - assets/khooboz arabi small.jpeg
+    - assets/Khooboz arabi small.jpeg
     - assets/Kinders (x2).png
     - assets/kishk.jpg
     - assets/kitkat.jpeg
@@ -228,7 +229,7 @@ flutter:
     - assets/roasted nuts.jpg
     - assets/ruit cocktail.jpeg
     - assets/safarjal.jpeg
-    - assets/Sambousak Bi jobna.jpg
+    - assets/Sambousak Bi Jobna.jpg
     - assets/Smeed.jpg
     - assets/Snicker.jpeg
     - assets/Soft Drinks.jpg
@@ -287,6 +288,9 @@ flutter:
     - family: Sarabun
       fonts:
         - asset: fonts/Sarabun-Regular.ttf
+    - family: Inder
+      fonts:
+        - asset: fonts/Inder-Regular.ttf
         
           
         
