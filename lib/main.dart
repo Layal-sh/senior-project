@@ -21,7 +21,6 @@ Future<void> main() async {
   });
 
   logger.info('This is an info message');
-  sqfliteFfiInit();
 
   if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) {
     sqfliteFfiInit();
