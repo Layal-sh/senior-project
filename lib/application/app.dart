@@ -226,7 +226,8 @@ class _AddInputState extends State<AddInput> {
                             if (getChosenMeals().isNotEmpty &&
                                 _GlucoseController.text.isNotEmpty) {
                               int bolusCalculation = calculateDosage(
-                                  getChosenMeals(), glucoseLevel);
+                                  calculateTotalCarbs(getChosenMeals()),
+                                  glucoseLevel);
                               print(bolusCalculation);
                             } else {
                               print("NO WORKY");
