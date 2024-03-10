@@ -231,6 +231,14 @@ class DBHelper {
     return response;
   }
 
+  getMealsFromEntryID(int entryId) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+    SELECT * FROM "hasMeal" WHERE entryId = $entryId;
+    ''');
+    return response;
+  }
+
   //create hasMeal for each entry
   createMealForEntry(int entryId, int mealId, int qtty, int unit) async {
     Database? mydb = await db;
