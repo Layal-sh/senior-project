@@ -1,12 +1,16 @@
 import 'package:sugar_sense/Database/variables.dart';
 
-int calculateDosage(List<Map> meals, int bloodSugar) {
-  int ans = 0;
-  double totalCarbs = 0;
+int calculateDosage(double totalCarbs, double bloodSugar) {
+  double ans = 0;
+  ans += (bloodSugar - targetBloodSugar_) / insulinSensitivity_;
+  ans += ((totalCarbs / 15) * carbRatio_);
+  return (ans).round();
+}
+
+double calculateTotalCarbs(List<Map> meals) {
+  double ans = 0;
   for (Map meal in meals) {
-    totalCarbs += meal["carbohydrates"];
+    ans += meal["carbohydrates"] * meal["quantity"];
   }
-  ans += (bloodSugar - targetBloodSugar_) * insulinSensitivity_;
-  ans += ((totalCarbs / 15) * carbRatio_) as int;
   return ans;
 }

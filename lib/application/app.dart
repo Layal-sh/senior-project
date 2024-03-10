@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sugar_sense/application/meals.dart';
+import 'package:sugar_sense/AI/ai_functions.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -181,10 +182,11 @@ class AddInput extends StatefulWidget {
 
 class _AddInputState extends State<AddInput> {
   //const Settings({Key? key}) : super(key: key);
+  int bolusCalculation = 0;
   final TextEditingController _GlucoseController = TextEditingController();
   final TextEditingController _CarbController = TextEditingController();
   String? carbRatioSelected;
-  void calculateBolus() {}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -216,7 +218,21 @@ class _AddInputState extends State<AddInput> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            print(double.parse(_GlucoseController.text));
+                            double glucoseLevel =
+                                double.parse(_GlucoseController.text);
+                            print(glucoseLevel.runtimeType);
+                            if (getChosenMeals().isNotEmpty &&
+                                _GlucoseController.text.isNotEmpty) {
+                              int bolusCalculation = calculateDosage(
+                                  calculateTotalCarbs(getChosenMeals()),
+                                  glucoseLevel);
+                              print(bolusCalculation);
+                            } else {
+                              print("NO WORKY");
+                            }
+                          },
                           child: const Text(
                             'Save',
                             style: TextStyle(
@@ -237,18 +253,18 @@ class _AddInputState extends State<AddInput> {
                     ),
                     Container(
                       color: const Color.fromARGB(255, 232, 232, 232),
-                      child: const SizedBox(
+                      child: SizedBox(
                         //height: 100,
                         width: double.infinity,
 
                         child: Padding(
-                          padding: EdgeInsets.only(
+                          padding: const EdgeInsets.only(
                               left: 20.0, top: 10, bottom: 10, right: 30.0),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
+                              const Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
@@ -276,8 +292,8 @@ class _AddInputState extends State<AddInput> {
                                   Column(
                                     children: [
                                       Text(
-                                        "0",
-                                        style: TextStyle(
+                                        '$bolusCalculation',
+                                        style: const TextStyle(
                                           fontSize: 35,
                                           fontFamily: "Inter",
                                           color: Color.fromARGB(255, 0, 0, 0),
@@ -286,10 +302,10 @@ class _AddInputState extends State<AddInput> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 20,
                                   ),
-                                  Column(
+                                  const Column(
                                     children: [
                                       SizedBox(
                                         height: 15,

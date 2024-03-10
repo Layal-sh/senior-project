@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/app.dart';
 import 'package:sugar_sense/login/signup/login.dart';
@@ -9,6 +13,8 @@ import 'package:logging/logging.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 final logger = Logger('MyLogger');
+bool isNotMobile = false;
+String localhost = "";
 
 Future<void> main() async {
   Logger.root.level =
@@ -18,10 +24,14 @@ Future<void> main() async {
   });
 
   logger.info('This is an info message');
-  sqfliteFfiInit();
 
-  // Use sqflite_common_ffi's database factory
-  databaseFactory = databaseFactoryFfi;
+  isNotMobile = kIsWeb || (!Platform.isAndroid && !Platform.isIOS);
+  localhost = !isNotMobile ? "10.0.2.2" : "localhost";
+  if (isNotMobile) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
+
   WidgetsFlutterBinding.ensureInitialized();
   await loadPreferences();
   runApp(MyApp());

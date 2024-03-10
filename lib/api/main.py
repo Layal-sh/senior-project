@@ -55,10 +55,10 @@ class NewPatient(BaseModel):
 
 
 conn_str = ("DRIVER={ODBC Driver 17 for SQL Server};"
-            "Server=localhost;"
+            "Server=localhost;" #MSI22\SQLEXPRESS
             "Database=SugarSense;"
             "Trusted_Connection=yes;")
-cnxn = pyodbc.connect(conn_str)
+cnxn = pyodbc.connect(connection_string)
 cursor = cnxn.cursor()
 print(Pmodel.BaseModel)
 row = cursor.execute("Select * from Users WHERE userId = 1")
@@ -189,3 +189,12 @@ def checkEmail(email):
 def getUserById(username):
     row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(username,)).fetchone()
     return row
+
+@app.get("/MealComposition")
+async def get_mealComposition():
+    cursor.execute("Select * from MealComposition") 
+    rows = cursor.fetchall()
+    if rows is None:
+        return {"error": "No meals found"}
+    else:
+        return [{description[0]: column for description, column in zip(cursor.description, row)} for row in rows]

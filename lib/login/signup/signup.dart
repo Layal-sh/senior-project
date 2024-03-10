@@ -8,6 +8,7 @@ import 'package:sugar_sense/application/membership.dart';
 import 'package:http/http.dart' as http;
 import 'login.dart';
 import 'dart:convert';
+import 'package:sugar_sense/main.dart';
 
 bool isValidEmail(String email) {
   final RegExp regex =
@@ -547,7 +548,7 @@ class _SignUpState extends State<SignUp> {
                                   ),
                                 ),
                                 onPressed: () async {
-                                  /*DBHelper dbHelper = DBHelper.instance;
+                                  DBHelper dbHelper = DBHelper.instance;
                                   dbHelper.initialDb();
                                   String fname = _controllerFirstname.text;
                                   String lname = _controllerLastname.text;
@@ -591,7 +592,7 @@ class _SignUpState extends State<SignUp> {
                                       final response = await http
                                           .post(
                                             Uri.parse(
-                                                'http://127.0.0.1:8000/register'),
+                                                'http://$localhost:8000/register'),
                                             headers: <String, String>{
                                               'Content-Type':
                                                   'application/json; charset=UTF-8',
@@ -893,7 +894,7 @@ class _SignUpState extends State<SignUp> {
                                                 'The server did not respond')),
                                       );
                                     }
-                                  }*/
+                                  }
                                   bool accept = await showModalBottomSheet(
                                     context: context,
                                     isScrollControlled: true,

@@ -200,7 +200,7 @@ class DBHelper {
     List<Map> response = await mydb!.rawQuery('''
     SELECT * FROM "Meals" WHERE mealId = $id;
     ''');
-    return response[0];
+    return response;
   }
 
   updateMealById(int mealId, double carbs, double certainty) async {
@@ -223,11 +223,11 @@ class DBHelper {
   }
 
   Future<void> syncMeals() async {
-    logger.info("we syncin frfr");
+    logger.info("Syncing meals...");
     DBHelper dbHelper = DBHelper.instance;
 
 // Fetch data from the server
-    var response = await http.get(Uri.parse('http://localhost:8000/meals'));
+    var response = await http.get(Uri.parse('http://$localhost:8000/meals'));
     if (response.statusCode == 200) {
       // If the server returns a 200 OK response, parse the JSON.
       var meals = jsonDecode(response.body);
@@ -239,10 +239,41 @@ class DBHelper {
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
       }
+      logger.info("Meals have been synced successfully.");
       // Now you can use meals to insert data into the database
     } else {
       // If the server returns an error response, throw an exception.
       throw Exception('Failed to load meals');
+    }
+  }
+
+  Future<void> syncMealComposition() async {
+    logger.info("Syncing meal compositions...");
+    DBHelper dbHelper = DBHelper.instance;
+    // Fetch the MealComposition data from the server
+    var response =
+        await http.get(Uri.parse('http://$localhost:8000/MealComposition'));
+
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, parse the JSON
+      var mealCompositionData = jsonDecode(response.body);
+
+      // Get a reference to the database
+      final Database? db = await dbHelper.db;
+
+      // For each meal composition in the data, update the database
+      for (var mealComposition in mealCompositionData) {
+        await db?.insert(
+          'MealComposition',
+          mealComposition,
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+      logger.info("Meal compositions have been synced successfully.");
+    } else {
+      // If the server returns a response with a status code other than 200,
+      // throw an exception
+      throw Exception('Failed to load meal composition');
     }
   }
 }
