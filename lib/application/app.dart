@@ -228,6 +228,12 @@ class _AddInputState extends State<AddInput> {
                               int bolusCalculation = calculateDosage(
                                   calculateTotalCarbs(getChosenMeals()),
                                   glucoseLevel);
+
+                              print('Chosen Meals:');
+                              print(chosenMeals);
+                              print('Total Carbs:');
+                              print(calculateTotalCarbs(getChosenMeals()));
+                              print('Bolus Calculation:');
                               print(bolusCalculation);
                             } else {
                               print("NO WORKY");

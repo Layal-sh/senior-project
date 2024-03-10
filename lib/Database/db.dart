@@ -164,6 +164,25 @@ class DBHelper {
     return response;
   }
 
+  selectAllMealComposition() async {
+    Database? mydb = await db;
+    List<Map> response =
+        await mydb!.rawQuery('''select * from MealComposition''');
+    print(response);
+    return response;
+  }
+
+  selectMealCompositionById(int id) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery(
+        '''select c.childMealID, m.mealName, m.carbohydrates, c.quantity
+	from Meals as m, MealComposition as c
+	where m.mealId=c.childMealID and c.parentMealID=$id''');
+    //display the meal composition
+    print(response);
+    return response;
+  }
+
   getEntryId(int pid, String date) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
