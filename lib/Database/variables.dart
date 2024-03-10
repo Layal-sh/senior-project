@@ -19,9 +19,9 @@ Future<void> savePreferences() async {
 Future<void> loadPreferences() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  targetBloodSugar_ = prefs.getInt('targetBloodSugar') ?? 0;
-  insulinSensitivity_ = prefs.getInt('insulinSensitivity') ?? 0;
-  carbRatio_ = prefs.getDouble('carbRatio') ?? 0;
+  targetBloodSugar_ = prefs.getInt('targetBloodSugar') ?? 100;
+  insulinSensitivity_ = prefs.getInt('insulinSensitivity') ?? 20;
+  carbRatio_ = prefs.getDouble('carbRatio') ?? 3;
   username_ = prefs.getString('username') ?? "";
   firstName_ = prefs.getString('firstName') ?? "";
   lastName_ = prefs.getString('lastName') ?? "";
@@ -32,9 +32,9 @@ Future<void> loadPreferences() async {
   profilePicture_ = prefs.getString('profilePicture') ?? "";
 }
 
-int targetBloodSugar_ = 0;
-int insulinSensitivity_ = 0;
-double carbRatio_ = 0;
+int targetBloodSugar_ = 100;
+int insulinSensitivity_ = 20;
+double carbRatio_ = 3;
 String username_ = "";
 String firstName_ = "";
 String lastName_ = "";
