@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/app.dart';
 import 'package:sugar_sense/login/signup/login.dart';
@@ -26,7 +27,6 @@ Future<void> main() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
   }
-
   WidgetsFlutterBinding.ensureInitialized();
   await loadPreferences();
   runApp(MyApp());

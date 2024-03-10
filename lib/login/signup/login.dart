@@ -264,7 +264,7 @@ class _LoginState extends State<Login> {
                                 final response = await http
                                     .post(
                                       Uri.parse(
-                                          'http://127.0.0.1:8000/authenticate'),
+                                          'http://127.0.0.1:8000/authenticate'), //10.0.2.2
                                       headers: <String, String>{
                                         'Content-Type':
                                             'application/json; charset=UTF-8',
@@ -281,11 +281,10 @@ class _LoginState extends State<Login> {
                                       "syncing meals fro the server to the local database");
                                   DBHelper dbHelper = DBHelper.instance;
                                   await dbHelper.syncMeals();
-                                logger.info(
-                                      "synced meals successfully");
-                                 
+                                  logger.info("synced meals successfully");
+
                                   // dbHelper.selectAllMeals();
-                                 // print(dbHelper.selectAllMeals());
+                                  // print(dbHelper.selectAllMeals());
 
                                   // ignore: use_build_context_synchronously
                                   Navigator.push(
