@@ -547,7 +547,7 @@ class _SignUpState extends State<SignUp> {
                                   ),
                                 ),
                                 onPressed: () async {
-                                  /*DBHelper dbHelper = DBHelper.instance;
+                                  DBHelper dbHelper = DBHelper.instance;
                                   dbHelper.initialDb();
                                   String fname = _controllerFirstname.text;
                                   String lname = _controllerLastname.text;
@@ -893,7 +893,7 @@ class _SignUpState extends State<SignUp> {
                                                 'The server did not respond')),
                                       );
                                     }
-                                  }*/
+                                  }
                                   bool accept = await showModalBottomSheet(
                                     context: context,
                                     isScrollControlled: true,
