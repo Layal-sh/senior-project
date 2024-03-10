@@ -591,7 +591,7 @@ class _SignUpState extends State<SignUp> {
                                       final response = await http
                                           .post(
                                             Uri.parse(
-                                                'http://127.0.0.1:8000/register'),
+                                                'http://10.0.2.2:8000/register'),
                                             headers: <String, String>{
                                               'Content-Type':
                                                   'application/json; charset=UTF-8',

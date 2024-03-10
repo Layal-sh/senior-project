@@ -28,8 +28,8 @@ server = 'sugarsense.database.windows.net'
 database = 'sugarsensedb'
 username = 'sugaradmin'
 password = 'SUG@Rs!!7891'
-driver= '{ODBC Driver 17 for SQL Server}'
-#driver= '{ODBC Driver 18 for SQL Server}'
+#driver= '{ODBC Driver 17 for SQL Server}'
+driver= '{ODBC Driver 18 for SQL Server}'
 
 connection_string = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password};'
 
@@ -58,7 +58,7 @@ conn_str = ("DRIVER={ODBC Driver 17 for SQL Server};"
             "Server=localhost;" #MSI22\SQLEXPRESS
             "Database=SugarSense;"
             "Trusted_Connection=yes;")
-cnxn = pyodbc.connect(conn_str)
+cnxn = pyodbc.connect(connection_string)
 cursor = cnxn.cursor()
 print(Pmodel.BaseModel)
 row = cursor.execute("Select * from Users WHERE userId = 1")

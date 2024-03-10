@@ -27,6 +27,7 @@ Future<void> main() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
   }
+
   WidgetsFlutterBinding.ensureInitialized();
   await loadPreferences();
   runApp(MyApp());
