@@ -8,6 +8,7 @@ import 'package:sugar_sense/application/membership.dart';
 import 'package:http/http.dart' as http;
 import 'login.dart';
 import 'dart:convert';
+import 'package:sugar_sense/main.dart';
 
 bool isValidEmail(String email) {
   final RegExp regex =
@@ -591,7 +592,7 @@ class _SignUpState extends State<SignUp> {
                                       final response = await http
                                           .post(
                                             Uri.parse(
-                                                'http://10.0.2.2:8000/register'),
+                                                'http://$localhost:8000/register'),
                                             headers: <String, String>{
                                               'Content-Type':
                                                   'application/json; charset=UTF-8',

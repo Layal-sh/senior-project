@@ -227,7 +227,7 @@ class DBHelper {
     DBHelper dbHelper = DBHelper.instance;
 
 // Fetch data from the server
-    var response = await http.get(Uri.parse('http://10.0.2.2:8000/meals'));
+    var response = await http.get(Uri.parse('http://$localhost:8000/meals'));
     if (response.statusCode == 200) {
       // If the server returns a 200 OK response, parse the JSON.
       var meals = jsonDecode(response.body);
@@ -252,7 +252,7 @@ class DBHelper {
     DBHelper dbHelper = DBHelper.instance;
     // Fetch the MealComposition data from the server
     var response =
-        await http.get(Uri.parse('http://10.0.2.2:8000/MealComposition'));
+        await http.get(Uri.parse('http://$localhost:8000/MealComposition'));
 
     if (response.statusCode == 200) {
       // If the server returns a 200 OK response, parse the JSON
