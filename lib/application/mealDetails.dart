@@ -35,7 +35,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
             fontWeight: FontWeight.w900,
           ),
         ),
-        actions: [
+        /*actions: [
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: IconButton(
@@ -48,7 +48,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
               },
             ),
           ),
-        ],
+        ],*/
       ),
       body: Hero(
         tag: 'meal${widget.meal.name}',
@@ -75,9 +75,9 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
               ),
               Padding(
                 padding: const EdgeInsets.only(
-                  left: 20,
+                  left: 40,
                   right: 20,
-                  top: 10,
+                  top: 20,
                 ),
                 child: Text(
                   widget.meal.name,
@@ -94,7 +94,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
               ),
               const Padding(
                 padding: EdgeInsets.only(
-                  left: 20,
+                  left: 40,
                   right: 20,
                 ),
                 child: Text(

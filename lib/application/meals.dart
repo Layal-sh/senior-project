@@ -209,7 +209,7 @@ class MealBox extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            height: 120,
+            height: 90,
             child: FutureBuilder<ByteData>(
               future: DefaultAssetBundle.of(context).load(meal.imageUrl),
               builder:
