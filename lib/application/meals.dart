@@ -187,6 +187,7 @@ Function addToChosenMeals = (int id, double quantity) async {
     'imageUrl': imageUrl,
     'id': id,
     'carbohydrates': meal[0]['carbohydrates'],
+    'certainty': meal[0]['certainty'],
     'quantity': quantity
   };
 
