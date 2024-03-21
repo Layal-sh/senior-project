@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sugar_sense/application/meals.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 
@@ -182,12 +183,38 @@ class AddInput extends StatefulWidget {
 
 class _AddInputState extends State<AddInput> {
   //const Settings({Key? key}) : super(key: key);
-  int bolusCalculation = 0;
+
   final TextEditingController _GlucoseController = TextEditingController();
   final TextEditingController _CarbController = TextEditingController();
   String? carbRatioSelected;
   ValueNotifier<double> glucoseLevelNotifier = ValueNotifier<double>(0.0);
   ValueNotifier<double> carbsTotalNotifier = ValueNotifier<double>(0.0);
+  ValueNotifier<double> bolusCalculation = ValueNotifier<double>(0);
+  void updateBolusCalculation() {
+    if (_GlucoseController.text.isNotEmpty) {
+      /* &&
+        _CarbController.text.isNotEmpty && getChosenMeals().isNotEmpty*/
+      double glucoseLevel = double.parse(_GlucoseController.text);
+      double totalCarbs = _CarbController.text.isNotEmpty
+          ? double.parse(_CarbController.text)
+          : 0.0;
+      bolusCalculation.value = calculateDosage(totalCarbs, glucoseLevel);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _GlucoseController.addListener(updateBolusCalculation);
+    _CarbController.addListener(updateBolusCalculation);
+  }
+
+  @override
+  void dispose() {
+    _GlucoseController.removeListener(updateBolusCalculation);
+    _CarbController.removeListener(updateBolusCalculation);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -221,11 +248,25 @@ class _AddInputState extends State<AddInput> {
                       children: [
                         InkWell(
                           onTap: () {
-                            double glucoseLevel =
+                            ValueListenableBuilder<double>(
+                              valueListenable: bolusCalculation,
+                              builder: (context, value, child) {
+                                return Text(
+                                  value.toString(),
+                                  style: const TextStyle(
+                                    fontSize: 35,
+                                    fontFamily: "Inter",
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                );
+                              },
+                            );
+                            /*double glucoseLevel =
                                 double.parse(_GlucoseController.text);
                             if (getChosenMeals().isNotEmpty &&
                                 _GlucoseController.text.isNotEmpty) {
-                              int bolusCalculation = calculateDosage(
+                              bolusCalculation = calculateDosage(
                                   calculateTotalCarbs(getChosenMeals()),
                                   glucoseLevel);
 
@@ -237,7 +278,7 @@ class _AddInputState extends State<AddInput> {
                               print(bolusCalculation);
                             } else {
                               print("NO WORKY");
-                            }
+                            }*/
                           },
                           child: const Text(
                             'Save',
@@ -297,14 +338,20 @@ class _AddInputState extends State<AddInput> {
                                 children: [
                                   Column(
                                     children: [
-                                      Text(
-                                        '$bolusCalculation',
-                                        style: const TextStyle(
-                                          fontSize: 35,
-                                          fontFamily: "Inter",
-                                          color: Color.fromARGB(255, 0, 0, 0),
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                      ValueListenableBuilder<double>(
+                                        valueListenable: bolusCalculation,
+                                        builder: (context, value, child) {
+                                          return Text(
+                                            value.toString(),
+                                            style: const TextStyle(
+                                              fontSize: 35,
+                                              fontFamily: "Inter",
+                                              color:
+                                                  Color.fromARGB(255, 0, 0, 0),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ],
                                   ),
@@ -398,7 +445,13 @@ class _AddInputState extends State<AddInput> {
                                 height: 20,
                                 child: TextFormField(
                                   controller: _GlucoseController,
-                                  keyboardType: TextInputType.number,
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                          signed: false),
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'[0-9.]')),
+                                  ],
                                   decoration: const InputDecoration(
                                     hintText: '0',
                                     border: UnderlineInputBorder(

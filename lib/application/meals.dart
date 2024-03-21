@@ -195,128 +195,242 @@ Function addToChosenMeals = (int id, double quantity) async {
   print(chosenMeals);
 };
 
-class MealBox extends StatelessWidget {
+class MealBox extends StatefulWidget {
   final Meal meal;
 
   const MealBox({required this.meal});
+  @override
+  _MealBoxState createState() => _MealBoxState();
+}
 
+class _MealBoxState extends State<MealBox> {
+  String dropdownValue = 'One';
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5), // Change this value as needed
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 90,
-            child: FutureBuilder<ByteData>(
-              future: DefaultAssetBundle.of(context).load(meal.imageUrl),
-              builder:
-                  (BuildContext context, AsyncSnapshot<ByteData> snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasError) {
-                    //print('No');
-                    return ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(5),
-                        topRight: Radius.circular(5),
-                      ),
-                      child: Image.asset(
-                        'assets/AddDish.png',
-                        width: MediaQuery.of(context).size.width,
-                        fit: BoxFit.cover,
-                      ),
-                    );
-                  } else {
-                    return ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(5),
-                        topRight: Radius.circular(5),
-                      ),
-                      child: Image.asset(
-                        meal.imageUrl,
-                        width: MediaQuery.of(context).size.width,
-                        fit: BoxFit.cover,
-                      ),
-                    );
-                  }
-                } else {
-                  return const CircularProgressIndicator(); // Show a loading spinner while waiting for the asset to load
-                }
-              },
-            ),
-          ),
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 8,
-                  right: 8,
-                ),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    child: Text(
-                      meal.name,
-                      softWrap: true,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 38, 20, 84),
-                        fontSize: 35,
-                        fontFamily: 'Ruda',
-                        letterSpacing: -0.75,
-                        fontWeight: FontWeight.w600,
-                      ),
+    return GestureDetector(
+      onTap: () async {
+        final TextEditingController quantityController =
+            TextEditingController();
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Center(
+              child: SingleChildScrollView(
+                child: AlertDialog(
+                  title: const Text(
+                    'Enter quantity',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      fontWeight: FontWeight.w600,
                     ),
+                  ),
+                  content: Column(
+                    //mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment
+                        .start, // This makes the column height wrap its content
+                    children: <Widget>[
+                      Text(
+                        widget.meal.name,
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 45, 170, 178),
+                          fontSize: 15,
+                        ),
+                      ),
+                      const Text(
+                        'Serving:',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 45, 170, 178),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 2,
+                            child: TextField(
+                              controller: quantityController,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                hintText: "Enter quantity",
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: DropdownButton<String>(
+                              value: dropdownValue,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  dropdownValue = newValue ?? dropdownValue;
+                                });
+                              },
+                              items: <String>[
+                                'One',
+                                'Two',
+                                'Three'
+                              ].map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                quantityController.clear();
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                      // Add more Text widgets for more lines
+                    ],
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: const Text('Cancel'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    TextButton(
+                      child: const Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop(quantityController.text);
+                      },
+                    ),
+                  ],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
                   ),
                 ),
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          pageBuilder:
-                              (context, animation, secondaryAnimation) =>
-                                  MealDetailsPage(
-                            meal: meal,
-                          ),
-                          transitionsBuilder:
-                              (context, animation, secondaryAnimation, child) {
-                            return FadeTransition(
-                              opacity: animation,
-                              child: child,
-                            );
-                          },
+            );
+          },
+        );
+      },
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5), // Change this value as needed
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 90,
+              child: FutureBuilder<ByteData>(
+                future:
+                    DefaultAssetBundle.of(context).load(widget.meal.imageUrl),
+                builder:
+                    (BuildContext context, AsyncSnapshot<ByteData> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasError) {
+                      //print('No');
+                      return ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(5),
+                          topRight: Radius.circular(5),
+                        ),
+                        child: Image.asset(
+                          'assets/AddDish.png',
+                          width: MediaQuery.of(context).size.width,
+                          fit: BoxFit.cover,
                         ),
                       );
-                    },
-                    child: Hero(
-                      tag: 'meal${meal.name}',
-                      child: const CircleAvatar(
-                        radius: 11,
-                        backgroundColor: Color.fromARGB(170, 64, 205, 215),
-                        child: Icon(
-                          Icons.arrow_forward_ios,
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          size: 14,
+                    } else {
+                      return ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(5),
+                          topRight: Radius.circular(5),
+                        ),
+                        child: Image.asset(
+                          widget.meal.imageUrl,
+                          width: MediaQuery.of(context).size.width,
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    }
+                  } else {
+                    return const CircularProgressIndicator(); // Show a loading spinner while waiting for the asset to load
+                  }
+                },
+              ),
+            ),
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 8,
+                    right: 8,
+                  ),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      child: Text(
+                        widget.meal.name,
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 38, 20, 84),
+                          fontSize: 35,
+                          fontFamily: 'Ruda',
+                          letterSpacing: -0.75,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          //meal name
-        ],
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    MealDetailsPage(
+                              meal: widget.meal,
+                            ),
+                            transitionsBuilder: (context, animation,
+                                secondaryAnimation, child) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                      child: Hero(
+                        tag: 'meal${widget.meal.name}',
+                        child: const CircleAvatar(
+                          radius: 11,
+                          backgroundColor: Color.fromARGB(170, 64, 205, 215),
+                          child: Icon(
+                            Icons.arrow_forward_ios,
+                            color: Color.fromARGB(255, 255, 255, 255),
+                            size: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            //meal name
+          ],
+        ),
       ),
     );
   }
