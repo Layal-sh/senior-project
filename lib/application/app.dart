@@ -186,6 +186,8 @@ class _AddInputState extends State<AddInput> {
   final TextEditingController _GlucoseController = TextEditingController();
   final TextEditingController _CarbController = TextEditingController();
   String? carbRatioSelected;
+  ValueNotifier<double> glucoseLevelNotifier = ValueNotifier<double>(0.0);
+  ValueNotifier<double> carbsTotalNotifier = ValueNotifier<double>(0.0);
 
   @override
   Widget build(BuildContext context) {

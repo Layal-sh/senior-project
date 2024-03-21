@@ -249,6 +249,47 @@ class DBHelper {
     return response;
   }
 
+//get meal id by name
+  getMealIdByName(String name) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+    SELECT mealId FROM "Meals" WHERE mealName = $name;
+    ''');
+    return response[0]['mealId'];
+  }
+
+//Create a new meal and insert it into the database after checking if it already exists
+  createNewMeal(
+      String name, double carbs, int unit, String picture, String tags) async {
+    Database? mydb = await db;
+    if (getMealIdByName(name) != Null) {
+      return -1;
+    } else {
+      int response = await mydb!.rawInsert(
+          '''INSERT INTO Meals(mealName,carbohydrates,unit,mealPicture,tags) VALUES($name,$carbs,$unit,$picture,$tags);''');
+      return getMealIdByName(name);
+    }
+  }
+
+//Create meal composition of a parent Meal and a child meal
+  createMealComposition(
+      int parentMealId, int childMealId, int unit, double quantity) async {
+    Database? mydb = await db;
+    int response = await mydb!.rawInsert('''
+  INSERT INTO MealComposition(parentMealId,childMealId,quantity,unit)
+  VALUES($parentMealId,$childMealId,$quantity,$unit);
+  ''');
+    return response;
+  }
+
+//Creates a new edited meal and makes its meal composition(The child meal should include )
+  editNewMeal(int parentMealId, List<Map> childMeals) {
+    childMeals.forEach((element) {
+      createMealComposition(parentMealId, element['mealId'],
+          element['quantity'], element['unit']);
+    });
+  }
+
   Future<void> syncMeals() async {
     logger.info("Syncing meals...");
     DBHelper dbHelper = DBHelper.instance;
