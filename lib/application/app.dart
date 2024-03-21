@@ -219,10 +219,8 @@ class _AddInputState extends State<AddInput> {
                       children: [
                         InkWell(
                           onTap: () {
-                            print(double.parse(_GlucoseController.text));
                             double glucoseLevel =
                                 double.parse(_GlucoseController.text);
-                            print(glucoseLevel.runtimeType);
                             if (getChosenMeals().isNotEmpty &&
                                 _GlucoseController.text.isNotEmpty) {
                               int bolusCalculation = calculateDosage(
