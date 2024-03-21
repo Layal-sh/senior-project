@@ -27,7 +27,7 @@ class DBHelper {
     String DbPath = await getDatabasesPath();
     String path = join(DbPath, 'SugarSense.db');
     Database database = await openDatabase(path,
-        onCreate: _onCreate, version: 4, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 5, onUpgrade: _onUpgrade);
     return database;
   }
 
@@ -51,7 +51,8 @@ class DBHelper {
     unit INTEGER NOT NULL,
     carbohydrates REAL NOT NULL,
     tags TEXT NULL,
-    certainty REAL NULL
+    certainty REAL NOT NULL,
+    frequency INTEGER NOT NULL
   );
   ''');
     await db.execute('''
@@ -260,13 +261,20 @@ class DBHelper {
 
 //Create a new meal and insert it into the database after checking if it already exists
   createNewMeal(
-      String name, double carbs, int unit, String picture, String tags) async {
+    String name,
+    double carbs,
+    int unit,
+    String picture,
+    String tags,
+  ) async {
+    double certainty = 0;
+    double frequency = 0;
     Database? mydb = await db;
     if (getMealIdByName(name) != Null) {
       return -1;
     } else {
       int response = await mydb!.rawInsert(
-          '''INSERT INTO Meals(mealName,carbohydrates,unit,mealPicture,tags) VALUES($name,$carbs,$unit,$picture,$tags);''');
+          '''INSERT INTO Meals(mealName,carbohydrates,unit,mealPicture,tags,certainty) VALUES($name,$carbs,$unit,$picture,$tags,$certainty,$frequency);''');
       return getMealIdByName(name);
     }
   }
@@ -282,11 +290,22 @@ class DBHelper {
     return response;
   }
 
-//Creates a new edited meal and makes its meal composition(The child meal should include )
+//Creates a new edited meal and makes its meal composition(The child meal should include new parent meal id)
+//child meals: id, quantity, unit
   editNewMeal(int parentMealId, List<Map> childMeals) {
+    List<Map> response = getMealById(parentMealId);
+
+    createNewMeal(
+        response[0]['mealName'],
+        response[0]['carbohydrates'],
+        response[0]['unit'],
+        response[0]['picture'],
+        response[0]['tags'] + ', myMeals');
+    int newId = getMealIdByName(response[0]['mealName']);
+
     childMeals.forEach((element) {
-      createMealComposition(parentMealId, element['mealId'],
-          element['quantity'], element['unit']);
+      createMealComposition(
+          newId, element['mealId'], element['quantity'], element['unit']);
     });
   }
 
@@ -343,5 +362,65 @@ class DBHelper {
       // throw an exception
       throw Exception('Failed to load meal composition');
     }
+  }
+
+  searchMeal(String input) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+    SELECT mealId FROM "Meals" WHERE mealName = $input OR tags LIKE '%$input%';
+    ''');
+    return response;
+  }
+
+/*
+1 -> drinks
+2 -> sweets & snacks
+3 -> pastries
+4 -> dairy products
+5 -> fruits
+6 -> lebanese dishes
+7 -> arabic desserts
+8 -> myMeals
+*/
+  chooseCategory(int input) {
+    String response = "";
+    switch (input) {
+      case 1:
+        response = "drinks";
+        break;
+      case 2:
+        response = "sweet & snacks";
+        break;
+      case 3:
+        response = "bread & pastries";
+        break;
+      case 4:
+        response = "dairy products";
+        break;
+      case 5:
+        response = "fruits";
+        break;
+      case 6:
+        response = "lebanese dishes";
+        break;
+      case 7:
+        response = "arabic desserts";
+        break;
+      case 8:
+        response = "myMeals";
+        break;
+      default:
+        return "";
+    }
+    return searchMeal(response);
+  }
+
+  updateFrequency(int mealId) async {
+    Database? mydb = await db;
+    int response = await mydb!.rawUpdate('''
+    UPDATE Meals SET frequency = frequency + 1;
+    WHERE mealId = $mealId
+    ''');
+    return response;
   }
 }
