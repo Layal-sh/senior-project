@@ -192,7 +192,7 @@ class _AddInputState extends State<AddInput> {
   String? carbRatioSelected;
   ValueNotifier<double> glucoseLevelNotifier = ValueNotifier<double>(0.0);
   ValueNotifier<double> carbsTotalNotifier = ValueNotifier<double>(0.0);
-  ValueNotifier<double> bolusCalculation = ValueNotifier<double>(0);
+  ValueNotifier<int> bolusCalculation = ValueNotifier<int>(0);
   void updateBolusCalculation() {
     if (_GlucoseController.text.isNotEmpty) {
       /* &&
@@ -258,7 +258,7 @@ class _AddInputState extends State<AddInput> {
                       children: [
                         InkWell(
                           onTap: () {
-                            ValueListenableBuilder<double>(
+                            ValueListenableBuilder<int>(
                               valueListenable: bolusCalculation,
                               builder: (context, value, child) {
                                 return Text(
@@ -348,7 +348,7 @@ class _AddInputState extends State<AddInput> {
                                 children: [
                                   Column(
                                     children: [
-                                      ValueListenableBuilder<double>(
+                                      ValueListenableBuilder<int>(
                                         valueListenable: bolusCalculation,
                                         builder: (context, value, child) {
                                           return Text(
