@@ -198,7 +198,9 @@ class _AddInputState extends State<AddInput> {
       double totalCarbs = _CarbController.text.isNotEmpty
           ? double.parse(_CarbController.text)
           : 0.0;
-      bolusCalculation.value = calculateDosage(totalCarbs, glucoseLevel);
+      List<Map> meals = getChosenMeals();
+      double totalCarbs_ = calculateTotalCarbs(meals);
+      bolusCalculation.value = calculateDosage(totalCarbs_, glucoseLevel) + 0;
     }
   }
 
