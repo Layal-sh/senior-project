@@ -51,7 +51,9 @@ class NewPatient(BaseModel):
     doctorID: int
     insulinSensivity: float
     targetBloodGlucose : int
-    carbRatio : float
+    carbRatio1 : float
+    carbRatio2 : float
+    carbRatio3 : float
 
 
 conn_str = ("DRIVER={ODBC Driver 17 for SQL Server};"
@@ -164,10 +166,10 @@ async def registerfunction(user: NewUser):
 async def registerfunction(user: NewPatient):
     try:
         id = getUserById(user.username)
-        cursor.execute("INSERT INTO Patients (patientID, doctorID, insulinSensivity, targetBloodGlucose , carbRatio) VALUES (?, ?, ?, ?, ?)",
-                       (id, user.doctorID, user.insulinSensivity, user.targetBloodGlucose, user.carbRatio))
+        cursor.execute("INSERT INTO Patients (patientID, doctorID, insulinSensivity, targetBloodGlucose , carbRatio) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                       (id, user.doctorID, user.insulinSensivity, user.targetBloodGlucose, user.carbRatio1, user.carbRatio2, user.carbRatio3))
         cnxn.commit()
-        return {"message": "Registered successfully"}
+        return {"message": "Registered patient successfully"}
     except HTTPException as e:
         raise e
     except Exception as e:

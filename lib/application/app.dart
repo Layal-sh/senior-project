@@ -207,9 +207,8 @@ class _AddInputState extends State<AddInput> {
       bolusCalculation.value = bolusCalculationResult + 0;
       DBHelper dbHelper = DBHelper.instance;
       DateTime now = DateTime.now();
-      String date = DateFormat('yyyy-MM-dd – kk:mm').format(now);
-      dbHelper.createEntry(
-          pid_, glucoseLevel, bolusCalculationResult, date, meals);
+      String date = DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(now);
+      dbHelper.createEntry(glucoseLevel, bolusCalculationResult, date, meals);
     }
   }
 
