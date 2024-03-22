@@ -615,7 +615,7 @@ class _SignUpState extends State<SignUp> {
                                           )
                                           .timeout(const Duration(seconds: 10));
                                       if (response.statusCode == 200) {
-                                        //await dbHelper.syncMeals();
+                                        await dbHelper.syncMeals();
                                         //List<Map> m=dbHelper.selectAllMeals();
                                         //m.forEach(print);
 
