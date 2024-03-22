@@ -20,6 +20,7 @@ Future<void> loadPreferences() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
   targetBloodSugar_ = prefs.getInt('targetBloodSugar') ?? 100;
+  pid_ = prefs.getInt('pid_') ?? 0;
   insulinSensitivity_ = prefs.getInt('insulinSensitivity') ?? 20;
   carbRatio_ = prefs.getDouble('carbRatio') ?? 3;
   username_ = prefs.getString('username') ?? "";
@@ -43,3 +44,4 @@ bool signedIn_ = false;
 String doctorCode_ = "";
 String phoneNumber_ = "";
 String profilePicture_ = "";
+int pid_ = 0;
