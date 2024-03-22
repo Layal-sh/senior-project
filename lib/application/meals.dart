@@ -28,7 +28,7 @@ class _MealsState extends State<Meals> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => {
                   Navigator.of(context).pop(),
                 }),
@@ -216,6 +216,7 @@ class _MealBoxState extends State<MealBox> {
           builder: (BuildContext context) {
             return Center(
               child: SingleChildScrollView(
+                reverse: true,
                 child: AlertDialog(
                   title: const Text(
                     'Enter quantity',
@@ -247,45 +248,27 @@ class _MealBoxState extends State<MealBox> {
                       Row(
                         children: <Widget>[
                           Expanded(
-                            flex: 2,
+                            flex: 3,
                             child: TextField(
                               controller: quantityController,
                               keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 hintText: "Enter quantity",
+                                suffixIcon: IconButton(
+                                  icon: const Icon(
+                                    Icons.clear,
+                                  ),
+                                  onPressed: () {
+                                    quantityController.clear();
+                                  },
+                                ),
                               ),
                             ),
                           ),
                           Expanded(
                             flex: 1,
-                            child: DropdownButton<String>(
-                              value: dropdownValue,
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  dropdownValue = newValue ?? dropdownValue;
-                                });
-                              },
-                              items: <String>[
-                                'One',
-                                'Two',
-                                'Three'
-                              ].map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            ),
+                            child: CustomDropdown(),
                           ),
-                          Expanded(
-                            flex: 1,
-                            child: IconButton(
-                              icon: const Icon(Icons.clear),
-                              onPressed: () {
-                                quantityController.clear();
-                              },
-                            ),
-                          )
                         ],
                       ),
                       // Add more Text widgets for more lines
@@ -293,13 +276,23 @@ class _MealBoxState extends State<MealBox> {
                   ),
                   actions: <Widget>[
                     TextButton(
-                      child: const Text('Cancel'),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 45, 170, 178),
+                        ),
+                      ),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
                     ),
                     TextButton(
-                      child: const Text('OK'),
+                      child: const Text(
+                        'OK',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 45, 170, 178),
+                        ),
+                      ),
                       onPressed: () {
                         Navigator.of(context).pop(quantityController.text);
                       },
@@ -432,6 +425,55 @@ class _MealBoxState extends State<MealBox> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class CustomDropdown extends StatefulWidget {
+  @override
+  _CustomDropdownState createState() => _CustomDropdownState();
+}
+
+class _CustomDropdownState extends State<CustomDropdown> {
+  String dropdownValue = 'g';
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<String>(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(
+            width: 36,
+            child: Center(
+              child: Text(
+                dropdownValue,
+                overflow: TextOverflow.fade,
+                softWrap: false,
+                style: const TextStyle(
+                  color: Color.fromARGB(255, 38, 20, 84),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+          const Icon(Icons.arrow_drop_down, size: 30),
+        ],
+      ),
+      onSelected: (String value) {
+        setState(() {
+          dropdownValue = value;
+        });
+      },
+      itemBuilder: (BuildContext context) {
+        return ['g', 'kg', 'cups'].map((String value) {
+          return PopupMenuItem<String>(
+            value: value,
+            child: Center(child: Text(value)),
+          );
+        }).toList();
+      },
     );
   }
 }

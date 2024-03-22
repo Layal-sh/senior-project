@@ -13,7 +13,7 @@ class MealDetailsPage extends StatefulWidget {
 
 class _MealDetailsPageState extends State<MealDetailsPage> {
   DBHelper db = DBHelper.instance;
-
+  String dropdownValue = 'Grams';
   final TextEditingController _numberOfMeal = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -154,7 +154,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
               child: Row(
                 children: [
                   SizedBox(
-                    width: MediaQuery.of(context).size.width / 3,
+                    width: MediaQuery.of(context).size.width / 3.4,
                     height: 25,
                     child: TextFormField(
                       controller: _numberOfMeal,
@@ -184,59 +184,92 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                   const SizedBox(
                     width: 10,
                   ),
-                  const Text(
-                    "grams",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color.fromARGB(255, 38, 20, 84),
-                        fontWeight: FontWeight.w400),
-                  ),
+                  PopupMenuButton<String>(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: 50,
+                          child: Text(
+                            dropdownValue,
+                            overflow: TextOverflow.fade,
+                            softWrap: false,
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 38, 20, 84),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        const Icon(Icons.arrow_drop_down, size: 30),
+                      ],
+                    ),
+                    onSelected: (String value) {
+                      setState(() {
+                        dropdownValue = value;
+                      });
+                    },
+                    itemBuilder: (BuildContext context) {
+                      return ['Grams', 'Kilograms', 'Pounds']
+                          .map((String value) {
+                        return PopupMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList();
+                    },
+                  )
                 ],
               ),
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 30, 203, 215),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+            SizedBox(
+              width: 135,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(1),
+                  backgroundColor: const Color.fromARGB(255, 30, 203, 215),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
-              ),
-              child: const Text(
-                'Add To Meals',
-                style: TextStyle(
-                  color: Color.fromARGB(255, 255, 255, 255),
-                  fontSize: 15,
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w600,
+                child: const Text(
+                  'Add To Meals',
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    fontSize: 15,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              onPressed: () async {
-                print("adding to meals");
-                try {
-                  if (double.parse(_numberOfMeal.text) <= 0) {
+                onPressed: () async {
+                  print("adding to meals");
+                  try {
+                    if (double.parse(_numberOfMeal.text) <= 0) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            content:
+                                Text('Cannot input negative or zero values'),
+                          );
+                        },
+                      );
+                    } else {
+                      addToChosenMeals(
+                          widget.meal.id, double.parse(_numberOfMeal.text));
+                    }
+                  } catch (e) {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          content: Text('Cannot input negative or zero values'),
+                          content: Text('Specify the amount as a number'),
                         );
                       },
                     );
-                  } else {
-                    addToChosenMeals(
-                        widget.meal.id, double.parse(_numberOfMeal.text));
                   }
-                } catch (e) {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        content: Text('Specify the amount as a number'),
-                      );
-                    },
-                  );
-                }
-              },
+                },
+              ),
             ),
           ],
         ),
