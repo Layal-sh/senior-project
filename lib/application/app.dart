@@ -1,5 +1,3 @@
-import 'dart:js_interop';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sugar_sense/Database/db.dart';
@@ -194,7 +192,7 @@ class _AddInputState extends State<AddInput> {
   String? carbRatioSelected;
   ValueNotifier<double> glucoseLevelNotifier = ValueNotifier<double>(0.0);
   ValueNotifier<double> carbsTotalNotifier = ValueNotifier<double>(0.0);
-  ValueNotifier<double> bolusCalculation = ValueNotifier<double>(0);
+  ValueNotifier<int> bolusCalculation = ValueNotifier<int>(0);
   void updateBolusCalculation() {
     if (_GlucoseController.text.isNotEmpty) {
       /* &&
@@ -209,9 +207,8 @@ class _AddInputState extends State<AddInput> {
       bolusCalculation.value = bolusCalculationResult + 0;
       DBHelper dbHelper = DBHelper.instance;
       DateTime now = DateTime.now();
-      String date = DateFormat('yyyy-MM-dd – kk:mm').format(now);
-      dbHelper.createEntry(
-          pid_, glucoseLevel, bolusCalculationResult, date, meals);
+      String date = DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(now);
+      dbHelper.createEntry(glucoseLevel, bolusCalculationResult, date, meals);
     }
   }
 
@@ -261,7 +258,7 @@ class _AddInputState extends State<AddInput> {
                       children: [
                         InkWell(
                           onTap: () {
-                            ValueListenableBuilder<double>(
+                            ValueListenableBuilder<int>(
                               valueListenable: bolusCalculation,
                               builder: (context, value, child) {
                                 return Text(
@@ -351,7 +348,7 @@ class _AddInputState extends State<AddInput> {
                                 children: [
                                   Column(
                                     children: [
-                                      ValueListenableBuilder<double>(
+                                      ValueListenableBuilder<int>(
                                         valueListenable: bolusCalculation,
                                         builder: (context, value, child) {
                                           return Text(

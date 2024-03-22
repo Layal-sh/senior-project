@@ -27,7 +27,7 @@ class DBHelper {
     String DbPath = await getDatabasesPath();
     String path = join(DbPath, 'SugarSense.db');
     Database database = await openDatabase(path,
-        onCreate: _onCreate, version: 5, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 12, onUpgrade: _onUpgrade);
     return database;
   }
 
@@ -36,8 +36,7 @@ class DBHelper {
   _onCreate(Database db, int version) async {
     await db.execute('''
   CREATE TABLE "Entry"(
-    entryId INTEGER IDENTITY(1,1) NOT NULL PRIMARY KEY,
-    patientId INTEGER NOT NULL,
+    entryId INTEGER AUTOINCREMENT NOT NULL PRIMARY KEY,
     glucoseLevel REAL NOT NULL,
     insulinDosage INTEGER NULL,
     entryDate TEXT NOT NULL
@@ -45,14 +44,14 @@ class DBHelper {
   ''');
     await db.execute('''
   CREATE TABLE "Meals"(
-    mealId INTEGER IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    mealId INTEGER AUTOINCREMENT NOT NULL PRIMARY KEY,
     mealName TEXT NOT NULL,
     mealPicture TEXT NULL,
     unit INTEGER NOT NULL,
     carbohydrates REAL NOT NULL,
     tags TEXT NULL,
-    certainty REAL NOT NULL,
-    frequency INTEGER NOT NULL
+    frequency INTEGER NOT NULL,
+    certainty REAL NOT NULL
   );
   ''');
     await db.execute('''
@@ -135,24 +134,23 @@ class DBHelper {
   }
 
   //create an entry for the insulin dosage
-  createEntry(int pid, double glucose, int insulin, String date,
-      List<Map> meals) async {
-    logger.info("Entered functino");
+  createEntry(double glucose, int insulin, String date, List<Map> meals) async {
+    logger.info("Entered function");
     Database? mydb = await db;
-    print('$pid $glucose $insulin $date');
-    int response = await mydb!.rawInsert('''
-  INSERT INTO Entry (patientId, glucoseLevel, insulinDosage, entryDate)
-  VALUES($pid,$glucose,$insulin,$date);
+    print('$glucose $insulin $date');
+    int entryId = await mydb!.rawInsert('''
+  INSERT INTO Entry (glucoseLevel, insulinDosage, entryDate)
+  VALUES($glucose,$insulin,'$date');
   ''');
-    int entryID = getEntryId(pid, date);
-    print(entryID);
+
+    print(entryId);
     meals.forEach((element) {
       mydb.rawInsert('''
   INSERT INTO hasMeal (entryId,mealId,quantity)
-  VALUES($entryID,${element['mealId']},${element['quantity']});
+  VALUES($entryId,${element['mealId']},${element['quantity']});
   ''');
     });
-    return response;
+    return entryId;
   }
 
   //this is for testing hasMeal
@@ -190,7 +188,7 @@ class DBHelper {
       SELECT entryId from Entry
       WHERE entryDate like $date and patientID = $pid
       ''');
-    return response[0]['entryId'];
+    return response[0];
   }
 
   getLatestEntryId() async {
@@ -380,7 +378,11 @@ class DBHelper {
 5 -> fruits
 6 -> lebanese dishes
 7 -> arabic desserts
-8 -> myMeals
+8 -> grains, pasta & rice
+9 -> breakfast
+10 -> lunch
+11 -> dinner
+12 -> myMeals
 */
   chooseCategory(int input) {
     String response = "";
@@ -410,6 +412,15 @@ class DBHelper {
         response = "grains, pasta & rice";
         break;
       case 9:
+        response = "breakfast";
+        break;
+      case 10:
+        response = "lunch";
+        break;
+      case 11:
+        response = "dinner";
+        break;
+      case 12:
         response = "myMeals";
         break;
       default:
