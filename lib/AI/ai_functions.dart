@@ -40,3 +40,28 @@ void updatePrevMeals(double bloodSugar) async {
     }
   }
 }
+
+String unitString(int unit) {
+  String ans = "grams";
+  switch (unit) {
+    case 1:
+      ans = "cups";
+      break;
+    case 2:
+      ans = "tablespoons";
+      break;
+    case 3:
+      ans = "teaspoons";
+      break;
+    case 4:
+      ans = "slices";
+      break;
+    case 5:
+      ans = "pieces";
+      break;
+    case 6:
+      ans = "scoops";
+      break;
+  }
+  return ans;
+}
