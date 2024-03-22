@@ -1,7 +1,12 @@
+import 'dart:js_interop';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sugar_sense/Database/db.dart';
+import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/meals.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
+import 'package:intl/intl.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -198,7 +203,15 @@ class _AddInputState extends State<AddInput> {
       double totalCarbs = _CarbController.text.isNotEmpty
           ? double.parse(_CarbController.text)
           : 0.0;
-      bolusCalculation.value = calculateDosage(totalCarbs, glucoseLevel);
+      List<Map> meals = getChosenMeals();
+      double totalCarbs_ = calculateTotalCarbs(meals);
+      int bolusCalculationResult = calculateDosage(totalCarbs_, glucoseLevel);
+      bolusCalculation.value = bolusCalculationResult + 0;
+      DBHelper dbHelper = DBHelper.instance;
+      DateTime now = DateTime.now();
+      String date = DateFormat('yyyy-MM-dd – kk:mm').format(now);
+      dbHelper.createEntry(
+          pid_, glucoseLevel, bolusCalculationResult, date, meals);
     }
   }
 
