@@ -4,6 +4,7 @@ import pyodbc
 import Models.personModel.person as Pmodel
 from fastapi.middleware.cors import CORSMiddleware
 import hashlib
+import requests
 
 
 app = FastAPI()
@@ -200,3 +201,18 @@ async def get_mealComposition():
         return {"error": "No meals found"}
     else:
         return [{description[0]: column for description, column in zip(cursor.description, row)} for row in rows]
+    
+#News Api Key: 52583f3a26ca4ba0b9631f43f66abb3d
+apiKey = '52583f3a26ca4ba0b9631f43f66abb3d'
+@app.get("/News")
+async def get_news():
+    url = ('https://newsapi.org/v2/everything?language=en&sortyBy=relevancy&q=type+1+diabetes&apiKey=52583f3a26ca4ba0b9631f43f66abb3d')
+    response = requests.get(url)
+    return response.json()
+
+@app.get("/NewsSources")
+async def get_news():
+    url = ('https://newsapi.org/v2/top-headlines/sources?language=en&apiKey=52583f3a26ca4ba0b9631f43f66abb3d')
+    response = requests.get(url)
+    return response.json()
+    
