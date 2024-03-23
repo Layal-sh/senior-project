@@ -27,29 +27,34 @@ class DBHelper {
     String DbPath = await getDatabasesPath();
     String path = join(DbPath, 'SugarSense.db');
     Database database = await openDatabase(path,
-        onCreate: _onCreate, version: 19, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 22, onUpgrade: _onUpgrade);
     return database;
   }
 
-  _onUpgrade(Database db, int oldVersion, int newVersion) async{
+  _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < newVersion) {
-    await db.execute('''
-      ALTER TABLE "Meals"
-      ADD COLUMN frequency INTEGER NOT NULL DEFAULT 0
-    ''');
-  }
+      //     await db.execute('DROP TABLE IF EXISTS Entry');
+      //     await db.execute('''
+      // CREATE TABLE "Entry"(
+      //   entryId INTEGER PRIMARY KEY AUTOINCREMENT,
+      //   glucoseLevel REAL NOT NULL,
+      //   insulinDosage INTEGER NULL,
+      //   entryDate TEXT NOT NULL
+      // );
+      // ''');
+    }
   }
 
   _onCreate(Database db, int version) async {
     await db.execute('''
   CREATE TABLE "Entry"(
-    entryId INTEGER AUTOINCREMENT NOT NULL PRIMARY KEY,
+    entryId INTEGER PRIMARY KEY AUTOINCREMENT,
     glucoseLevel REAL NOT NULL,
     insulinDosage INTEGER NULL,
     entryDate TEXT NOT NULL
   );
   ''');
-     await db.execute('''
+    await db.execute('''
     CREATE TABLE "Meals"(
       mealId INTEGER NOT NULL PRIMARY KEY,
       mealName TEXT NOT NULL,
@@ -135,66 +140,44 @@ class DBHelper {
     List<Map> response = await mydb!.rawQuery('''
   SELECT * FROM "Meals";
    ''');
-    // response.forEach((element) {
-    //   print(element['mealName']);
-    // });
+    logger.info("All meals have been fetched successfully.");
     return response;
   }
 
   //create an entry for the insulin dosage
   createEntry(double glucose, int insulin, String date, List<Map> meals) async {
-    logger.info("Entered function");
     Database? mydb = await db;
     print('$glucose $insulin $date');
     int entryId = await mydb!.rawInsert('''
   INSERT INTO Entry (glucoseLevel, insulinDosage, entryDate)
   VALUES($glucose,$insulin,'$date');
   ''');
+    int idEntry = await getLatestEntryId();
 
-    print(entryId);
     meals.forEach((element) {
       mydb.rawInsert('''
-  INSERT INTO hasMeal (entryId,mealId,quantity)
-  VALUES($entryId,${element['mealId']},${element['quantity']});
+  INSERT INTO hasMeal (entryId,mealId,quantity,unit)
+  VALUES($idEntry,${element['id']},${element['quantity']},"${element['unit']}");
   ''');
+      logger.info("hasMeal has been created successfully.");
     });
+    logger.info("Created entry with id $entryId");
     return entryId;
-  }
-
-  //this is for testing hasMeal
-  selectAllHasMeals() async {
-    Database? mydb = await db;
-    List<Map> response = await mydb!.rawQuery('''
-  SELECT * FROM "hasMeal";
-   ''');
-    print(response);
-    return response;
   }
 
   selectAllMealComposition() async {
     Database? mydb = await db;
     List<Map> response =
         await mydb!.rawQuery('''select * from MealComposition''');
-    print(response);
+    logger.info("All meal compositions have been fetched successfully.");
     return response;
   }
 
-  selectMealCompositionById(int id) async {
-    Database? mydb = await db;
-    List<Map> response = await mydb!.rawQuery(
-        '''select c.childMealID, m.mealName, m.carbohydrates, c.quantity
-	from Meals as m, MealComposition as c
-	where m.mealId=c.childMealID and c.parentMealID=$id''');
-    //display the meal composition
-    print(response);
-    return response;
-  }
-
-  getEntryId(int pid, String date) async {
+  getEntryDate(String date) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
       SELECT entryId from Entry
-      WHERE entryDate like $date and patientID = $pid
+      WHERE entryDate = $date
       ''');
     return response[0];
   }
@@ -218,6 +201,7 @@ class DBHelper {
     for (Map ing in response) {
       ings.add(await getMealById(ing["childMealId"]));
     }
+    logger.info("Ingredients for meal $id have been fetched successfully.");
     return ings;
   }
 
@@ -235,6 +219,7 @@ class DBHelper {
     UPDATE Meals SET carbohydrate = $carbs , certainty = $certainty
     WHERE mealId = $mealId
     ''');
+    logger.info("Meal $mealId has been updated successfully.");
     return response;
   }
 
@@ -281,6 +266,7 @@ class DBHelper {
     } else {
       int response = await mydb!.rawInsert(
           '''INSERT INTO Meals(mealName,carbohydrates,unit,mealPicture,tags,certainty) VALUES($name,$carbs,$unit,$picture,$tags,$certainty,$frequency);''');
+      logger.info("New meal $name has been created successfully.");
       return getMealIdByName(name);
     }
   }
@@ -293,6 +279,8 @@ class DBHelper {
   INSERT INTO MealComposition(parentMealId,childMealId,quantity,unit)
   VALUES($parentMealId,$childMealId,$quantity,$unit);
   ''');
+    logger.info(
+        "Meal composition for the 'Meals Editing' has been created successfully.");
     return response;
   }
 
@@ -313,6 +301,7 @@ class DBHelper {
       createMealComposition(
           newId, element['mealId'], element['quantity'], element['unit']);
     });
+    logger.info("Meal has been edited successfully.");
   }
 
   Future<void> syncMeals() async {
@@ -434,6 +423,7 @@ class DBHelper {
       default:
         return "";
     }
+    logger.info("Category $response has been chosen.");
     return searchMeal(response);
   }
 
@@ -443,6 +433,7 @@ class DBHelper {
     UPDATE Meals SET frequency = frequency + 1;
     WHERE mealId = $mealId
     ''');
+    logger.info("Frequency for meal $mealId has been updated successfully.");
     return response;
   }
 }

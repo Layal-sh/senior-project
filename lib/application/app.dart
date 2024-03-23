@@ -193,22 +193,26 @@ class _AddInputState extends State<AddInput> {
   ValueNotifier<double> glucoseLevelNotifier = ValueNotifier<double>(0.0);
   ValueNotifier<double> carbsTotalNotifier = ValueNotifier<double>(0.0);
   ValueNotifier<int> bolusCalculation = ValueNotifier<int>(0);
+  double glucoseLevel = 0.0;
+  List<Map> meals = [];
+  String date = "";
+  int bolusCalculationResult = 0;
+
   void updateBolusCalculation() {
     if (_GlucoseController.text.isNotEmpty) {
       /* &&
         _CarbController.text.isNotEmpty && getChosenMeals().isNotEmpty*/
-      double glucoseLevel = double.parse(_GlucoseController.text);
+      glucoseLevel = double.parse(_GlucoseController.text);
       double totalCarbs = _CarbController.text.isNotEmpty
           ? double.parse(_CarbController.text)
           : 0.0;
-      List<Map> meals = getChosenMeals();
+      meals = getChosenMeals();
       double totalCarbs_ = calculateTotalCarbs(meals);
       int bolusCalculationResult = calculateDosage(totalCarbs_, glucoseLevel);
       bolusCalculation.value = bolusCalculationResult + 0;
       DBHelper dbHelper = DBHelper.instance;
       DateTime now = DateTime.now();
-      String date = DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(now);
-      dbHelper.createEntry(glucoseLevel, bolusCalculationResult, date, meals);
+      date = DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(now);
     }
   }
 
@@ -289,6 +293,9 @@ class _AddInputState extends State<AddInput> {
                             } else {
                               print("NO WORKY");
                             }*/
+                            DBHelper dbHelper = DBHelper.instance;
+                            dbHelper.createEntry(glucoseLevel,
+                                bolusCalculationResult, date, meals);
                           },
                           child: const Text(
                             'Save',

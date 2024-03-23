@@ -278,7 +278,7 @@ class _LoginState extends State<Login> {
 
                                 if (response.statusCode == 200) {
                                   logger.info(
-                                      "syncing meals fro the server to the local database");
+                                      "syncing meals from the server to the local database");
                                   DBHelper dbHelper = DBHelper.instance;
                                   await dbHelper.syncMeals();
                                   logger.info("synced meals successfully");

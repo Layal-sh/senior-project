@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/application/create.dart';
 import 'package:sugar_sense/application/mealDetails.dart';
+import 'package:sugar_sense/main.dart';
 
 class Meals extends StatefulWidget {
   const Meals({Key? key}) : super(key: key);
@@ -15,7 +16,6 @@ class Meals extends StatefulWidget {
 
 List<Map> chosenMeals = [];
 List<Map> getChosenMeals() {
-  print(chosenMeals.runtimeType);
   return chosenMeals;
 }
 
@@ -119,7 +119,6 @@ class _MealsState extends State<Meals> {
                   return Text('Error: ${snapshot.error}');
                 } else {
                   List<Map> meals = snapshot.data!;
-                  print(meals);
                   return GridView.builder(
                     padding: const EdgeInsets.all(10.0),
                     itemCount: meals.length,
@@ -188,11 +187,12 @@ Function addToChosenMeals = (int id, double quantity) async {
     'id': id,
     'carbohydrates': meal[0]['carbohydrates'],
     'certainty': meal[0]['certainty'],
-    'quantity': quantity
+    'quantity': quantity,
+    'unit': meal[0]['unit']
   };
-
   chosenMeals.add(insertedMeal);
-  print(chosenMeals);
+  logger.info(
+      "Added meal to chosen meals --> name: ${insertedMeal['name']} carbs: ${insertedMeal['carbohydrates']} quantity: ${insertedMeal['quantity']} unit: ${insertedMeal['unit']} certainty: ${insertedMeal['certainty']}");
 };
 
 class MealBox extends StatefulWidget {
