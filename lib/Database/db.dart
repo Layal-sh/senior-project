@@ -27,11 +27,18 @@ class DBHelper {
     String DbPath = await getDatabasesPath();
     String path = join(DbPath, 'SugarSense.db');
     Database database = await openDatabase(path,
-        onCreate: _onCreate, version: 12, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 19, onUpgrade: _onUpgrade);
     return database;
   }
 
-  _onUpgrade(Database db, int oldVersion, int newVersion) {}
+  _onUpgrade(Database db, int oldVersion, int newVersion) async{
+    if (oldVersion < newVersion) {
+    await db.execute('''
+      ALTER TABLE "Meals"
+      ADD COLUMN frequency INTEGER NOT NULL DEFAULT 0
+    ''');
+  }
+  }
 
   _onCreate(Database db, int version) async {
     await db.execute('''
@@ -42,18 +49,19 @@ class DBHelper {
     entryDate TEXT NOT NULL
   );
   ''');
-    await db.execute('''
-  CREATE TABLE "Meals"(
-    mealId INTEGER AUTOINCREMENT NOT NULL PRIMARY KEY,
-    mealName TEXT NOT NULL,
-    mealPicture TEXT NULL,
-    unit INTEGER NOT NULL,
-    carbohydrates REAL NOT NULL,
-    tags TEXT NULL,
-    frequency INTEGER NOT NULL,
-    certainty REAL NOT NULL
-  );
+     await db.execute('''
+    CREATE TABLE "Meals"(
+      mealId INTEGER NOT NULL PRIMARY KEY,
+      mealName TEXT NOT NULL,
+      mealPicture TEXT NULL,
+      unit INTEGER NOT NULL,
+      carbohydrates REAL NOT NULL,
+      tags TEXT NULL,
+      frequency INTEGER NOT NULL,
+      certainty REAL NOT NULL
+    );
   ''');
+
     await db.execute('''
   CREATE TABLE "MealComposition"(
     parentMealId INTEGER NOT NULL,
