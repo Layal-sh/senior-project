@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sugar_sense/Database/db.dart';
+import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/meals.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
+import 'package:intl/intl.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -189,7 +192,7 @@ class _AddInputState extends State<AddInput> {
   String? carbRatioSelected;
   ValueNotifier<double> glucoseLevelNotifier = ValueNotifier<double>(0.0);
   ValueNotifier<double> carbsTotalNotifier = ValueNotifier<double>(0.0);
-  ValueNotifier<double> bolusCalculation = ValueNotifier<double>(0);
+  ValueNotifier<int> bolusCalculation = ValueNotifier<int>(0);
   void updateBolusCalculation() {
     if (_GlucoseController.text.isNotEmpty) {
       /* &&
@@ -198,7 +201,14 @@ class _AddInputState extends State<AddInput> {
       double totalCarbs = _CarbController.text.isNotEmpty
           ? double.parse(_CarbController.text)
           : 0.0;
-      bolusCalculation.value = calculateDosage(totalCarbs, glucoseLevel);
+      List<Map> meals = getChosenMeals();
+      double totalCarbs_ = calculateTotalCarbs(meals);
+      int bolusCalculationResult = calculateDosage(totalCarbs_, glucoseLevel);
+      bolusCalculation.value = bolusCalculationResult + 0;
+      DBHelper dbHelper = DBHelper.instance;
+      DateTime now = DateTime.now();
+      String date = DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(now);
+      dbHelper.createEntry(glucoseLevel, bolusCalculationResult, date, meals);
     }
   }
 
@@ -248,7 +258,7 @@ class _AddInputState extends State<AddInput> {
                       children: [
                         InkWell(
                           onTap: () {
-                            ValueListenableBuilder<double>(
+                            ValueListenableBuilder<int>(
                               valueListenable: bolusCalculation,
                               builder: (context, value, child) {
                                 return Text(
@@ -338,7 +348,7 @@ class _AddInputState extends State<AddInput> {
                                 children: [
                                   Column(
                                     children: [
-                                      ValueListenableBuilder<double>(
+                                      ValueListenableBuilder<int>(
                                         valueListenable: bolusCalculation,
                                         builder: (context, value, child) {
                                           return Text(
