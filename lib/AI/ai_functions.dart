@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:math';
 
 import 'package:path/path.dart';
@@ -20,11 +21,13 @@ double calculateTotalCarbs(List<Map> meals) {
 }
 
 void updatePrevMeals(double bloodSugar) async {
-  if ((bloodSugar - targetBloodSugar_).abs() <= insulinSensitivity_) {
-    DBHelper dbHelper = DBHelper.instance;
-    int prevEntryId = await dbHelper.getLatestEntryId();
-    List<Map> hasMeals = await dbHelper.getMealsFromEntryID(prevEntryId);
-    List<Map> meals = [];
+  DBHelper dbHelper = DBHelper.instance;
+  int prevEntryId = await dbHelper.getLatestEntryId();
+  List<Map> hasMeals = await dbHelper.getMealsFromEntryID(prevEntryId);
+  List<Map> meals = [];
+  double bloodSugarDiff = bloodSugar - targetBloodSugar_;
+  if ((bloodSugarDiff).abs() <= insulinSensitivity_) {
+    //bro is good certainty factor goes up for all meals
     int mealCount = 0;
     for (Map mid in hasMeals) {
       Map meal = await dbHelper.getMealById(mid["mealId"])[0];
@@ -37,6 +40,26 @@ void updatePrevMeals(double bloodSugar) async {
           meal["certainty"] + alpha * (1 - meal["certainty"]) / 2;
       await dbHelper.updateMealById(
           meal["mealId"], meal["carbohydrates"], newCertainty);
+    }
+  } else {
+    //bro is not good carbs for each meal go up
+    double totalBlame = 0;
+    for (Map mid in hasMeals) {
+      Map meal = await dbHelper.getMealById(mid["mealId"])[0];
+      meal["quantity"] = mid["quantity"];
+      double blame = meal["carbohydrates"] * (1 - meal["certainty"]);
+      meal["blame"] = blame;
+      totalBlame += blame * meal["quantity"];
+      meals.add(meal);
+    }
+    double unaccountedCarbs =
+        ((bloodSugarDiff / insulinSensitivity_) / carbRatio_) * 15;
+    unaccountedCarbs /= 2;
+    for (Map meal in meals) {
+      double ratio = meal["blame"] / totalBlame;
+      double newCarbs = meal["carbohydrates"] + unaccountedCarbs * ratio;
+      await dbHelper.updateMealById(
+          meal["mealId"], newCarbs, meal["certainty"]);
     }
   }
 }
