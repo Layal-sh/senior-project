@@ -19,9 +19,11 @@ List<Map> getChosenMeals() {
   return chosenMeals;
 }
 
+DBHelper db = DBHelper.instance;
+
 class _MealsState extends State<Meals> {
   final TextEditingController _filter = TextEditingController();
-  DBHelper db = DBHelper.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,6 +131,7 @@ class _MealsState extends State<Meals> {
                             (meals[i]['mealPicture'] ?? 'AddDish.png'),
                         id: meals[i]['mealId'],
                         carbohydrates: meals[i]['carbohydrates'],
+                        unit: meals[i]['unit'],
                         quantity: 1,
                       ),
                     ),
@@ -156,14 +159,18 @@ class Meal {
   final int id;
   final double carbohydrates;
   final double quantity;
-  Meal(
-      {required this.name,
-      required this.imageUrl,
-      required this.id,
-      required this.carbohydrates,
-      required this.quantity});
+  final int unit;
+
+  Meal({
+    required this.name,
+    required this.imageUrl,
+    required this.id,
+    required this.carbohydrates,
+    required this.quantity,
+    required this.unit,
+  });
   String toString() {
-    return 'Meal{name: $name, imageUrl: $imageUrl, id: $id, carbodydrates: $carbohydrates, quantity: $quantity}';
+    return 'Meal{name: $name, imageUrl: $imageUrl, id: $id, carbodydrates: $carbohydrates, quantity: $quantity, unit: $unit}';
   }
 
   Map<String, dynamic> toMap() {
@@ -172,13 +179,13 @@ class Meal {
       'imageUrl': imageUrl,
       'id': id,
       'carbohydrates': carbohydrates,
-      'quantity': quantity
+      'quantity': quantity,
+      'unit': unit,
     };
   }
 }
 
 Function addToChosenMeals = (int id, double quantity) async {
-  DBHelper db = DBHelper.instance;
   List<Map> meal = await db.getMealById(id);
   var imageUrl = 'assets/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
   Map<String, dynamic> insertedMeal = {
@@ -204,7 +211,6 @@ class MealBox extends StatefulWidget {
 }
 
 class _MealBoxState extends State<MealBox> {
-  String dropdownValue = 'One';
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -267,7 +273,17 @@ class _MealBoxState extends State<MealBox> {
                           ),
                           Expanded(
                             flex: 1,
-                            child: CustomDropdown(),
+                            child: Text(
+                              db.chooseCategory(widget.meal.unit),
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.fade,
+                              softWrap: false,
+                              style: const TextStyle(
+                                color: Color.fromARGB(255, 38, 20, 84),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -294,7 +310,38 @@ class _MealBoxState extends State<MealBox> {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.of(context).pop(quantityController.text);
+                        if (quantityController.text.isEmpty) {
+                          print('Quantity is empty');
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Not Valid'),
+                                content: const Text(
+                                  'Please enter a quantity.',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: const Text(
+                                      'OK',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          Navigator.of(context).pop(quantityController.text);
+                        }
                       },
                     ),
                   ],
@@ -425,55 +472,6 @@ class _MealBoxState extends State<MealBox> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class CustomDropdown extends StatefulWidget {
-  @override
-  _CustomDropdownState createState() => _CustomDropdownState();
-}
-
-class _CustomDropdownState extends State<CustomDropdown> {
-  String dropdownValue = 'g';
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<String>(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(
-            width: 36,
-            child: Center(
-              child: Text(
-                dropdownValue,
-                overflow: TextOverflow.fade,
-                softWrap: false,
-                style: const TextStyle(
-                  color: Color.fromARGB(255, 38, 20, 84),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
-          const Icon(Icons.arrow_drop_down, size: 30),
-        ],
-      ),
-      onSelected: (String value) {
-        setState(() {
-          dropdownValue = value;
-        });
-      },
-      itemBuilder: (BuildContext context) {
-        return ['g', 'kg', 'cups'].map((String value) {
-          return PopupMenuItem<String>(
-            value: value,
-            child: Center(child: Text(value)),
-          );
-        }).toList();
-      },
     );
   }
 }

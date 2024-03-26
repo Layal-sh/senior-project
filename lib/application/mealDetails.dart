@@ -13,7 +13,7 @@ class MealDetailsPage extends StatefulWidget {
 
 class _MealDetailsPageState extends State<MealDetailsPage> {
   DBHelper db = DBHelper.instance;
-  String dropdownValue = 'Grams';
+
   final TextEditingController _numberOfMeal = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -151,75 +151,44 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Form(
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 3.4,
-                    height: 25,
-                    child: TextFormField(
-                      controller: _numberOfMeal,
-                      keyboardType: TextInputType.number,
-                      textAlign: TextAlign.center,
-                      decoration: const InputDecoration(
-                        hintText: 'Choose Amount',
-                        hintStyle: TextStyle(
-                          fontSize: 15,
-                          color: Color.fromARGB(255, 198, 198, 198),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color.fromARGB(255, 38, 20, 84),
-                            width: 1.5,
-                          ),
-                        ),
-                        border: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color.fromARGB(255, 171, 171, 171),
-                            width: 100,
-                          ),
-                        ),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width / 2.7,
+                height: 30,
+                child: TextFormField(
+                  controller: _numberOfMeal,
+                  keyboardType: TextInputType.number,
+                  textAlign: TextAlign.center,
+                  decoration: const InputDecoration(
+                    hintText: 'Choose Amount',
+                    hintStyle: TextStyle(
+                      fontSize: 15,
+                      color: Color.fromARGB(255, 198, 198, 198),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color.fromARGB(255, 38, 20, 84),
+                        width: 1.5,
+                      ),
+                    ),
+                    border: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color.fromARGB(255, 171, 171, 171),
+                        width: 100,
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  PopupMenuButton<String>(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          width: 50,
-                          child: Text(
-                            dropdownValue,
-                            overflow: TextOverflow.fade,
-                            softWrap: false,
-                            style: const TextStyle(
-                              color: Color.fromARGB(255, 38, 20, 84),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        const Icon(Icons.arrow_drop_down, size: 30),
-                      ],
-                    ),
-                    onSelected: (String value) {
-                      setState(() {
-                        dropdownValue = value;
-                      });
-                    },
-                    itemBuilder: (BuildContext context) {
-                      return ['Grams', 'Kilograms', 'Pounds']
-                          .map((String value) {
-                        return PopupMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList();
-                    },
-                  )
-                ],
+                ),
+              ),
+            ),
+            Text(
+              db.chooseCategory(widget.meal.unit),
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.fade,
+              softWrap: false,
+              style: const TextStyle(
+                color: Color.fromARGB(255, 38, 20, 84),
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
               ),
             ),
             SizedBox(
