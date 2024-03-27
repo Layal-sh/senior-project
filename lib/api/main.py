@@ -29,8 +29,8 @@ server = 'sugarsense.database.windows.net'
 database = 'sugarsensedb'
 username = 'sugaradmin'
 password = 'SUG@Rs!!7891'
-driver= '{ODBC Driver 17 for SQL Server}'
-#driver= '{ODBC Driver 18 for SQL Server}'
+#driver= '{ODBC Driver 17 for SQL Server}'
+driver= '{ODBC Driver 18 for SQL Server}'
 
 connection_string = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password};'
 
@@ -117,7 +117,7 @@ async def read_item(meal_id: int):
     else:
         return {description[0]: column for description, column in zip(cursor.description, row)}
     
-@app.get("/getUserDetails")
+@app.post("/getUserDetails")
 async def getUserDetails(user: User):
     cursor.execute("SELECT userPassword FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(user.username,))
     rowUsername = cursor.fetchone()
