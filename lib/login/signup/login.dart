@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sugar_sense/Database/db.dart';
+import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/app.dart';
 import 'package:sugar_sense/main.dart';
 import 'package:sugar_sense/values/app_regex.dart';
@@ -283,13 +285,49 @@ class _LoginState extends State<Login> {
                                   await dbHelper.syncMeals();
                                   logger.info("synced meals successfully");
                                   await dbHelper.syncMealComposition();
-                                  dbHelper.selectAllMealComposition();
                                   logger.info(
                                       "synced meal compositions successfully");
 
                                   // dbHelper.selectAllMeals();
                                   // print(dbHelper.selectAllMeals());
 
+                                  // ignore: use_build_context_synchronously
+                                  logger.info(
+                                      "saving values to shared preferences");
+                                  final response = await http
+                                      .post(
+                                        Uri.parse(
+                                            'http://$localhost:8000/getUserDetails'), //$localhost
+                                        headers: <String, String>{
+                                          'Content-Type':
+                                              'application/json; charset=UTF-8',
+                                        },
+                                        body: jsonEncode(<String, String>{
+                                          'username': email,
+                                          'password': password,
+                                        }),
+                                      )
+                                      .timeout(const Duration(seconds: 10));
+
+                                  if (response.statusCode == 200) {
+                                    Map<String, dynamic> userDetails =
+                                        jsonDecode(response.body);
+                                    logger.info("user details: $userDetails");
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                    await prefs.setString(
+                                        'username', userDetails['userName']);
+                                    await prefs.setString(
+                                        'firstName', userDetails['firstName']);
+                                    await prefs.setString(
+                                        'lastName', userDetails['lastName']);
+                                    await prefs.setString(
+                                        'email', userDetails['email']);
+                                    await prefs.setInt(
+                                        'id', userDetails['userID']);
+                                    logger.info(
+                                        "saved values to shared preferences successfully");
+                                  }
                                   // ignore: use_build_context_synchronously
                                   Navigator.push(
                                     context,

@@ -5,6 +5,10 @@ import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/meals.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:sugar_sense/main.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -614,30 +618,58 @@ class _AddInputState extends State<AddInput> {
   }
 }
 
-class Articles extends StatelessWidget {
-  //const Dashboard({Key? key}) : super(key: key);
+class Articles extends StatefulWidget {
+  const Articles({super.key});
+
+  @override
+  _ArticlesState createState() => _ArticlesState();
+}
+
+class _ArticlesState extends State<Articles> {
+  List articles = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchArticles();
+  }
+
+  void fetchArticles() async {
+    final response = await http.get(Uri.parse('http://$localhost:8000/News'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> responseData = jsonDecode(response.body)['articles'];
+
+      setState(() {
+        articles = responseData.where((article) {
+          return article['urlToImage'] != null &&
+              article['title'] != null &&
+              article['url'] != null;
+        }).toList();
+      });
+    } else {
+      throw Exception('Failed to load articles');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'Articles',
-          style: TextStyle(
-            color: Color.fromARGB(255, 255, 249, 254),
-            fontSize: 17,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-        backgroundColor: const Color.fromARGB(255, 38, 20, 84),
-      ),
-      body: const SingleChildScrollView(
-        child: Center(
-          child: Text('Articles!'), // Replace with your desired text
-        ),
-      ),
+    return ListView.builder(
+      itemCount: articles.length,
+      itemBuilder: (context, index) {
+        String imageUrl = articles[index]['urlToImage'];
+        String title = articles[index]['title'];
+        String url = articles[index]['url'];
+
+        return ListTile(
+          leading: Image.network(imageUrl),
+          title: Text(title),
+          onTap: () {
+            // Open the article URL when the ListTile is tapped
+            launch(url);
+          },
+        );
+      },
     );
   }
 }
