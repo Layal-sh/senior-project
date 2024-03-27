@@ -285,7 +285,6 @@ class _LoginState extends State<Login> {
                                   await dbHelper.syncMeals();
                                   logger.info("synced meals successfully");
                                   await dbHelper.syncMealComposition();
-                                  dbHelper.selectAllMealComposition();
                                   logger.info(
                                       "synced meal compositions successfully");
 
@@ -313,18 +312,21 @@ class _LoginState extends State<Login> {
                                   if (response.statusCode == 200) {
                                     Map<String, dynamic> userDetails =
                                         jsonDecode(response.body);
-
+                                    logger.info("user details: $userDetails");
                                     SharedPreferences prefs =
                                         await SharedPreferences.getInstance();
                                     await prefs.setString(
-                                        'username', userDetails['username']);
+                                        'username', userDetails['userName']);
                                     await prefs.setString(
                                         'firstName', userDetails['firstName']);
                                     await prefs.setString(
                                         'lastName', userDetails['lastName']);
                                     await prefs.setString(
                                         'email', userDetails['email']);
-                                    await prefs.setInt('id', userDetails['id']);
+                                    await prefs.setInt(
+                                        'id', userDetails['userID']);
+                                    logger.info(
+                                        "saved values to shared preferences successfully");
                                   }
                                   // ignore: use_build_context_synchronously
                                   Navigator.push(
