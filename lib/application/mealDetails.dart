@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/application/meals.dart';
+import 'package:sugar_sense/AI/ai_functions.dart';
 
 class MealDetailsPage extends StatefulWidget {
   final Meal meal;
@@ -181,7 +182,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
               ),
             ),
             Text(
-              db.chooseCategory(widget.meal.unit),
+              unitString(widget.meal.unit),
               textAlign: TextAlign.center,
               overflow: TextOverflow.fade,
               softWrap: false,

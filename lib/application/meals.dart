@@ -6,6 +6,7 @@ import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/application/create.dart';
 import 'package:sugar_sense/application/mealDetails.dart';
 import 'package:sugar_sense/main.dart';
+import 'package:sugar_sense/AI/ai_functions.dart';
 
 class Meals extends StatefulWidget {
   const Meals({Key? key}) : super(key: key);
@@ -274,7 +275,7 @@ class _MealBoxState extends State<MealBox> {
                           Expanded(
                             flex: 1,
                             child: Text(
-                              db.chooseCategory(widget.meal.unit),
+                              unitString(widget.meal.unit),
                               textAlign: TextAlign.center,
                               overflow: TextOverflow.fade,
                               softWrap: false,
