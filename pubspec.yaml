@@ -272,10 +272,10 @@ flutter:
     - family: Inter
       fonts:
         - asset: fonts/Inter-Regular.ttf
-    - family: InterBold
+    - family: InterBlack
       fonts:
-        - asset: fonts/Inter-Bold.ttf
-          weight: 900
+        - asset: fonts/Inter-Black.ttf
+          #weight: 900
     - family: Italiana
       fonts:
         - asset: fonts/Italiana-Regular.ttf

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sugar_sense/Database/db.dart';
@@ -14,11 +15,14 @@ class MealDetailsPage extends StatefulWidget {
 
 class _MealDetailsPageState extends State<MealDetailsPage> {
   DBHelper db = DBHelper.instance;
-
+  final TextEditingController controller = TextEditingController(text: '1');
   final TextEditingController _numberOfMeal = TextEditingController();
+  // Your list of ingredients
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       //backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
@@ -36,7 +40,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
             fontWeight: FontWeight.w900,
           ),
         ),
-        /*actions: [
+        actions: [
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: IconButton(
@@ -49,7 +53,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
               },
             ),
           ),
-        ],*/
+        ],
       ),
       body: Hero(
         tag: 'meal${widget.meal.name}',
@@ -59,6 +63,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
           ),
           child: Column(
             //mainAxisAlignment: MainAxisAlignment.start,
+            //mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
@@ -104,40 +109,209 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                     color: Color.fromARGB(255, 38, 20, 84),
                     fontSize: 17,
                     fontFamily: 'Inter',
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
               /*Expanded(
+                child: ListView.builder(
+                  itemCount: ingredients.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(ingredients[index]),
+                    );
+                  },
+                ),
+              )*/
+              Expanded(
                 child: FutureBuilder<List<Map>>(
                   future: db.getMealIngredients(widget.meal.id),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<Map>> snapshot) {
+                    print(snapshot.hasData);
+                    if (snapshot.hasData) {
+                      List<Map> ingredients = snapshot.data!;
+                      return ListView.builder(
+                        itemCount: ingredients.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ListTile(
+                                title:
+                                    Text(snapshot.data![index]['childMealID']),
+                              );
+                            },
+                          );
+                        },
+                      );
                     } else if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
                     } else {
-                      List<Map> ingredients = snapshot.data!;
-                      return GridView.builder(
-                        padding: const EdgeInsets.all(10.0),
-                        itemCount: ingredients.length,
-                        itemBuilder: (ctx, i) => IngBox(
-                          ingredient: Ingredient(
-                            name: ingredients[i]['mealName'],
-                          ),
-                        ),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          childAspectRatio: 3 / 3.5,
-                          crossAxisSpacing: 7,
-                          mainAxisSpacing: 10,
-                        ),
-                      );
+                      // By default, show a loading spinner.
+                      return CircularProgressIndicator();
                     }
                   },
                 ),
-              ),*/
+              ),
+              /*Center(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: Container(
+                    padding: EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          color: const Color.fromARGB(255, 0, 0, 0)),
+                      borderRadius: BorderRadius.circular(1.0),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Carbohydrates',
+                          style: TextStyle(
+                            fontSize: 25.0,
+                            fontFamily: 'InterBlack',
+                          ),
+                        ),
+                        const Divider(
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          //height: 10,
+                          thickness: 1,
+                        ),
+                        const Text(
+                          'Serving Size',
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(0.0),
+                                  child: IconButton(
+                                    icon: const Icon(
+                                      Icons.arrow_drop_up,
+                                      size: 40,
+                                    ),
+                                    onPressed: () {
+                                      int currentValue =
+                                          int.parse(controller.text);
+                                      if (currentValue < 99) {
+                                        currentValue++;
+                                        controller.text = (currentValue)
+                                            .toString(); // incrementing value
+                                      }
+                                    },
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(0.0),
+                                  child: IconButton(
+                                    icon: const Icon(
+                                      Icons.arrow_drop_down,
+                                      size: 40,
+                                    ),
+                                    onPressed: () {
+                                      int currentValue =
+                                          int.parse(controller.text);
+                                      if (currentValue > 1) {
+                                        currentValue--;
+                                        controller.text = (currentValue)
+                                            .toString(); // decrementing value
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.13,
+                              height: 40.0,
+                              child: TextField(
+                                controller: controller,
+                                keyboardType: TextInputType.number,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 20.0),
+                                decoration: const InputDecoration(
+                                  contentPadding:
+                                      EdgeInsets.symmetric(vertical: 10.0),
+                                  border: OutlineInputBorder(),
+                                  hintText: '1',
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  widget.meal
+                                      .name, // Replace with your actual value
+                                  style: const TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w900,
+                                    fontFamily: 'Inter',
+                                  ),
+                                ),
+                                Text(
+                                  " (${unitString(widget.meal.unit)})", // Replace with your actual value
+                                  style: const TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w900,
+                                    fontFamily: 'Inter',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const Divider(
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          //height: 10,
+                          thickness: 5,
+                        ),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        const Text(
+                          'Amount per Serving',
+                          style: TextStyle(
+                            fontSize: 17.0,
+                            fontFamily: 'Inter',
+                            //fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Total Carbohydrates',
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            Text(
+                              '10g', // Replace with your actual value
+                              style: TextStyle(fontSize: 16.0),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              )*/
             ],
           ),
         ),
@@ -248,13 +422,13 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
   }
 }
 
-class Ingredient {
-  final String name;
+/*class Ingredient {
+  final int name;
 
   Ingredient({required this.name});
-}
+}*/
 
-class IngBox extends StatelessWidget {
+/*class IngBox extends StatelessWidget {
   final Ingredient ingredient;
 
   const IngBox({required this.ingredient});
@@ -265,18 +439,18 @@ class IngBox extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(50), // Change this value as needed
       ),
-      child: Column(
+      child: const Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(
+            padding: EdgeInsets.only(
               left: 8,
               right: 8,
             ),
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                ingredient.name,
+                "ingredient.name",
                 softWrap: true,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -295,4 +469,4 @@ class IngBox extends StatelessWidget {
       ),
     );
   }
-}
+}*/

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sugar_sense/application/userinfo.dart';
+import 'package:sugar_sense/accCreation/userinfo.dart';
 
 class ThankYou extends StatefulWidget {
   const ThankYou({super.key});

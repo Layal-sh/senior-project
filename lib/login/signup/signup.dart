@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
-import 'package:sugar_sense/application/membership.dart';
+import 'package:sugar_sense/accCreation/membership.dart';
 import 'package:http/http.dart' as http;
 import 'login.dart';
 import 'dart:convert';

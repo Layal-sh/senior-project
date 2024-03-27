@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:sugar_sense/application/thanks.dart';
+import 'package:sugar_sense/accCreation/thanks.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Membership extends StatefulWidget {
