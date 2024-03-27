@@ -29,8 +29,8 @@ server = 'sugarsense.database.windows.net'
 database = 'sugarsensedb'
 username = 'sugaradmin'
 password = 'SUG@Rs!!7891'
-driver= '{ODBC Driver 17 for SQL Server}'
-#driver= '{ODBC Driver 18 for SQL Server}'
+#driver= '{ODBC Driver 17 for SQL Server}'
+driver= '{ODBC Driver 18 for SQL Server}'
 
 connection_string = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password};'
 
@@ -117,6 +117,22 @@ async def read_item(meal_id: int):
     else:
         return {description[0]: column for description, column in zip(cursor.description, row)}
     
+@app.get("/getUserDetails")
+async def getUserDetails(user: User):
+    cursor.execute("SELECT userPassword FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(user.username,))
+    rowUsername = cursor.fetchone()
+    cursor.execute("SELECT userPassword FROM Users WHERE CAST(email AS VARCHAR(255)) = ?",(user.username,))
+    rowEmail = cursor.fetchone()
+    hashed_password = hashlib.md5(user.password.encode()).hexdigest()
+    if(rowUsername is not None and hashed_password == rowUsername[0]):
+        cursor.execute("SELECT * FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(user.username,))
+        row = cursor.fetchone()
+        return {description[0]: column for description, column in zip(cursor.description, row)}
+    elif(rowEmail is not None and hashed_password == rowEmail[0]):
+        cursor.execute("SELECT * FROM Users WHERE CAST(email AS VARCHAR(255)) = ?",(user.username,))
+        row = cursor.fetchone()
+        return {description[0]: column for description, column in zip(cursor.description, row)}
+    return "stop trying to hack me man"
 
 @app.post("/authenticate")
 async def authenticate(user: User):

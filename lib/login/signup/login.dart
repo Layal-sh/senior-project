@@ -291,6 +291,10 @@ class _LoginState extends State<Login> {
                                   // print(dbHelper.selectAllMeals());
 
                                   // ignore: use_build_context_synchronously
+                                  logger.info(
+                                      "saving values to shared preferences");
+
+                                  // ignore: use_build_context_synchronously
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
