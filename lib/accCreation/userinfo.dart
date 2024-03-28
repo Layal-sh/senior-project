@@ -227,9 +227,16 @@ class _UserInfoState extends State<UserInfo> {
                                             100) /
                                         2,
                                     child: TextField(
-                                      decoration: const InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        hintText: 'Enter your second answer',
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                              decimal: false),
+                                      inputFormatters: <TextInputFormatter>[
+                                        FilteringTextInputFormatter.digitsOnly,
+                                      ],
+                                      decoration: InputDecoration(
+                                        border: const OutlineInputBorder(),
+                                        hintText:
+                                            unit1 == 0 ? 'Carbs' : "Exchange",
                                       ),
                                       onSubmitted: (value) {
                                         setState(() {
@@ -259,9 +266,15 @@ class _UserInfoState extends State<UserInfo> {
                                             100) /
                                         2,
                                     child: TextField(
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                              decimal: false),
+                                      inputFormatters: <TextInputFormatter>[
+                                        FilteringTextInputFormatter.digitsOnly,
+                                      ],
                                       decoration: const InputDecoration(
                                         border: OutlineInputBorder(),
-                                        hintText: 'Enter your answer',
+                                        hintText: 'Unit',
                                       ),
                                       onSubmitted: (value) {
                                         setState(() {
