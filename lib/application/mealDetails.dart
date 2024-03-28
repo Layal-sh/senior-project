@@ -20,14 +20,6 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
   final TextEditingController controller = TextEditingController(text: '1');
   final TextEditingController _numberOfMeal = TextEditingController();
   // Your list of ingredients
-  late Future<List<Map>> _ingFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _ingFuture = db.getIngredients(
-        widget.meal.id); // Call your function that fetches the meals data
-  }
 
   Future<List<Ingredient>> fetchIngredients() async {
     List<Map> response =
