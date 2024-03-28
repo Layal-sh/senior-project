@@ -20,17 +20,17 @@ class _UserInfoState extends State<UserInfo> {
   ];
   int core = 0;
   int units = 1;
-  final answers = [0.0, 0.0, 0.0, ''];
-
-  var currentPage = 0;
-  int unit1 = 0;
-  int unit2 = 0;
-  int unit3 = 0;
   List<Option> options = [
     Option(title: 'Glucose Levels'),
     Option(title: 'Insulin Intake'),
     Option(title: 'Meals'),
   ];
+
+  var currentPage = 0;
+  int unit1 = 0;
+  int unit2 = 0;
+  int unit3 = 0;
+  final answers = [0.0, 0, 0, ''];
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -97,6 +97,7 @@ class _UserInfoState extends State<UserInfo> {
           ),
           Expanded(
               child: PageView.builder(
+            physics: NeverScrollableScrollPhysics(),
             controller: controller,
             itemCount: questions.length,
             itemBuilder: (context, index) {
@@ -255,8 +256,10 @@ class _UserInfoState extends State<UserInfo> {
                                       ),
                                       onSubmitted: (value) {
                                         setState(() {
-                                          core = value
-                                              as int; // You need to create a secondAnswers list
+                                          int? intValue = int.tryParse(value);
+                                          if (intValue != null) {
+                                            core = intValue;
+                                          }
                                         });
                                       },
                                     ),
@@ -296,16 +299,12 @@ class _UserInfoState extends State<UserInfo> {
                                       ),
                                       onSubmitted: (value) {
                                         setState(() {
-                                          units = value as int;
-                                          answers[index] = core / units;
-                                          currentPage =
-                                              controller.page!.round() + 1;
-                                          if (currentPage < questions.length) {
-                                            controller.nextPage(
-                                              duration:
-                                                  Duration(milliseconds: 500),
-                                              curve: Curves.ease,
-                                            );
+                                          int? intValue = int.tryParse(value);
+                                          if (intValue != null) {
+                                            units = intValue;
+                                            if (core != 0) {
+                                              answers[index] = core / units;
+                                            }
                                           }
                                         });
                                       },
@@ -423,6 +422,12 @@ class _UserInfoState extends State<UserInfo> {
                               SizedBox(
                                 width: MediaQuery.of(context).size.width - 60,
                                 child: TextField(
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                          decimal: false),
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(20),
@@ -431,14 +436,9 @@ class _UserInfoState extends State<UserInfo> {
                                   ),
                                   onSubmitted: (value) {
                                     setState(() {
-                                      answers[index] = value;
-                                      currentPage =
-                                          controller.page!.round() + 1;
-                                      if (currentPage < questions.length) {
-                                        controller.nextPage(
-                                          duration: Duration(milliseconds: 500),
-                                          curve: Curves.ease,
-                                        );
+                                      int? intValue = int.tryParse(value);
+                                      if (intValue != null) {
+                                        answers[index] = intValue;
                                       }
                                     });
                                   },
@@ -554,6 +554,12 @@ class _UserInfoState extends State<UserInfo> {
                               SizedBox(
                                 width: MediaQuery.of(context).size.width - 60,
                                 child: TextField(
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                          decimal: false),
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(20),
@@ -562,14 +568,10 @@ class _UserInfoState extends State<UserInfo> {
                                   ),
                                   onSubmitted: (value) {
                                     setState(() {
-                                      answers[index] = value;
-                                      currentPage =
-                                          controller.page!.round() + 1;
-                                      if (currentPage < questions.length) {
-                                        controller.nextPage(
-                                          duration: Duration(milliseconds: 500),
-                                          curve: Curves.ease,
-                                        );
+                                      int? intValue = int.tryParse(value);
+
+                                      if (intValue != null) {
+                                        answers[index] = value;
                                       }
                                     });
                                   },
@@ -669,12 +671,18 @@ class _UserInfoState extends State<UserInfo> {
                 ),
                 onPressed: () {
                   setState(() {
-                    currentPage++;
-                    if (currentPage < questions.length) {
-                      controller.nextPage(
-                        duration: Duration(milliseconds: 500),
-                        curve: Curves.ease,
-                      );
+                    if (answers[currentPage] != 0.0 ||
+                        answers[currentPage] != 0) {
+                      //currentPage++;
+                      currentPage = controller.page!.round() + 1;
+                      if (currentPage < questions.length) {
+                        controller.nextPage(
+                          duration: Duration(milliseconds: 500),
+                          curve: Curves.ease,
+                        );
+                      }
+                    } else {
+                      print("not valid");
                     }
                   });
                 },
