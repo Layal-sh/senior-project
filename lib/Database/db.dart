@@ -201,9 +201,9 @@ class DBHelper {
   getIngredients(int parentId) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
-        SELECT m.mealName,c.unit, c.quantity 
-  FROM Meals as m, MealComposition as c
-  WHERE m.mealID=c.parentMealID AND m.mealID=$parentId;
+      SELECT m1.mealName,c.unit, c.quantity 
+  FROM Meals AS m, Meals AS m1, MealComposition AS c
+  WHERE m.mealID=c.parentMealID AND m1.mealID=c.childMealID AND m.mealID=$parentId;
     ''');
     logger
         .info("Ingredients for meal $parentId have been fetched successfully.");
