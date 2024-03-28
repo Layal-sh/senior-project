@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'dart:math';
 
 class UserInfo extends StatefulWidget {
   const UserInfo({super.key});
@@ -800,6 +801,67 @@ class _UserInfoState extends State<UserInfo> {
                       updateAnswers();
                     },
                   );
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      Future.delayed(Duration(seconds: 3), () {
+                        // Close the dialog
+                        Navigator.of(context).pop();
+                        // Navigate to the new page
+                        Navigator.of(context).pushReplacementNamed('/app');
+                      });
+                      return Dialog(
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          height: MediaQuery.of(context).size.height * 0.6,
+                          child: AlertDialog(
+                            insetPadding: const EdgeInsets.only(
+                              left: 10,
+                              right: 10,
+                              top: 20,
+                              bottom: 20,
+                            ),
+                            backgroundColor: Colors.white,
+                            content: Column(
+                              children: [
+                                Image.asset(
+                                    'assets/completed.png'), // Replace with your image path
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                const Text(
+                                  'Congratulations!',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Inter',
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text(
+                                  'Your account is ready to use. You will be redirected to the Home Page in a few seconds...',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontFamily: 'Inter',
+                                    color: Color.fromARGB(255, 107, 114, 128),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                CustomLoading(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
                 },
                 child: const Text(
                   "Finish",
@@ -831,4 +893,65 @@ class Option {
   final String title;
 
   Option({required this.title, this.isSelected = false});
+}
+
+class CustomLoading extends StatefulWidget {
+  @override
+  _CustomLoadingState createState() => _CustomLoadingState();
+}
+
+class _CustomLoadingState extends State<CustomLoading>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 2),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 75,
+      height: 75,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (_, child) {
+          return Transform.rotate(
+            angle: _controller.value * 2 * pi,
+            child: child,
+          );
+        },
+        child: Stack(
+          children: List.generate(8, (index) {
+            return Positioned(
+              left: 25,
+              top: 0,
+              child: Transform.rotate(
+                angle: (2 * pi / 8) * index,
+                child: Container(
+                  width: 16,
+                  height: 16,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromARGB(255, 22, 161, 170),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
+      ),
+    );
+  }
 }

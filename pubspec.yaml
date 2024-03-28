@@ -256,6 +256,7 @@ flutter:
     - assets/Wheat.jpg
     - assets/yogurt with fruits.jpg
     - assets/Znoud El Set.jpg
+    - assets/completed.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
