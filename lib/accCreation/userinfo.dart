@@ -18,13 +18,19 @@ class _UserInfoState extends State<UserInfo> {
     'What\'s Your Target Glucose Level?',
     'Choose What You Would Like Your Doctor To Have Access To'
   ];
-  final answers = ['', 0.0, 0.0, ''];
-  List<String> secondAnswers = List<String>.filled(4, '');
+  int core = 0;
+  int units = 1;
+  final answers = [0.0, 0.0, 0.0, ''];
+
   var currentPage = 0;
   int unit1 = 0;
   int unit2 = 0;
   int unit3 = 0;
-  int unit4 = 0;
+  List<Option> options = [
+    Option(title: 'Glucose Levels'),
+    Option(title: 'Insulin Intake'),
+    Option(title: 'Meals'),
+  ];
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -103,13 +109,19 @@ class _UserInfoState extends State<UserInfo> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(
-                      questions[index],
-                      style: const TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Inter',
-                        color: Color.fromARGB(255, 0, 0, 0),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: 40,
+                      ),
+                      child: Text(
+                        questions[index],
+                        style: const TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Inter',
+                          height: 1.1,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
                       ),
                     ),
                     Column(
@@ -234,14 +246,17 @@ class _UserInfoState extends State<UserInfo> {
                                         FilteringTextInputFormatter.digitsOnly,
                                       ],
                                       decoration: InputDecoration(
-                                        border: const OutlineInputBorder(),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
                                         hintText:
                                             unit1 == 0 ? 'Carbs' : "Exchange",
                                       ),
                                       onSubmitted: (value) {
                                         setState(() {
-                                          secondAnswers[index] =
-                                              value; // You need to create a secondAnswers list
+                                          core = value
+                                              as int; // You need to create a secondAnswers list
                                         });
                                       },
                                     ),
@@ -272,13 +287,17 @@ class _UserInfoState extends State<UserInfo> {
                                       inputFormatters: <TextInputFormatter>[
                                         FilteringTextInputFormatter.digitsOnly,
                                       ],
-                                      decoration: const InputDecoration(
-                                        border: OutlineInputBorder(),
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
                                         hintText: 'Unit',
                                       ),
                                       onSubmitted: (value) {
                                         setState(() {
-                                          answers[index] = value;
+                                          units = value as int;
+                                          answers[index] = core / units;
                                           currentPage =
                                               controller.page!.round() + 1;
                                           if (currentPage < questions.length) {
@@ -297,13 +316,117 @@ class _UserInfoState extends State<UserInfo> {
                             ],
                           ),
                         if (index == 1)
-                          Row(
+                          Column(
                             children: [
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.width * 0.3,
+                                  right: 5,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            unit2 = 0;
+                                          });
+                                        },
+                                        child: Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.055,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                              bottomLeft: Radius.circular(10),
+                                            ),
+                                            color: unit2 == 0
+                                                ? const Color.fromARGB(
+                                                    255, 22, 161, 170)
+                                                : const Color.fromARGB(
+                                                    255, 217, 217, 217),
+                                            border: Border.all(
+                                              color: const Color.fromARGB(
+                                                  0, 101, 73, 152),
+                                              width: 0,
+                                            ),
+                                          ),
+                                          child: const Center(
+                                            child: Text(
+                                              'mmol/L',
+                                              style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 255, 255, 255),
+                                                fontWeight: FontWeight.w900,
+                                                fontFamily: 'Rubik',
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            unit2 = 1;
+                                          });
+                                        },
+                                        child: Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.055,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                              topRight: Radius.circular(10),
+                                              bottomRight: Radius.circular(10),
+                                            ),
+                                            color: unit2 == 1
+                                                ? const Color.fromARGB(
+                                                    255, 22, 161, 170)
+                                                : const Color.fromARGB(
+                                                    255, 217, 217, 217),
+                                            border: Border.all(
+                                              color: const Color.fromARGB(
+                                                  0, 101, 73, 152),
+                                              width: 0,
+                                            ),
+                                          ),
+                                          child: const Center(
+                                            child: Text(
+                                              'mg/dL',
+                                              style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 255, 255, 255),
+                                                fontWeight: FontWeight.w900,
+                                                fontFamily: 'Rubik',
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
                               SizedBox(
                                 width: MediaQuery.of(context).size.width - 60,
                                 child: TextField(
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
                                     hintText: 'Enter your insulin sensitivity',
                                   ),
                                   onSubmitted: (value) {
@@ -324,13 +447,117 @@ class _UserInfoState extends State<UserInfo> {
                             ],
                           ),
                         if (index == 2)
-                          Row(
+                          Column(
                             children: [
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.width * 0.3,
+                                  right: 5,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            unit3 = 0;
+                                          });
+                                        },
+                                        child: Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.055,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                              bottomLeft: Radius.circular(10),
+                                            ),
+                                            color: unit3 == 0
+                                                ? const Color.fromARGB(
+                                                    255, 22, 161, 170)
+                                                : const Color.fromARGB(
+                                                    255, 217, 217, 217),
+                                            border: Border.all(
+                                              color: const Color.fromARGB(
+                                                  0, 101, 73, 152),
+                                              width: 0,
+                                            ),
+                                          ),
+                                          child: const Center(
+                                            child: Text(
+                                              'mmol/L',
+                                              style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 255, 255, 255),
+                                                fontWeight: FontWeight.w900,
+                                                fontFamily: 'Rubik',
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            unit3 = 1;
+                                          });
+                                        },
+                                        child: Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.055,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                              topRight: Radius.circular(10),
+                                              bottomRight: Radius.circular(10),
+                                            ),
+                                            color: unit3 == 1
+                                                ? const Color.fromARGB(
+                                                    255, 22, 161, 170)
+                                                : const Color.fromARGB(
+                                                    255, 217, 217, 217),
+                                            border: Border.all(
+                                              color: const Color.fromARGB(
+                                                  0, 101, 73, 152),
+                                              width: 0,
+                                            ),
+                                          ),
+                                          child: const Center(
+                                            child: Text(
+                                              'mg/dL',
+                                              style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 255, 255, 255),
+                                                fontWeight: FontWeight.w900,
+                                                fontFamily: 'Rubik',
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
                               SizedBox(
                                 width: MediaQuery.of(context).size.width - 60,
                                 child: TextField(
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
                                     hintText: 'Enter your target glucose level',
                                   ),
                                   onSubmitted: (value) {
@@ -351,31 +578,70 @@ class _UserInfoState extends State<UserInfo> {
                             ],
                           ),
                         if (index == 3)
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width - 60,
-                                child: TextField(
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    hintText: 'Enter your insulin sensitivity',
-                                  ),
-                                  onSubmitted: (value) {
-                                    setState(() {
-                                      answers[index] = value;
-                                      currentPage =
-                                          controller.page!.round() + 1;
-                                      if (currentPage < questions.length) {
-                                        controller.nextPage(
-                                          duration: Duration(milliseconds: 500),
-                                          curve: Curves.ease,
-                                        );
-                                      }
-                                    });
-                                  },
-                                ),
-                              ),
-                            ],
+                          SizedBox(
+                            height: 300,
+                            child: ListView.builder(
+                              itemCount: options.length,
+                              itemBuilder: (context, index) {
+                                return Column(
+                                  children: [
+                                    ListTile(
+                                      title: Text(
+                                        options[index].title,
+                                        style: const TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w600,
+                                          fontFamily: 'Inter',
+                                          color:
+                                              Color.fromARGB(255, 84, 84, 84),
+                                        ),
+                                      ),
+                                      trailing: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            options[index].isSelected =
+                                                !options[index].isSelected;
+                                          });
+                                        },
+                                        child: Container(
+                                          width: 20, // Adjust as needed
+                                          height: 20, // Adjust as needed
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: const Color.fromARGB(
+                                                  255,
+                                                  22,
+                                                  161,
+                                                  170), // Change this to your desired border color
+                                              width:
+                                                  2, // Change this to your desired border width
+                                            ),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(
+                                                1.5), // Adjust as needed
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: options[index].isSelected
+                                                    ? const Color.fromARGB(
+                                                        255, 22, 161, 170)
+                                                    : Color.fromARGB(
+                                                        0, 255, 255, 255),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
                           ),
                       ],
                     ),
@@ -453,4 +719,11 @@ class _UserInfoState extends State<UserInfo> {
             ),
     );
   }
+}
+
+class Option {
+  bool isSelected;
+  final String title;
+
+  Option({required this.title, this.isSelected = false});
 }
