@@ -133,14 +133,27 @@ class Dashboard extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text(
-          'Home',
-          style: TextStyle(
-            color: Color.fromARGB(255, 255, 249, 254),
-            fontSize: 17,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w900,
-          ),
+        title: const Row(
+          children: [
+            Text(
+              'Sugar',
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 249, 254),
+                fontSize: 21,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            Text(
+              'Sense',
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 249, 254),
+                fontSize: 21,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
@@ -161,14 +174,27 @@ class Settings extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text(
-          'Settings',
-          style: TextStyle(
-            color: Color.fromARGB(255, 255, 249, 254),
-            fontSize: 17,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w900,
-          ),
+        title: const Row(
+          children: [
+            Text(
+              'Sugar',
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 249, 254),
+                fontSize: 21,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            Text(
+              'Sense',
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 249, 254),
+                fontSize: 21,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
@@ -654,22 +680,50 @@ class _ArticlesState extends State<Articles> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: articles.length,
-      itemBuilder: (context, index) {
-        String imageUrl = articles[index]['urlToImage'];
-        String title = articles[index]['title'];
-        String url = articles[index]['url'];
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Row(
+          children: [
+            Text(
+              'Sugar',
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 249, 254),
+                fontSize: 21,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            Text(
+              'Sense',
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 249, 254),
+                fontSize: 21,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color.fromARGB(255, 38, 20, 84),
+      ),
+      body: ListView.builder(
+        itemCount: articles.length,
+        itemBuilder: (context, index) {
+          String imageUrl = articles[index]['urlToImage'];
+          String title = articles[index]['title'];
+          String url = articles[index]['url'];
 
-        return ListTile(
-          leading: Image.network(imageUrl),
-          title: Text(title),
-          onTap: () {
-            // Open the article URL when the ListTile is tapped
-            launch(url);
-          },
-        );
-      },
+          return ListTile(
+            leading: Image.network(imageUrl),
+            title: Text(title),
+            onTap: () {
+              // Open the article URL when the ListTile is tapped
+              launch(url);
+            },
+          );
+        },
+      ),
     );
   }
 }
@@ -682,14 +736,27 @@ class Profile extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text(
-          'Profile',
-          style: TextStyle(
-            color: Color.fromARGB(255, 255, 249, 254),
-            fontSize: 17,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w900,
-          ),
+        title: const Row(
+          children: [
+            Text(
+              'Sugar',
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 249, 254),
+                fontSize: 21,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            Text(
+              'Sense',
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 249, 254),
+                fontSize: 21,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),

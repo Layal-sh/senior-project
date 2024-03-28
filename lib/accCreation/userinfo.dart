@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'dart:math';
 
 class UserInfo extends StatefulWidget {
   const UserInfo({super.key});
@@ -12,12 +13,21 @@ class UserInfo extends StatefulWidget {
 
 class _UserInfoState extends State<UserInfo> {
   final controller = PageController();
+
   final questions = [
     'What\'s Your Carbohydrates Ratio?',
     'What\'s Your Insulin Sensitivity?',
     'What\'s Your Target Glucose Level?',
     'Choose What You Would Like Your Doctor To Have Access To'
   ];
+  List<GlobalKey<FormState>> formKeys = List.generate(
+    3,
+    (index) => GlobalKey<FormState>(),
+  );
+  final carbohydratesController = TextEditingController();
+  final unitController = TextEditingController();
+  final insulinController = TextEditingController();
+  final glucoseController = TextEditingController();
   int core = 0;
   int units = 1;
   List<Option> options = [
@@ -30,7 +40,55 @@ class _UserInfoState extends State<UserInfo> {
   int unit1 = 0;
   int unit2 = 0;
   int unit3 = 0;
+  @override
+  void initState() {
+    super.initState();
+
+    // Add a listener to the controller
+    carbohydratesController.addListener(() {
+      int? intValue = int.tryParse(carbohydratesController.text);
+      if (intValue != null) {
+        core = intValue;
+      }
+    });
+    unitController.addListener(() {
+      int? intValue = int.tryParse(unitController.text);
+      if (intValue != null) {
+        units = intValue;
+        if (core != 0) {
+          answers[currentPage] = core / units;
+        }
+      }
+    });
+    insulinController.addListener(() {
+      int? intValue = int.tryParse(insulinController.text);
+      if (intValue != null) {
+        answers[currentPage] = intValue;
+      }
+    });
+    glucoseController.addListener(() {
+      int? intValue = int.tryParse(glucoseController.text);
+
+      if (intValue != null) {
+        answers[currentPage] = intValue;
+      }
+    });
+  }
+
   final answers = [0.0, 0, 0, ''];
+  void updateAnswers() {
+    // Get the selected options
+    List<Option> selectedOptions =
+        options.where((option) => option.isSelected).toList();
+
+    // Convert the selected options to a list of titles
+    List<String> selectedTitles =
+        selectedOptions.map((option) => option.title).toList();
+
+    // Update the last item in the answers list
+    answers[answers.length - 1] = selectedTitles;
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -233,84 +291,96 @@ class _UserInfoState extends State<UserInfo> {
                               const SizedBox(
                                 height: 30,
                               ),
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: (MediaQuery.of(context).size.width -
-                                            100) /
-                                        2,
-                                    child: TextField(
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                              decimal: false),
-                                      inputFormatters: <TextInputFormatter>[
-                                        FilteringTextInputFormatter.digitsOnly,
-                                      ],
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
+                              Form(
+                                key: formKeys[0],
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width:
+                                          (MediaQuery.of(context).size.width -
+                                                  100) /
+                                              2,
+                                      child: TextFormField(
+                                        controller: carbohydratesController,
+                                        keyboardType: const TextInputType
+                                            .numberWithOptions(decimal: false),
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
+                                        ],
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          hintText:
+                                              unit1 == 0 ? 'Carbs' : "Exchange",
                                         ),
-                                        hintText:
-                                            unit1 == 0 ? 'Carbs' : "Exchange",
-                                      ),
-                                      onSubmitted: (value) {
-                                        setState(() {
-                                          int? intValue = int.tryParse(value);
-                                          if (intValue != null) {
-                                            core = intValue;
+                                        onChanged: (text) {
+                                          if (text.isEmpty) {
+                                            core = 0;
+                                            answers[currentPage] = 0.0;
                                           }
-                                        });
-                                      },
+                                        },
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please enter a value';
+                                          }
+                                          return null;
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Text(
-                                    "/",
-                                    style: TextStyle(
-                                      fontSize: 36,
-                                      //fontWeight: FontWeight.w300,
-                                      fontFamily: 'Inter',
-                                      color: Color.fromARGB(255, 0, 0, 0),
+                                    const SizedBox(
+                                      width: 10,
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  SizedBox(
-                                    width: (MediaQuery.of(context).size.width -
-                                            100) /
-                                        2,
-                                    child: TextField(
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                              decimal: false),
-                                      inputFormatters: <TextInputFormatter>[
-                                        FilteringTextInputFormatter.digitsOnly,
-                                      ],
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
+                                    const Text(
+                                      "/",
+                                      style: TextStyle(
+                                        fontSize: 36,
+                                        //fontWeight: FontWeight.w300,
+                                        fontFamily: 'Inter',
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    SizedBox(
+                                      width:
+                                          (MediaQuery.of(context).size.width -
+                                                  100) /
+                                              2,
+                                      child: TextFormField(
+                                        controller: unitController,
+                                        keyboardType: const TextInputType
+                                            .numberWithOptions(decimal: false),
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
+                                        ],
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          hintText: 'Unit',
                                         ),
-                                        hintText: 'Unit',
-                                      ),
-                                      onSubmitted: (value) {
-                                        setState(() {
-                                          int? intValue = int.tryParse(value);
-                                          if (intValue != null) {
-                                            units = intValue;
-                                            if (core != 0) {
-                                              answers[index] = core / units;
-                                            }
+                                        onChanged: (text) {
+                                          if (text.isEmpty) {
+                                            units = 1;
+                                            answers[currentPage] = 0.0;
                                           }
-                                        });
-                                      },
+                                        },
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please enter a value';
+                                          }
+                                          return null;
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -419,29 +489,37 @@ class _UserInfoState extends State<UserInfo> {
                               const SizedBox(
                                 height: 30,
                               ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width - 60,
-                                child: TextField(
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                          decimal: false),
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.digitsOnly,
-                                  ],
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                              Form(
+                                key: formKeys[1],
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width - 60,
+                                  child: TextFormField(
+                                    controller: insulinController,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                            decimal: false),
+                                    inputFormatters: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.digitsOnly,
+                                    ],
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      hintText:
+                                          'Enter your insulin sensitivity',
                                     ),
-                                    hintText: 'Enter your insulin sensitivity',
-                                  ),
-                                  onSubmitted: (value) {
-                                    setState(() {
-                                      int? intValue = int.tryParse(value);
-                                      if (intValue != null) {
-                                        answers[index] = intValue;
+                                    onChanged: (text) {
+                                      if (text.isEmpty) {
+                                        answers[currentPage] = 0;
                                       }
-                                    });
-                                  },
+                                    },
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a value';
+                                      }
+                                      return null;
+                                    },
+                                  ),
                                 ),
                               ),
                             ],
@@ -551,30 +629,37 @@ class _UserInfoState extends State<UserInfo> {
                               const SizedBox(
                                 height: 30,
                               ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width - 60,
-                                child: TextField(
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                          decimal: false),
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.digitsOnly,
-                                  ],
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                              Form(
+                                key: formKeys[2],
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width - 60,
+                                  child: TextFormField(
+                                    controller: glucoseController,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                            decimal: false),
+                                    inputFormatters: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.digitsOnly,
+                                    ],
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      hintText:
+                                          'Enter your target glucose level',
                                     ),
-                                    hintText: 'Enter your target glucose level',
-                                  ),
-                                  onSubmitted: (value) {
-                                    setState(() {
-                                      int? intValue = int.tryParse(value);
-
-                                      if (intValue != null) {
-                                        answers[index] = value;
+                                    onChanged: (text) {
+                                      if (text.isEmpty) {
+                                        answers[currentPage] = 0;
                                       }
-                                    });
-                                  },
+                                    },
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a value';
+                                      }
+                                      return null;
+                                    },
+                                  ),
                                 ),
                               ),
                             ],
@@ -670,21 +755,20 @@ class _UserInfoState extends State<UserInfo> {
                   ),
                 ),
                 onPressed: () {
-                  setState(() {
-                    if (answers[currentPage] != 0.0 ||
-                        answers[currentPage] != 0) {
-                      //currentPage++;
-                      currentPage = controller.page!.round() + 1;
-                      if (currentPage < questions.length) {
-                        controller.nextPage(
-                          duration: Duration(milliseconds: 500),
-                          curve: Curves.ease,
-                        );
+                  if (formKeys[currentPage].currentState!.validate()) {
+                    setState(() {
+                      if (answers[currentPage] != 0.0 ||
+                          answers[currentPage] != 0) {
+                        currentPage = controller.page!.round() + 1;
+                        if (currentPage < questions.length) {
+                          controller.nextPage(
+                            duration: Duration(milliseconds: 500),
+                            curve: Curves.ease,
+                          );
+                        }
                       }
-                    } else {
-                      print("not valid");
-                    }
-                  });
+                    });
+                  }
                 },
                 child: const Text(
                   "Next",
@@ -712,7 +796,72 @@ class _UserInfoState extends State<UserInfo> {
                   ),
                 ),
                 onPressed: () {
-                  setState(() {});
+                  setState(
+                    () {
+                      updateAnswers();
+                    },
+                  );
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      Future.delayed(Duration(seconds: 3), () {
+                        // Close the dialog
+                        Navigator.of(context).pop();
+                        // Navigate to the new page
+                        Navigator.of(context).pushReplacementNamed('/app');
+                      });
+                      return Dialog(
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          height: MediaQuery.of(context).size.height * 0.6,
+                          child: AlertDialog(
+                            insetPadding: const EdgeInsets.only(
+                              left: 10,
+                              right: 10,
+                              top: 20,
+                              bottom: 20,
+                            ),
+                            backgroundColor: Colors.white,
+                            content: Column(
+                              children: [
+                                Image.asset(
+                                    'assets/completed.png'), // Replace with your image path
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                const Text(
+                                  'Congratulations!',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Inter',
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text(
+                                  'Your account is ready to use. You will be redirected to the Home Page in a few seconds...',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontFamily: 'Inter',
+                                    color: Color.fromARGB(255, 107, 114, 128),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                CustomLoading(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
                 },
                 child: const Text(
                   "Finish",
@@ -727,6 +876,16 @@ class _UserInfoState extends State<UserInfo> {
             ),
     );
   }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    carbohydratesController.dispose();
+    unitController.dispose();
+    insulinController.dispose();
+    glucoseController.dispose();
+    super.dispose();
+  }
 }
 
 class Option {
@@ -734,4 +893,65 @@ class Option {
   final String title;
 
   Option({required this.title, this.isSelected = false});
+}
+
+class CustomLoading extends StatefulWidget {
+  @override
+  _CustomLoadingState createState() => _CustomLoadingState();
+}
+
+class _CustomLoadingState extends State<CustomLoading>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 2),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 75,
+      height: 75,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (_, child) {
+          return Transform.rotate(
+            angle: _controller.value * 2 * pi,
+            child: child,
+          );
+        },
+        child: Stack(
+          children: List.generate(8, (index) {
+            return Positioned(
+              left: 25,
+              top: 0,
+              child: Transform.rotate(
+                angle: (2 * pi / 8) * index,
+                child: Container(
+                  width: 16,
+                  height: 16,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromARGB(255, 22, 161, 170),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
+      ),
+    );
+  }
 }
