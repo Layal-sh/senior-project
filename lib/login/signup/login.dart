@@ -287,8 +287,10 @@ class _LoginState extends State<Login> {
                                   await dbHelper.syncMealComposition();
                                   logger.info(
                                       "synced meal compositions successfully");
-
-                                  // dbHelper.selectAllMeals();
+                                  List<Map> response1 =
+                                      await dbHelper.getIngredients(9);
+                                  print(response1);
+                                  //dbHelper.selectAllMeals();
                                   // print(dbHelper.selectAllMeals());
 
                                   // ignore: use_build_context_synchronously
