@@ -797,13 +797,7 @@ class _UserInfoState extends State<UserInfo> {
                 onPressed: () {
                   setState(
                     () {
-                      if (answers[currentPage] != '') {
-                        //currentPage++;
-                        updateAnswers();
-                        print(answers);
-                      } else {
-                        print("not valid");
-                      }
+                      updateAnswers();
                     },
                   );
                 },
