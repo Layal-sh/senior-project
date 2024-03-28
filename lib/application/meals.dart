@@ -24,6 +24,14 @@ DBHelper db = DBHelper.instance;
 
 class _MealsState extends State<Meals> {
   final TextEditingController _filter = TextEditingController();
+  late Future<List<Map>> _mealsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _mealsFuture =
+        db.selectAllMeals(); // Call your function that fetches the meals data
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +122,7 @@ class _MealsState extends State<Meals> {
           ),
           Expanded(
             child: FutureBuilder<List<Map>>(
-              future: db.selectAllMeals(),
+              future: _mealsFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();
@@ -452,16 +460,13 @@ class _MealBoxState extends State<MealBox> {
                           ),
                         );
                       },
-                      child: Hero(
-                        tag: 'meal${widget.meal.name}',
-                        child: const CircleAvatar(
-                          radius: 11,
-                          backgroundColor: Color.fromARGB(170, 64, 205, 215),
-                          child: Icon(
-                            Icons.arrow_forward_ios,
-                            color: Color.fromARGB(255, 255, 255, 255),
-                            size: 14,
-                          ),
+                      child: const CircleAvatar(
+                        radius: 11,
+                        backgroundColor: Color.fromARGB(170, 64, 205, 215),
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          size: 14,
                         ),
                       ),
                     ),

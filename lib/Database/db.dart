@@ -198,7 +198,7 @@ class DBHelper {
     return ings;
   }
 
-  getIngredients(int parentId) async {
+  Future<List<Map>> getIngredients(int parentId) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
       SELECT m1.mealName,c.unit, c.quantity 

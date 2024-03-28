@@ -654,7 +654,7 @@ class Articles extends StatefulWidget {
 class _ArticlesState extends State<Articles> {
   List articles = [];
 
-  @override
+  /*@override
   void initState() {
     super.initState();
     fetchArticles();
@@ -676,7 +676,7 @@ class _ArticlesState extends State<Articles> {
     } else {
       throw Exception('Failed to load articles');
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -707,7 +707,7 @@ class _ArticlesState extends State<Articles> {
         ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
-      body: ListView.builder(
+      /*body: ListView.builder(
         itemCount: articles.length,
         itemBuilder: (context, index) {
           String imageUrl = articles[index]['urlToImage'];
@@ -723,7 +723,7 @@ class _ArticlesState extends State<Articles> {
             },
           );
         },
-      ),
+      ),*/
     );
   }
 }

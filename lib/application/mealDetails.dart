@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -18,6 +20,30 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
   final TextEditingController controller = TextEditingController(text: '1');
   final TextEditingController _numberOfMeal = TextEditingController();
   // Your list of ingredients
+  late Future<List<Map>> _ingFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _ingFuture = db.getIngredients(
+        widget.meal.id); // Call your function that fetches the meals data
+  }
+
+  Future<List<Ingredient>> fetchIngredients() async {
+    List<Map> response =
+        await db.getIngredients(widget.meal.id); // Call getIngredients
+
+    // Convert the response into a list of Ingredient objects
+    List<Ingredient> ingredients = response.map((item) {
+      return Ingredient(
+        name: item['mealName'],
+        unit: item['unit'],
+        quantity: item['quantity'],
+      );
+    }).toList();
+
+    return ingredients;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,265 +81,259 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
           ),
         ],
       ),
-      body: Hero(
-        tag: 'meal${widget.meal.name}',
-        child: Padding(
-          padding: const EdgeInsets.only(
-            top: 20,
-          ),
-          child: Column(
-            //mainAxisAlignment: MainAxisAlignment.start,
-            //mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: SizedBox(
-                  width: 175,
-                  height: 175,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
-                    child: Image.asset(
-                      widget.meal.imageUrl,
-                      fit: BoxFit.cover,
-                    ),
+      body: Padding(
+        padding: const EdgeInsets.only(
+          top: 20,
+        ),
+        child: Column(
+          //mainAxisAlignment: MainAxisAlignment.start,
+          //mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: SizedBox(
+                width: 175,
+                height: 175,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: Image.asset(
+                    widget.meal.imageUrl,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 40,
-                  right: 20,
-                  top: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 40,
+                right: 20,
+                top: 20,
+              ),
+              child: Text(
+                widget.meal.name,
+                style: const TextStyle(
+                  color: Color.fromARGB(255, 38, 20, 84),
+                  fontSize: 20,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w800,
                 ),
-                child: Text(
-                  widget.meal.name,
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 38, 20, 84),
-                    fontSize: 20,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            const Padding(
+              padding: EdgeInsets.only(
+                left: 40,
+                right: 20,
+              ),
+              child: Text(
+                'Ingredients',
+                style: TextStyle(
+                  color: Color.fromARGB(255, 38, 20, 84),
+                  fontSize: 17,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            Expanded(
+              child: FutureBuilder<List<Ingredient>>(
+                future: fetchIngredients(), //_ingFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    //List<Map> ingredients = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (ctx, i) {
+                        return IngBox(ingredient: snapshot.data![i]);
+                      },
+                    ); /*GridView.builder(
+                      padding: const EdgeInsets.all(10.0),
+                      itemCount: ingredients.length,
+                      itemBuilder: (ctx, i) => IngBox(
+                        ingredient: Ingredient(
+                          name: ingredients[i]['mealName'],
+                          quantity: ingredients[i]['c.quantity'],
+                          unit: ingredients[i]['c.unit'],
+                        ),
+                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 3 / 5,
+                        crossAxisSpacing: 5,
+                        mainAxisSpacing: 10,
+                      ),
+                    );*/
+                  }
+                },
+              ),
+            ),
+
+            /*Center(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: Container(
+                  padding: EdgeInsets.all(10.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                        color: const Color.fromARGB(255, 0, 0, 0)),
+                    borderRadius: BorderRadius.circular(1.0),
                   ),
-                ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              const Padding(
-                padding: EdgeInsets.only(
-                  left: 40,
-                  right: 20,
-                ),
-                child: Text(
-                  'Ingredients',
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 38, 20, 84),
-                    fontSize: 17,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              /*Expanded(
-                child: ListView.builder(
-                  itemCount: ingredients.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(ingredients[index]),
-                    );
-                  },
-                ),
-              )*/
-              Expanded(
-                child: FutureBuilder<List<Map>>(
-                  future: db.getMealIngredients(widget.meal.id),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<Map>> snapshot) {
-                    print(snapshot.hasData);
-                    if (snapshot.hasData) {
-                      List<Map> ingredients = snapshot.data!;
-                      return ListView.builder(
-                        itemCount: ingredients.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return ListView.builder(
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ListTile(
-                                title:
-                                    Text(snapshot.data![index]['childMealID']),
-                              );
-                            },
-                          );
-                        },
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      // By default, show a loading spinner.
-                      return CircularProgressIndicator();
-                    }
-                  },
-                ),
-              ),
-              /*Center(
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: Container(
-                    padding: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          color: const Color.fromARGB(255, 0, 0, 0)),
-                      borderRadius: BorderRadius.circular(1.0),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Carbohydrates',
-                          style: TextStyle(
-                            fontSize: 25.0,
-                            fontFamily: 'InterBlack',
-                          ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Carbohydrates',
+                        style: TextStyle(
+                          fontSize: 25.0,
+                          fontFamily: 'InterBlack',
                         ),
-                        const Divider(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          //height: 10,
-                          thickness: 1,
+                      ),
+                      const Divider(
+                        color: Color.fromARGB(255, 0, 0, 0),
+                        //height: 10,
+                        thickness: 1,
+                      ),
+                      const Text(
+                        'Serving Size',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w800,
                         ),
-                        const Text(
-                          'Serving Size',
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(0.0),
-                                  child: IconButton(
-                                    icon: const Icon(
-                                      Icons.arrow_drop_up,
-                                      size: 40,
-                                    ),
-                                    onPressed: () {
-                                      int currentValue =
-                                          int.parse(controller.text);
-                                      if (currentValue < 99) {
-                                        currentValue++;
-                                        controller.text = (currentValue)
-                                            .toString(); // incrementing value
-                                      }
-                                    },
+                      ),
+                      Row(
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(0.0),
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.arrow_drop_up,
+                                    size: 40,
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(0.0),
-                                  child: IconButton(
-                                    icon: const Icon(
-                                      Icons.arrow_drop_down,
-                                      size: 40,
-                                    ),
-                                    onPressed: () {
-                                      int currentValue =
-                                          int.parse(controller.text);
-                                      if (currentValue > 1) {
-                                        currentValue--;
-                                        controller.text = (currentValue)
-                                            .toString(); // decrementing value
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.13,
-                              height: 40.0,
-                              child: TextField(
-                                controller: controller,
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(fontSize: 20.0),
-                                decoration: const InputDecoration(
-                                  contentPadding:
-                                      EdgeInsets.symmetric(vertical: 10.0),
-                                  border: OutlineInputBorder(),
-                                  hintText: '1',
+                                  onPressed: () {
+                                    int currentValue =
+                                        int.parse(controller.text);
+                                    if (currentValue < 99) {
+                                      currentValue++;
+                                      controller.text = (currentValue)
+                                          .toString(); // incrementing value
+                                    }
+                                  },
                                 ),
                               ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  widget.meal
-                                      .name, // Replace with your actual value
-                                  style: const TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.w900,
-                                    fontFamily: 'Inter',
+                              Padding(
+                                padding: const EdgeInsets.all(0.0),
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.arrow_drop_down,
+                                    size: 40,
                                   ),
+                                  onPressed: () {
+                                    int currentValue =
+                                        int.parse(controller.text);
+                                    if (currentValue > 1) {
+                                      currentValue--;
+                                      controller.text = (currentValue)
+                                          .toString(); // decrementing value
+                                    }
+                                  },
                                 ),
-                                Text(
-                                  " (${unitString(widget.meal.unit)})", // Replace with your actual value
-                                  style: const TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.w900,
-                                    fontFamily: 'Inter',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const Divider(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          //height: 10,
-                          thickness: 5,
-                        ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        const Text(
-                          'Amount per Serving',
-                          style: TextStyle(
-                            fontSize: 17.0,
-                            fontFamily: 'Inter',
-                            //fontWeight: FontWeight.w800,
+                              ),
+                            ],
                           ),
-                        ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Total Carbohydrates',
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.w800,
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.13,
+                            height: 40.0,
+                            child: TextField(
+                              controller: controller,
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 20.0),
+                              decoration: const InputDecoration(
+                                contentPadding:
+                                    EdgeInsets.symmetric(vertical: 10.0),
+                                border: OutlineInputBorder(),
+                                hintText: '1',
                               ),
                             ),
-                            Text(
-                              '10g', // Replace with your actual value
-                              style: TextStyle(fontSize: 16.0),
-                            ),
-                          ],
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                widget.meal
+                                    .name, // Replace with your actual value
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w900,
+                                  fontFamily: 'Inter',
+                                ),
+                              ),
+                              Text(
+                                " (${unitString(widget.meal.unit)})", // Replace with your actual value
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w900,
+                                  fontFamily: 'Inter',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const Divider(
+                        color: Color.fromARGB(255, 0, 0, 0),
+                        //height: 10,
+                        thickness: 5,
+                      ),
+                      const SizedBox(
+                        height: 10.0,
+                      ),
+                      const Text(
+                        'Amount per Serving',
+                        style: TextStyle(
+                          fontSize: 17.0,
+                          fontFamily: 'Inter',
+                          //fontWeight: FontWeight.w800,
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(
+                        height: 10.0,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Total Carbohydrates',
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          Text(
+                            '10g', // Replace with your actual value
+                            style: TextStyle(fontSize: 16.0),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              )*/
-            ],
-          ),
+              ),
+            )*/
+          ],
         ),
       ),
       bottomNavigationBar: Padding(
@@ -422,51 +442,118 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
   }
 }
 
-/*class Ingredient {
-  final int name;
+class Ingredient {
+  final String name;
+  final String quantity;
+  final int unit;
 
-  Ingredient({required this.name});
-}*/
+  Ingredient({
+    required this.name,
+    required this.quantity,
+    required this.unit,
+  });
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'quantity': quantity,
+      'unit': unit,
+    };
+  }
+}
 
-/*class IngBox extends StatelessWidget {
+class IngBox extends StatefulWidget {
   final Ingredient ingredient;
 
   const IngBox({required this.ingredient});
+  @override
+  _IngBoxState createState() => _IngBoxState();
+}
 
+class _IngBoxState extends State<IngBox> {
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Text(
+        '${widget.ingredient.name}: ${widget.ingredient.quantity}: ${widget.ingredient.unit}'); /*Card(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(50), // Change this value as needed
+        borderRadius: BorderRadius.circular(5), // Change this value as needed
       ),
-      child: const Row(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               left: 8,
               right: 8,
             ),
             child: FittedBox(
               fit: BoxFit.scaleDown,
-              child: Text(
-                "ingredient.name",
-                softWrap: true,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Color.fromARGB(255, 38, 20, 84),
-                  fontSize: 35,
-                  fontFamily: 'Ruda',
-                  letterSpacing: -0.75,
-                  fontWeight: FontWeight.w600,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.7,
+                child: Text(
+                  "widget.ingredient.name",
+                  softWrap: true,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 38, 20, 84),
+                    fontSize: 35,
+                    fontFamily: 'Ruda',
+                    letterSpacing: -0.75,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
           ),
-
-          //meal name
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 8,
+              right: 8,
+            ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.7,
+                child: Text(
+                  "widget.ingredient.quantity",
+                  softWrap: true,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 38, 20, 84),
+                    fontSize: 35,
+                    fontFamily: 'Ruda',
+                    letterSpacing: -0.75,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 8,
+              right: 8,
+            ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.7,
+                child: Text(
+                  "widget.ingredient.unit",
+                  softWrap: true,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 38, 20, 84),
+                    fontSize: 35,
+                    fontFamily: 'Ruda',
+                    letterSpacing: -0.75,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
-    );
+    );*/
   }
-}*/
+}
