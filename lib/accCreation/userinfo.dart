@@ -12,12 +12,21 @@ class UserInfo extends StatefulWidget {
 
 class _UserInfoState extends State<UserInfo> {
   final controller = PageController();
+
   final questions = [
     'What\'s Your Carbohydrates Ratio?',
     'What\'s Your Insulin Sensitivity?',
     'What\'s Your Target Glucose Level?',
     'Choose What You Would Like Your Doctor To Have Access To'
   ];
+  List<GlobalKey<FormState>> formKeys = List.generate(
+    3,
+    (index) => GlobalKey<FormState>(),
+  );
+  final carbohydratesController = TextEditingController();
+  final unitController = TextEditingController();
+  final insulinController = TextEditingController();
+  final glucoseController = TextEditingController();
   int core = 0;
   int units = 1;
   List<Option> options = [
@@ -30,7 +39,55 @@ class _UserInfoState extends State<UserInfo> {
   int unit1 = 0;
   int unit2 = 0;
   int unit3 = 0;
+  @override
+  void initState() {
+    super.initState();
+
+    // Add a listener to the controller
+    carbohydratesController.addListener(() {
+      int? intValue = int.tryParse(carbohydratesController.text);
+      if (intValue != null) {
+        core = intValue;
+      }
+    });
+    unitController.addListener(() {
+      int? intValue = int.tryParse(unitController.text);
+      if (intValue != null) {
+        units = intValue;
+        if (core != 0) {
+          answers[currentPage] = core / units;
+        }
+      }
+    });
+    insulinController.addListener(() {
+      int? intValue = int.tryParse(insulinController.text);
+      if (intValue != null) {
+        answers[currentPage] = intValue;
+      }
+    });
+    glucoseController.addListener(() {
+      int? intValue = int.tryParse(glucoseController.text);
+
+      if (intValue != null) {
+        answers[currentPage] = intValue;
+      }
+    });
+  }
+
   final answers = [0.0, 0, 0, ''];
+  void updateAnswers() {
+    // Get the selected options
+    List<Option> selectedOptions =
+        options.where((option) => option.isSelected).toList();
+
+    // Convert the selected options to a list of titles
+    List<String> selectedTitles =
+        selectedOptions.map((option) => option.title).toList();
+
+    // Update the last item in the answers list
+    answers[answers.length - 1] = selectedTitles;
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -233,84 +290,96 @@ class _UserInfoState extends State<UserInfo> {
                               const SizedBox(
                                 height: 30,
                               ),
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: (MediaQuery.of(context).size.width -
-                                            100) /
-                                        2,
-                                    child: TextField(
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                              decimal: false),
-                                      inputFormatters: <TextInputFormatter>[
-                                        FilteringTextInputFormatter.digitsOnly,
-                                      ],
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
+                              Form(
+                                key: formKeys[0],
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width:
+                                          (MediaQuery.of(context).size.width -
+                                                  100) /
+                                              2,
+                                      child: TextFormField(
+                                        controller: carbohydratesController,
+                                        keyboardType: const TextInputType
+                                            .numberWithOptions(decimal: false),
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
+                                        ],
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          hintText:
+                                              unit1 == 0 ? 'Carbs' : "Exchange",
                                         ),
-                                        hintText:
-                                            unit1 == 0 ? 'Carbs' : "Exchange",
-                                      ),
-                                      onSubmitted: (value) {
-                                        setState(() {
-                                          int? intValue = int.tryParse(value);
-                                          if (intValue != null) {
-                                            core = intValue;
+                                        onChanged: (text) {
+                                          if (text.isEmpty) {
+                                            core = 0;
+                                            answers[currentPage] = 0.0;
                                           }
-                                        });
-                                      },
+                                        },
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please enter a value';
+                                          }
+                                          return null;
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Text(
-                                    "/",
-                                    style: TextStyle(
-                                      fontSize: 36,
-                                      //fontWeight: FontWeight.w300,
-                                      fontFamily: 'Inter',
-                                      color: Color.fromARGB(255, 0, 0, 0),
+                                    const SizedBox(
+                                      width: 10,
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  SizedBox(
-                                    width: (MediaQuery.of(context).size.width -
-                                            100) /
-                                        2,
-                                    child: TextField(
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                              decimal: false),
-                                      inputFormatters: <TextInputFormatter>[
-                                        FilteringTextInputFormatter.digitsOnly,
-                                      ],
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
+                                    const Text(
+                                      "/",
+                                      style: TextStyle(
+                                        fontSize: 36,
+                                        //fontWeight: FontWeight.w300,
+                                        fontFamily: 'Inter',
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    SizedBox(
+                                      width:
+                                          (MediaQuery.of(context).size.width -
+                                                  100) /
+                                              2,
+                                      child: TextFormField(
+                                        controller: unitController,
+                                        keyboardType: const TextInputType
+                                            .numberWithOptions(decimal: false),
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
+                                        ],
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          hintText: 'Unit',
                                         ),
-                                        hintText: 'Unit',
-                                      ),
-                                      onSubmitted: (value) {
-                                        setState(() {
-                                          int? intValue = int.tryParse(value);
-                                          if (intValue != null) {
-                                            units = intValue;
-                                            if (core != 0) {
-                                              answers[index] = core / units;
-                                            }
+                                        onChanged: (text) {
+                                          if (text.isEmpty) {
+                                            units = 1;
+                                            answers[currentPage] = 0.0;
                                           }
-                                        });
-                                      },
+                                        },
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please enter a value';
+                                          }
+                                          return null;
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -419,29 +488,37 @@ class _UserInfoState extends State<UserInfo> {
                               const SizedBox(
                                 height: 30,
                               ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width - 60,
-                                child: TextField(
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                          decimal: false),
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.digitsOnly,
-                                  ],
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                              Form(
+                                key: formKeys[1],
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width - 60,
+                                  child: TextFormField(
+                                    controller: insulinController,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                            decimal: false),
+                                    inputFormatters: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.digitsOnly,
+                                    ],
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      hintText:
+                                          'Enter your insulin sensitivity',
                                     ),
-                                    hintText: 'Enter your insulin sensitivity',
-                                  ),
-                                  onSubmitted: (value) {
-                                    setState(() {
-                                      int? intValue = int.tryParse(value);
-                                      if (intValue != null) {
-                                        answers[index] = intValue;
+                                    onChanged: (text) {
+                                      if (text.isEmpty) {
+                                        answers[currentPage] = 0;
                                       }
-                                    });
-                                  },
+                                    },
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a value';
+                                      }
+                                      return null;
+                                    },
+                                  ),
                                 ),
                               ),
                             ],
@@ -551,30 +628,37 @@ class _UserInfoState extends State<UserInfo> {
                               const SizedBox(
                                 height: 30,
                               ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width - 60,
-                                child: TextField(
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                          decimal: false),
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.digitsOnly,
-                                  ],
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                              Form(
+                                key: formKeys[2],
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width - 60,
+                                  child: TextFormField(
+                                    controller: glucoseController,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                            decimal: false),
+                                    inputFormatters: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.digitsOnly,
+                                    ],
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      hintText:
+                                          'Enter your target glucose level',
                                     ),
-                                    hintText: 'Enter your target glucose level',
-                                  ),
-                                  onSubmitted: (value) {
-                                    setState(() {
-                                      int? intValue = int.tryParse(value);
-
-                                      if (intValue != null) {
-                                        answers[index] = value;
+                                    onChanged: (text) {
+                                      if (text.isEmpty) {
+                                        answers[currentPage] = 0;
                                       }
-                                    });
-                                  },
+                                    },
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter a value';
+                                      }
+                                      return null;
+                                    },
+                                  ),
                                 ),
                               ),
                             ],
@@ -670,21 +754,20 @@ class _UserInfoState extends State<UserInfo> {
                   ),
                 ),
                 onPressed: () {
-                  setState(() {
-                    if (answers[currentPage] != 0.0 ||
-                        answers[currentPage] != 0) {
-                      //currentPage++;
-                      currentPage = controller.page!.round() + 1;
-                      if (currentPage < questions.length) {
-                        controller.nextPage(
-                          duration: Duration(milliseconds: 500),
-                          curve: Curves.ease,
-                        );
+                  if (formKeys[currentPage].currentState!.validate()) {
+                    setState(() {
+                      if (answers[currentPage] != 0.0 ||
+                          answers[currentPage] != 0) {
+                        currentPage = controller.page!.round() + 1;
+                        if (currentPage < questions.length) {
+                          controller.nextPage(
+                            duration: Duration(milliseconds: 500),
+                            curve: Curves.ease,
+                          );
+                        }
                       }
-                    } else {
-                      print("not valid");
-                    }
-                  });
+                    });
+                  }
                 },
                 child: const Text(
                   "Next",
@@ -712,7 +795,17 @@ class _UserInfoState extends State<UserInfo> {
                   ),
                 ),
                 onPressed: () {
-                  setState(() {});
+                  setState(
+                    () {
+                      if (answers[currentPage] != '') {
+                        //currentPage++;
+                        updateAnswers();
+                        print(answers);
+                      } else {
+                        print("not valid");
+                      }
+                    },
+                  );
                 },
                 child: const Text(
                   "Finish",
@@ -726,6 +819,16 @@ class _UserInfoState extends State<UserInfo> {
               ),
             ),
     );
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    carbohydratesController.dispose();
+    unitController.dispose();
+    insulinController.dispose();
+    glucoseController.dispose();
+    super.dispose();
   }
 }
 
