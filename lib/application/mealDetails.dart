@@ -125,6 +125,8 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
               )*/
               Expanded(
                 child: FutureBuilder<List<Map>>(
+                  // the new function is getIngredients///
+                  /////////////////////////////////////////
                   future: db.getMealIngredients(widget.meal.id),
                   builder: (BuildContext context,
                       AsyncSnapshot<List<Map>> snapshot) {

@@ -287,9 +287,22 @@ class _LoginState extends State<Login> {
                                   await dbHelper.syncMealComposition();
                                   logger.info(
                                       "synced meal compositions successfully");
+                                  
+                                  //testing for the ingredients
                                   List<Map> response1 =
                                       await dbHelper.getIngredients(9);
+                                  print("get ingreidents:");
                                   print(response1);
+
+                                  //testing for the editting
+                                  List<Map> chosen = [
+                                    {'mealID': 58, 'unit': 5, 'quantity': 2.0},
+                                    {'mealID': 13, 'unit':2, 'quantity': 3.0}
+                                  ];
+                                  
+                                  
+                                  await dbHelper.editNewMeal(10,'iitpancake','kinderpic', chosen);
+                                    
                                   //dbHelper.selectAllMeals();
                                   // print(dbHelper.selectAllMeals());
 
