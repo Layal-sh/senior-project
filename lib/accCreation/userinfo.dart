@@ -402,6 +402,7 @@ class _UserInfoState extends State<UserInfo> {
                                         onTap: () {
                                           setState(() {
                                             unit2 = 0;
+                                            unit3 = 0;
                                           });
                                         },
                                         child: Container(
@@ -445,6 +446,7 @@ class _UserInfoState extends State<UserInfo> {
                                         onTap: () {
                                           setState(() {
                                             unit2 = 1;
+                                            unit3 = 1;
                                           });
                                         },
                                         child: Container(

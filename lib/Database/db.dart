@@ -27,15 +27,15 @@ class DBHelper {
     String DbPath = await getDatabasesPath();
     String path = join(DbPath, 'SugarSense.db');
     Database database = await openDatabase(path,
-        onCreate: _onCreate, version: 23, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 27, onUpgrade: _onUpgrade);
     return database;
   }
 
   _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    //if (oldVersion < newVersion) {
-    // await db.execute(
-    //     '''ALTER TABLE "Meals" ADD COLUMN frequency INTEGER NULL;''');
-    //}
+    if (oldVersion < newVersion) {
+      await db.execute(
+          '''ALTER TABLE "Meals" ADD COLUMN frequency INTEGER NULL;''');
+    }
   }
 
   _onCreate(Database db, int version) async {
@@ -251,10 +251,10 @@ class DBHelper {
     List<Map> response = await mydb!.rawQuery('''
     SELECT mealId FROM "Meals" WHERE mealName = "$name";
     ''');
-     if (response.isNotEmpty) {
-    return response.first['mealId'] as int;
-  }
-  return -1;
+    if (response.isNotEmpty) {
+      return response.first['mealId'] as int;
+    }
+    return -1;
   }
 
 //Create a new meal and insert it into the database after checking if it already exists
@@ -265,16 +265,14 @@ class DBHelper {
     String picture,
     String tags,
   ) async {
-
     double certainty = 0.0;
     int frequency = 0;
     Database? mydb = await db;
     int mealId = await getMealIdByName("$name");
 
-    int nextId= await getNextMealId();
-   
+    int nextId = await getNextMealId();
+
     if (mealId < 0) {
-      
       int response = await mydb!.rawInsert(
           '''INSERT INTO Meals(mealId,mealName,carbohydrates,unit,mealPicture,tags,certainty,frequency) VALUES($nextId,"$name",$carbs,$unit,"$picture","$tags",$certainty,$frequency);''');
       logger.info("New meal $name has been created successfully.");
@@ -287,19 +285,19 @@ class DBHelper {
   }
 
   getNextMealId() async {
-  Database? mydb = await db;
-  var result = await mydb!.rawQuery('SELECT MAX(mealId) as maxId FROM Meals');
-  if (result.isNotEmpty) {
-    int maxId = result.first['maxId'] as int;
-    return maxId + 1;
+    Database? mydb = await db;
+    var result = await mydb!.rawQuery('SELECT MAX(mealId) as maxId FROM Meals');
+    if (result.isNotEmpty) {
+      int maxId = result.first['maxId'] as int;
+      return maxId + 1;
+    }
+    return 1; // return 1 if the Meals table is empty
   }
-  return 1; // return 1 if the Meals table is empty
-}
 
 //Create meal composition of a parent Meal and a child meal
   createMealComposition(
       int parentMealId, int childMealId, int unit, double quantity) async {
-         print("entered meal composition");
+    print("entered meal composition");
     Database? mydb = await db;
     int response = await mydb!.rawInsert('''
   INSERT INTO MealComposition(parentMealId,childMealId,quantity,unit)
@@ -312,36 +310,30 @@ class DBHelper {
 
 //Creates a new edited meal and makes its meal composition(The child meal should include new parent meal id)
 //child meals: id, quantity, unit
-  editNewMeal(int parentMealId,String mealName, String picture, List<Map> childMeals) async{
-    
+  editNewMeal(int parentMealId, String mealName, String picture,
+      List<Map> childMeals) async {
     List<Map> response = await getMealById(parentMealId);
 
-    if(mealName == null || mealName == "") {
+    if (mealName == null || mealName == "") {
       mealName = "My ${response[0]['mealName']}";
     }
 
-    int newMealID= await createNewMeal(
-        mealName,
-        response[0]['carbohydrates'],
-        response[0]['unit'],
-        picture,
-        response[0]['tags'] + ', myMeals');
+    int newMealID = await createNewMeal(mealName, response[0]['carbohydrates'],
+        response[0]['unit'], picture, response[0]['tags'] + ', myMeals');
 
     print(newMealID);
 
-    if(newMealID!=-1){
+    if (newMealID != -1) {
       if (childMeals != null) {
-      childMeals.forEach((element) {
-      createMealComposition(
-          newMealID, element['mealID'], element['unit'], element['quantity']);
-    });
+        childMeals.forEach((element) {
+          createMealComposition(newMealID, element['mealID'], element['unit'],
+              element['quantity']);
+        });
       }
-    logger.info("Meal has been edited successfully.");
-    }
-    else{
+      logger.info("Meal has been edited successfully.");
+    } else {
       logger.info("Error meal wasn't edited.");
     }
-    
   }
 
   Future<void> syncMeals() async {
