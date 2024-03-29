@@ -119,17 +119,17 @@ async def read_item(meal_id: int):
     
 @app.post("/getUserDetails")
 async def getUserDetails(user: User):
-    cursor.execute("SELECT userPassword FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(user.username,))
+    cursor.execute("SELECT userPassword FROM Users WHERE userName = ?", (user.username,))
     rowUsername = cursor.fetchone()
-    cursor.execute("SELECT userPassword FROM Users WHERE CAST(email AS VARCHAR(255)) = ?",(user.username,))
+    cursor.execute("SELECT userPassword FROM Users WHERE email = ?",(user.username,))
     rowEmail = cursor.fetchone()
     hashed_password = hashlib.md5(user.password.encode()).hexdigest()
     if(rowUsername is not None and hashed_password == rowUsername[0]):
-        cursor.execute("SELECT * FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(user.username,))
+        cursor.execute("SELECT * FROM Users WHERE userName = ?",(user.username,))
         row = cursor.fetchone()
         return {description[0]: column for description, column in zip(cursor.description, row)}
     elif(rowEmail is not None and hashed_password == rowEmail[0]):
-        cursor.execute("SELECT * FROM Users WHERE CAST(email AS VARCHAR(255)) = ?",(user.username,))
+        cursor.execute("SELECT * FROM Users WHERE email = ?",(user.username,))
         row = cursor.fetchone()
         return {description[0]: column for description, column in zip(cursor.description, row)}
     return "stop trying to hack me man"
@@ -181,11 +181,15 @@ async def registerfunction(user: NewUser):
     
 @app.post("/regPatient")
 async def registerfunction(user: NewPatient):
+    print("entered /regPatient")
     try:
         id = getUserById(user.username)
-        cursor.execute("INSERT INTO Patients (patientID, doctorID, insulinSensivity, targetBloodGlucose , carbRatio) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        print(id)
+        print(user)
+        cursor.execute("INSERT INTO Patients (patientID, doctorID, insulinSensivity, targetBloodGlucose , carbRatio, carbRatio2, carbRatio3) VALUES (?, ?, ?, ?, ?, ?, ?)",
                        (id, user.doctorID, user.insulinSensivity, user.targetBloodGlucose, user.carbRatio1, user.carbRatio2, user.carbRatio3))
         cnxn.commit()
+        print("Registered patient successfully")
         return {"message": "Registered patient successfully"}
     except HTTPException as e:
         raise e
@@ -207,8 +211,10 @@ def checkEmail(email):
         return False
 def getUserById(username):
     row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(username,)).fetchone()
-    return row
-
+    if row is not None:
+        return row[0]
+    else:
+        return None
 @app.get("/MealComposition")
 async def get_mealComposition():
     cursor.execute("Select * from MealComposition") 

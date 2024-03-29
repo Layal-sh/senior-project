@@ -304,44 +304,45 @@ class _LoginState extends State<Login> {
                                   // print(dbHelper.selectAllMeals());
 
                                   // ignore: use_build_context_synchronously
-                                  logger.info(
-                                      "saving values to shared preferences");
-                                  final response = await http
-                                      .post(
-                                        Uri.parse(
-                                            'http://$localhost:8000/getUserDetails'), //$localhost
-                                        headers: <String, String>{
-                                          'Content-Type':
-                                              'application/json; charset=UTF-8',
-                                        },
-                                        body: jsonEncode(<String, String>{
-                                          'username': email,
-                                          'password': password,
-                                        }),
-                                      )
-                                      .timeout(const Duration(seconds: 10));
 
-                                  if (response.statusCode == 200) {
-                                    logger.info(
-                                        'Response body: ${response.body}');
-                                    Map<String, dynamic> userDetails =
-                                        jsonDecode(response.body);
-                                    logger.info("user details: $userDetails");
-                                    SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
-                                    await prefs.setString(
-                                        'username', userDetails['userName']);
-                                    await prefs.setString(
-                                        'firstName', userDetails['firstName']);
-                                    await prefs.setString(
-                                        'lastName', userDetails['lastName']);
-                                    await prefs.setString(
-                                        'email', userDetails['email']);
-                                    await prefs.setInt(
-                                        'id', userDetails['userID']);
-                                    logger.info(
-                                        "saved values to shared preferences successfully");
-                                  }
+                                  // logger.info(
+                                  //     "saving values to shared preferences");
+                                  // final response = await http
+                                  //     .post(
+                                  //       Uri.parse(
+                                  //           'http://$localhost:8000/getUserDetails'), //$localhost
+                                  //       headers: <String, String>{
+                                  //         'Content-Type':
+                                  //             'application/json; charset=UTF-8',
+                                  //       },
+                                  //       body: jsonEncode(<String, String>{
+                                  //         'username': email,
+                                  //         'password': password,
+                                  //       }),
+                                  //     )
+                                  //     .timeout(const Duration(seconds: 10));
+
+                                  // if (response.statusCode == 200) {
+                                  //   logger.info(
+                                  //       'Response body: ${response.body}');
+                                  //   Map<String, dynamic> userDetails =
+                                  //       jsonDecode(response.body);
+                                  //   logger.info("user details: $userDetails");
+                                  //   SharedPreferences prefs =
+                                  //       await SharedPreferences.getInstance();
+                                  //   await prefs.setString(
+                                  //       'username', userDetails['userName']);
+                                  //   await prefs.setString(
+                                  //       'firstName', userDetails['firstName']);
+                                  //   await prefs.setString(
+                                  //       'lastName', userDetails['lastName']);
+                                  //   await prefs.setString(
+                                  //       'email', userDetails['email']);
+                                  //   await prefs.setInt(
+                                  //       'id', userDetails['userID']);
+                                  //   logger.info(
+                                  //       "saved values to shared preferences successfully");
+                                  // }
                                   // ignore: use_build_context_synchronously
                                   Navigator.push(
                                     context,

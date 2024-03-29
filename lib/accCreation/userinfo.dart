@@ -915,15 +915,16 @@ class _UserInfoState extends State<UserInfo> {
           },
           body: jsonEncode(<String, dynamic>{
             'username': username_,
-            'doctorID': 0,
+            'doctorID': 1,
             'insulinSensivity': insulinSensitivity,
             'targetBloodGlucose': targetGlucose,
             'carbRatio1': carbRatio,
-            'carbRatio2': -1,
-            'carbRatio3': -1
+            'carbRatio2': -1.0,
+            'carbRatio3': -1.0
           }),
         )
         .timeout(const Duration(seconds: 10));
+    print(response);
     return response;
   }
 }

@@ -32,10 +32,10 @@ class DBHelper {
   }
 
   _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < newVersion) {
-      await db.execute(
-          '''ALTER TABLE "Meals" ADD COLUMN frequency INTEGER NULL;''');
-    }
+    // if (oldVersion < newVersion) {
+    //   await db.execute(
+    //       '''ALTER TABLE "Meals" ADD COLUMN frequency INTEGER NULL;''');
+    // }
   }
 
   _onCreate(Database db, int version) async {
