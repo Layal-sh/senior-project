@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/application/meals.dart';
@@ -37,51 +39,63 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance!.addPostFrameCallback((_) {
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: Color.fromARGB(255, 38, 20, 84), // Set status bar color
+      ));
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       //backgroundColor: const Color.fromARGB(255, 38, 20, 84),
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 38, 20, 84),
-        centerTitle: true,
-        iconTheme: const IconThemeData(
-          color: Color.fromARGB(255, 255, 255, 255),
-          size: 25.0,
-        ),
-        title: const Text(
-          'Details',
-          style: TextStyle(
-            color: Color.fromARGB(255, 255, 255, 255),
-            fontSize: 14,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: IconButton(
-              icon: const Icon(
-                Icons.edit,
-                color: Color.fromARGB(255, 255, 255, 255),
-              ),
-              onPressed: () {
-                // Handle the settings button press here
-              },
-            ),
-          ),
-        ],
-      ),
+
       body: Padding(
         padding: const EdgeInsets.only(
-          top: 20,
+          top: 30,
         ),
         child: Column(
           //mainAxisAlignment: MainAxisAlignment.start,
           //mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 10,
+                right: 10,
+              ),
+              child: SizedBox(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back_rounded,
+                        size: 35,
+                        color: Color.fromARGB(255, 38, 20, 84),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.edit,
+                        color: Color.fromARGB(255, 38, 20, 84),
+                      ),
+                      onPressed: () {
+                        // Handle the settings button press here
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            /*Center(
               child: SizedBox(
                 width: 175,
                 height: 175,
@@ -93,20 +107,21 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                   ),
                 ),
               ),
-            ),
+            ),*/
             Padding(
               padding: const EdgeInsets.only(
                 left: 40,
                 right: 20,
-                top: 20,
+                top: 10,
               ),
               child: Text(
                 widget.meal.name,
                 style: const TextStyle(
                   color: Color.fromARGB(255, 38, 20, 84),
-                  fontSize: 20,
+                  fontSize: 25,
                   fontFamily: 'Inter',
-                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.75,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ),
@@ -119,12 +134,13 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                 right: 20,
               ),
               child: Text(
-                'Ingredients',
+                "Categories",
                 style: TextStyle(
                   color: Color.fromARGB(255, 38, 20, 84),
-                  fontSize: 17,
+                  fontSize: 23,
                   fontFamily: 'Inter',
-                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.75,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ),
@@ -137,22 +153,9 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
-                    //List<Map> ingredients = snapshot.data!;
-                    return ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (ctx, i) {
-                        return IngBox(ingredient: snapshot.data![i]);
-                      },
-                    );
-                  }
-                  /*if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const SizedBox
-                        .shrink(); //const CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
                     if (snapshot.data!.isNotEmpty) {
                       return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Padding(
                             padding: EdgeInsets.only(
@@ -160,27 +163,35 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                               right: 20,
                             ),
                             child: Text(
-                              'Ingredients',
+                              'Ingredients:',
                               style: TextStyle(
                                 color: Color.fromARGB(255, 38, 20, 84),
-                                fontSize: 17,
+                                fontSize: 20,
                                 fontFamily: 'Inter',
+                                letterSpacing: -0.75,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
-                          ListView.builder(
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (ctx, i) {
-                              return IngBox(ingredient: snapshot.data![i]);
-                            },
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (ctx, i) {
+                                return IngBox(ingredient: snapshot.data![i]);
+                              },
+                            ),
                           ),
                         ],
                       );
                     } else {
-                      return SizedBox
+                      return const SizedBox
                           .shrink(); // Return an empty widget if the list is empty
-                    }}*/
+                    }
+                  }
+
                   /*return ListView.builder(
                       itemCount: snapshot.data!.length,
                       itemBuilder: (ctx, i) {
@@ -445,7 +456,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return AlertDialog(
+                          return const AlertDialog(
                             content:
                                 Text('Cannot input negative or zero values'),
                           );
@@ -459,7 +470,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return AlertDialog(
+                        return const AlertDialog(
                           content: Text('Specify the amount as a number'),
                         );
                       },
@@ -505,88 +516,58 @@ class IngBox extends StatefulWidget {
 class _IngBoxState extends State<IngBox> {
   @override
   Widget build(BuildContext context) {
-    return Text(
-        '${widget.ingredient.name}: ${widget.ingredient.quantity}: ${widget.ingredient.unit}'); /*Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5), // Change this value as needed
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.only(left: 40.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 8,
-              right: 8,
-            ),
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.7,
-                child: Text(
-                  "widget.ingredient.name",
-                  softWrap: true,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 38, 20, 84),
-                    fontSize: 35,
-                    fontFamily: 'Ruda',
-                    letterSpacing: -0.75,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.4,
+            child: Text(
+              widget.ingredient.name,
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Color.fromARGB(255, 38, 20, 84),
+                fontSize: 18,
+                fontFamily: 'Inter',
+                letterSpacing: -0.75,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 8,
-              right: 8,
-            ),
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.7,
-                child: Text(
-                  "widget.ingredient.quantity",
-                  softWrap: true,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 38, 20, 84),
-                    fontSize: 35,
-                    fontFamily: 'Ruda',
-                    letterSpacing: -0.75,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.2,
+            child: Text(
+              "${widget.ingredient.quantity}",
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Color.fromARGB(255, 38, 20, 84),
+                fontSize: 20,
+                fontFamily: 'Inter',
+                letterSpacing: -0.75,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 8,
-              right: 8,
-            ),
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.7,
-                child: Text(
-                  "widget.ingredient.unit",
-                  softWrap: true,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 38, 20, 84),
-                    fontSize: 35,
-                    fontFamily: 'Ruda',
-                    letterSpacing: -0.75,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.2,
+            child: Text(
+              "${widget.ingredient.unit}",
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Color.fromARGB(255, 38, 20, 84),
+                fontSize: 20,
+                fontFamily: 'Inter',
+                letterSpacing: -0.75,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
         ],
       ),
-    );*/
+    );
   }
 }

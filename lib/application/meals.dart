@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/application/create.dart';
@@ -35,6 +36,10 @@ class _MealsState extends State<Meals> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Color.fromARGB(255, 38, 20, 84), // top bar color
+      statusBarIconBrightness: Brightness.light, // top bar icons
+    ));
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(

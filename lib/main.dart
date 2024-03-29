@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/app.dart';
@@ -40,6 +41,10 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Color.fromARGB(255, 38, 20, 84), // top bar color
+      statusBarIconBrightness: Brightness.light, // top bar icons
+    ));
     return MaterialApp(debugShowCheckedModeBanner: false, routes: {
       "/": (context) => Splash(),
       '/start': (context) => Start(),
