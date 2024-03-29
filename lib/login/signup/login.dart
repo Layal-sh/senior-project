@@ -261,12 +261,55 @@ class _LoginState extends State<Login> {
                             //         builder: (context) => const App()),
                             //   );
                             // } else {
-                              try {
-                                //server authentication
+                            try {
+                              //server authentication
+                              final response = await http
+                                  .post(
+                                    Uri.parse(
+                                        'http://$localhost:8000/authenticate'), //$localhost
+                                    headers: <String, String>{
+                                      'Content-Type':
+                                          'application/json; charset=UTF-8',
+                                    },
+                                    body: jsonEncode(<String, String>{
+                                      'username': email,
+                                      'password': password,
+                                    }),
+                                  )
+                                  .timeout(const Duration(seconds: 10));
+
+                              if (response.statusCode == 200) {
+                                logger.info(
+                                    "syncing meals from the server to the local database");
+                                DBHelper dbHelper = DBHelper.instance;
+                                await dbHelper.syncMeals();
+                                logger.info("synced meals successfully");
+                                await dbHelper.syncMealComposition();
+                                logger.info(
+                                    "synced meal compositions successfully");
+
+                                // //testing for the ingredients
+                                // List<Map> response1 =
+                                //     await dbHelper.getIngredients(9);
+                                // print("testing get ingreidents:");
+                                // print(response1);
+                                //   List<Map> chosen = [
+                                //   {'mealID': 58, 'unit': 5, 'quantity': 2.0},
+                                //   {'mealID': 13, 'unit':2, 'quantity': 3.0}
+                                // ];
+
+                                // await dbHelper.editNewMeal(10,'iitpancake','kinderpic', chosen);
+
+                                //dbHelper.selectAllMeals();
+                                // print(dbHelper.selectAllMeals());
+
+                                // ignore: use_build_context_synchronously
+                                logger.info(
+                                    "saving values to shared preferences");
                                 final response = await http
                                     .post(
                                       Uri.parse(
-                                          'http://$localhost:8000/authenticate'), //$localhost
+                                          'http://$localhost:8000/getUserDetails'), //$localhost
                                       headers: <String, String>{
                                         'Content-Type':
                                             'application/json; charset=UTF-8',
@@ -279,92 +322,49 @@ class _LoginState extends State<Login> {
                                     .timeout(const Duration(seconds: 10));
 
                                 if (response.statusCode == 200) {
+                                  Map<String, dynamic> userDetails =
+                                      jsonDecode(response.body);
+                                  logger.info("user details: $userDetails");
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  await prefs.setString(
+                                      'username', userDetails['userName']);
+                                  await prefs.setString(
+                                      'firstName', userDetails['firstName']);
+                                  await prefs.setString(
+                                      'lastName', userDetails['lastName']);
+                                  await prefs.setString(
+                                      'email', userDetails['email']);
+                                  await prefs.setInt(
+                                      'id', userDetails['userID']);
                                   logger.info(
-                                      "syncing meals from the server to the local database");
-                                  DBHelper dbHelper = DBHelper.instance;
-                                  await dbHelper.syncMeals();
-                                  logger.info("synced meals successfully");
-                                  await dbHelper.syncMealComposition();
-                                  logger.info(
-                                      "synced meal compositions successfully");
-                                  
-                                  // //testing for the ingredients
-                                  // List<Map> response1 =
-                                  //     await dbHelper.getIngredients(9);
-                                  // print("testing get ingreidents:");
-                                  // print(response1);
-                                  //   List<Map> chosen = [
-                                  //   {'mealID': 58, 'unit': 5, 'quantity': 2.0},
-                                  //   {'mealID': 13, 'unit':2, 'quantity': 3.0}
-                                  // ];
-
-                                  // await dbHelper.editNewMeal(10,'iitpancake','kinderpic', chosen);
-                                             
-                                  //dbHelper.selectAllMeals();
-                                  // print(dbHelper.selectAllMeals());
-
-                                  // ignore: use_build_context_synchronously
-                                  logger.info(
-                                      "saving values to shared preferences");
-                                  final response = await http
-                                      .post(
-                                        Uri.parse(
-                                            'http://$localhost:8000/getUserDetails'), //$localhost
-                                        headers: <String, String>{
-                                          'Content-Type':
-                                              'application/json; charset=UTF-8',
-                                        },
-                                        body: jsonEncode(<String, String>{
-                                          'username': email,
-                                          'password': password,
-                                        }),
-                                      )
-                                      .timeout(const Duration(seconds: 10));
-
-                                  if (response.statusCode == 200) {
-                                    Map<String, dynamic> userDetails =
-                                        jsonDecode(response.body);
-                                    logger.info("user details: $userDetails");
-                                    SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
-                                    await prefs.setString(
-                                        'username', userDetails['userName']);
-                                    await prefs.setString(
-                                        'firstName', userDetails['firstName']);
-                                    await prefs.setString(
-                                        'lastName', userDetails['lastName']);
-                                    await prefs.setString(
-                                        'email', userDetails['email']);
-                                    await prefs.setInt(
-                                        'id', userDetails['userID']);
-                                    logger.info(
-                                        "saved values to shared preferences successfully");
-                                  }
-                                  // ignore: use_build_context_synchronously
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const App()),
-                                  );
-                                } else {
-                                  //incorrect username or password handling
-                                  //for layal you can change this if you want or remove this comment if you think its good
-                                  var responseBody = jsonDecode(response.body);
-                                  var errorMessage =
-                                      responseBody['detail'] ?? 'Unknown error';
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('$errorMessage')),
-                                  );
+                                      "saved values to shared preferences successfully");
                                 }
-                              } catch (e) {
-                                // ignore: avoid_print
-                                print('Error: $e');
+                                // ignore: use_build_context_synchronously
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const App()),
+                                );
+                              } else {
+                                //incorrect username or password handling
+                                //for layal you can change this if you want or remove this comment if you think its good
+                                var responseBody = jsonDecode(response.body);
+                                var errorMessage =
+                                    responseBody['detail'] ?? 'Unknown error';
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(
-                                          'The server did not respond error : $e')),
+                                  SnackBar(content: Text('$errorMessage')),
                                 );
                               }
+                            } catch (e) {
+                              // ignore: avoid_print
+                              print('Error: $e');
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(
+                                        'The server did not respond error : $e')),
+                              );
+                            }
                             //}
                           },
                           child: const Text(
