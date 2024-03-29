@@ -253,14 +253,14 @@ class _LoginState extends State<Login> {
                             logger.info('he did in fact frfr click da button');
                             String email = _emailController.text;
                             String password = _passwordController.text;
-                            if (email == 'admin' && password == 'admin') {
-                              //alowing admins to login without server connection
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const App()),
-                              );
-                            } else {
+                            // if (email == 'admin' && password == 'admin') {
+                            //   //alowing admins to login without server connection
+                            //   Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) => const App()),
+                            //   );
+                            // } else {
                               try {
                                 //server authentication
                                 final response = await http
@@ -288,12 +288,17 @@ class _LoginState extends State<Login> {
                                   logger.info(
                                       "synced meal compositions successfully");
                                   
-                                  //testing for the ingredients
-                                  List<Map> response1 =
-                                      await dbHelper.getIngredients(9);
-                                  print("testing get ingreidents:");
-                                  print(response1);
-                                  
+                                  // //testing for the ingredients
+                                  // List<Map> response1 =
+                                  //     await dbHelper.getIngredients(9);
+                                  // print("testing get ingreidents:");
+                                  // print(response1);
+                                  //   List<Map> chosen = [
+                                  //   {'mealID': 58, 'unit': 5, 'quantity': 2.0},
+                                  //   {'mealID': 13, 'unit':2, 'quantity': 3.0}
+                                  // ];
+
+                                  // await dbHelper.editNewMeal(10,'iitpancake','kinderpic', chosen);
                                              
                                   //dbHelper.selectAllMeals();
                                   // print(dbHelper.selectAllMeals());
@@ -360,7 +365,7 @@ class _LoginState extends State<Login> {
                                           'The server did not respond error : $e')),
                                 );
                               }
-                            }
+                            //}
                           },
                           child: const Text(
                             "Sign In",

@@ -330,7 +330,6 @@ class DBHelper {
     print(newMealID);
 
     if(newMealID!=-1){
-      print("inside if");
       if (childMeals != null) {
       childMeals.forEach((element) {
       createMealComposition(
