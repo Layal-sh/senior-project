@@ -33,7 +33,6 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
         quantity: item['quantity'],
       );
     }).toList();
-
     return ingredients;
   }
 
@@ -486,11 +485,6 @@ class Ingredient {
     required this.quantity,
     required this.unit,
   });
-  @override
-  String toString() {
-    return 'Ingredient(name: $name, unit: $unit, quantity: $quantity)';
-  }
-
   Map<String, dynamic> toMap() {
     return {
       'name': name,
