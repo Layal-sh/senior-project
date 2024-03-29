@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/widgets.dart';
 import 'dart:math';
+
+import 'package:sugar_sense/Database/variables.dart';
+import 'package:sugar_sense/main.dart';
 
 class UserInfo extends StatefulWidget {
   const UserInfo({super.key});
@@ -803,6 +809,7 @@ class _UserInfoState extends State<UserInfo> {
                       updateAnswers();
                     },
                   );
+                  final response = registerPatient();
                   showDialog(
                     context: context,
                     barrierDismissible: false,
@@ -887,6 +894,37 @@ class _UserInfoState extends State<UserInfo> {
     insulinController.dispose();
     glucoseController.dispose();
     super.dispose();
+  }
+
+  Future<http.Response> registerPatient() async {
+    double exchange = double.parse(carbohydratesController.text);
+    double insUnit = double.parse(unitController.text);
+    double insulinSensitivity = double.parse(insulinController.text);
+    double targetGlucosed = double.parse(glucoseController.text);
+    if (unit1 == 0) exchange /= 15;
+    if (unit2 == 0) insulinSensitivity *= 18.018;
+    if (unit3 == 0) targetGlucosed *= 18.018;
+    double carbRatio = insUnit / exchange;
+    int targetGlucose = targetGlucosed.round();
+
+    final response = await http
+        .post(
+          Uri.parse('http://$localhost:8000/regPatient'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, dynamic>{
+            'username': username_,
+            'doctorID': 0,
+            'insulinSensivity': insulinSensitivity,
+            'targetBloodGlucose': targetGlucose,
+            'carbRatio1': carbRatio,
+            'carbRatio2': -1,
+            'carbRatio3': -1
+          }),
+        )
+        .timeout(const Duration(seconds: 10));
+    return response;
   }
 }
 

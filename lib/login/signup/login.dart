@@ -322,6 +322,8 @@ class _LoginState extends State<Login> {
                                       .timeout(const Duration(seconds: 10));
 
                                   if (response.statusCode == 200) {
+                                    logger.info(
+                                        'Response body: ${response.body}');
                                     Map<String, dynamic> userDetails =
                                         jsonDecode(response.body);
                                     logger.info("user details: $userDetails");
