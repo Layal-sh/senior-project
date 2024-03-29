@@ -24,7 +24,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
   Future<List<Ingredient>> fetchIngredients() async {
     List<Map> response =
         await db.getIngredients(widget.meal.id); // Call getIngredients
-
+  
     // Convert the response into a list of Ingredient objects
     List<Ingredient> ingredients = response.map((item) {
       return Ingredient(
@@ -32,8 +32,8 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
         unit: item['unit'],
         quantity: item['quantity'],
       );
+      
     }).toList();
-
     return ingredients;
   }
 
@@ -436,7 +436,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
 
 class Ingredient {
   final String name;
-  final String quantity;
+  final double quantity;
   final int unit;
 
   Ingredient({
@@ -444,6 +444,10 @@ class Ingredient {
     required this.quantity,
     required this.unit,
   });
+    @override
+  String toString() {
+    return 'Ingredient(name: $name, unit: $unit, quantity: $quantity)';
+  }
   Map<String, dynamic> toMap() {
     return {
       'name': name,
