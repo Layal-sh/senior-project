@@ -707,7 +707,7 @@ class _ArticlesState extends State<Articles> {
         ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
-      /*body: ListView.builder(
+      body: ListView.builder(
         itemCount: articles.length,
         itemBuilder: (context, index) {
           String imageUrl = articles[index]['urlToImage'];
@@ -723,7 +723,7 @@ class _ArticlesState extends State<Articles> {
             },
           );
         },
-      ),*/
+      ),
     );
   }
 }
