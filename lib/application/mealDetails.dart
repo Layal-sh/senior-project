@@ -144,7 +144,50 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                       itemBuilder: (ctx, i) {
                         return IngBox(ingredient: snapshot.data![i]);
                       },
-                    ); /*GridView.builder(
+                    );
+                  }
+                  /*if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox
+                        .shrink(); //const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    if (snapshot.data!.isNotEmpty) {
+                      return Column(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(
+                              left: 40,
+                              right: 20,
+                            ),
+                            child: Text(
+                              'Ingredients',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 38, 20, 84),
+                                fontSize: 17,
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (ctx, i) {
+                              return IngBox(ingredient: snapshot.data![i]);
+                            },
+                          ),
+                        ],
+                      );
+                    } else {
+                      return SizedBox
+                          .shrink(); // Return an empty widget if the list is empty
+                    }}*/
+                  /*return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (ctx, i) {
+                        return IngBox(ingredient: snapshot.data![i]);
+                      },
+                    );*/ /*GridView.builder(
                       padding: const EdgeInsets.all(10.0),
                       itemCount: ingredients.length,
                       itemBuilder: (ctx, i) => IngBox(
@@ -162,7 +205,6 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                         mainAxisSpacing: 10,
                       ),
                     );*/
-                  }
                 },
               ),
             ),
@@ -436,7 +478,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
 
 class Ingredient {
   final String name;
-  final String quantity;
+  final double quantity;
   final int unit;
 
   Ingredient({
@@ -444,6 +486,11 @@ class Ingredient {
     required this.quantity,
     required this.unit,
   });
+  @override
+  String toString() {
+    return 'Ingredient(name: $name, unit: $unit, quantity: $quantity)';
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'name': name,
