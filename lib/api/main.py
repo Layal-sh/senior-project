@@ -55,6 +55,7 @@ class NewPatient(BaseModel):
     carbRatio1 : float
     carbRatio2 : float
     carbRatio3 : float
+    privacy : str
 
 
 conn_str = ("DRIVER={ODBC Driver 17 for SQL Server};"
@@ -186,8 +187,8 @@ async def registerfunction(user: NewPatient):
         id = getUserById(user.username)
         print(id)
         print(user)
-        cursor.execute("INSERT INTO Patients (patientID, doctorID, insulinSensivity, targetBloodGlucose , carbRatio, carbRatio2, carbRatio3) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                       (id, user.doctorID, user.insulinSensivity, user.targetBloodGlucose, user.carbRatio1, user.carbRatio2, user.carbRatio3))
+        cursor.execute("INSERT INTO Patients (patientID, doctorID, insulinSensivity, targetBloodGlucose , carbRatio, carbRatio2, carbRatio3, privacy) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                       (id, user.doctorID, user.insulinSensivity, user.targetBloodGlucose, user.carbRatio1, user.carbRatio2, user.carbRatio3, user.privacy))
         cnxn.commit()
         print("Registered patient successfully")
         return {"message": "Registered patient successfully"}

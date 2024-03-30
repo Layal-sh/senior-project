@@ -907,6 +907,15 @@ class _UserInfoState extends State<UserInfo> {
     double carbRatio = insUnit / exchange;
     int targetGlucose = targetGlucosed.round();
 
+  String privacy="";
+    for (var option in options) {
+  if (option.isSelected) {
+    privacy+="1";
+  } else {
+     privacy+="0";
+  }
+}
+
     final response = await http
         .post(
           Uri.parse('http://$localhost:8000/regPatient'),
@@ -920,11 +929,11 @@ class _UserInfoState extends State<UserInfo> {
             'targetBloodGlucose': targetGlucose,
             'carbRatio1': carbRatio,
             'carbRatio2': -1.0,
-            'carbRatio3': -1.0
+            'carbRatio3': -1.0,
+            'privacy': privacy
           }),
         )
         .timeout(const Duration(seconds: 10));
-    print(response);
     return response;
   }
 }
