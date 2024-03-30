@@ -664,13 +664,14 @@ class _ArticlesState extends State<Articles> {
     final response = await http.get(Uri.parse('http://$localhost:8000/News'));
 
     if (response.statusCode == 200) {
-      List<dynamic> responseData = jsonDecode(response.body)['articles'];
+      List<dynamic> responseData = jsonDecode(response.body);
 
       setState(() {
         articles = responseData.where((article) {
-          return article['urlToImage'] != null &&
-              article['title'] != null &&
-              article['url'] != null;
+          return article['title'] != null ||
+              article['link'] != null ||
+              article['thumbnail'] != null ||
+              article['source'] != null;
         }).toList();
       });
     } else {
@@ -710,9 +711,11 @@ class _ArticlesState extends State<Articles> {
       body: ListView.builder(
         itemCount: articles.length,
         itemBuilder: (context, index) {
-          String imageUrl = articles[index]['urlToImage'];
+          //if an articles doesn't have a thumbnail(image) do whatvever u want. we put this picture. 
+          String imageUrl = articles[index]['thumbnail'] ?? 'assets/no-pictures.png';
           String title = articles[index]['title'];
-          String url = articles[index]['url'];
+          String url = articles[index]['link'];
+          //String source = articles[index]['source'];
 
           return ListTile(
             leading: Image.network(imageUrl),

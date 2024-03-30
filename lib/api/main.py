@@ -5,7 +5,7 @@ import Models.personModel.person as Pmodel
 from fastapi.middleware.cors import CORSMiddleware
 import hashlib
 import requests
-
+from serpapi import GoogleSearch
 
 app = FastAPI()
 # Set up logging
@@ -226,16 +226,39 @@ async def get_mealComposition():
         return [{description[0]: column for description, column in zip(cursor.description, row)} for row in rows]
     
 #News Api Key: 52583f3a26ca4ba0b9631f43f66abb3d
-apiKey = '52583f3a26ca4ba0b9631f43f66abb3d'
+apiKey = 'd9cb4bee70915b0f8ad912e10388ab16f02a2f0b7e84724806d40e5700461781'
+
 @app.get("/News")
 async def get_news():
-    url = ('https://newsapi.org/v2/everything?language=en&sortyBy=relevancy&q=type+1+diabetes&apiKey=52583f3a26ca4ba0b9631f43f66abb3d')
-    response = requests.get(url)
-    return response.json()
 
-@app.get("/NewsSources")
-async def get_news():
-    url = ('https://newsapi.org/v2/top-headlines/sources?language=en&apiKey=52583f3a26ca4ba0b9631f43f66abb3d')
-    response = requests.get(url)
-    return response.json()
+    params = {
+        "q": "diabetes articles",
+        "hl": "en",
+        "gl": "us",
+        "google_domain": "google.com",
+        "api_key": "d9cb4bee70915b0f8ad912e10388ab16f02a2f0b7e84724806d40e5700461781"
+    }
+
+    search = GoogleSearch(params)
+    results = search.get_dict()
+   
+    params2 = {
+        "q": "type 1 diabetes lifestyle",
+        "hl": "en",
+        "gl": "us",
+        "google_domain": "google.com",
+        "api_key": "d9cb4bee70915b0f8ad912e10388ab16f02a2f0b7e84724806d40e5700461781"
+    }
+
+    search2 = GoogleSearch(params2)
+    results2 = search2.get_dict()
+    print(print(len(results["organic_results"]), " ", len(results2["organic_results"])))
+
+    return results["organic_results"]+results2["organic_results"]
+
     
+#combined_results = results["organic_results"] + results2["organic_results"]
+# Convert each dictionary in the list to a frozenset so it can be added to a set
+# This will remove duplicates because sets only allow unique elements
+#unique_results = [dict(item) for item in set(frozenset(d.items()) for d in combined_results)]
+#return unique_results
