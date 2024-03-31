@@ -65,14 +65,14 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
   @override
   Widget build(BuildContext context) {
     SchedulerBinding.instance!.addPostFrameCallback((_) {
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor:
-            const Color.fromARGB(255, 38, 20, 84), // Set status bar color
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: Color.fromARGB(255, 38, 20, 84), // Set status bar color
       ));
     });
     return Scaffold(
       //resizeToAvoidBottomInset: false,
-      backgroundColor: const Color.fromARGB(184, 30, 203, 215),
+      backgroundColor: const Color.fromARGB(
+          83, 115, 61, 252), //const Color.fromARGB(184, 30, 203, 215),
 
       body: Padding(
         padding: const EdgeInsets.only(
