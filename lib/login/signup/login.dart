@@ -53,6 +53,60 @@ class _LoginState extends State<Login> {
     }
   }
 
+  bool _isLoading = false;
+
+  Future<void> _signIn(String email, String password) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    logger.info("syncing meals from the server to the local database");
+    DBHelper dbHelper = DBHelper.instance;
+    await dbHelper.deleteMealComposition();
+    await dbHelper.syncMeals();
+    logger.info("synced meals successfully");
+    await dbHelper.syncMealComposition();
+    logger.info("synced meal compositions successfully");
+
+    //ignore: use_build_context_synchronously
+    print(await dbHelper.selectAllMealComposition());
+    logger.info("saving values to shared preferences");
+    final response = await http
+        .post(
+          Uri.parse('http://$localhost:8000/getUserDetails'), //$localhost
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, String>{
+            'username': email,
+            'password': password,
+          }),
+        )
+        .timeout(const Duration(seconds: 10));
+
+    if (response.statusCode == 200) {
+      logger.info('Response body: ${response.body}');
+      Map<String, dynamic> userDetails = jsonDecode(response.body);
+      logger.info("user details: $userDetails");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('username', userDetails['userName']);
+      await prefs.setString('firstName', userDetails['firstName']);
+      await prefs.setString('lastName', userDetails['lastName']);
+      await prefs.setString('email', userDetails['email']);
+      await prefs.setInt('id', userDetails['userID']);
+      logger.info("saved values to shared preferences successfully");
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const App()),
+    );
+  }
+
   @override
   void initState() {
     initializeControllers();
@@ -279,63 +333,7 @@ class _LoginState extends State<Login> {
                                     .timeout(const Duration(seconds: 10));
 
                                 if (response.statusCode == 200) {
-                                  logger.info(
-                                      "syncing meals from the server to the local database");
-                                  DBHelper dbHelper = DBHelper.instance;
-                                  await dbHelper.deleteMealComposition();
-                                  await dbHelper.syncMeals();
-                                  logger.info("synced meals successfully");
-                                  await dbHelper.syncMealComposition();
-                                  logger.info(
-                                      "synced meal compositions successfully");
-
-                                  //ignore: use_build_context_synchronously
-                                  print(await dbHelper
-                                      .selectAllMealComposition());
-                                  logger.info(
-                                      "saving values to shared preferences");
-                                  final response = await http
-                                      .post(
-                                        Uri.parse(
-                                            'http://$localhost:8000/getUserDetails'), //$localhost
-                                        headers: <String, String>{
-                                          'Content-Type':
-                                              'application/json; charset=UTF-8',
-                                        },
-                                        body: jsonEncode(<String, String>{
-                                          'username': email,
-                                          'password': password,
-                                        }),
-                                      )
-                                      .timeout(const Duration(seconds: 10));
-
-                                  if (response.statusCode == 200) {
-                                    logger.info(
-                                        'Response body: ${response.body}');
-                                    Map<String, dynamic> userDetails =
-                                        jsonDecode(response.body);
-                                    logger.info("user details: $userDetails");
-                                    SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
-                                    await prefs.setString(
-                                        'username', userDetails['userName']);
-                                    await prefs.setString(
-                                        'firstName', userDetails['firstName']);
-                                    await prefs.setString(
-                                        'lastName', userDetails['lastName']);
-                                    await prefs.setString(
-                                        'email', userDetails['email']);
-                                    await prefs.setInt(
-                                        'id', userDetails['userID']);
-                                    logger.info(
-                                        "saved values to shared preferences successfully");
-                                  }
-                                  //ignore: use_build_context_synchronously
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const App()),
-                                  );
+                                  _isLoading ? null : _signIn(email, password);
                                 } else {
                                   //incorrect username or password handling
                                   //for layal you can change this if you want or remove this comment if you think its good
@@ -357,15 +355,17 @@ class _LoginState extends State<Login> {
                               }
                             }
                           },
-                          child: const Text(
-                            "Sign In",
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 255, 249, 254),
-                              fontSize: 22,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                          child: _isLoading
+                              ? const CircularProgressIndicator()
+                              : const Text(
+                                  'Sign In',
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 255, 249, 254),
+                                    fontSize: 22,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
                         ),
                         const SizedBox(
                           height: 100,
