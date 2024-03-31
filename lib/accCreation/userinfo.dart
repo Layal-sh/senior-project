@@ -19,8 +19,8 @@ class UserInfo extends StatefulWidget {
 
 class _UserInfoState extends State<UserInfo> {
   final controller = PageController();
-  bool isButtonClicked = false; // Add this line at the top of your class
-
+  bool isVisible = false;
+  int clicked = 0;
   final questions = [
     'What\'s Your Carbohydrates Ratio?',
     'What\'s Your Insulin Sensitivity?',
@@ -41,6 +41,7 @@ class _UserInfoState extends State<UserInfo> {
       List.generate(5, (index) => TextEditingController());
   List<int> core = List.generate(4, (index) => 0);
   List<int> units = List.generate(4, (index) => 1);
+
   List<Widget> forms = [];
   //int core = 0;
   //int units = 1;
@@ -99,89 +100,6 @@ class _UserInfoState extends State<UserInfo> {
 
     // Update the last item in the answers list
     answers[answers.length - 1] = selectedTitles;
-  }
-
-  Widget _buildForm(int index) {
-    return Form(
-      key: formKeys[index],
-      child: Row(
-        children: <Widget>[
-          SizedBox(
-            width: (MediaQuery.of(context).size.width - 100) / 2,
-            child: TextFormField(
-              controller: carbohydratesController[index],
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: false),
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly,
-              ],
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                hintText: unit1 == 0 ? 'Carbs' : "Exchange",
-              ),
-              onChanged: (text) {
-                if (text.isEmpty) {
-                  core[index] = 0;
-                  answers[currentPage] = 0.0;
-                }
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a value';
-                }
-                return null;
-              },
-            ),
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          const Text(
-            "/",
-            style: TextStyle(
-              fontSize: 36,
-              //fontWeight: FontWeight.w300,
-              fontFamily: 'Inter',
-              color: Color.fromARGB(255, 0, 0, 0),
-            ),
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          SizedBox(
-            width: (MediaQuery.of(context).size.width - 100) / 2,
-            child: TextFormField(
-              controller: unitController[index],
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: false),
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly,
-              ],
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                hintText: 'Unit',
-              ),
-              onChanged: (text) {
-                if (text.isEmpty) {
-                  units[index] = 1;
-                  answers[currentPage] = 0.0;
-                }
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a value';
-                }
-                return null;
-              },
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   void updatefirstAnswer() {
@@ -394,166 +312,279 @@ class _UserInfoState extends State<UserInfo> {
                               ),
                               Form(
                                 key: formKeys[0],
-                                child: Row(
-                                  children: [
-                                    SizedBox(
-                                      width:
-                                          (MediaQuery.of(context).size.width -
-                                                  100) /
-                                              2,
-                                      child: TextFormField(
-                                        controller: carbohydratesController[0],
-                                        keyboardType: const TextInputType
-                                            .numberWithOptions(decimal: false),
-                                        inputFormatters: <TextInputFormatter>[
-                                          FilteringTextInputFormatter
-                                              .digitsOnly,
-                                        ],
-                                        decoration: InputDecoration(
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          hintText:
-                                              unit1 == 0 ? 'Carbs' : "Exchange",
-                                        ),
-                                        onChanged: (text) {
-                                          if (text.isEmpty) {
-                                            core[0] = 0;
-                                            answers[currentPage] = 0.0;
-                                          }
-                                        },
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter a value';
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    const Text(
-                                      "/",
-                                      style: TextStyle(
-                                        fontSize: 36,
-                                        //fontWeight: FontWeight.w300,
-                                        fontFamily: 'Inter',
-                                        color: Color.fromARGB(255, 0, 0, 0),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    SizedBox(
-                                      width:
-                                          (MediaQuery.of(context).size.width -
-                                                  100) /
-                                              2,
-                                      child: TextFormField(
-                                        controller: unitController[0],
-                                        keyboardType: const TextInputType
-                                            .numberWithOptions(decimal: false),
-                                        inputFormatters: <TextInputFormatter>[
-                                          FilteringTextInputFormatter
-                                              .digitsOnly,
-                                        ],
-                                        decoration: InputDecoration(
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          hintText: 'Unit',
-                                        ),
-                                        onChanged: (text) {
-                                          if (text.isEmpty) {
-                                            units[0] = 1;
-                                            answers[currentPage] = 0.0;
-                                          }
-                                        },
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter a value';
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Align(
-                                alignment: Alignment.centerLeft,
                                 child: Column(
                                   children: [
-                                    if (isButtonClicked)
-                                      Expanded(
-                                        child: ListView.builder(
-                                          itemCount: forms.length - 1,
-                                          itemBuilder: (context, index) {
-                                            return forms[index + 1];
-                                          },
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: (MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100) /
+                                              2,
+                                          child: TextFormField(
+                                            controller:
+                                                carbohydratesController[0],
+                                            keyboardType: const TextInputType
+                                                .numberWithOptions(
+                                                decimal: false),
+                                            inputFormatters: <TextInputFormatter>[
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                            ],
+                                            decoration: InputDecoration(
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              hintText: unit1 == 0
+                                                  ? 'Carbs'
+                                                  : "Exchange",
+                                            ),
+                                            onChanged: (text) {
+                                              if (text.isEmpty) {
+                                                core[0] = 0;
+                                                answers[currentPage] = 0.0;
+                                              }
+                                            },
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return 'Please enter a value';
+                                              }
+                                              return null;
+                                            },
+                                          ),
                                         ),
-                                      ),
-                                    ElevatedButton.icon(
-                                      onPressed: () {
-                                        ListView.builder(
-                                          itemCount: forms.length,
-                                          itemBuilder: (context, index) {
-                                            return forms[index];
-                                          },
-                                        );
-                                        setState(() {
-                                          forms.add(_buildForm(forms.length));
-                                          isButtonClicked =
-                                              !isButtonClicked; // Add a new form
-                                        });
-                                      },
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all(
-                                                Colors.transparent),
-                                        shadowColor: MaterialStateProperty.all(
-                                            Colors.transparent),
-                                        foregroundColor:
-                                            MaterialStateProperty.all(
-                                                Colors.transparent),
-                                        overlayColor:
-                                            MaterialStateProperty.resolveWith(
-                                                (states) {
-                                          if (states.contains(
-                                              MaterialState.pressed)) {
-                                            return const Color.fromARGB(
-                                                    255, 212, 242, 245)
-                                                .withOpacity(
-                                                    0.5); // Change this color to your desired color
-                                          }
-                                          return null; // Use the default value for other states
-                                        }),
-                                        surfaceTintColor:
-                                            MaterialStateProperty.all(
-                                                Colors.transparent),
-                                      ),
-                                      icon: const Icon(
-                                        Icons.add,
-                                        color:
-                                            Color.fromARGB(255, 22, 161, 170),
-                                      ), // Provide your icon here
-                                      label: const Text(
-                                        'Add Another',
-                                        style: TextStyle(
-                                          color:
-                                              Color.fromARGB(255, 22, 161, 170),
+                                        const SizedBox(
+                                          width: 10,
                                         ),
-                                      ), // Provide your text here
+                                        const Text(
+                                          "/",
+                                          style: TextStyle(
+                                            fontSize: 36,
+                                            //fontWeight: FontWeight.w300,
+                                            fontFamily: 'Inter',
+                                            color: Color.fromARGB(255, 0, 0, 0),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        SizedBox(
+                                          width: (MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100) /
+                                              2,
+                                          child: TextFormField(
+                                            controller: unitController[0],
+                                            keyboardType: const TextInputType
+                                                .numberWithOptions(
+                                                decimal: false),
+                                            inputFormatters: <TextInputFormatter>[
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                            ],
+                                            decoration: InputDecoration(
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              hintText: 'Unit',
+                                            ),
+                                            onChanged: (text) {
+                                              if (text.isEmpty) {
+                                                units[0] = 1;
+                                                answers[currentPage] = 0.0;
+                                              }
+                                            },
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return 'Please enter a value';
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Column(
+                                      children: [
+                                        Visibility(
+                                          visible: isVisible,
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                width: (MediaQuery.of(context)
+                                                            .size
+                                                            .width -
+                                                        135) /
+                                                    2,
+                                                child: TextFormField(
+                                                  controller:
+                                                      carbohydratesController[
+                                                          1],
+                                                  keyboardType:
+                                                      const TextInputType
+                                                          .numberWithOptions(
+                                                          decimal: false),
+                                                  inputFormatters: <TextInputFormatter>[
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                  ],
+                                                  decoration: InputDecoration(
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                    hintText: unit1 == 0
+                                                        ? 'Carbs'
+                                                        : "Exchange",
+                                                  ),
+                                                  onChanged: (text) {
+                                                    if (text.isEmpty) {
+                                                      core[1] = 0;
+                                                      //answers[currentPage] = 0.0;
+                                                    }
+                                                  },
+                                                  validator: (value) {
+                                                    if (value == null ||
+                                                        value.isEmpty) {
+                                                      return 'Please enter a value';
+                                                    }
+                                                    return null;
+                                                  },
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              const Text(
+                                                "/",
+                                                style: TextStyle(
+                                                  fontSize: 36,
+                                                  //fontWeight: FontWeight.w300,
+                                                  fontFamily: 'Inter',
+                                                  color: Color.fromARGB(
+                                                      255, 0, 0, 0),
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              SizedBox(
+                                                width: (MediaQuery.of(context)
+                                                            .size
+                                                            .width -
+                                                        135) /
+                                                    2,
+                                                child: TextFormField(
+                                                  controller: unitController[1],
+                                                  keyboardType:
+                                                      const TextInputType
+                                                          .numberWithOptions(
+                                                          decimal: false),
+                                                  inputFormatters: <TextInputFormatter>[
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                  ],
+                                                  decoration: InputDecoration(
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                    hintText: 'Unit',
+                                                  ),
+                                                  onChanged: (text) {
+                                                    if (text.isEmpty) {
+                                                      units[1] = 1;
+                                                      //answers[currentPage] = 0.0;
+                                                    }
+                                                  },
+                                                  validator: (value) {
+                                                    if (value == null ||
+                                                        value.isEmpty) {
+                                                      return 'Please enter a value';
+                                                    }
+                                                    return null;
+                                                  },
+                                                ),
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.delete,
+                                                  size: 20,
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    clicked--;
+                                                    isVisible = false;
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        ElevatedButton.icon(
+                                          onPressed: () {
+                                            setState(() {
+                                              clicked++;
+                                              if (clicked == 0) {
+                                                isVisible = !isVisible;
+                                              }
+                                              //isVisible = !isVisible;
+                                            });
+                                          },
+                                          style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    Colors.transparent),
+                                            shadowColor:
+                                                MaterialStateProperty.all(
+                                                    Colors.transparent),
+                                            foregroundColor:
+                                                MaterialStateProperty.all(
+                                                    Colors.transparent),
+                                            overlayColor: MaterialStateProperty
+                                                .resolveWith((states) {
+                                              if (states.contains(
+                                                  MaterialState.pressed)) {
+                                                return const Color.fromARGB(
+                                                        255, 212, 242, 245)
+                                                    .withOpacity(
+                                                        0.5); // Change this color to your desired color
+                                              }
+                                              return null; // Use the default value for other states
+                                            }),
+                                            surfaceTintColor:
+                                                MaterialStateProperty.all(
+                                                    Colors.transparent),
+                                          ),
+                                          icon: const Icon(
+                                            Icons.add,
+                                            color: Color.fromARGB(
+                                                255, 22, 161, 170),
+                                          ), // Provide your icon here
+                                          label: const Text(
+                                            'Add Another',
+                                            style: TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 22, 161, 170),
+                                            ),
+                                          ), // Provide your text here
+                                        ),
+                                      ],
+                                    )
                                   ],
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         if (index == 1)
