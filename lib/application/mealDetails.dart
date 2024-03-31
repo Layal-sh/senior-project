@@ -107,8 +107,8 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                             right: 15,
                           ),
                           child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
+                            decoration: const BoxDecoration(
+                              color: Color.fromARGB(255, 255, 249, 254),
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(20), // Top left corner
                                 topRight:
@@ -288,7 +288,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                                       width: MediaQuery.of(context).size.width *
                                           0.8,
                                       child: Container(
-                                        padding: EdgeInsets.all(10.0),
+                                        padding: const EdgeInsets.all(10.0),
                                         decoration: BoxDecoration(
                                           border: Border.all(
                                               color: const Color.fromARGB(
@@ -405,9 +405,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                                                 ),
                                                 Expanded(
                                                   child: Text(
-                                                    widget.meal.name +
-                                                        " " +
-                                                        "(${unitString(widget.meal.unit)})", // Replace with your actual value
+                                                    "${widget.meal.name} (${unitString(widget.meal.unit)})", // Replace with your actual value
                                                     style: const TextStyle(
                                                       fontSize: 16.0,
                                                       fontWeight:
@@ -455,7 +453,9 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                                                   builder:
                                                       (context, value, child) {
                                                     return Text(
-                                                      '${formatDouble(widget.meal.carbohydrates * value)}',
+                                                      formatDouble(widget.meal
+                                                              .carbohydrates *
+                                                          value),
                                                       style: const TextStyle(
                                                           fontSize: 16.0),
                                                     );
@@ -490,7 +490,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CircleAvatar(
-                      backgroundColor: Color.fromARGB(79, 0, 236, 253),
+                      backgroundColor: const Color.fromARGB(79, 0, 236, 253),
                       child: IconButton(
                         padding: EdgeInsets.zero,
                         icon: const Icon(
