@@ -282,6 +282,7 @@ class _LoginState extends State<Login> {
                                   logger.info(
                                       "syncing meals from the server to the local database");
                                   DBHelper dbHelper = DBHelper.instance;
+                                  await dbHelper.deleteMealComposition();
                                   await dbHelper.syncMeals();
                                   logger.info("synced meals successfully");
                                   await dbHelper.syncMealComposition();
@@ -289,7 +290,8 @@ class _LoginState extends State<Login> {
                                       "synced meal compositions successfully");
 
                                   //ignore: use_build_context_synchronously
-
+                                  print(await dbHelper
+                                      .selectAllMealComposition());
                                   logger.info(
                                       "saving values to shared preferences");
                                   final response = await http

@@ -711,8 +711,9 @@ class _ArticlesState extends State<Articles> {
       body: ListView.builder(
         itemCount: articles.length,
         itemBuilder: (context, index) {
-          //if an articles doesn't have a thumbnail(image) do whatvever u want. we put this picture. 
-          String imageUrl = articles[index]['thumbnail'] ?? 'assets/no-pictures.png';
+          //if an articles doesn't have a thumbnail(image) do whatvever u want. we put this picture.
+          String imageUrl =
+              articles[index]['thumbnail'] ?? 'assets/no-pictures.png';
           String title = articles[index]['title'];
           String url = articles[index]['link'];
           //String source = articles[index]['source'];

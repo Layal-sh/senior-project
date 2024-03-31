@@ -126,6 +126,15 @@ class DBHelper {
     return response;
   }
 
+  deleteMealComposition() async {
+    logger.info("Deleting Meal Composition...");
+    Database? mydb = await db;
+    int response = await mydb!.rawDelete('''
+    DELETE FROM MealComposition;
+''');
+    return response;
+  }
+
   //get all meals from local database for adding inputs
   Future<List<Map>> selectAllMeals() async {
     Database? mydb = await db;
