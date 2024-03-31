@@ -19,6 +19,7 @@ class UserInfo extends StatefulWidget {
 
 class _UserInfoState extends State<UserInfo> {
   final controller = PageController();
+  bool isButtonClicked = false; // Add this line at the top of your class
 
   final questions = [
     'What\'s Your Carbohydrates Ratio?',
@@ -30,18 +31,26 @@ class _UserInfoState extends State<UserInfo> {
     3,
     (index) => GlobalKey<FormState>(),
   );
-  final carbohydratesController = TextEditingController();
-  final unitController = TextEditingController();
+  //final carbohydratesController = TextEditingController();
+  //final unitController = TextEditingController();
   final insulinController = TextEditingController();
   final glucoseController = TextEditingController();
-  int core = 0;
-  int units = 1;
+  List<TextEditingController> carbohydratesController =
+      List.generate(5, (index) => TextEditingController());
+  List<TextEditingController> unitController =
+      List.generate(5, (index) => TextEditingController());
+  List<int> core = List.generate(4, (index) => 0);
+  List<int> units = List.generate(4, (index) => 1);
+  List<Widget> forms = [];
+  //int core = 0;
+  //int units = 1;
+  //List<Form> forms = [Form(child: MyCustomForm(0, 1))];
   List<Option> options = [
     Option(title: 'Glucose Levels'),
     Option(title: 'Insulin Intake'),
     Option(title: 'Meals'),
   ];
-
+  int index = 0;
   var currentPage = 0;
   int unit1 = 0;
   int unit2 = 0;
@@ -51,19 +60,16 @@ class _UserInfoState extends State<UserInfo> {
     super.initState();
 
     // Add a listener to the controller
-    carbohydratesController.addListener(() {
-      int? intValue = int.tryParse(carbohydratesController.text);
+    carbohydratesController[index].addListener(() {
+      int? intValue = int.tryParse(carbohydratesController[index].text);
       if (intValue != null) {
-        core = intValue;
+        core[index] = intValue;
       }
     });
-    unitController.addListener(() {
-      int? intValue = int.tryParse(unitController.text);
+    unitController[index].addListener(() {
+      int? intValue = int.tryParse(unitController[index].text);
       if (intValue != null) {
-        units = intValue;
-        if (core != 0) {
-          answers[currentPage] = core / units;
-        }
+        units[index] = intValue;
       }
     });
     insulinController.addListener(() {
@@ -82,7 +88,7 @@ class _UserInfoState extends State<UserInfo> {
   }
 
   final answers = [0.0, 0, 0, ''];
-  void updateAnswers() {
+  void updatelastAnswers() {
     // Get the selected options
     List<Option> selectedOptions =
         options.where((option) => option.isSelected).toList();
@@ -93,6 +99,95 @@ class _UserInfoState extends State<UserInfo> {
 
     // Update the last item in the answers list
     answers[answers.length - 1] = selectedTitles;
+  }
+
+  Widget _buildForm(int index) {
+    return Form(
+      key: formKeys[index],
+      child: Row(
+        children: <Widget>[
+          SizedBox(
+            width: (MediaQuery.of(context).size.width - 100) / 2,
+            child: TextFormField(
+              controller: carbohydratesController[index],
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: false),
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                hintText: unit1 == 0 ? 'Carbs' : "Exchange",
+              ),
+              onChanged: (text) {
+                if (text.isEmpty) {
+                  core[index] = 0;
+                  answers[currentPage] = 0.0;
+                }
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a value';
+                }
+                return null;
+              },
+            ),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          const Text(
+            "/",
+            style: TextStyle(
+              fontSize: 36,
+              //fontWeight: FontWeight.w300,
+              fontFamily: 'Inter',
+              color: Color.fromARGB(255, 0, 0, 0),
+            ),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          SizedBox(
+            width: (MediaQuery.of(context).size.width - 100) / 2,
+            child: TextFormField(
+              controller: unitController[index],
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: false),
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                hintText: 'Unit',
+              ),
+              onChanged: (text) {
+                if (text.isEmpty) {
+                  units[index] = 1;
+                  answers[currentPage] = 0.0;
+                }
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a value';
+                }
+                return null;
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void updatefirstAnswer() {
+    List<double> coreUnitsValues =
+        List.generate(core.length, (index) => core[index] / units[index]);
+    answers[0] = coreUnitsValues;
   }
 
   @override
@@ -307,7 +402,7 @@ class _UserInfoState extends State<UserInfo> {
                                                   100) /
                                               2,
                                       child: TextFormField(
-                                        controller: carbohydratesController,
+                                        controller: carbohydratesController[0],
                                         keyboardType: const TextInputType
                                             .numberWithOptions(decimal: false),
                                         inputFormatters: <TextInputFormatter>[
@@ -324,7 +419,7 @@ class _UserInfoState extends State<UserInfo> {
                                         ),
                                         onChanged: (text) {
                                           if (text.isEmpty) {
-                                            core = 0;
+                                            core[0] = 0;
                                             answers[currentPage] = 0.0;
                                           }
                                         },
@@ -357,7 +452,7 @@ class _UserInfoState extends State<UserInfo> {
                                                   100) /
                                               2,
                                       child: TextFormField(
-                                        controller: unitController,
+                                        controller: unitController[0],
                                         keyboardType: const TextInputType
                                             .numberWithOptions(decimal: false),
                                         inputFormatters: <TextInputFormatter>[
@@ -373,7 +468,7 @@ class _UserInfoState extends State<UserInfo> {
                                         ),
                                         onChanged: (text) {
                                           if (text.isEmpty) {
-                                            units = 1;
+                                            units[0] = 1;
                                             answers[currentPage] = 0.0;
                                           }
                                         },
@@ -388,6 +483,77 @@ class _UserInfoState extends State<UserInfo> {
                                   ],
                                 ),
                               ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Column(
+                                  children: [
+                                    if (isButtonClicked)
+                                      Expanded(
+                                        child: ListView.builder(
+                                          itemCount: forms.length - 1,
+                                          itemBuilder: (context, index) {
+                                            return forms[index + 1];
+                                          },
+                                        ),
+                                      ),
+                                    ElevatedButton.icon(
+                                      onPressed: () {
+                                        ListView.builder(
+                                          itemCount: forms.length,
+                                          itemBuilder: (context, index) {
+                                            return forms[index];
+                                          },
+                                        );
+                                        setState(() {
+                                          forms.add(_buildForm(forms.length));
+                                          isButtonClicked =
+                                              !isButtonClicked; // Add a new form
+                                        });
+                                      },
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                Colors.transparent),
+                                        shadowColor: MaterialStateProperty.all(
+                                            Colors.transparent),
+                                        foregroundColor:
+                                            MaterialStateProperty.all(
+                                                Colors.transparent),
+                                        overlayColor:
+                                            MaterialStateProperty.resolveWith(
+                                                (states) {
+                                          if (states.contains(
+                                              MaterialState.pressed)) {
+                                            return const Color.fromARGB(
+                                                    255, 212, 242, 245)
+                                                .withOpacity(
+                                                    0.5); // Change this color to your desired color
+                                          }
+                                          return null; // Use the default value for other states
+                                        }),
+                                        surfaceTintColor:
+                                            MaterialStateProperty.all(
+                                                Colors.transparent),
+                                      ),
+                                      icon: const Icon(
+                                        Icons.add,
+                                        color:
+                                            Color.fromARGB(255, 22, 161, 170),
+                                      ), // Provide your icon here
+                                      label: const Text(
+                                        'Add Another',
+                                        style: TextStyle(
+                                          color:
+                                              Color.fromARGB(255, 22, 161, 170),
+                                        ),
+                                      ), // Provide your text here
+                                    ),
+                                  ],
+                                ),
+                              )
                             ],
                           ),
                         if (index == 1)
@@ -763,7 +929,23 @@ class _UserInfoState extends State<UserInfo> {
                   ),
                 ),
                 onPressed: () {
-                  if (formKeys[currentPage].currentState!.validate()) {
+                  if (currentPage == 0) {
+                    if (formKeys[currentPage].currentState!.validate()) {
+                      setState(() {
+                        updatefirstAnswer();
+                        if ((answers[0] as List)[0] != 0.0) {
+                          updatefirstAnswer();
+                          currentPage = controller.page!.round() + 1;
+                          if (currentPage < questions.length) {
+                            controller.nextPage(
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.ease,
+                            );
+                          }
+                        }
+                      });
+                    }
+                  } else if (formKeys[currentPage].currentState!.validate()) {
                     setState(() {
                       if (answers[currentPage] != 0.0 ||
                           answers[currentPage] != 0) {
@@ -777,6 +959,7 @@ class _UserInfoState extends State<UserInfo> {
                       }
                     });
                   }
+                  print(answers);
                 },
                 child: const Text(
                   "Next",
@@ -806,10 +989,10 @@ class _UserInfoState extends State<UserInfo> {
                 onPressed: () {
                   setState(
                     () {
-                      updateAnswers();
+                      updatelastAnswers();
                     },
                   );
-                  final response = registerPatient();
+                  //final response = registerPatient();
                   showDialog(
                     context: context,
                     barrierDismissible: false,
@@ -889,14 +1072,14 @@ class _UserInfoState extends State<UserInfo> {
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    carbohydratesController.dispose();
-    unitController.dispose();
+    carbohydratesController[index].dispose();
+    unitController[index].dispose();
     insulinController.dispose();
     glucoseController.dispose();
     super.dispose();
   }
 
-  Future<http.Response> registerPatient() async {
+  /*Future<http.Response> registerPatient() async {
     double exchange = double.parse(carbohydratesController.text);
     double insUnit = double.parse(unitController.text);
     double insulinSensitivity = double.parse(insulinController.text);
@@ -907,14 +1090,14 @@ class _UserInfoState extends State<UserInfo> {
     double carbRatio = insUnit / exchange;
     int targetGlucose = targetGlucosed.round();
 
-  String privacy="";
+    String privacy = "";
     for (var option in options) {
-  if (option.isSelected) {
-    privacy+="1";
-  } else {
-     privacy+="0";
-  }
-}
+      if (option.isSelected) {
+        privacy += "1";
+      } else {
+        privacy += "0";
+      }
+    }
 
     final response = await http
         .post(
@@ -935,7 +1118,7 @@ class _UserInfoState extends State<UserInfo> {
         )
         .timeout(const Duration(seconds: 10));
     return response;
-  }
+  }*/
 }
 
 class Option {
