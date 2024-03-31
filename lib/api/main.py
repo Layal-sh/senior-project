@@ -120,17 +120,17 @@ async def read_item(meal_id: int):
     
 @app.post("/getUserDetails")
 async def getUserDetails(user: User):
-    cursor.execute("SELECT userPassword FROM Users WHERE userName = ?", (user.username,))
+    cursor.execute("SELECT userPassword FROM Users WHERE CAST(userName AS NVARCHAR(MAX)) = ?", (user.username,))
     rowUsername = cursor.fetchone()
-    cursor.execute("SELECT userPassword FROM Users WHERE email = ?",(user.username,))
+    cursor.execute("SELECT userPassword FROM Users WHERE CAST(email AS NVARCHAR(MAX)) = ?",(user.username,))
     rowEmail = cursor.fetchone()
     hashed_password = hashlib.md5(user.password.encode()).hexdigest()
     if(rowUsername is not None and hashed_password == rowUsername[0]):
-        cursor.execute("SELECT * FROM Users WHERE userName = ?",(user.username,))
+        cursor.execute("SELECT * FROM Users WHERE CAST(userName AS NVARCHAR(MAX)) = ?", (user.username,))
         row = cursor.fetchone()
         return {description[0]: column for description, column in zip(cursor.description, row)}
     elif(rowEmail is not None and hashed_password == rowEmail[0]):
-        cursor.execute("SELECT * FROM Users WHERE email = ?",(user.username,))
+        cursor.execute("SELECT * FROM Users WHERE CAST(email AS NVARCHAR(MAX)) = ?",(user.username,))
         row = cursor.fetchone()
         return {description[0]: column for description, column in zip(cursor.description, row)}
     return "stop trying to hack me man"
@@ -139,16 +139,20 @@ async def getUserDetails(user: User):
 async def authenticate(user: User):
     try:
         # Query the database for the user
-        cursor.execute("SELECT userPassword FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(user.username,))
+        cursor.execute("SELECT userPassword FROM Users WHERE CAST(userName AS NVARCHAR(MAX)) = ?", (user.username,))
         rowUsername = cursor.fetchone()
-        cursor.execute("SELECT userPassword FROM Users WHERE CAST(email AS VARCHAR(255)) = ?",(user.username,))
+        cursor.execute("SELECT userPassword FROM Users WHERE CAST(email AS NVARCHAR(MAX)) = ?",(user.username,))
         rowEmail = cursor.fetchone()
+
         # If the user doesn't exist or the password is incorrect, return a 401 Unauthorized response
+
         hashed_password = hashlib.md5(user.password.encode()).hexdigest()
+
+
         if (rowUsername is None or hashed_password != rowUsername[0]) and (rowEmail is None or hashed_password != rowEmail[0]):
             if(rowUsername is None and rowEmail is None):
                 raise HTTPException(status_code=401, detail="Invalid email or username")
-            if(hashed_password != rowUsername[0] and hashed_password != rowEmail[0]):
+            else:
                 raise HTTPException(status_code=401, detail="Incorrect password")
 
         # If the email and password are correct, return a 200 OK response
