@@ -72,154 +72,74 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
     });
     return Scaffold(
       //resizeToAvoidBottomInset: false,
-      backgroundColor: Color.fromARGB(255, 221, 221, 221),
+      backgroundColor: const Color.fromARGB(184, 30, 203, 215),
 
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            expandedHeight: 200.0, // This is the initial expanded height
-            flexibleSpace: FlexibleSpaceBar(
-              background: Image.asset(
-                widget.meal.imageUrl,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 23,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+      body: Padding(
+        padding: const EdgeInsets.only(
+          top: 23,
+        ),
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Stack(
                     children: [
-                      Stack(
-                        children: <Widget>[
-                          Center(
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height * 0.3,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.asset(
-                                  widget.meal.imageUrl,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
+                      Center(
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * 0.3,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.asset(
+                              widget.meal.imageUrl,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 10,
-                              left: 10,
-                              right: 10,
-                            ),
-                            child: SizedBox(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  CircleAvatar(
-                                    backgroundColor: const Color.fromARGB(
-                                        201, 160, 160, 160),
-                                    child: IconButton(
-                                      padding: EdgeInsets.zero,
-                                      icon: const Icon(
-                                        Icons.arrow_back_rounded,
-                                        size: 35,
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                  ),
-                                  CircleAvatar(
-                                    backgroundColor: const Color.fromARGB(
-                                        201, 160, 160, 160),
-                                    child: IconButton(
-                                      padding: EdgeInsets.zero,
-                                      icon: const Icon(
-                                        Icons.edit,
-                                        color:
-                                            Color.fromARGB(255, 255, 255, 255),
-                                      ),
-                                      onPressed: () {
-                                        // Handle the settings button press here
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                       Expanded(
-                        child: SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              left: 30,
-                              right: 30,
-                            ),
-                            child: Container(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height * 0.2,
+                            left: 15,
+                            right: 15,
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
                               color: Colors.white,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width - 80,
-                                    child: Expanded(
-                                      child: Text(
-                                        widget.meal.name,
-                                        style: const TextStyle(
-                                          color:
-                                              Color.fromARGB(255, 38, 20, 84),
-                                          fontSize: 35,
-                                          fontFamily: 'Inter',
-                                          letterSpacing: -0.75,
-                                          fontWeight: FontWeight.w900,
-                                        ),
-                                      ),
-                                    ),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20), // Top left corner
+                                topRight:
+                                    Radius.circular(20), // Top right corner
+                                // Add other corners if needed
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 25.0,
+                                    right: 25,
+                                    top: 25,
                                   ),
-                                  const SizedBox(
-                                    height: 15,
-                                  ),
-                                  const Text(
-                                    "Categories",
-                                    style: TextStyle(
-                                      color: Color.fromARGB(255, 38, 20, 84),
-                                      fontSize: 23,
-                                      fontFamily: 'InterBold',
-                                      letterSpacing: -0.75,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  Row(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Container(
-                                        width: 60,
-                                        height: 35,
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                              255, 30, 203, 215),
-                                          borderRadius: BorderRadius.circular(
-                                              10), // Set the border radius here
-                                        ),
-                                        child: const Center(
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                80,
+                                        child: Expanded(
                                           child: Text(
-                                            "Cat 1",
-                                            style: TextStyle(
+                                            widget.meal.name,
+                                            style: const TextStyle(
                                               color: Color.fromARGB(
-                                                  255, 255, 255, 255),
-                                              fontSize: 18,
+                                                  255, 38, 20, 84),
+                                              fontSize: 35,
                                               fontFamily: 'Inter',
                                               letterSpacing: -0.75,
                                               fontWeight: FontWeight.w900,
@@ -228,89 +148,142 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                                         ),
                                       ),
                                       const SizedBox(
-                                        width: 10,
+                                        height: 15,
                                       ),
-                                      Container(
-                                        width: 60,
-                                        height: 35,
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                              255, 30, 203, 215),
-                                          borderRadius: BorderRadius.circular(
-                                              10), // Set the border radius here
+                                      const Text(
+                                        "Categories",
+                                        style: TextStyle(
+                                          color:
+                                              Color.fromARGB(255, 38, 20, 84),
+                                          fontSize: 23,
+                                          fontFamily: 'InterBold',
+                                          letterSpacing: -0.75,
+                                          fontWeight: FontWeight.w700,
                                         ),
-                                        child: const Center(
-                                          child: Text(
-                                            "Cat 1",
-                                            style: TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 255, 255, 255),
-                                              fontSize: 18,
-                                              fontFamily: 'Inter',
-                                              letterSpacing: -0.75,
-                                              fontWeight: FontWeight.w900,
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width: 60,
+                                            height: 35,
+                                            decoration: BoxDecoration(
+                                              color: const Color.fromARGB(
+                                                  255, 30, 203, 215),
+                                              borderRadius: BorderRadius.circular(
+                                                  10), // Set the border radius here
+                                            ),
+                                            child: const Center(
+                                              child: Text(
+                                                "Cat 1",
+                                                style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 255, 255, 255),
+                                                  fontSize: 18,
+                                                  fontFamily: 'Inter',
+                                                  letterSpacing: -0.75,
+                                                  fontWeight: FontWeight.w900,
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                        ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Container(
+                                            width: 60,
+                                            height: 35,
+                                            decoration: BoxDecoration(
+                                              color: const Color.fromARGB(
+                                                  255, 30, 203, 215),
+                                              borderRadius: BorderRadius.circular(
+                                                  10), // Set the border radius here
+                                            ),
+                                            child: const Center(
+                                              child: Text(
+                                                "Cat 1",
+                                                style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 255, 255, 255),
+                                                  fontSize: 18,
+                                                  fontFamily: 'Inter',
+                                                  letterSpacing: -0.75,
+                                                  fontWeight: FontWeight.w900,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      FutureBuilder<List<Ingredient>>(
+                                        future:
+                                            fetchIngredients(), //_ingFuture,
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const CircularProgressIndicator();
+                                          } else if (snapshot.hasError) {
+                                            return Text(
+                                                'Error: ${snapshot.error}');
+                                          } else {
+                                            if (snapshot.data!.isNotEmpty) {
+                                              var limitedData = snapshot.data!
+                                                  .take(15)
+                                                  .toList();
+                                              return Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const Padding(
+                                                    padding: EdgeInsets.only(
+                                                      bottom: 10,
+                                                    ),
+                                                    child: Text(
+                                                      'Ingredients:',
+                                                      style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 38, 20, 84),
+                                                        fontSize: 23,
+                                                        fontFamily: 'InterBold',
+                                                        letterSpacing: -0.75,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Column(
+                                                    children: List.generate(
+                                                      limitedData.length,
+                                                      (i) => IngBox(
+                                                          ingredient: snapshot
+                                                              .data![i]),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            } else {
+                                              return const SizedBox
+                                                  .shrink(); // Return an empty widget if the list is empty
+                                            }
+                                          }
+                                        },
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(
-                                    height: 20,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: 20.0,
                                   ),
-                                  FutureBuilder<List<Ingredient>>(
-                                    future: fetchIngredients(), //_ingFuture,
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const CircularProgressIndicator();
-                                      } else if (snapshot.hasError) {
-                                        return Text('Error: ${snapshot.error}');
-                                      } else {
-                                        if (snapshot.data!.isNotEmpty) {
-                                          var limitedData =
-                                              snapshot.data!.take(15).toList();
-                                          return Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Padding(
-                                                padding: EdgeInsets.only(
-                                                  bottom: 10,
-                                                ),
-                                                child: Text(
-                                                  'Ingredients:',
-                                                  style: TextStyle(
-                                                    color: Color.fromARGB(
-                                                        255, 38, 20, 84),
-                                                    fontSize: 23,
-                                                    fontFamily: 'InterBold',
-                                                    letterSpacing: -0.75,
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
-                                                ),
-                                              ),
-                                              Column(
-                                                children: List.generate(
-                                                  limitedData.length,
-                                                  (i) => IngBox(
-                                                      ingredient:
-                                                          snapshot.data![i]),
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        } else {
-                                          return const SizedBox
-                                              .shrink(); // Return an empty widget if the list is empty
-                                        }
-                                      }
-                                    },
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  Center(
+                                  child: Center(
                                     child: SizedBox(
                                       width: MediaQuery.of(context).size.width *
                                           0.8,
@@ -495,19 +468,60 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 10,
+                left: 10,
+                right: 10,
+              ),
+              child: SizedBox(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Color.fromARGB(79, 0, 236, 253),
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        icon: const Icon(
+                          Icons.arrow_back_rounded,
+                          size: 35,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    CircleAvatar(
+                      backgroundColor: const Color.fromARGB(79, 0, 236, 253),
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        icon: const Icon(
+                          Icons.edit,
+                          color: Color.fromARGB(255, 255, 255, 255),
+                        ),
+                        onPressed: () {
+                          // Handle the settings button press here
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: Container(
         color: Color.fromARGB(255, 255, 249, 254),
@@ -521,94 +535,103 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Form(
+              Expanded(
+                flex: 2,
+                child: Form(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width / 2.7,
+                    height: 30,
+                    child: TextFormField(
+                      controller: _numberOfMeal,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                        hintText: 'Choose Amount',
+                        hintStyle: TextStyle(
+                          fontSize: 15,
+                          color: Color.fromARGB(255, 198, 198, 198),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 38, 20, 84),
+                            width: 1.5,
+                          ),
+                        ),
+                        border: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 171, 171, 171),
+                            width: 100,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Text(
+                  unitString(widget.meal.unit),
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.fade,
+                  softWrap: false,
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 38, 20, 84),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 2,
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width / 2.7,
-                  height: 30,
-                  child: TextFormField(
-                    controller: _numberOfMeal,
-                    keyboardType: TextInputType.number,
-                    textAlign: TextAlign.center,
-                    decoration: const InputDecoration(
-                      hintText: 'Choose Amount',
-                      hintStyle: TextStyle(
+                  width: 135,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(1),
+                      backgroundColor: const Color.fromARGB(255, 30, 203, 215),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text(
+                      'Add To Meals',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 255, 255, 255),
                         fontSize: 15,
-                        color: Color.fromARGB(255, 198, 198, 198),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color.fromARGB(255, 38, 20, 84),
-                          width: 1.5,
-                        ),
-                      ),
-                      border: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color.fromARGB(255, 171, 171, 171),
-                          width: 100,
-                        ),
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ),
-                ),
-              ),
-              Text(
-                unitString(widget.meal.unit),
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.fade,
-                softWrap: false,
-                style: const TextStyle(
-                  color: Color.fromARGB(255, 38, 20, 84),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              SizedBox(
-                width: 135,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.all(1),
-                    backgroundColor: const Color.fromARGB(255, 30, 203, 215),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Text(
-                    'Add To Meals',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 255, 255, 255),
-                      fontSize: 15,
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  onPressed: () async {
-                    print("adding to meals");
-                    try {
-                      if (double.parse(_numberOfMeal.text) <= 0) {
+                    onPressed: () async {
+                      print("adding to meals");
+                      try {
+                        if (double.parse(_numberOfMeal.text) <= 0) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const AlertDialog(
+                                content: Text(
+                                    'Cannot input negative or zero values'),
+                              );
+                            },
+                          );
+                        } else {
+                          addToChosenMeals(
+                              widget.meal.id, double.parse(_numberOfMeal.text));
+                        }
+                      } catch (e) {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
                             return const AlertDialog(
-                              content:
-                                  Text('Cannot input negative or zero values'),
+                              content: Text('Specify the amount as a number'),
                             );
                           },
                         );
-                      } else {
-                        addToChosenMeals(
-                            widget.meal.id, double.parse(_numberOfMeal.text));
                       }
-                    } catch (e) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return const AlertDialog(
-                            content: Text('Specify the amount as a number'),
-                          );
-                        },
-                      );
-                    }
-                  },
+                    },
+                  ),
                 ),
               ),
             ],
