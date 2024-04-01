@@ -68,8 +68,7 @@ class _LoginState extends State<Login> {
     await dbHelper.syncMealComposition();
     logger.info("synced meal compositions successfully");
 
-    //ignore: use_build_context_synchronously
-    print(await dbHelper.selectAllMealComposition());
+  
     logger.info("saving values to shared preferences");
     final response = await http
         .post(
@@ -333,6 +332,7 @@ class _LoginState extends State<Login> {
                                     .timeout(const Duration(seconds: 10));
 
                                 if (response.statusCode == 200) {
+                                
                                   _isLoading ? null : _signIn(email, password);
                                 } else {
                                   //incorrect username or password handling
