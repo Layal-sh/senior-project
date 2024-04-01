@@ -232,11 +232,10 @@ async def get_mealComposition():
 #News Api Key: 52583f3a26ca4ba0b9631f43f66abb3d
 apiKey = 'd9cb4bee70915b0f8ad912e10388ab16f02a2f0b7e84724806d40e5700461781'
 
-@app.get("/News")
-async def get_news():
-
+@app.get("/News/{query}")
+async def get_news(query: str):
     params = {
-        "q": "diabetes articles",
+        "q": query,
         "hl": "en",
         "gl": "us",
         "google_domain": "google.com",
@@ -245,20 +244,8 @@ async def get_news():
 
     search = GoogleSearch(params)
     results = search.get_dict()
-   
-    params2 = {
-        "q": "type 1 diabetes lifestyle",
-        "hl": "en",
-        "gl": "us",
-        "google_domain": "google.com",
-        "api_key": "d9cb4bee70915b0f8ad912e10388ab16f02a2f0b7e84724806d40e5700461781"
-    }
     
-    search2 = GoogleSearch(params2)
-    results2 = search2.get_dict()
-    print(print(len(results["organic_results"]), " ", len(results2["organic_results"])))
-    print(results["organic_results"]+results2["organic_results"])
-    return results["organic_results"]+results2["organic_results"]
+    return results["organic_results"]
 
     
 #combined_results = results["organic_results"] + results2["organic_results"]
