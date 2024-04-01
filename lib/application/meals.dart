@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/application/create.dart';
+import 'package:sugar_sense/application/editMeal.dart';
 import 'package:sugar_sense/application/mealDetails.dart';
 import 'package:sugar_sense/main.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
@@ -147,6 +148,7 @@ class _MealsState extends State<Meals> {
                         carbohydrates: meals[i]['carbohydrates'],
                         unit: meals[i]['unit'],
                         quantity: 1,
+                        ingredients: [],
                       ),
                     ),
                     gridDelegate:
@@ -174,7 +176,7 @@ class Meal {
   final double carbohydrates;
   final double quantity;
   final int unit;
-
+  final List<eIngredient> ingredients;
   Meal({
     required this.name,
     required this.imageUrl,
@@ -182,6 +184,7 @@ class Meal {
     required this.carbohydrates,
     required this.quantity,
     required this.unit,
+    required this.ingredients,
   });
   String toString() {
     return 'Meal{name: $name, imageUrl: $imageUrl, id: $id, carbodydrates: $carbohydrates, quantity: $quantity, unit: $unit}';

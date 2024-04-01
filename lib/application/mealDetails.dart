@@ -6,6 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sugar_sense/Database/db.dart';
+import 'package:sugar_sense/application/editMeal.dart';
 import 'package:sugar_sense/application/meals.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 
@@ -64,7 +65,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    SchedulerBinding.instance!.addPostFrameCallback((_) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: Color.fromARGB(255, 38, 20, 84), // Set status bar color
       ));
@@ -74,10 +75,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
       backgroundColor: const Color.fromARGB(
           83, 115, 61, 252), //const Color.fromARGB(184, 30, 203, 215),
 
-      body: Padding(
-        padding: const EdgeInsets.only(
-          top: 23,
-        ),
+      body: SafeArea(
         child: Stack(
           children: [
             SingleChildScrollView(
@@ -91,7 +89,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                           width: MediaQuery.of(context).size.width,
                           height: MediaQuery.of(context).size.height * 0.3,
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(0),
                             child: Image.asset(
                               widget.meal.imageUrl,
                               fit: BoxFit.cover,
@@ -107,6 +105,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                             right: 15,
                           ),
                           child: Container(
+                            height: MediaQuery.of(context).size.height * 0.7,
                             decoration: const BoxDecoration(
                               color: Color.fromARGB(255, 255, 249, 254),
                               borderRadius: BorderRadius.only(
@@ -512,7 +511,23 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                           color: Color.fromARGB(255, 255, 255, 255),
                         ),
                         onPressed: () {
-                          // Handle the settings button press here
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      EditMeal(
+                                meal: widget.meal,
+                              ),
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
+                                return FadeTransition(
+                                  opacity: animation,
+                                  child: child,
+                                );
+                              },
+                            ),
+                          );
                         },
                       ),
                     ),
@@ -680,58 +695,55 @@ class IngBox extends StatefulWidget {
 class _IngBoxState extends State<IngBox> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 40.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.4,
-            child: Text(
-              widget.ingredient.name,
-              softWrap: true,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Color.fromARGB(255, 38, 20, 84),
-                fontSize: 18,
-                fontFamily: 'Inter',
-                letterSpacing: -0.75,
-                fontWeight: FontWeight.w600,
-              ),
+    return Row(
+      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.4,
+          child: Text(
+            widget.ingredient.name,
+            softWrap: true,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color.fromARGB(255, 38, 20, 84),
+              fontSize: 18,
+              fontFamily: 'Inter',
+              letterSpacing: -0.75,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.2,
-            child: Text(
-              "${widget.ingredient.quantity}",
-              softWrap: true,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Color.fromARGB(255, 38, 20, 84),
-                fontSize: 20,
-                fontFamily: 'Inter',
-                letterSpacing: -0.75,
-                fontWeight: FontWeight.w600,
-              ),
+        ),
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.2,
+          child: Text(
+            "${widget.ingredient.quantity}",
+            softWrap: true,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color.fromARGB(255, 38, 20, 84),
+              fontSize: 20,
+              fontFamily: 'Inter',
+              letterSpacing: -0.75,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.2,
-            child: Text(
-              "${widget.ingredient.unit}",
-              softWrap: true,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Color.fromARGB(255, 38, 20, 84),
-                fontSize: 20,
-                fontFamily: 'Inter',
-                letterSpacing: -0.75,
-                fontWeight: FontWeight.w600,
-              ),
+        ),
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.26,
+          child: Text(
+            unitString(widget.ingredient.unit),
+            softWrap: true,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color.fromARGB(255, 38, 20, 84),
+              fontSize: 20,
+              fontFamily: 'Inter',
+              letterSpacing: -0.75,
+              fontWeight: FontWeight.w600,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

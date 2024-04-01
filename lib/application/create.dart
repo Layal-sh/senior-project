@@ -110,22 +110,21 @@ class _CreateMealState extends State<CreateMeal> {
                   Container(
                     width: 175,
                     height: 175,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(40),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: _selectedImage != null
+                          ? Image.file(
+                              File(_selectedImage!.path),
+                              width: 200,
+                              height: 200,
+                              fit: BoxFit.cover,
+                            )
+                          : Icon(
+                              Icons.camera_alt,
+                              size: 50,
+                              color: Colors.grey[800],
+                            ),
                     ),
-                    child: _selectedImage != null
-                        ? Image.file(
-                            File(_selectedImage!.path),
-                            width: 200,
-                            height: 200,
-                            fit: BoxFit.cover,
-                          )
-                        : Icon(
-                            Icons.camera_alt,
-                            size: 50,
-                            color: Colors.grey[800],
-                          ),
                   ),
                   Positioned(
                     right: 0,
