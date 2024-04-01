@@ -653,6 +653,7 @@ class Articles extends StatefulWidget {
 
 class _ArticlesState extends State<Articles> {
   List articles = [];
+  List<bool>? starred;
 
   @override
   void initState() {
@@ -667,20 +668,16 @@ class _ArticlesState extends State<Articles> {
       List<dynamic> responseData = jsonDecode(response.body);
 
       setState(() {
-        articles = responseData.where((article) {
-          return article['title'] != null ||
-              article['link'] != null ||
-              article['thumbnail'] != null ||
-              article['source'] != null;
-        }).toList();
+        articles = responseData;
+        starred = List<bool>.filled(articles.length, false);
       });
-    } else {
-      throw Exception('Failed to load articles');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -708,26 +705,44 @@ class _ArticlesState extends State<Articles> {
         ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
-      body: ListView.builder(
-        itemCount: articles.length,
-        itemBuilder: (context, index) {
-          //if an articles doesn't have a thumbnail(image) do whatvever u want. we put this picture.
-          String imageUrl =
-              articles[index]['thumbnail'] ?? 'assets/no-pictures.png';
-          String title = articles[index]['title'];
-          String url = articles[index]['link'];
-          //String source = articles[index]['source'];
+      body: (articles.isEmpty || starred == null)
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: articles.length,
+              itemBuilder: (context, index) {
+                String? imageUrl = articles[index]['thumbnail'];
+                String title = articles[index]['title'];
+                String url = articles[index]['link'];
 
-          return ListTile(
-            leading: Image.network(imageUrl),
-            title: Text(title),
-            onTap: () {
-              // Open the article URL when the ListTile is tapped
-              launch(url);
-            },
-          );
-        },
-      ),
+                return Card(
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    children: [
+                      if (imageUrl != null)
+                        Container(
+                          width: screenWidth * 0.8,
+                          child: Image.network(imageUrl, fit: BoxFit.cover),
+                        ),
+                      ListTile(
+                        title: Text(title),
+                        trailing: IconButton(
+                          icon: Icon(
+                            starred![index] ? Icons.star : Icons.star_border,
+                            color: starred![index] ? Colors.yellow : null,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              starred![index] = !starred![index];
+                            });
+                          },
+                        ),
+                        onTap: () => launch(url),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
     );
   }
 }

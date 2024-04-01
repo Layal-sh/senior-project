@@ -257,7 +257,7 @@ async def get_news():
     search2 = GoogleSearch(params2)
     results2 = search2.get_dict()
     print(print(len(results["organic_results"]), " ", len(results2["organic_results"])))
-
+    print(results["organic_results"]+results2["organic_results"])
     return results["organic_results"]+results2["organic_results"]
 
     
