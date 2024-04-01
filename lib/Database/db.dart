@@ -402,9 +402,7 @@ class DBHelper {
 
   searchMeal(String input) async {
     Database? mydb = await db;
-    List<Map> response = await mydb!.rawQuery('''
-    SELECT mealId FROM "Meals" WHERE mealName = $input OR tags LIKE '%$input%';
-    ''');
+    List<Map> response = await mydb!.rawQuery('SELECT mealId, mealName FROM "Meals" WHERE mealName = ? OR tags LIKE ?', [input, '%$input%']);
     return response;
   }
 
@@ -466,6 +464,41 @@ class DBHelper {
     }
     logger.info("Category $response has been chosen.");
     return searchMeal(response);
+  }
+
+  getCategoryOfMeal(int mealId) async{
+    List <String> categories=[];
+    if((await searchMealForCatgeory(mealId, "drinks")).isNotEmpty){
+      categories.add("drinks");
+    }
+    if((await searchMealForCatgeory(mealId, "sweet & snacks")).isNotEmpty){
+        categories.add("sweet & snacks");
+    }
+    if((await searchMealForCatgeory(mealId, "pastries")).isNotEmpty){
+        categories.add("pastries");
+    }
+    if((await searchMealForCatgeory(mealId, "dairy products")).isNotEmpty){
+        categories.add("dairy products");
+    }
+    if((await searchMealForCatgeory(mealId, "fruits")).isNotEmpty){
+        categories.add("fruits");
+    }
+    if((await searchMealForCatgeory(mealId, "lebanese dishes")).isNotEmpty){
+        categories.add("lebanese dishes");
+    }
+    if((await searchMealForCatgeory(mealId, "arabic desserts")).isNotEmpty){
+        categories.add("arabic desserts");
+    }
+    if((await searchMealForCatgeory(mealId, "grains, pasta & rice")).isNotEmpty){
+        categories.add("grains, pasta & rice");
+    }
+    return categories;
+  }
+
+    searchMealForCatgeory(int mealId,String input) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('SELECT * FROM "Meals" WHERE mealId = ? AND tags LIKE ?', [mealId, '%$input%']);
+    return response;
   }
 
   updateFrequency(int mealId) async {

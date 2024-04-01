@@ -253,7 +253,7 @@ async def get_news():
         "google_domain": "google.com",
         "api_key": "d9cb4bee70915b0f8ad912e10388ab16f02a2f0b7e84724806d40e5700461781"
     }
-
+    
     search2 = GoogleSearch(params2)
     results2 = search2.get_dict()
     print(print(len(results["organic_results"]), " ", len(results2["organic_results"])))
