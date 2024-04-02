@@ -109,7 +109,7 @@ class _UserInfoState extends State<UserInfo> {
   void updatefirstAnswer() {
     List<double> coreUnitsValues = List.filled(3, 0.0);
     for (int i = 0; i < 3; i++) {
-      coreUnitsValues[i] = core[i] / units[i];
+      coreUnitsValues[i] = units[i] / core[i];
     }
 
     answers[0] = coreUnitsValues;
