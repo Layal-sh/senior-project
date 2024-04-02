@@ -901,6 +901,7 @@ class _SignUpState extends State<SignUp> {
                                       );
                                     }
                                   }
+                                  //remove bool accept and the the if after it when done
                                   bool accept = await showModalBottomSheet(
                                     context: context,
                                     isScrollControlled: true,
