@@ -15,11 +15,10 @@ class CreateMeal extends StatefulWidget {
 }
 
 class _CreateMealState extends State<CreateMeal> {
-  PickedFile? _selectedImage;
+  XFile? _selectedImage;
   void _pickImage() async {
     final ImagePicker _picker = ImagePicker();
-    final PickedFile? image =
-        (await _picker.pickImage(source: ImageSource.gallery)) as PickedFile?;
+    final XFile? image = (await _picker.pickImage(source: ImageSource.gallery));
 
     setState(() {
       _selectedImage = image;
@@ -44,222 +43,232 @@ class _CreateMealState extends State<CreateMeal> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 15,
-        automaticallyImplyLeading: false,
-        backgroundColor: const Color.fromARGB(255, 38, 20, 84),
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Icon(
-                        Icons.arrow_back,
-                        color: Color.fromARGB(255, 38, 20, 84),
-                        size: 30,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        //dbHelper.createEntry(pid, glucose, insulin, date, selectedMeals);
-                      },
-                      child: const Text(
-                        'Create',
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 38, 20, 84),
-                          fontSize: 22,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            GestureDetector(
-              onTap: _pickImage,
-              child: Stack(
-                children: [
-                  Container(
-                    width: 175,
-                    height: 175,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: _selectedImage != null
-                          ? Image.file(
-                              File(_selectedImage!.path),
-                              width: 200,
-                              height: 200,
-                              fit: BoxFit.cover,
-                            )
-                          : Icon(
-                              Icons.camera_alt,
-                              size: 50,
-                              color: Colors.grey[800],
-                            ),
-                    ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                color: const Color.fromARGB(255, 38, 20, 84),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 10.0,
+                    right: 10,
                   ),
-                  Positioned(
-                    right: 0,
-                    bottom: 7,
-                    child: InkWell(
-                      onTap: _pickImage,
-                      child: Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: const BoxDecoration(
-                          color: Color.fromARGB(255, 38, 20, 84),
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            topRight: Radius.circular(15),
-                            bottomLeft: Radius.circular(7),
-                            bottomRight: Radius.circular(15),
-                          ),
-                        ),
-                        child: const Icon(
-                          Icons.edit,
-                          size: 20,
-                          color: Color.fromARGB(255, 255, 255, 255),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              height: MediaQuery.of(context).size.height - 280,
-              color: const Color.fromARGB(255, 231, 231, 231),
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Name: ',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 38, 20, 84),
-                      fontSize: 17,
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    //controller: _nameController,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 38, 20, 84),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 38, 20, 84),
-                          width: 1.5,
-                        ),
-                      ),
-                      hintText: 'Enter meal name',
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'Ingredients: ',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 38, 20, 84),
-                      fontSize: 17,
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  selectedMeals.isEmpty
-                      ? Container()
-                      : Expanded(
-                          child: ListView.builder(
-                            itemCount: selectedMeals.length,
-                            itemBuilder: (context, index) {
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(allMeals[index]['mealName']),
-                                  const Text('quantity'),
-                                  const Text('unit'),
-                                  IconButton(
-                                    icon: const Icon(Icons.close),
-                                    onPressed: () {
-                                      setState(() {
-                                        //selectedMeals.removeAt(index);
-                                      });
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        color: const Color.fromARGB(255, 38, 20, 84),
-                        iconSize: 30,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => Meals()),
-                          );
-                        },
+                      CircleAvatar(
+                        backgroundColor: Color.fromARGB(0, 0, 236, 253),
+                        child: IconButton(
+                          padding: EdgeInsets.zero,
+                          icon: const Icon(
+                            Icons.arrow_back_rounded,
+                            size: 30,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
                       ),
-                      const Text(
-                        'Add Ingredients',
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 38, 20, 84),
-                          fontSize: 17,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w900,
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 8.0,
+                          bottom: 8,
+                          left: 5,
+                          right: 5,
+                        ),
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50.0),
+                            ),
+                            backgroundColor:
+                                const Color.fromARGB(255, 45, 170, 178),
+                            //padding: const EdgeInsets.all(16),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                          ),
+                          onPressed: () {},
+                          child: const Text(
+                            'Create',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ],
+                ),
+                // Your body content
               ),
-            ),
-          ],
+              const SizedBox(
+                height: 20,
+              ),
+              GestureDetector(
+                onTap: _pickImage,
+                child: Stack(
+                  children: [
+                    Container(
+                      width: 175,
+                      height: 175,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: _selectedImage != null
+                            ? Image.file(
+                                File(_selectedImage!.path),
+                                width: 200,
+                                height: 200,
+                                fit: BoxFit.cover,
+                              )
+                            : Container(
+                                color: Color.fromARGB(255, 211, 211, 211),
+                                child: Icon(
+                                  Icons.camera_alt,
+                                  size: 50,
+                                  color: Colors.grey[800],
+                                ),
+                              ),
+                      ),
+                    ),
+                    Positioned(
+                      right: 0,
+                      bottom: 7,
+                      child: InkWell(
+                        onTap: _pickImage,
+                        child: Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: const BoxDecoration(
+                            color: Color.fromARGB(255, 38, 20, 84),
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(15),
+                              topRight: Radius.circular(15),
+                              bottomLeft: Radius.circular(7),
+                              bottomRight: Radius.circular(15),
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.edit,
+                            size: 20,
+                            color: Color.fromARGB(255, 255, 255, 255),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height - 280,
+                color: const Color.fromARGB(255, 231, 231, 231),
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Name: ',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 38, 20, 84),
+                        fontSize: 17,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextField(
+                      //controller: _nameController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          borderSide: const BorderSide(
+                            color: Color.fromARGB(255, 38, 20, 84),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          borderSide: const BorderSide(
+                            color: Color.fromARGB(255, 38, 20, 84),
+                            width: 1.5,
+                          ),
+                        ),
+                        hintText: 'Enter meal name',
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Text(
+                      'Ingredients: ',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 38, 20, 84),
+                        fontSize: 17,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    selectedMeals.isEmpty
+                        ? Container()
+                        : Expanded(
+                            child: ListView.builder(
+                              itemCount: selectedMeals.length,
+                              itemBuilder: (context, index) {
+                                return Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(allMeals[index]['mealName']),
+                                    const Text('quantity'),
+                                    const Text('unit'),
+                                    IconButton(
+                                      icon: const Icon(Icons.close),
+                                      onPressed: () {
+                                        setState(() {
+                                          //selectedMeals.removeAt(index);
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          color: const Color.fromARGB(255, 38, 20, 84),
+                          iconSize: 30,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => Meals()),
+                            );
+                          },
+                        ),
+                        const Text(
+                          'Add Ingredients',
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 38, 20, 84),
+                            fontSize: 17,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

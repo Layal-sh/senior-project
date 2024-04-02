@@ -31,8 +31,7 @@ class _MealsState extends State<Meals> {
   @override
   void initState() {
     super.initState();
-    _mealsFuture =
-        db.selectAllMeals(); // Call your function that fetches the meals data
+    _mealsFuture = db.selectAllMeals();
   }
 
   @override
@@ -81,8 +80,10 @@ class _MealsState extends State<Meals> {
                   MaterialPageRoute(builder: (context) => CreateMeal()),
                 );
               },
-              child:
-                  const Text('Create', style: TextStyle(color: Colors.white)),
+              child: const Text(
+                'Create',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
         ],

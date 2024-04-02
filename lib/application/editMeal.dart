@@ -311,54 +311,57 @@ class _EditMealState extends State<EditMeal> {
                         const SizedBox(
                           height: 5,
                         ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 60,
-                              height: 35,
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 30, 203, 215),
-                                borderRadius: BorderRadius.circular(
-                                    10), // Set the border radius here
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  "Cat 1",
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 255, 255, 255),
-                                    fontSize: 18,
-                                    fontFamily: 'Inter',
-                                    letterSpacing: -0.75,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                              width: 60,
-                              height: 35,
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 30, 203, 215),
-                                borderRadius: BorderRadius.circular(
-                                    10), // Set the border radius here
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  "Cat 1",
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 255, 255, 255),
-                                    fontSize: 18,
-                                    fontFamily: 'Inter',
-                                    letterSpacing: -0.75,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                        FutureBuilder<List<String>>(
+                          future: db.getCategoryOfMeal(
+                              widget.meal.id), // Call the function
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<String>> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator(); // Show a loading spinner while waiting
+                            } else if (snapshot.hasError) {
+                              return Text(
+                                  'Error: ${snapshot.error}'); // Show error if there is any
+                            } else {
+                              // Display the categories
+                              return Wrap(
+                                spacing: 10, // space between rows
+                                runSpacing: 10,
+                                children: snapshot.data!
+                                    .map(
+                                      (category) => IntrinsicWidth(
+                                        child: Container(
+                                          height: 35,
+                                          decoration: BoxDecoration(
+                                            color: const Color.fromARGB(
+                                                255, 30, 203, 215),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 8.0, right: 8),
+                                            child: Center(
+                                              child: Text(
+                                                category, // Display the category
+                                                style: const TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 255, 255, 255),
+                                                  fontSize: 18,
+                                                  fontFamily: 'Inter',
+                                                  letterSpacing: -0.75,
+                                                  fontWeight: FontWeight.w900,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                              );
+                            }
+                          },
                         ),
                       ],
                     ),
@@ -398,10 +401,10 @@ class _eIngBoxState extends State<eIngBox> {
   @override
   Widget build(BuildContext context) {
     return Row(
-      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         SizedBox(
-          width: MediaQuery.of(context).size.width * 0.6,
+          //width: MediaQuery.of(context).size.width * 0.6,
           child: Text(
             widget.ingredient.name,
             softWrap: true,
