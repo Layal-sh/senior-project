@@ -1195,7 +1195,7 @@ class _UserInfoState extends State<UserInfo> {
                       updatelastAnswers();
                     },
                   );
-                  //final response = registerPatient();
+                  final response = registerPatient();
                   showDialog(
                     context: context,
                     barrierDismissible: false,
@@ -1284,15 +1284,29 @@ class _UserInfoState extends State<UserInfo> {
     super.dispose();
   }
 
-  /*Future<http.Response> registerPatient() async {
-    double exchange = double.parse(carbohydratesController.text);
-    double insUnit = double.parse(unitController.text);
-    double insulinSensitivity = double.parse(insulinController.text);
-    double targetGlucosed = double.parse(glucoseController.text);
-    if (unit1 == 0) exchange /= 15;
+  Future<http.Response> registerPatient() async {
+    // double exchange = double.parse(carbohydratesController.text);
+    // double insUnit = double.parse(unitController.text);
+    // double insulinSensitivity = double.parse(insulinController.text);
+    // double targetGlucosed = double.parse(glucoseController.text);
+
+    double insulinSensitivity = (answers[1] as num).toDouble();
+    double targetGlucosed = (answers[2] as num).toDouble();
+
+    List<dynamic> carbRatios = answers[0] as List<dynamic>;
+    double carbRatio1 = (carbRatios[0] as num).toDouble();
+    double carbRatio2 = (carbRatios[1] as num).toDouble();
+    double carbRatio3 = (carbRatios[2] as num).toDouble();
+
+    if (unit1 == 0) {
+    carbRatio1 *= 15;
+    carbRatio2 *= 15;
+    carbRatio3 *= 15;
+    }
     if (unit2 == 0) insulinSensitivity *= 18.018;
     if (unit3 == 0) targetGlucosed *= 18.018;
-    double carbRatio = insUnit / exchange;
+    
+    //double carbRatio = insUnit / exchange;
     int targetGlucose = targetGlucosed.round();
 
     String privacy = "";
@@ -1315,15 +1329,15 @@ class _UserInfoState extends State<UserInfo> {
             'doctorID': 1,
             'insulinSensivity': insulinSensitivity,
             'targetBloodGlucose': targetGlucose,
-            'carbRatio1': carbRatio,
-            'carbRatio2': -1.0,
-            'carbRatio3': -1.0,
+            'carbRatio1': carbRatio1,
+            'carbRatio2': carbRatio2,
+            'carbRatio3': carbRatio3,
             'privacy': privacy
           }),
         )
         .timeout(const Duration(seconds: 10));
     return response;
-  }*/
+  }
 }
 
 class Option {

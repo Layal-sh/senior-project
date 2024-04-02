@@ -866,6 +866,7 @@ class _SignUpState extends State<SignUp> {
                                           },
                                         );
                                         if (accept == true) {
+                                          username_ = _controllerUsername.text;
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
