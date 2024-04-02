@@ -109,7 +109,7 @@ class _UserInfoState extends State<UserInfo> {
   void updatefirstAnswer() {
     List<double> coreUnitsValues = List.filled(3, 0.0);
     for (int i = 0; i < 3; i++) {
-      coreUnitsValues[i] = core[i] / units[i];
+      coreUnitsValues[i] = units[i] / core[i];
     }
 
     answers[0] = coreUnitsValues;
@@ -1299,13 +1299,13 @@ class _UserInfoState extends State<UserInfo> {
     double carbRatio3 = (carbRatios[2] as num).toDouble();
 
     if (unit1 == 0) {
-    carbRatio1 *= 15;
-    carbRatio2 *= 15;
-    carbRatio3 *= 15;
+      carbRatio1 *= 15;
+      carbRatio2 *= 15;
+      carbRatio3 *= 15;
     }
     if (unit2 == 0) insulinSensitivity *= 18.018;
     if (unit3 == 0) targetGlucosed *= 18.018;
-    
+
     //double carbRatio = insUnit / exchange;
     int targetGlucose = targetGlucosed.round();
 
