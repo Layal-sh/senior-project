@@ -25,9 +25,26 @@ class _CreateMealState extends State<CreateMeal> {
     });
   }
 
+  final _nameController = TextEditingController();
+
   DBHelper dbHelper = DBHelper.instance;
   List<Map> allMeals = [];
   List<int> selectedMeals = [];
+  List<String> categories = [
+    'Drinks',
+    'Sweets & snacks',
+    'Pastries',
+    'Dairy products',
+    'Fruits',
+    'Lebanese dishes',
+    'Arabic desserts',
+    'Grains, pasta & rice',
+    'Breakfast',
+    'Lunch',
+    'Dinner'
+  ];
+
+  List<String> selectedCategories = [];
 
   @override
   void initState() {
@@ -38,6 +55,13 @@ class _CreateMealState extends State<CreateMeal> {
   void loadMeals() async {
     allMeals = await dbHelper.selectAllMeals();
     setState(() {});
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    _nameController.dispose();
+    super.dispose();
   }
 
   @override
@@ -181,7 +205,7 @@ class _CreateMealState extends State<CreateMeal> {
                       height: 10,
                     ),
                     TextField(
-                      //controller: _nameController,
+                      controller: _nameController,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
@@ -205,6 +229,140 @@ class _CreateMealState extends State<CreateMeal> {
                       height: 20,
                     ),
                     const Text(
+                      'Choose categories: ',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 38, 20, 84),
+                        fontSize: 17,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Wrap(
+                      spacing: 8.0, // gap between adjacent chips
+                      runSpacing: 4.0, // gap between lines
+                      children: [
+                        for (var category in categories)
+                          ChoiceChip(
+                            label: Opacity(
+                              opacity: selectedCategories.contains(category)
+                                  ? 1.0
+                                  : 0.5, // Adjust the opacity based on whether the category is selected
+                              child: Text(category),
+                            ),
+                            selected: selectedCategories.contains(category),
+                            selectedColor:
+                                const Color.fromARGB(255, 51, 184, 194),
+                            backgroundColor:
+                                const Color.fromARGB(126, 158, 158, 158),
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                color: selectedCategories.contains(category)
+                                    ? const Color.fromARGB(255, 45, 170, 178)
+                                    : const Color.fromARGB(126, 158, 158,
+                                        158), // Adjust the border color based on whether the category is selected
+                              ),
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            onSelected: (bool selected) {
+                              setState(() {
+                                if (selected) {
+                                  selectedCategories.add(category);
+                                } else {
+                                  selectedCategories.remove(category);
+                                }
+                              });
+                            },
+                          ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Total Carbs: ',
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 38, 20, 84),
+                            fontSize: 17,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.15,
+                                  child: TextFormField(
+                                    textAlign: TextAlign.center,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                            decimal: true),
+                                    decoration: const InputDecoration(
+                                      hintText: '0.0',
+                                      hintStyle: TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                    validator: (value) {
+                                      /*if (value.isEmpty) {
+                                        return 'Please enter a number';
+                                      }
+                                      return null;*/
+                                    },
+                                  ),
+                                ),
+                                const Text(
+                                  'grams',
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 38, 20, 84),
+                                    fontSize: 17,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(width: 20),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Meals()),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                foregroundColor: Colors.transparent,
+                                surfaceTintColor: Colors.transparent,
+                                shape:
+                                    CircleBorder(), // Make the button circular
+                                padding: EdgeInsets.all(
+                                    15), // Adjust the size of the button
+                              ),
+                              child: Image.asset(
+                                'assets/AddDish.png',
+                                height: 32,
+                                width: 32,
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                    /*const Text(
                       'Ingredients: ',
                       style: TextStyle(
                         color: Color.fromARGB(255, 38, 20, 84),
@@ -213,6 +371,7 @@ class _CreateMealState extends State<CreateMeal> {
                         fontWeight: FontWeight.w900,
                       ),
                     ),
+                    */
                     selectedMeals.isEmpty
                         ? Container()
                         : Expanded(
@@ -239,7 +398,7 @@ class _CreateMealState extends State<CreateMeal> {
                               },
                             ),
                           ),
-                    Row(
+                    /*Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         IconButton(
@@ -264,6 +423,38 @@ class _CreateMealState extends State<CreateMeal> {
                         ),
                       ],
                     ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
+                            decoration: const InputDecoration(
+                              fillColor: Colors.white,
+                              filled: true,
+                              border: OutlineInputBorder(),
+                              hintText: 'Carbohydrates number',
+                            ),
+                            validator: (value) {
+                              /*if (value.isEmpty) {
+                                return 'Please enter a number';
+                              }
+                              return null;*/
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                            width:
+                                10), // Add some spacing between the TextFormField and the Button
+                        ElevatedButton(
+                          onPressed: () {
+                            // Add your calculation logic here
+                          },
+                          child: Text('Default Calculate'),
+                        ),
+                      ],
+                    )
+                  */
                   ],
                 ),
               ),
