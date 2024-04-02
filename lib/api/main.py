@@ -49,7 +49,7 @@ class NewUser(BaseModel):
     
 class NewPatient(BaseModel):
     username: str
-    doctorID: int
+    doctorID: str
     insulinSensivity: float
     targetBloodGlucose : int
     carbRatio1 : float
@@ -135,6 +135,14 @@ async def getUserDetails(user: User):
         return {description[0]: column for description, column in zip(cursor.description, row)}
     return "stop trying to hack me man"
 
+@app.post("/getPatientDetails")
+async def getUserDetails(user: User):
+    id = getUserById(user.username)
+    
+    cursor.execute("SELECT * FROM Patients WHERE patientID = ?",(id))
+    row = cursor.fetchone()
+    return {description[0]: column for description, column in zip(cursor.description, row)}
+
 @app.post("/authenticate")
 async def authenticate(user: User):
     try:
@@ -191,7 +199,7 @@ async def registerfunction(user: NewPatient):
         id = getUserById(user.username)
         print(id)
         print(user)
-        cursor.execute("INSERT INTO Patients (patientID, doctorID, insulinSensivity, targetBloodGlucose , carbRatio, carbRatio2, carbRatio3, privacy) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        cursor.execute("INSERT INTO Patients (patientID, doctorCode, insulinSensivity, targetBloodGlucose , carbRatio, carbRatio2, carbRatio3, privacy) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                        (id, user.doctorID, user.insulinSensivity, user.targetBloodGlucose, user.carbRatio1, user.carbRatio2, user.carbRatio3, user.privacy))
         cnxn.commit()
         print("Registered patient successfully")

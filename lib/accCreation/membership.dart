@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/accCreation/thanks.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -87,9 +88,9 @@ class _MembershipState extends State<Membership> {
                 const SizedBox(
                   height: 20,
                 ),
-                const Text(
-                  'Welcome widget.username!', //${}
-                  style: TextStyle(
+                Text(
+                  'Welcome $firstName_!', //${}
+                  style: const TextStyle(
                     color: Color.fromARGB(255, 49, 205, 215),
                     fontSize: 21,
                     fontFamily: 'Ruda',
@@ -134,7 +135,7 @@ class _MembershipState extends State<Membership> {
                       width: 100,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 76, 57, 125),
+                        color: const Color.fromARGB(255, 76, 57, 125),
                         borderRadius: BorderRadius.circular(40),
                       ),
                     ),
@@ -328,7 +329,7 @@ class _MembershipState extends State<Membership> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ThankYou(),
+                            builder: (context) => const ThankYou(),
                           ),
                         );
                       }

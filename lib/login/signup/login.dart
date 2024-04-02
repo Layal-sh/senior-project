@@ -68,7 +68,6 @@ class _LoginState extends State<Login> {
     await dbHelper.syncMealComposition();
     logger.info("synced meal compositions successfully");
 
-  
     logger.info("saving values to shared preferences");
     final response = await http
         .post(
@@ -93,6 +92,41 @@ class _LoginState extends State<Login> {
       await prefs.setString('lastName', userDetails['lastName']);
       await prefs.setString('email', userDetails['email']);
       await prefs.setInt('id', userDetails['userID']);
+
+      final responsePatient = await http
+          .post(
+            Uri.parse('http://$localhost:8000/getPatientDetails'), //$localhost
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: jsonEncode(<String, String>{
+              'username': email,
+              'password': password,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
+      if (responsePatient.statusCode == 200) {
+        logger.info('Response body: ${responsePatient.body}');
+        Map<String, dynamic> patientDetails = jsonDecode(responsePatient.body);
+        logger.info("patient details: $patientDetails");
+        await prefs.setString('doctorCode_', patientDetails['doctorCode']);
+        if (patientDetails['phoneNumber'] != null) {
+          await prefs.setInt('phoneNumber_', patientDetails['phoneNumber']);
+        }
+        if (patientDetails['profilePhoto'] != null) {
+          await prefs.setString(
+              'profilePicture_', patientDetails['profilePhoto']);
+        }
+
+        await prefs.setInt(
+            'insulinSensitivity_', patientDetails['insulinSensivity'].toInt());
+        await prefs.setInt(
+            'targetBloodSugar_', patientDetails['targetBloodGlucose']);
+        await prefs.setDouble('carbRatio_', patientDetails['carbRatio']);
+        await prefs.setDouble('carbRatio_2', patientDetails['carbRatio2']);
+        await prefs.setDouble('carbRatio_3', patientDetails['carbRatio3']);
+        await prefs.setString('privacy_', patientDetails['privacy']);
+      }
       logger.info("saved values to shared preferences successfully");
     }
 
@@ -332,7 +366,6 @@ class _LoginState extends State<Login> {
                                     .timeout(const Duration(seconds: 10));
 
                                 if (response.statusCode == 200) {
-                                
                                   _isLoading ? null : _signIn(email, password);
                                 } else {
                                   //incorrect username or password handling

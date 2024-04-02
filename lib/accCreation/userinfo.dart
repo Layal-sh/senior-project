@@ -1326,7 +1326,7 @@ class _UserInfoState extends State<UserInfo> {
           },
           body: jsonEncode(<String, dynamic>{
             'username': username_,
-            'doctorID': 1,
+            'doctorID': doctorCode_,
             'insulinSensivity': insulinSensitivity,
             'targetBloodGlucose': targetGlucose,
             'carbRatio1': carbRatio1,
