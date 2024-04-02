@@ -19,8 +19,8 @@ class UserInfo extends StatefulWidget {
 
 class _UserInfoState extends State<UserInfo> {
   final controller = PageController();
-  //bool isVisible = false;
-  List<bool> isVisible = List.generate(3, (index) => false);
+
+  List<bool> isVisible = List.generate(2, (index) => false);
   bool add = true;
   int clicked = 0;
   final questions = [
@@ -38,11 +38,11 @@ class _UserInfoState extends State<UserInfo> {
   final insulinController = TextEditingController();
   final glucoseController = TextEditingController();
   List<TextEditingController> carbohydratesController =
-      List.generate(4, (index) => TextEditingController());
+      List.generate(3, (index) => TextEditingController());
   List<TextEditingController> unitController =
-      List.generate(4, (index) => TextEditingController());
-  List<int> core = List.generate(4, (index) => 0);
-  List<int> units = List.generate(4, (index) => 1);
+      List.generate(3, (index) => TextEditingController());
+  List<int> core = List.generate(3, (index) => 0);
+  List<int> units = List.generate(3, (index) => 1);
 
   List<Widget> forms = [];
   //int core = 0;
@@ -53,7 +53,7 @@ class _UserInfoState extends State<UserInfo> {
     Option(title: 'Insulin Intake'),
     Option(title: 'Meals'),
   ];
-  int index = 0;
+
   var currentPage = 0;
   int unit1 = 0;
   int unit2 = 0;
@@ -62,19 +62,21 @@ class _UserInfoState extends State<UserInfo> {
   void initState() {
     super.initState();
 
-    // Add a listener to the controller
-    carbohydratesController[index].addListener(() {
-      int? intValue = int.tryParse(carbohydratesController[index].text);
-      if (intValue != null) {
-        core[index] = intValue;
-      }
-    });
-    unitController[index].addListener(() {
-      int? intValue = int.tryParse(unitController[index].text);
-      if (intValue != null) {
-        units[index] = intValue;
-      }
-    });
+    for (int i = 0; i < 3; i++) {
+      carbohydratesController[i].addListener(() {
+        int? intValue = int.tryParse(carbohydratesController[i].text);
+        if (intValue != null) {
+          core[i] = intValue;
+        }
+      });
+      unitController[i].addListener(() {
+        int? intValue = int.tryParse(unitController[i].text);
+        if (intValue != null) {
+          units[i] = intValue;
+        }
+      });
+    }
+
     insulinController.addListener(() {
       int? intValue = int.tryParse(insulinController.text);
       if (intValue != null) {
@@ -105,8 +107,11 @@ class _UserInfoState extends State<UserInfo> {
   }
 
   void updatefirstAnswer() {
-    List<double> coreUnitsValues =
-        List.generate(core.length, (index) => core[index] / units[index]);
+    List<double> coreUnitsValues = List.filled(3, 0.0);
+    for (int i = 0; i < 3; i++) {
+      coreUnitsValues[i] = core[i] / units[i];
+    }
+
     answers[0] = coreUnitsValues;
   }
 
@@ -529,7 +534,7 @@ class _UserInfoState extends State<UserInfo> {
                                                     ),
                                                   ),
                                                   IconButton(
-                                                    icon: Icon(
+                                                    icon: const Icon(
                                                       Icons.delete,
                                                       size: 20,
                                                     ),
@@ -686,149 +691,11 @@ class _UserInfoState extends State<UserInfo> {
                                           ),
                                         ),
                                         Visibility(
-                                          visible: isVisible[2],
-                                          child: Container(
-                                            child: Column(
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    SizedBox(
-                                                      width: (MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width -
-                                                              135) /
-                                                          2,
-                                                      child: TextFormField(
-                                                        controller:
-                                                            carbohydratesController[
-                                                                3],
-                                                        keyboardType:
-                                                            const TextInputType
-                                                                .numberWithOptions(
-                                                                decimal: false),
-                                                        inputFormatters: <TextInputFormatter>[
-                                                          FilteringTextInputFormatter
-                                                              .digitsOnly,
-                                                        ],
-                                                        decoration:
-                                                            InputDecoration(
-                                                          border:
-                                                              OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20),
-                                                          ),
-                                                          hintText: unit1 == 0
-                                                              ? 'Carbs'
-                                                              : "Exchange",
-                                                        ),
-                                                        onChanged: (text) {
-                                                          if (text.isEmpty) {
-                                                            core[3] = 0;
-                                                            //answers[currentPage] = 0.0;
-                                                          }
-                                                        },
-                                                        validator: (value) {
-                                                          if (value == null ||
-                                                              value.isEmpty) {
-                                                            return 'Please enter a value';
-                                                          }
-                                                          return null;
-                                                        },
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    const Text(
-                                                      "/",
-                                                      style: TextStyle(
-                                                        fontSize: 36,
-                                                        //fontWeight: FontWeight.w300,
-                                                        fontFamily: 'Inter',
-                                                        color: Color.fromARGB(
-                                                            255, 0, 0, 0),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    SizedBox(
-                                                      width: (MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width -
-                                                              135) /
-                                                          2,
-                                                      child: TextFormField(
-                                                        controller:
-                                                            unitController[3],
-                                                        keyboardType:
-                                                            const TextInputType
-                                                                .numberWithOptions(
-                                                                decimal: false),
-                                                        inputFormatters: <TextInputFormatter>[
-                                                          FilteringTextInputFormatter
-                                                              .digitsOnly,
-                                                        ],
-                                                        decoration:
-                                                            InputDecoration(
-                                                          border:
-                                                              OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20),
-                                                          ),
-                                                          hintText: 'Unit',
-                                                        ),
-                                                        onChanged: (text) {
-                                                          if (text.isEmpty) {
-                                                            units[3] = 1;
-                                                            //answers[currentPage] = 0.0;
-                                                          }
-                                                        },
-                                                        validator: (value) {
-                                                          if (value == null ||
-                                                              value.isEmpty) {
-                                                            return 'Please enter a value';
-                                                          }
-                                                          return null;
-                                                        },
-                                                      ),
-                                                    ),
-                                                    IconButton(
-                                                      icon: Icon(
-                                                        Icons.delete,
-                                                        size: 20,
-                                                      ),
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          clicked--;
-                                                          core[3] = 0;
-                                                          units[3] = 1;
-                                                          add = true;
-                                                          isVisible[2] = false;
-                                                        });
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(
-                                                  height: 10,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Visibility(
                                           visible: add,
                                           child: ElevatedButton.icon(
                                             onPressed: () {
                                               setState(() {
-                                                if (clicked < 4) {
+                                                if (clicked < 3) {
                                                   clicked++;
                                                   if (clicked == 1) {
                                                     isVisible[0] =
@@ -838,12 +705,8 @@ class _UserInfoState extends State<UserInfo> {
                                                     isVisible[1] =
                                                         !isVisible[1];
                                                   }
-                                                  if (clicked == 3) {
-                                                    isVisible[2] =
-                                                        !isVisible[2];
-                                                  }
                                                 }
-                                                if (clicked == 3) {
+                                                if (clicked == 2) {
                                                   add = false;
                                                 }
                                                 //isVisible = !isVisible;
@@ -1412,8 +1275,10 @@ class _UserInfoState extends State<UserInfo> {
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    carbohydratesController[index].dispose();
-    unitController[index].dispose();
+    for (int i = 0; i < 3; i++) {
+      carbohydratesController[i].dispose();
+      unitController[i].dispose();
+    }
     insulinController.dispose();
     glucoseController.dispose();
     super.dispose();
