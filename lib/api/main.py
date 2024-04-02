@@ -244,7 +244,7 @@ async def get_news(query: str):
 
     search = GoogleSearch(params)
     results = search.get_dict()
-    
+    print(results["organic_results"])
     return results["organic_results"]
 
     

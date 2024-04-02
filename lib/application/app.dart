@@ -658,19 +658,31 @@ class _ArticlesState extends State<Articles> {
   @override
   void initState() {
     super.initState();
+    articles = [];
+    starred = [];
     fetchArticles();
   }
 
   void fetchArticles() async {
-    final response = await http.get(Uri.parse('http://$localhost:8000/News'));
+    List<String> searches = [
+      'diabetes type 1',
+      'diabetes lifestyle',
+      'diabetes article',
+      'diabetes insulin'
+    ];
 
-    if (response.statusCode == 200) {
-      List<dynamic> responseData = jsonDecode(response.body);
+    for (String s in searches) {
+      final response =
+          await http.get(Uri.parse('http://$localhost:8000/News/$s'));
 
-      setState(() {
-        articles = responseData;
-        starred = List<bool>.filled(articles.length, false);
-      });
+      if (response.statusCode == 200) {
+        List<dynamic> responseData = jsonDecode(response.body);
+
+        setState(() {
+          articles.addAll(responseData);
+          starred?.addAll(List<bool>.filled(responseData.length, false));
+        });
+      }
     }
   }
 
@@ -713,32 +725,35 @@ class _ArticlesState extends State<Articles> {
                 String? imageUrl = articles[index]['thumbnail'];
                 String title = articles[index]['title'];
                 String url = articles[index]['link'];
+                String? date = articles[index]['date'];
 
                 return Card(
                   clipBehavior: Clip.antiAlias,
-                  child: Column(
-                    children: [
-                      if (imageUrl != null)
-                        Container(
-                          width: screenWidth * 0.8,
-                          child: Image.network(imageUrl, fit: BoxFit.cover),
-                        ),
-                      ListTile(
-                        title: Text(title),
-                        trailing: IconButton(
-                          icon: Icon(
-                            starred![index] ? Icons.star : Icons.star_border,
-                            color: starred![index] ? Colors.yellow : null,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              starred![index] = !starred![index];
-                            });
-                          },
-                        ),
-                        onTap: () => launch(url),
+                  child: ListTile(
+                    leading: imageUrl != null
+                        ? Image.network(
+                            imageUrl,
+                            width: 60, // adjust the width as needed
+                            height: 60, // adjust the height as needed
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                    title: Text(title),
+                    subtitle: date != null
+                        ? Text(date)
+                        : null, // display the date here
+                    trailing: IconButton(
+                      icon: Icon(
+                        starred![index] ? Icons.star : Icons.star_border,
+                        color: starred![index] ? Colors.yellow : null,
                       ),
-                    ],
+                      onPressed: () {
+                        setState(() {
+                          starred![index] = !starred![index];
+                        });
+                      },
+                    ),
+                    onTap: () => launch(url),
                   ),
                 );
               },
