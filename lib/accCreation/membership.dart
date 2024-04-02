@@ -89,7 +89,7 @@ class _MembershipState extends State<Membership> {
                   height: 20,
                 ),
                 Text(
-                  'Welcome $username_!', //${}
+                  'Welcome $firstName_!', //${}
                   style: const TextStyle(
                     color: Color.fromARGB(255, 49, 205, 215),
                     fontSize: 21,
