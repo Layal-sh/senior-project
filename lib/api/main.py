@@ -91,15 +91,24 @@ def post():
 def patch():
     return {"Success": "You just Patched"}
 
-@app.get("/users/{user_id}")
-async def read_item(user_id: int):
-    cursor.execute("Select * from Users WHERE userId = ?", (user_id,))
+@app.get("/checkUsername/{user_id}")
+async def read_item(user_id: str):
+    cursor.execute("Select * from Users WHERE CAST(userName AS NVARCHAR(MAX)) = ?", (user_id,))
     row = cursor.fetchone()
     if row is None:
-        return {"error": "User not found"}
+        return None
     else:
         return {description[0]: column for description, column in zip(cursor.description, row)}
-    
+
+@app.get("/checkEmail/{user_id}")
+async def read_item(user_id: str):
+    cursor.execute("Select * from Users WHERE CAST(email AS NVARCHAR(MAX)) = ?", (user_id,))
+    row = cursor.fetchone()
+    if row is None:
+        return None
+    else:
+        return {description[0]: column for description, column in zip(cursor.description, row)}
+        
 @app.get("/meals")
 async def get_meals():
     cursor.execute("Select * from Meals") 
@@ -242,6 +251,7 @@ apiKey = 'd9cb4bee70915b0f8ad912e10388ab16f02a2f0b7e84724806d40e5700461781'
 
 @app.get("/News/{query}")
 async def get_news(query: str):
+    print("We got here")
     params = {
         "q": query,
         "hl": "en",
@@ -249,10 +259,10 @@ async def get_news(query: str):
         "google_domain": "google.com",
         "api_key": "d9cb4bee70915b0f8ad912e10388ab16f02a2f0b7e84724806d40e5700461781"
     }
-
     search = GoogleSearch(params)
+    print("we searched :D")
     results = search.get_dict()
-    print(results["organic_results"])
+    print("frfr")
     return results["organic_results"]
 
     

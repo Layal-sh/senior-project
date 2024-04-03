@@ -109,7 +109,9 @@ class _LoginState extends State<Login> {
         logger.info('Response body: ${responsePatient.body}');
         Map<String, dynamic> patientDetails = jsonDecode(responsePatient.body);
         logger.info("patient details: $patientDetails");
-        await prefs.setString('doctorCode_', patientDetails['doctorCode']);
+        if (patientDetails['doctorCode'] != null) {
+          await prefs.setString('doctorCode_', patientDetails['doctorCode']);
+        }
         if (patientDetails['phoneNumber'] != null) {
           await prefs.setInt('phoneNumber_', patientDetails['phoneNumber']);
         }
@@ -123,9 +125,15 @@ class _LoginState extends State<Login> {
         await prefs.setInt(
             'targetBloodSugar_', patientDetails['targetBloodGlucose']);
         await prefs.setDouble('carbRatio_', patientDetails['carbRatio']);
-        await prefs.setDouble('carbRatio_2', patientDetails['carbRatio2']);
-        await prefs.setDouble('carbRatio_3', patientDetails['carbRatio3']);
-        await prefs.setString('privacy_', patientDetails['privacy']);
+        if (patientDetails['carbRatio2'] != null) {
+          await prefs.setDouble('carbRatio_2', patientDetails['carbRatio2']);
+        }
+        if (patientDetails['carbRatio3'] != null) {
+          await prefs.setDouble('carbRatio_3', patientDetails['carbRatio3']);
+        }
+        if (patientDetails['privacy'] != null) {
+          await prefs.setString('privacy_', patientDetails['privacy']);
+        }
       }
       logger.info("saved values to shared preferences successfully");
     }

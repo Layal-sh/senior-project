@@ -41,8 +41,8 @@ class _UserInfoState extends State<UserInfo> {
       List.generate(3, (index) => TextEditingController());
   List<TextEditingController> unitController =
       List.generate(3, (index) => TextEditingController());
-  List<int> core = List.generate(3, (index) => 0);
-  List<int> units = List.generate(3, (index) => 1);
+  List<int> core = List.generate(3, (index) => 1);
+  List<int> units = List.generate(3, (index) => 0);
 
   List<Widget> forms = [];
   //int core = 0;
@@ -1189,14 +1189,16 @@ class _UserInfoState extends State<UserInfo> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async{
                   setState(
                     () {
                       updatelastAnswers();
                     },
                   );
-                  final response = registerPatient();
-                  showDialog(
+                  final response = await registerPatient();
+                  if(response.statusCode == 200){
+                    logger.info("registered patient successfully");
+                    showDialog(
                     context: context,
                     barrierDismissible: false,
                     builder: (BuildContext context) {
@@ -1204,7 +1206,7 @@ class _UserInfoState extends State<UserInfo> {
                         // Close the dialog
                         Navigator.of(context).pop();
                         // Navigate to the new page
-                        Navigator.of(context).pushReplacementNamed('/app');
+                        Navigator.of(context).pushReplacementNamed('/login');
                       });
                       return Dialog(
                         child: SizedBox(
@@ -1257,6 +1259,8 @@ class _UserInfoState extends State<UserInfo> {
                       );
                     },
                   );
+                  }
+                  
                 },
                 child: const Text(
                   "Finish",
@@ -1285,11 +1289,7 @@ class _UserInfoState extends State<UserInfo> {
   }
 
   Future<http.Response> registerPatient() async {
-    // double exchange = double.parse(carbohydratesController.text);
-    // double insUnit = double.parse(unitController.text);
-    // double insulinSensitivity = double.parse(insulinController.text);
-    // double targetGlucosed = double.parse(glucoseController.text);
-
+   
     double insulinSensitivity = (answers[1] as num).toDouble();
     double targetGlucosed = (answers[2] as num).toDouble();
 

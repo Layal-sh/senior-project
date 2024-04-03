@@ -346,14 +346,13 @@ class _AddInputState extends State<AddInput> {
                                 );
                               },
                             );
-                            double glucoseLevel =
+                            /*double glucoseLevel =
                                 double.parse(_GlucoseController.text);
                             if (getChosenMeals().isNotEmpty &&
                                 _GlucoseController.text.isNotEmpty) {
-                              /*bolusCalculation = calculateDosage(
+                              bolusCalculation = calculateDosage(
                                   calculateTotalCarbs(getChosenMeals()),
                                   glucoseLevel);
-*/
 
                               print('Chosen Meals:');
                               print(chosenMeals);
@@ -363,7 +362,7 @@ class _AddInputState extends State<AddInput> {
                               print(bolusCalculation);
                             } else {
                               print("NO WORKY");
-                            }
+                            }*/
                             DBHelper dbHelper = DBHelper.instance;
                             dbHelper.createEntry(glucoseLevel,
                                 bolusCalculationResult, date, meals);
@@ -770,15 +769,22 @@ class _ArticlesState extends State<Articles> {
     ];
 
     for (String s in searches) {
+      logger.info("getting $s");
       final response =
           await http.get(Uri.parse('http://$localhost:8000/News/$s'));
-
+      logger.info("got $s");
       if (response.statusCode == 200) {
         List<dynamic> responseData = jsonDecode(response.body);
+        DBHelper dbHelper = DBHelper.instance;
+        for (var article in responseData) {
+          List<Map> res = await dbHelper.checkArticle(article['title']);
+          starred!.add(res.isNotEmpty);
+          logger.info("Starred: ${starred!.last}");
+        }
 
         setState(() {
           articles.addAll(responseData);
-          starred?.addAll(List<bool>.filled(responseData.length, false));
+          starred;
         });
       }
     }
@@ -845,7 +851,16 @@ class _ArticlesState extends State<Articles> {
                         starred![index] ? Icons.star : Icons.star_border,
                         color: starred![index] ? Colors.yellow : null,
                       ),
-                      onPressed: () {
+                      onPressed: () async {
+                        logger.info("clicked");
+                        DBHelper dbHelper = DBHelper.instance;
+                        var response;
+                        if (starred![index])
+                          response = await dbHelper.deleteFavorite(url);
+                        else
+                          response = await dbHelper.addFavorite(
+                              title, url, imageUrl!, date!);
+                        logger.info(response);
                         setState(() {
                           starred![index] = !starred![index];
                         });

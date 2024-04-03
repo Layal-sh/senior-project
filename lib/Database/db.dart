@@ -27,15 +27,26 @@ class DBHelper {
     String DbPath = await getDatabasesPath();
     String path = join(DbPath, 'SugarSense.db');
     Database database = await openDatabase(path,
-        onCreate: _onCreate, version: 27, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 31, onUpgrade: _onUpgrade);
     return database;
   }
 
   _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // if (oldVersion < newVersion) {
-    //   await db.execute(
-    //       '''ALTER TABLE "Meals" ADD COLUMN frequency INTEGER NULL;''');
-    // }
+    if (oldVersion < newVersion) {
+      await db.execute('''DROP TABLE IF EXISTS "Favorites";''');
+      print("Dropped Favorites table");
+      await db.execute('''DROP TABLE IF EXISTS "Articles";''');
+      print("Dropped Articles table");
+      await db.execute('''
+      CREATE TABLE "Articles"(
+        url TEXT NOT NULL PRIMARY KEY,
+        title TEXT NOT NULL,
+        imageUrl TEXT NULL,
+        date TEXT NULL
+      );
+      ''');
+      print("Created Articles table");
+    }
   }
 
   _onCreate(Database db, int version) async {
@@ -98,6 +109,9 @@ class DBHelper {
     logger.info("Local Database has been created");
   }
 
+  ////////////////////////////////////////////////////////////
+  ////////////////// Instructions ////////////////////////////
+  ////////////////////////////////////////////////////////////
   readData(String sql) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery(sql);
@@ -126,6 +140,9 @@ class DBHelper {
     return response;
   }
 
+//////////////////////////////////////////////////////////////
+  /////////////// Fixing for Sign up///////////////////////////
+  //////////////////////////////////////////////////////////////
   deleteMealComposition() async {
     logger.info("Deleting Meal Composition...");
     Database? mydb = await db;
@@ -135,7 +152,11 @@ class DBHelper {
     return response;
   }
 
-  //get all meals from local database for adding inputs
+  ////////////////////////////////////////////////////////////
+  /////////////// Display of Meals///////////////////////////
+  ////////////////////////////////////////////////////////////
+
+//get all meals from local database for adding inputs
   Future<List<Map>> selectAllMeals() async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
@@ -145,10 +166,85 @@ class DBHelper {
     return response;
   }
 
+  selectAllMealComposition() async {
+    Database? mydb = await db;
+    List<Map> response =
+        await mydb!.rawQuery('''select * from MealComposition''');
+    logger.info("All meal compositions have been fetched successfully.");
+    return response;
+  }
+
+  Future<List<Map>> getIngredients(int parentId) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+      SELECT m1.mealName, m1.mealID, c.unit, c.quantity 
+  FROM Meals AS m, Meals AS m1, MealComposition AS c
+  WHERE m.mealID=c.parentMealID AND m1.mealID=c.childMealID AND m.mealID=$parentId;
+    ''');
+    logger
+        .info("Ingredients for meal $parentId have been fetched successfully.");
+    return response;
+  }
+
+  //////////////////////////////////////////////////////////////////////
+  /////////////// Retreive Meals by Id or Name///////////////////////////
+  /////////////////////////////////////////////////////////////////////
+
+  //get meal id by name
+  getMealIdByName(String name) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+    SELECT mealId FROM "Meals" WHERE mealName = "$name";
+    ''');
+    if (response.isNotEmpty) {
+      return response.first['mealId'] as int;
+    }
+    return -1;
+  }
+
+  getMealById(int id) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+    SELECT * FROM "Meals" WHERE mealId = $id;
+    ''');
+    return response;
+  }
+
+  ////////////////////////////////////////////////////////////
+  /////////////// Functions For AI///////////////////////////
+  ////////////////////////////////////////////////////////////
+
+  Future<List<Map>> getMealIngredients(int id) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+    SELECT * FROM "MealComposition" WHERE parentMealId = $id;
+    ''');
+    List<Map> ings = [];
+    for (Map ing in response) {
+      ings.add(await getMealById(ing["childMealId"]));
+    }
+    logger.info("Ingredients for meal $id have been fetched successfully.");
+    return ings;
+  }
+
+  updateMealById(int mealId, double carbs, double certainty) async {
+    Database? mydb = await db;
+    int response = await mydb!.rawUpdate('''
+    UPDATE Meals SET carbohydrate = $carbs , certainty = $certainty
+    WHERE mealId = $mealId
+    ''');
+    logger.info("Meal $mealId has been updated successfully.");
+    return response;
+  }
+
+  ////////////////////////////////////////////////////////////
+  /////////////// Create Entrires with its Meals /////////////
+  ////////////////////////////////////////////////////////////
+
   //create an entry for the insulin dosage
   createEntry(double glucose, int insulin, String date, List<Map> meals) async {
     Database? mydb = await db;
-    print('$glucose $insulin $date');
+    //print('$glucose $insulin $date');
     int entryId = await mydb!.rawInsert('''
   INSERT INTO Entry (glucoseLevel, insulinDosage, entryDate)
   VALUES($glucose,$insulin,'$date');
@@ -166,11 +262,34 @@ class DBHelper {
     return entryId;
   }
 
-  selectAllMealComposition() async {
+  //create hasMeal for each entry
+  createMealForEntry(int entryId, int mealId, int qtty, int unit) async {
     Database? mydb = await db;
-    List<Map> response =
-        await mydb!.rawQuery('''select * from MealComposition''');
-    logger.info("All meal compositions have been fetched successfully.");
+    int response = await mydb!.rawInsert('''
+  INSERT INTO "hasMeal"(entryId,mealId,quantity)
+  VALUES($entryId,$mealId,$qtty);
+  ''');
+    return response;
+  }
+
+  updateFrequency(int mealId) async {
+    Database? mydb = await db;
+    int response = await mydb!.rawUpdate('''
+    UPDATE Meals SET frequency = frequency + 1;
+    WHERE mealId = $mealId
+    ''');
+    logger.info("Frequency for meal $mealId has been updated successfully.");
+    return response;
+  }
+
+  //////////////////////////////////////////////////////////////////////
+  /////////////// Functions related to Entries///////////////////////////
+  /////////////////////////////////////////////////////////////////////
+  getMealsFromEntryID(int entryId) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+    SELECT * FROM "hasMeal" WHERE entryId = $entryId;
+    ''');
     return response;
   }
 
@@ -193,78 +312,9 @@ class DBHelper {
     return response[0]['entryId'];
   }
 
-  Future<List<Map>> getMealIngredients(int id) async {
-    Database? mydb = await db;
-    List<Map> response = await mydb!.rawQuery('''
-    SELECT * FROM "MealComposition" WHERE parentMealId = $id;
-    ''');
-    List<Map> ings = [];
-    for (Map ing in response) {
-      ings.add(await getMealById(ing["childMealId"]));
-    }
-    logger.info("Ingredients for meal $id have been fetched successfully.");
-    return ings;
-  }
-
-  Future<List<Map>> getIngredients(int parentId) async {
-    Database? mydb = await db;
-    List<Map> response = await mydb!.rawQuery('''
-      SELECT m1.mealName, m1.mealID, c.unit, c.quantity 
-  FROM Meals AS m, Meals AS m1, MealComposition AS c
-  WHERE m.mealID=c.parentMealID AND m1.mealID=c.childMealID AND m.mealID=$parentId;
-    ''');
-    logger
-        .info("Ingredients for meal $parentId have been fetched successfully.");
-    return response;
-  }
-
-  getMealById(int id) async {
-    Database? mydb = await db;
-    List<Map> response = await mydb!.rawQuery('''
-    SELECT * FROM "Meals" WHERE mealId = $id;
-    ''');
-    return response;
-  }
-
-  updateMealById(int mealId, double carbs, double certainty) async {
-    Database? mydb = await db;
-    int response = await mydb!.rawUpdate('''
-    UPDATE Meals SET carbohydrate = $carbs , certainty = $certainty
-    WHERE mealId = $mealId
-    ''');
-    logger.info("Meal $mealId has been updated successfully.");
-    return response;
-  }
-
-  getMealsFromEntryID(int entryId) async {
-    Database? mydb = await db;
-    List<Map> response = await mydb!.rawQuery('''
-    SELECT * FROM "hasMeal" WHERE entryId = $entryId;
-    ''');
-    return response;
-  }
-
-  //create hasMeal for each entry
-  createMealForEntry(int entryId, int mealId, int qtty, int unit) async {
-    Database? mydb = await db;
-    int response = await mydb!.rawInsert('''
-  INSERT INTO "hasMeal"(entryId,mealId,quantity)
-  VALUES($entryId,$mealId,$qtty);
-  ''');
-    return response;
-  }
-
-//get meal id by name
-  getMealIdByName(String name) async {
-    Database? mydb = await db;
-    List<Map> response = await mydb!.rawQuery('''
-    SELECT mealId FROM "Meals" WHERE mealName = "$name";
-    ''');
-    if (response.isNotEmpty) {
-      return response.first['mealId'] as int;
-    }
-    return -1;
-  }
+  ////////////////////////////////////////////////
+  /////////////// Create & Edit Meals /////////////
+  /////////////////////////////////////////////////
 
 //Create a new meal and insert it into the database after checking if it already exists
   Future<int> createNewMeal(
@@ -330,8 +380,6 @@ class DBHelper {
     int newMealID = await createNewMeal(mealName, response[0]['carbohydrates'],
         response[0]['unit'], picture, response[0]['tags'] + ', myMeals');
 
-    print(newMealID);
-
     if (newMealID != -1) {
       if (childMeals != null) {
         childMeals.forEach((element) {
@@ -339,11 +387,15 @@ class DBHelper {
               element['quantity']);
         });
       }
-      logger.info("Meal has been edited successfully.");
+      logger.info("Meal has been edited successfully with id $newMealID.");
     } else {
       logger.info("Error meal wasn't edited.");
     }
   }
+
+  ////////////////////////////////////////////////////////////////////
+  /////////////// Syncing Of Meals & Meals Composition ////////////////
+  ////////////////////////////////////////////////////////////////////
 
   Future<void> syncMeals() async {
     logger.info("Syncing meals...");
@@ -400,6 +452,44 @@ class DBHelper {
     }
   }
 
+  //////////////////////////////////////////////
+  /////////////// Articles Page ////////////////
+  /////////////////////////////////////////////
+
+  checkArticle(String link) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+    SELECT * FROM Articles WHERE url = "$link";
+    ''');
+    return response;
+  }
+
+  addFavorite(String link, String title, String imageUrl, String date) async {
+    Database? mydb = await db;
+    List<Map> chk = await checkArticle(link);
+    if (chk.isNotEmpty) {
+      return -1;
+    } else {
+      int response = await mydb!.rawInsert('''
+    INSERT INTO Articles(url, title, imageUrl, date)
+    VALUES("$link", "$title", "$imageUrl", "$date");
+    ''');
+      return response;
+    }
+  }
+
+  deleteFavorite(String link) async {
+    Database? mydb = await db;
+    int response = await mydb!.rawDelete('''
+    DELETE FROM Articles WHERE url = "$link";
+    ''');
+    return response;
+  }
+
+  ///////////////////////////////////////////////////////////
+  /////////////// Search for meals & category ////////////////
+  ///////////////////////////////////////////////////////////
+
   searchMeal(String input) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery(
@@ -408,6 +498,17 @@ class DBHelper {
     return response;
   }
 
+  searchMealForCatgeory(int mealId, String input) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery(
+        'SELECT * FROM "Meals" WHERE mealId = ? AND tags LIKE ?',
+        [mealId, '%$input%']);
+    return response;
+  }
+
+  //////////////////////////////////////////////////////////////////
+  /////////////// Search and filtering of categories ////////////////
+  //////////////////////////////////////////////////////////////////
 /*
 1 -> drinks
 2 -> sweets & snacks
@@ -496,23 +597,5 @@ class DBHelper {
       categories.add("grains, pasta & rice");
     }
     return categories;
-  }
-
-  searchMealForCatgeory(int mealId, String input) async {
-    Database? mydb = await db;
-    List<Map> response = await mydb!.rawQuery(
-        'SELECT * FROM "Meals" WHERE mealId = ? AND tags LIKE ?',
-        [mealId, '%$input%']);
-    return response;
-  }
-
-  updateFrequency(int mealId) async {
-    Database? mydb = await db;
-    int response = await mydb!.rawUpdate('''
-    UPDATE Meals SET frequency = frequency + 1;
-    WHERE mealId = $mealId
-    ''');
-    logger.info("Frequency for meal $mealId has been updated successfully.");
-    return response;
   }
 }
