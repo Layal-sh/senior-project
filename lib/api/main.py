@@ -91,15 +91,24 @@ def post():
 def patch():
     return {"Success": "You just Patched"}
 
-@app.get("/users/{user_id}")
-async def read_item(user_id: int):
-    cursor.execute("Select * from Users WHERE userId = ?", (user_id,))
+@app.get("/checkUsername/{user_id}")
+async def read_item(user_id: str):
+    cursor.execute("Select * from Users WHERE CAST(userName AS NVARCHAR(MAX)) = ?", (user_id,))
     row = cursor.fetchone()
     if row is None:
-        return {"error": "User not found"}
+        return None
     else:
         return {description[0]: column for description, column in zip(cursor.description, row)}
-    
+
+@app.get("/checkEmail/{user_id}")
+async def read_item(user_id: str):
+    cursor.execute("Select * from Users WHERE CAST(email AS NVARCHAR(MAX)) = ?", (user_id,))
+    row = cursor.fetchone()
+    if row is None:
+        return None
+    else:
+        return {description[0]: column for description, column in zip(cursor.description, row)}
+        
 @app.get("/meals")
 async def get_meals():
     cursor.execute("Select * from Meals") 

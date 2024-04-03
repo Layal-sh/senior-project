@@ -559,6 +559,13 @@ class _SignUpState extends State<SignUp> {
                                   String confirmPassword =
                                       _controllerConFirmPassword.text;
                                   String doctorId = _controllerDoctorID.text;
+                                  final checkName= await http.get(Uri.parse('http://$localhost:8000/checkUsername/$username'));
+                                  final body= jsonDecode(checkName.body);
+
+                                  final checkEmail= await http.get(Uri.parse('http://$localhost:8000/checkEmail/$email'));
+                                  final body2= jsonDecode(checkEmail.body);
+
+                                  print(body);
                                   if (doctorId.isEmpty) {
                                     doctorCode_ = "NULL";
                                   } else {
@@ -574,13 +581,27 @@ class _SignUpState extends State<SignUp> {
                                             'All fields with * must be filled'),
                                       ),
                                     );
-                                  } else if (!isValidEmail(email)) {
+                                  } else if(body != null){
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content:
+                                              Text('Username already exists')),
+                                    );
+                                  }
+                                   else if (!isValidEmail(email)) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                           content:
                                               Text('The email is not valid')),
                                     );
-                                  } else if (password != confirmPassword) {
+                                  } else if(body2 !=null){
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content:
+                                              Text('Email already exists')),
+                                    );
+                                  }
+                                  else if (password != confirmPassword) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                           content: Text(
@@ -594,27 +615,27 @@ class _SignUpState extends State<SignUp> {
                                     );
                                   } else {
                                     try {
-                                      //server authentication
-                                      final response = await http
-                                          .post(
-                                            Uri.parse(
-                                                'http://$localhost:8000/register'),
-                                            headers: <String, String>{
-                                              'Content-Type':
-                                                  'application/json; charset=UTF-8',
-                                            },
-                                            body: jsonEncode(<String, String>{
-                                              'firstName': fname,
-                                              'lastName': lname,
-                                              'username': username,
-                                              'email': email,
-                                              'password': password,
-                                              'confirmPassword':
-                                                  confirmPassword,
-                                            }),
-                                          )
-                                          .timeout(const Duration(seconds: 10));
-                                      if (response.statusCode == 200) {
+                                      // //server authentication
+                                      // final response = await http
+                                      //     .post(
+                                      //       Uri.parse(
+                                      //           'http://$localhost:8000/register'),
+                                      //       headers: <String, String>{
+                                      //         'Content-Type':
+                                      //             'application/json; charset=UTF-8',
+                                      //       },
+                                      //       body: jsonEncode(<String, String>{
+                                      //         'firstName': fname,
+                                      //         'lastName': lname,
+                                      //         'username': username,
+                                      //         'email': email,
+                                      //         'password': password,
+                                      //         'confirmPassword':
+                                      //             confirmPassword,
+                                      //       }),
+                                      //     )
+                                      //     .timeout(const Duration(seconds: 10));
+                                    //  if (response.statusCode == 200) {
                                         //await dbHelper.syncMeals();
                                         //List<Map> m=dbHelper.selectAllMeals();
                                         //m.forEach(print);
@@ -866,7 +887,28 @@ class _SignUpState extends State<SignUp> {
                                           },
                                         );
                                         if (accept == true) {
-                                          username_ = _controllerUsername.text;
+                                          //server authentication
+                                      final response = await http
+                                          .post(
+                                            Uri.parse(
+                                                'http://$localhost:8000/register'),
+                                            headers: <String, String>{
+                                              'Content-Type':
+                                                  'application/json; charset=UTF-8',
+                                            },
+                                            body: jsonEncode(<String, String>{
+                                              'firstName': fname,
+                                              'lastName': lname,
+                                              'username': username,
+                                              'email': email,
+                                              'password': password,
+                                              'confirmPassword':
+                                                  confirmPassword,
+                                            }),
+                                          )
+                                          .timeout(const Duration(seconds: 10));
+                                     if (response.statusCode == 200) {
+                                      username_ = _controllerUsername.text;
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -876,8 +918,8 @@ class _SignUpState extends State<SignUp> {
                                               ),
                                             ),
                                           );
-                                        }
-                                      } else {
+
+                                     }else {
                                         // ignore: avoid_print
                                         print(response.body);
                                         var responseBody =
@@ -891,6 +933,9 @@ class _SignUpState extends State<SignUp> {
                                               content: Text('$errorMessage')),
                                         );
                                       }
+                                          
+                                    } //if accept==true
+                                    
                                     } catch (e) {
                                       // ignore: avoid_print
                                       print('Error: $e');
