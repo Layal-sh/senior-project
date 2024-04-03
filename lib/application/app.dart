@@ -674,9 +674,10 @@ class _ArticlesState extends State<Articles> {
     ];
 
     for (String s in searches) {
+      logger.info("getting $s");
       final response =
           await http.get(Uri.parse('http://$localhost:8000/News/$s'));
-
+      logger.info("got $s");
       if (response.statusCode == 200) {
         List<dynamic> responseData = jsonDecode(response.body);
         DBHelper dbHelper = DBHelper.instance;

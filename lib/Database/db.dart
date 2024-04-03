@@ -27,26 +27,26 @@ class DBHelper {
     String DbPath = await getDatabasesPath();
     String path = join(DbPath, 'SugarSense.db');
     Database database = await openDatabase(path,
-        onCreate: _onCreate, version: 30, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 31, onUpgrade: _onUpgrade);
     return database;
   }
 
   _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // if (oldVersion < newVersion) {
-    //   await db.execute('''DROP TABLE IF EXISTS "Favorites";''');
-    //   print("Dropped Favorites table");
-    //   await db.execute('''DROP TABLE IF EXISTS "Articles";''');
-    //   print("Dropped Articles table");
-    //   await db.execute('''
-    //   CREATE TABLE "Articles"(
-    //     url TEXT NOT NULL PRIMARY KEY,
-    //     title TEXT NOT NULL,
-    //     imageUrl TEXT NULL,
-    //     date TEXT NULL
-    //   );
-    //   ''');
-    //   print("Created Articles table");
-    // }
+    if (oldVersion < newVersion) {
+      await db.execute('''DROP TABLE IF EXISTS "Favorites";''');
+      print("Dropped Favorites table");
+      await db.execute('''DROP TABLE IF EXISTS "Articles";''');
+      print("Dropped Articles table");
+      await db.execute('''
+      CREATE TABLE "Articles"(
+        url TEXT NOT NULL PRIMARY KEY,
+        title TEXT NOT NULL,
+        imageUrl TEXT NULL,
+        date TEXT NULL
+      );
+      ''');
+      print("Created Articles table");
+    }
   }
 
   _onCreate(Database db, int version) async {

@@ -242,6 +242,7 @@ apiKey = 'd9cb4bee70915b0f8ad912e10388ab16f02a2f0b7e84724806d40e5700461781'
 
 @app.get("/News/{query}")
 async def get_news(query: str):
+    print("We got here")
     params = {
         "q": query,
         "hl": "en",
@@ -249,10 +250,10 @@ async def get_news(query: str):
         "google_domain": "google.com",
         "api_key": "d9cb4bee70915b0f8ad912e10388ab16f02a2f0b7e84724806d40e5700461781"
     }
-
     search = GoogleSearch(params)
+    print("we searched :D")
     results = search.get_dict()
-    print(results["organic_results"])
+    print("frfr")
     return results["organic_results"]
 
     
