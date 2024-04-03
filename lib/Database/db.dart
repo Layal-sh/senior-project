@@ -27,14 +27,25 @@ class DBHelper {
     String DbPath = await getDatabasesPath();
     String path = join(DbPath, 'SugarSense.db');
     Database database = await openDatabase(path,
-        onCreate: _onCreate, version: 27, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 29, onUpgrade: _onUpgrade);
     return database;
   }
 
   _onUpgrade(Database db, int oldVersion, int newVersion) async {
     // if (oldVersion < newVersion) {
-    //   await db.execute(
-    //       '''ALTER TABLE "Meals" ADD COLUMN frequency INTEGER NULL;''');
+    //   await db.execute('''DROP TABLE IF EXISTS "Favorites";''');
+    //   print("Dropped Favorites table");
+    //   await db.execute('''DROP TABLE IF EXISTS "Articles";''');
+    //   print("Dropped Articles table");
+    //   await db.execute('''
+    //   CREATE TABLE "Articles"(
+    //     url TEXT NOT NULL PRIMARY KEY,
+    //     title TEXT NOT NULL,
+    //     imageUrl TEXT NULL,
+    //     date TEXT NULL
+    //   );
+    //   ''');
+    //   print("Created Articles table");
     // }
   }
 
@@ -405,6 +416,35 @@ class DBHelper {
     List<Map> response = await mydb!.rawQuery(
         'SELECT mealId, mealName FROM "Meals" WHERE mealName = ? OR tags LIKE ?',
         [input, '%$input%']);
+    return response;
+  }
+
+  checkArticle(String link) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+    SELECT * FROM Articles WHERE link = "$link";
+    ''');
+    return response;
+  }
+
+  addFavorite(String link, String title, String imageUrl, String date) async {
+    Database? mydb = await db;
+    if (checkArticle(link).isNotEmpty) {
+      return -1;
+    } else {
+      int response = await mydb!.rawInsert('''
+    INSERT INTO Articles(link, title, imageUrl, date)
+    VALUES("$link", "$title", "$imageUrl", "$date");
+    ''');
+      return response;
+    }
+  }
+
+  deleteFavorite(String link) async {
+    Database? mydb = await db;
+    int response = await mydb!.rawDelete('''
+    DELETE FROM Articles WHERE link = "$link";
+    ''');
     return response;
   }
 
