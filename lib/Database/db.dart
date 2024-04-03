@@ -459,7 +459,7 @@ class DBHelper {
   checkArticle(String link) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
-    SELECT * FROM Articles WHERE link = "$link";
+    SELECT * FROM Articles WHERE url = "$link";
     ''');
     return response;
   }
@@ -471,7 +471,7 @@ class DBHelper {
       return -1;
     } else {
       int response = await mydb!.rawInsert('''
-    INSERT INTO Articles(link, title, imageUrl, date)
+    INSERT INTO Articles(url, title, imageUrl, date)
     VALUES("$link", "$title", "$imageUrl", "$date");
     ''');
       return response;
@@ -481,7 +481,7 @@ class DBHelper {
   deleteFavorite(String link) async {
     Database? mydb = await db;
     int response = await mydb!.rawDelete('''
-    DELETE FROM Articles WHERE link = "$link";
+    DELETE FROM Articles WHERE url = "$link";
     ''');
     return response;
   }
