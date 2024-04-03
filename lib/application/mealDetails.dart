@@ -8,7 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/application/editMeal.dart';
 import 'package:sugar_sense/application/meals.dart';
-
+import 'package:sugar_sense/application/app.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 
 class MealDetailsPage extends StatefulWidget {
@@ -633,8 +633,9 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                         } else {
                           addToChosenMeals(
                               widget.meal.id, double.parse(_numberOfMeal.text));
-                          Navigator.of(context).pop();
-                          Navigator.of(context).pop();
+
+                          Navigator.pop(context, 'refresh');
+                          //Navigator.of(context).pop(context, 'refresh');
                         }
                       } catch (e) {
                         showDialog(

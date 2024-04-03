@@ -42,12 +42,33 @@ class _EditMealState extends State<EditMeal> {
     return ingredients;
   }
 
+  List<String> categories = [
+    'Drinks',
+    'Sweets & snacks',
+    'Pastries',
+    'Dairy products',
+    'Fruits',
+    'Lebanese dishes',
+    'Arabic desserts',
+    'Grains, pasta & rice',
+    'Breakfast',
+    'Lunch',
+    'Dinner'
+  ];
+
+  List<String> selectedCategories = [];
   List<double> globalControllers = [];
   @override
   void initState() {
     super.initState();
+    loadCategories();
     _selectedImagePath = widget.meal.imageUrl;
     _nameController.text = widget.meal.name;
+  }
+
+  void loadCategories() async {
+    selectedCategories = await db.getCategoryOfMeal(widget.meal.id);
+    setState(() {});
   }
 
   @override
@@ -58,50 +79,51 @@ class _EditMealState extends State<EditMeal> {
       ));
     });
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              color: const Color.fromARGB(255, 38, 20, 84),
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 10.0,
-                  right: 10,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50.0),
-                          ),
-                          backgroundColor:
-                              const Color.fromARGB(255, 45, 170, 178),
-                          //padding: const EdgeInsets.all(16),
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Column(
+            children: [
+              Container(
+                color: const Color.fromARGB(255, 38, 20, 84),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 10.0,
+                    right: 10,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(color: Colors.white),
                         ),
-                        onPressed: () {},
-                        child: const Text('Save',
-                            style: TextStyle(color: Colors.white)),
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50.0),
+                            ),
+                            backgroundColor:
+                                const Color.fromARGB(255, 45, 170, 178),
+                            //padding: const EdgeInsets.all(16),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                          ),
+                          onPressed: () {},
+                          child: const Text('Save',
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                // Your body content
               ),
-              // Your body content
-            ),
-            SingleChildScrollView(
-              child: Column(
+              Column(
                 children: [
                   const SizedBox(
                     height: 20,
@@ -182,9 +204,6 @@ class _EditMealState extends State<EditMeal> {
                     height: 20,
                   ),
                   Container(
-                    height: MediaQuery.of(context).size.height - 280,
-
-                    //height: MediaQuery.of(context).size.height - 200,
                     color: const Color.fromARGB(255, 231, 231, 231),
                     padding: const EdgeInsets.all(20),
                     child: Column(
@@ -200,7 +219,9 @@ class _EditMealState extends State<EditMeal> {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         TextField(
                           controller: _nameController,
                           decoration: InputDecoration(
@@ -270,22 +291,16 @@ class _EditMealState extends State<EditMeal> {
                                         ),
                                       ),
                                     ),
-                                    ListView.separated(
-                                      shrinkWrap:
-                                          true, // Use this if ListView is inside another scrolling widget like Column
-                                      physics:
-                                          NeverScrollableScrollPhysics(), // Use this if ListView is inside another scrolling widget like Column
-                                      itemCount: boxes.length,
-                                      itemBuilder: (context, index) {
-                                        return boxes[
-                                            index]; // Replace this with your widget
-                                      },
-                                      separatorBuilder: (context, index) {
-                                        return SizedBox(
-                                            height:
-                                                10); // Replace 10 with your desired height
-                                      },
-                                    ),
+                                    Column(
+                                      children: boxes.map((box) {
+                                        return Column(
+                                          children: <Widget>[
+                                            box,
+                                            const SizedBox(height: 10),
+                                          ],
+                                        );
+                                      }).toList(),
+                                    )
                                   ],
                                 );
                               } else {
@@ -296,7 +311,7 @@ class _EditMealState extends State<EditMeal> {
                           },
                         ),
                         const SizedBox(
-                          height: 15,
+                          height: 5,
                         ),
                         const Text(
                           "Categories",
@@ -311,65 +326,52 @@ class _EditMealState extends State<EditMeal> {
                         const SizedBox(
                           height: 5,
                         ),
-                        FutureBuilder<List<String>>(
-                          future: db.getCategoryOfMeal(
-                              widget.meal.id), // Call the function
-                          builder: (BuildContext context,
-                              AsyncSnapshot<List<String>> snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircularProgressIndicator(); // Show a loading spinner while waiting
-                            } else if (snapshot.hasError) {
-                              return Text(
-                                  'Error: ${snapshot.error}'); // Show error if there is any
-                            } else {
-                              // Display the categories
-                              return Wrap(
-                                spacing: 10, // space between rows
-                                runSpacing: 10,
-                                children: snapshot.data!
-                                    .map(
-                                      (category) => IntrinsicWidth(
-                                        child: Container(
-                                          height: 35,
-                                          decoration: BoxDecoration(
-                                            color: const Color.fromARGB(
-                                                255, 30, 203, 215),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 8.0, right: 8),
-                                            child: Center(
-                                              child: Text(
-                                                category, // Display the category
-                                                style: const TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 255, 255, 255),
-                                                  fontSize: 18,
-                                                  fontFamily: 'Inter',
-                                                  letterSpacing: -0.75,
-                                                  fontWeight: FontWeight.w900,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                              );
-                            }
-                          },
+                        Wrap(
+                          spacing: 8.0, // gap between adjacent chips
+                          runSpacing: 4.0, // gap between lines
+                          children: [
+                            for (var category in categories)
+                              ChoiceChip(
+                                label: Opacity(
+                                  opacity: selectedCategories.contains(category)
+                                      ? 1.0
+                                      : 0.5, // Adjust the opacity based on whether the category is selected
+                                  child: Text(category),
+                                ),
+                                selected: selectedCategories.contains(category),
+                                selectedColor:
+                                    const Color.fromARGB(255, 51, 184, 194),
+                                backgroundColor:
+                                    const Color.fromARGB(126, 158, 158, 158),
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                    color: selectedCategories.contains(category)
+                                        ? const Color.fromARGB(
+                                            255, 45, 170, 178)
+                                        : const Color.fromARGB(126, 158, 158,
+                                            158), // Adjust the border color based on whether the category is selected
+                                  ),
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                onSelected: (bool selected) {
+                                  setState(() {
+                                    if (selected) {
+                                      selectedCategories.add(category);
+                                    } else {
+                                      selectedCategories.remove(category);
+                                    }
+                                  });
+                                },
+                              ),
+                          ],
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

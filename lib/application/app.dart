@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/meals.dart';
@@ -19,9 +22,39 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   var selectedIndex = 0;
+  Timer? _timer;
+  double totalCarbs = 0;
+  bool showTotalCarbs = false;
+  @override
+  void initState() {
+    super.initState();
+
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (chosenMeals.length == 0) {
+        timer.cancel();
+      } else {
+        setState(() {});
+      }
+    });
+  }
+
+  void calculateTotalCarbs() {
+    for (var meal in chosenMeals) {
+      double mealCarbohydrates = meal['carbohydrates'] * meal['quantity'];
+      totalCarbs += mealCarbohydrates;
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget page = Dashboard();
+
     switch (selectedIndex) {
       case 0:
         page = Dashboard();
@@ -216,6 +249,11 @@ class AddInput extends StatefulWidget {
 
 class _AddInputState extends State<AddInput> {
   //const Settings({Key? key}) : super(key: key);
+  void refresh() {
+    setState(() {});
+  }
+
+  double totalCarbs = 0;
 
   final TextEditingController _GlucoseController = TextEditingController();
   final TextEditingController _CarbController = TextEditingController();
@@ -249,6 +287,7 @@ class _AddInputState extends State<AddInput> {
   @override
   void initState() {
     super.initState();
+
     _GlucoseController.addListener(updateBolusCalculation);
     _CarbController.addListener(updateBolusCalculation);
   }
@@ -257,6 +296,7 @@ class _AddInputState extends State<AddInput> {
   void dispose() {
     _GlucoseController.removeListener(updateBolusCalculation);
     _CarbController.removeListener(updateBolusCalculation);
+    chosenMeals.clear();
     super.dispose();
   }
 
@@ -574,9 +614,9 @@ class _AddInputState extends State<AddInput> {
                               SizedBox(
                                 width: MediaQuery.of(context).size.width / 7,
                                 //height: 20,
-                                child: const Text(
-                                  '0',
-                                  style: TextStyle(
+                                child: Text(
+                                  '${totalCarbs}',
+                                  style: const TextStyle(
                                       fontSize: 18,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w500),
@@ -608,27 +648,84 @@ class _AddInputState extends State<AddInput> {
                     const SizedBox(
                       height: 10,
                     ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Meals()),
-                        );
-                      },
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            width: 90,
-                            height: 90,
-                            child: Image.asset('assets/AddDish.png'),
-                          ),
-                          const Text(
-                            'Add Meals',
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 38, 20, 84),
-                              fontSize: 20,
-                              fontFamily: 'Ruda',
-                              fontWeight: FontWeight.w500,
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: Wrap(
+                        direction: Axis.horizontal,
+                        alignment: chosenMeals.isEmpty
+                            ? WrapAlignment.center
+                            : WrapAlignment.start,
+                        spacing: 10,
+                        children: <Widget>[
+                          for (var meal in chosenMeals)
+                            Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: SizedBox(
+                                    width: 80,
+                                    height: 80,
+                                    child: Image.asset(
+                                      '${meal['imageUrl']}',
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  left: 0,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        chosenMeals.remove(meal);
+                                      });
+                                    },
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(50),
+                                      child: Container(
+                                        width: 30,
+                                        height: 30,
+                                        color: const Color.fromARGB(
+                                            255, 49, 205, 215),
+                                        child: const Icon(
+                                          Icons.remove,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          InkWell(
+                            onTap: () async {
+                              var result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Meals()),
+                              );
+                              if (result == 'refresh') {
+                                refresh();
+                              }
+                            },
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  width: chosenMeals.isEmpty ? 90 : 80,
+                                  height: chosenMeals.isEmpty ? 90 : 80,
+                                  child: Image.asset('assets/AddDish.png'),
+                                ),
+                                Text(
+                                  'Add Meals',
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 38, 20, 84),
+                                    fontSize: chosenMeals.isEmpty ? 20 : 17,
+                                    fontFamily: 'Ruda',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],

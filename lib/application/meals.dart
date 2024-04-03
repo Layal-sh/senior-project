@@ -203,6 +203,15 @@ class Meal {
   }
 }
 
+double totalCarbs = 0;
+double TotalCarbs() {
+  for (var meal in chosenMeals) {
+    double mealCarbohydrates = meal['carbohydrates'] * meal['quantity'];
+    totalCarbs += mealCarbohydrates;
+  }
+  return totalCarbs;
+}
+
 Function addToChosenMeals = (int id, double quantity) async {
   List<Map> meal = await db.getMealById(id);
   var imageUrl = 'assets/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
@@ -216,6 +225,7 @@ Function addToChosenMeals = (int id, double quantity) async {
     'unit': meal[0]['unit']
   };
   chosenMeals.add(insertedMeal);
+
   logger.info(
       "Added meal to chosen meals --> name: ${insertedMeal['name']} carbs: ${insertedMeal['carbohydrates']} quantity: ${insertedMeal['quantity']} unit: ${insertedMeal['unit']} certainty: ${insertedMeal['certainty']}");
 };
@@ -450,8 +460,8 @@ class _MealBoxState extends State<MealBox> {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: InkWell(
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                        var result = await Navigator.push(
                           context,
                           PageRouteBuilder(
                             pageBuilder:
@@ -468,6 +478,9 @@ class _MealBoxState extends State<MealBox> {
                             },
                           ),
                         );
+                        if (result == 'refresh') {
+                          Navigator.pop(context, 'refresh');
+                        }
                       },
                       child: const CircleAvatar(
                         radius: 11,
