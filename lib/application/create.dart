@@ -4,8 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sugar_sense/AI/ai_functions.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/application/meals.dart';
+import 'package:sugar_sense/main.dart';
 
 class CreateMeal extends StatefulWidget {
   const CreateMeal({super.key});
@@ -372,6 +374,34 @@ class _CreateMealState extends State<CreateMeal> {
                       ),
                     ),
                     */
+                    Column(
+                      children: <Widget>[
+                        // Replace this with your actual total carbs widget
+                        ListView.builder(
+                          shrinkWrap:
+                              true, // This allows the ListView to be inside a Column
+                          itemCount: chosenMeals.length,
+                          itemBuilder: (context, index) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text('${chosenMeals[index]['name']}'),
+                                Text(chosenMeals[index]['quantity'].toString()),
+                                Text(unitString(chosenMeals[index]['unit'])),
+                                IconButton(
+                                  icon: Icon(Icons.close),
+                                  onPressed: () {
+                                    setState(() {
+                                      chosenMeals.removeAt(index);
+                                    });
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                     selectedMeals.isEmpty
                         ? Container()
                         : Expanded(
@@ -465,3 +495,25 @@ class _CreateMealState extends State<CreateMeal> {
     );
   }
 }
+
+List<Map> chosenMeals = [];
+List<Map> getChosenMeals() {
+  return chosenMeals;
+}
+
+Function addToChosenMeals = (int id, double quantity) async {
+  List<Map> meal = await db.getMealById(id);
+  var imageUrl = 'assets/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
+  Map<String, dynamic> insertedMeal = {
+    'name': meal[0]['mealName'],
+    'imageUrl': imageUrl,
+    'id': id,
+    'carbohydrates': meal[0]['carbohydrates'],
+    'certainty': meal[0]['certainty'],
+    'quantity': quantity,
+    'unit': meal[0]['unit']
+  };
+  chosenMeals.add(insertedMeal);
+  logger.info(
+      "Added meal to chosen meals --> name: ${insertedMeal['name']} carbs: ${insertedMeal['carbohydrates']} quantity: ${insertedMeal['quantity']} unit: ${insertedMeal['unit']} certainty: ${insertedMeal['certainty']}");
+};

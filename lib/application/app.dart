@@ -306,13 +306,14 @@ class _AddInputState extends State<AddInput> {
                                 );
                               },
                             );
-                            /*double glucoseLevel =
+                            double glucoseLevel =
                                 double.parse(_GlucoseController.text);
                             if (getChosenMeals().isNotEmpty &&
                                 _GlucoseController.text.isNotEmpty) {
-                              bolusCalculation = calculateDosage(
+                              /*bolusCalculation = calculateDosage(
                                   calculateTotalCarbs(getChosenMeals()),
                                   glucoseLevel);
+*/
 
                               print('Chosen Meals:');
                               print(chosenMeals);
@@ -322,7 +323,7 @@ class _AddInputState extends State<AddInput> {
                               print(bolusCalculation);
                             } else {
                               print("NO WORKY");
-                            }*/
+                            }
                             DBHelper dbHelper = DBHelper.instance;
                             dbHelper.createEntry(glucoseLevel,
                                 bolusCalculationResult, date, meals);
