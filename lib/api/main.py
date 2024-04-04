@@ -108,6 +108,16 @@ async def read_item(user_id: str):
         return None
     else:
         return {description[0]: column for description, column in zip(cursor.description, row)}
+
+@app.get("/checkDoc/{user_id}")
+async def read_item(user_id: str):
+    cursor.execute("Select * from Doctors WHERE CAST(doctorCode AS NVARCHAR(MAX)) = ?", (user_id,))
+    row = cursor.fetchone()
+    if row is None:
+        return None
+    else:
+        return {description[0]: column for description, column in zip(cursor.description, row)}
+        
         
 @app.get("/meals")
 async def get_meals():

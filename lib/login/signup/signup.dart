@@ -568,9 +568,13 @@ class _SignUpState extends State<SignUp> {
                                   print(body);
                                   if (doctorId.isEmpty) {
                                     doctorCode_ = "NULL";
-                                  } else {
+                                  } 
+                                  else {
                                     doctorCode_ = doctorId;
                                   }
+                                  final checkDoctor= await http.get(Uri.parse('http://$localhost:8000/checkDoc/$doctorCode_'));
+                                  final body3= jsonDecode(checkDoctor.body);
+
                                   if (username.isEmpty ||
                                       email.isEmpty ||
                                       password.isEmpty ||
@@ -600,6 +604,15 @@ class _SignUpState extends State<SignUp> {
                                           content:
                                               Text('Email already exists')),
                                     );
+                                  }
+                                  else if(body3 == null){
+                                    if(body3 == null){
+                                         ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'The doctor ID was not found')),
+                                    );
+                                      }
                                   }
                                   else if (password != confirmPassword) {
                                     ScaffoldMessenger.of(context).showSnackBar(
