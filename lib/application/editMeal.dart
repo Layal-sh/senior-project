@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 import 'package:sugar_sense/Database/db.dart';
+import 'package:sugar_sense/application/meals.dart';
 import 'package:sugar_sense/application/meals.dart';
 
 class EditMeal extends StatefulWidget {
@@ -43,6 +46,24 @@ class _EditMealState extends State<EditMeal> {
   }
 
   List<double> globalControllers = [];
+
+  createChildMeal() async {
+    List<Map> childMeal = [];
+    List<Map> response = await db.getIngredients(widget.meal.id);
+    print("get ingredients response: $response");
+    print("global Controllers: $globalControllers");
+    for (int i = 0; i < globalControllers.length; i++) {
+      childMeal.add({
+        'mealID': response[i]['mealId'],
+        'mealName': response[i]['mealName'],
+        'carbohydrates': response[i]['carbohydrates'],
+        'unit': response[i]['unit'],
+        'quantity': globalControllers[i],
+      });
+    }
+    return childMeal;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -97,7 +118,28 @@ class _EditMealState extends State<EditMeal> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 16.0),
                           ),
-                          onPressed: () {},
+                          onPressed: () async {
+                            DBHelper db = DBHelper.instance;
+                            print(await createChildMeal());
+                            int response = await db.editNewMeal(
+                                widget.meal.id,
+                                _nameController.text,
+                                _selectedImagePath!,
+                                await createChildMeal());
+
+                            if (response != -1) {
+                              await addToChosenCMeals(response, 1.0);
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const AlertDialog(
+                                    content: Text('Meal could not be edited'),
+                                  );
+                                },
+                              );
+                            }
+                          },
                           child: const Text('Save',
                               style: TextStyle(color: Colors.white)),
                         ),

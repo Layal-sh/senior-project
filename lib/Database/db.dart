@@ -185,7 +185,7 @@ class DBHelper {
   Future<List<Map>> getIngredients(int parentId) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
-      SELECT m1.mealName, m1.mealID, c.unit, c.quantity 
+      SELECT m1.mealName, m1.mealID, m1.carbohydrates , c.unit, c.quantity 
   FROM Meals AS m, Meals AS m1, MealComposition AS c
   WHERE m.mealID=c.parentMealID AND m1.mealID=c.childMealID AND m.mealID=$parentId;
     ''');
@@ -372,6 +372,7 @@ class DBHelper {
   ''');
     logger.info(
         "Meal composition for the 'Meals Editing' has been created successfully.");
+    print("createMealComposition Response: $response");
     return response;
   }
 
@@ -380,12 +381,17 @@ class DBHelper {
   editNewMeal(int parentMealId, String mealName, String picture,
       List<Map> childMeals) async {
     List<Map> response = await getMealById(parentMealId);
+    double totalCarbs = response[0]['carbohydrates'];
+
+    childMeals.forEach((element) {
+      totalCarbs += element['carbohydrates'] * element['quantity'];
+    });
 
     if (mealName == null || mealName == "") {
       mealName = "My ${response[0]['mealName']}";
     }
 
-    int newMealID = await createNewMeal(mealName, response[0]['carbohydrates'],
+    int newMealID = await createNewMeal(mealName, totalCarbs,
         response[0]['unit'], picture, response[0]['tags'] + ', myMeals');
 
     if (newMealID != -1) {
@@ -396,8 +402,10 @@ class DBHelper {
         });
       }
       logger.info("Meal has been edited successfully with id $newMealID.");
+      return newMealID;
     } else {
       logger.info("Error meal wasn't edited.");
+      return -1;
     }
   }
 
