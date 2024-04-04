@@ -6,6 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import hashlib
 import requests
 from serpapi import GoogleSearch
+import time
+import threading
 
 app = FastAPI()
 # Set up logging
@@ -259,6 +261,10 @@ async def get_mealComposition():
 #News Api Key: 52583f3a26ca4ba0b9631f43f66abb3d
 apiKey = 'd9cb4bee70915b0f8ad912e10388ab16f02a2f0b7e84724806d40e5700461781'
 
+def get_results(search):
+    global results
+    results = search.get_dict()
+
 @app.get("/News/{query}")
 async def get_news(query: str):
     print("We got here")
@@ -267,13 +273,25 @@ async def get_news(query: str):
         "hl": "en",
         "gl": "us",
         "google_domain": "google.com",
-        "api_key": "d9cb4bee70915b0f8ad912e10388ab16f02a2f0b7e84724806d40e5700461781"
+        "api_key": apiKey
     }
     search = GoogleSearch(params)
     print("we searched :D")
-    results = search.get_dict()
-    print("frfr")
-    return results["organic_results"]
+
+    for i in range(10):  # Retry up to 3 times
+        thread = threading.Thread(target=get_results, args=(search,))
+        thread.start()
+        thread.join(10)
+
+        if thread.is_alive():
+            print("get_dict() is stuck, retrying...")
+            time.sleep(5)  # Wait for 5 seconds before retrying
+        else:
+            print("get_dict() finished successfully")
+            print("frfr")
+            return results["organic_results"]
+    print("wifi do be no cap not working")
+    return {"error": "Failed to get results after 3 attempts"}
 
     
 #combined_results = results["organic_results"] + results2["organic_results"]
