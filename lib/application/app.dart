@@ -244,7 +244,7 @@ class _AddInputState extends State<AddInput> {
 
   final TextEditingController _GlucoseController = TextEditingController();
   //final TextEditingController _CarbController = TextEditingController();
-  String? carbRatioSelected;
+  String? carbRatioSelected = carbRatio_.toString();
   ValueNotifier<double> glucoseLevelNotifier = ValueNotifier<double>(0.0);
   ValueNotifier<double> carbsTotalNotifier = ValueNotifier<double>(0.0);
   ValueNotifier<int> bolusCalculation = ValueNotifier<int>(0);
@@ -483,24 +483,36 @@ class _AddInputState extends State<AddInput> {
                                 color: Colors.black,
                                 fontWeight: FontWeight.w500),
                           ),
-                          DropdownButton(
-                            hint: const Text("Select"),
-                            value: carbRatioSelected,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                carbRatioSelected = newValue;
-                              });
-                            },
-                            items: <String>['x', 'y', 'z']
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
+                          (carbRatio_2 == 0.0 && carbRatio_3 == 0.0)
+                              ? Text(
+                                  "$carbRatio_",
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      color: Color.fromARGB(255, 0, 0, 0),
+                                      fontWeight: FontWeight.w500),
+                                )
+                              : DropdownButton(
+                                  hint: Text("$carbRatio_"),
+                                  value: carbRatioSelected,
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      carbRatioSelected = newValue;
+                                    });
+                                  },
+                                  items: <String>[
+                                    carbRatio_.toString(),
+                                    carbRatio_2.toString(),
+                                    carbRatio_3.toString()
+                                  ]
+                                      .where((String value) => value != '0.0')
+                                      .map<DropdownMenuItem<String>>(
+                                          (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
                                 ),
-                              );
-                            }).toList(),
-                          ),
                         ],
                       ),
                     ),
