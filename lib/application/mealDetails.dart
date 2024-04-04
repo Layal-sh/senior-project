@@ -10,6 +10,7 @@ import 'package:sugar_sense/application/editMeal.dart';
 import 'package:sugar_sense/application/meals.dart';
 import 'package:sugar_sense/application/app.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
+import 'package:sugar_sense/main.dart';
 
 class MealDetailsPage extends StatefulWidget {
   final Meal meal;
@@ -618,9 +619,19 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                       ),
                     ),
                     onPressed: () async {
-                      print("adding to meals");
+                      logger.info("adding to chosen meals");
                       try {
-                        if (double.parse(_numberOfMeal.text) <= 0) {
+                        if(_numberOfMeal.text.isEmpty){
+                          showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const AlertDialog(
+                              content: Text('Specify the amount as a number'),
+                            );
+                          },
+                        );
+                        }
+                        else if (double.parse(_numberOfMeal.text) <= 0) {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -631,21 +642,36 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                             },
                           );
                         } else {
-                          addToChosenMeals(
+                          bool found= await addToChosenMeals(
                               widget.meal.id, double.parse(_numberOfMeal.text));
 
-                          Navigator.pop(context, 'refresh');
+                            if(found){
+                              Navigator.pop(context, 'refresh');
+                            }
+                            else{
+                              showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const AlertDialog(
+                                content: Text(
+                                    'Meal was already added'),
+                              );
+                            },
+                          );
+                            }
+                          
                           //Navigator.of(context).pop(context, 'refresh');
                         }
                       } catch (e) {
                         showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const AlertDialog(
-                              content: Text('Specify the amount as a number'),
-                            );
-                          },
-                        );
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const AlertDialog(
+                                content: Text(
+                                    'an error occured'),
+                              );
+                            },
+                          );
                       }
                     },
                   ),

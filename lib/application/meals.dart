@@ -18,6 +18,7 @@ class Meals extends StatefulWidget {
 }
 
 List<Map> chosenMeals = [];
+
 List<Map> getChosenMeals() {
   return chosenMeals;
 }
@@ -213,7 +214,21 @@ double TotalCarbs() {
 }
 
 Function addToChosenMeals = (int id, double quantity) async {
-  List<Map> meal = await db.getMealById(id);
+  bool found=false;
+  print("entered chosen meals");
+  print(chosenMeals);
+  chosenMeals.forEach((meal) {
+  if(meal['id']==id){
+    found=true;
+  }
+  });
+
+  if(found){
+    return false;
+  }else{
+
+      List<Map> meal = await db.getMealById(id);
+
   var imageUrl = 'assets/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
   Map<String, dynamic> insertedMeal = {
     'name': meal[0]['mealName'],
@@ -228,6 +243,9 @@ Function addToChosenMeals = (int id, double quantity) async {
 
   logger.info(
       "Added meal to chosen meals --> name: ${insertedMeal['name']} carbs: ${insertedMeal['carbohydrates']} quantity: ${insertedMeal['quantity']} unit: ${insertedMeal['unit']} certainty: ${insertedMeal['certainty']}");
+    
+    return true;
+  }
 };
 
 class MealBox extends StatefulWidget {
