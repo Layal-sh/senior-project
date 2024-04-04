@@ -407,7 +407,7 @@ class _MealBoxState extends State<MealBox> {
                           color: Color.fromARGB(255, 45, 170, 178),
                         ),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         if (quantityController.text.isEmpty) {
                           print('Quantity is empty');
                           showDialog(
@@ -438,7 +438,28 @@ class _MealBoxState extends State<MealBox> {
                             },
                           );
                         } else {
-                          Navigator.of(context).pop(quantityController.text);
+                          bool found;
+                          if (widget.ind == 0) {
+                            found = await addToChosenMeals(widget.meal.id,
+                                double.parse(quantityController.text));
+                          } else {
+                            found = await addToChosenCMeals(widget.meal.id,
+                                double.parse(quantityController.text));
+                          }
+
+                          if (found) {
+                            Navigator.pop(context, 'refresh');
+                            Navigator.pop(context, 'refresh');
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const AlertDialog(
+                                  content: Text('Meal was already added'),
+                                );
+                              },
+                            );
+                          }
                         }
                       },
                     ),
@@ -551,13 +572,13 @@ class _MealBoxState extends State<MealBox> {
                           Navigator.pop(context, 'refresh');
                         }
                       },
-                      child: const CircleAvatar(
-                        radius: 11,
+                      child: CircleAvatar(
+                        radius: MediaQuery.of(context).size.width * 0.027,
                         backgroundColor: Color.fromARGB(170, 64, 205, 215),
                         child: Icon(
                           Icons.arrow_forward_ios,
                           color: Color.fromARGB(255, 255, 255, 255),
-                          size: 14,
+                          size: MediaQuery.of(context).size.width * 0.035,
                         ),
                       ),
                     ),
