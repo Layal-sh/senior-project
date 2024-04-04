@@ -20,29 +20,18 @@ class App extends StatefulWidget {
   State<App> createState() => _AppState();
 }
 
+Timer? _timer;
+
 class _AppState extends State<App> {
   var selectedIndex = 0;
-  Timer? _timer;
-  double totalCarbs = 0;
-  bool showTotalCarbs = false;
+
   @override
   void initState() {
     super.initState();
-
+    TotalCarbs();
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (chosenMeals.length == 0) {
-        timer.cancel();
-      } else {
-        setState(() {});
-      }
+      setState(() {});
     });
-  }
-
-  void calculateTotalCarbs() {
-    for (var meal in chosenMeals) {
-      double mealCarbohydrates = meal['carbohydrates'] * meal['quantity'];
-      totalCarbs += mealCarbohydrates;
-    }
   }
 
   @override
@@ -253,10 +242,8 @@ class _AddInputState extends State<AddInput> {
     setState(() {});
   }
 
-  double totalCarbs = 0;
-
   final TextEditingController _GlucoseController = TextEditingController();
-  final TextEditingController _CarbController = TextEditingController();
+  //final TextEditingController _CarbController = TextEditingController();
   String? carbRatioSelected;
   ValueNotifier<double> glucoseLevelNotifier = ValueNotifier<double>(0.0);
   ValueNotifier<double> carbsTotalNotifier = ValueNotifier<double>(0.0);
@@ -265,22 +252,24 @@ class _AddInputState extends State<AddInput> {
   List<Map> meals = [];
   String date = "";
   int bolusCalculationResult = 0;
-
+  double totalCarbs = 0;
   void updateBolusCalculation() {
-    if (_GlucoseController.text.isNotEmpty) {
+    if (_GlucoseController.text.isNotEmpty && showTotalCarbs==true) {
       /* &&
         _CarbController.text.isNotEmpty && getChosenMeals().isNotEmpty*/
       glucoseLevel = double.parse(_GlucoseController.text);
-      double totalCarbs = _CarbController.text.isNotEmpty
+      /*double totalCarbs = _CarbController.text.isNotEmpty
           ? double.parse(_CarbController.text)
           : 0.0;
       meals = getChosenMeals();
-      double totalCarbs_ = calculateTotalCarbs(meals);
-      int bolusCalculationResult = calculateDosage(totalCarbs_, glucoseLevel);
+      double totalCarbs_ = calculateTotalCarbs(meals);*/
+      int bolusCalculationResult = calculateDosage(totalCarbs, glucoseLevel);
       bolusCalculation.value = bolusCalculationResult + 0;
       DBHelper dbHelper = DBHelper.instance;
       DateTime now = DateTime.now();
       date = DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(now);
+    } else {
+      bolusCalculation.value = 0;
     }
   }
 
@@ -289,15 +278,26 @@ class _AddInputState extends State<AddInput> {
     super.initState();
 
     _GlucoseController.addListener(updateBolusCalculation);
-    _CarbController.addListener(updateBolusCalculation);
+    //_CarbController.addListener(updateBolusCalculation);
   }
 
   @override
   void dispose() {
     _GlucoseController.removeListener(updateBolusCalculation);
-    _CarbController.removeListener(updateBolusCalculation);
+    //_CarbController.removeListener(updateBolusCalculation);
     chosenMeals.clear();
+    _timer?.cancel();
     super.dispose();
+  }
+
+  bool showTotalCarbs = false;
+  void addMeal() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {});
+    });
+    setState(() {
+      showTotalCarbs = false;
+    });
   }
 
   @override
@@ -346,14 +346,13 @@ class _AddInputState extends State<AddInput> {
                                 );
                               },
                             );
-                            /*double glucoseLevel =
+                            double glucoseLevel =
                                 double.parse(_GlucoseController.text);
                             if (getChosenMeals().isNotEmpty &&
                                 _GlucoseController.text.isNotEmpty) {
-                              bolusCalculation = calculateDosage(
-                                  calculateTotalCarbs(getChosenMeals()),
-                                  glucoseLevel);
-
+                              /*bolusCalculation =
+                                  calculateDosage(totalCarbs, glucoseLevel);
+*/
                               print('Chosen Meals:');
                               print(chosenMeals);
                               print('Total Carbs:');
@@ -362,7 +361,7 @@ class _AddInputState extends State<AddInput> {
                               print(bolusCalculation);
                             } else {
                               print("NO WORKY");
-                            }*/
+                            }
                             DBHelper dbHelper = DBHelper.instance;
                             dbHelper.createEntry(glucoseLevel,
                                 bolusCalculationResult, date, meals);
@@ -611,18 +610,38 @@ class _AddInputState extends State<AddInput> {
                           Row(
                             children: [
                               SizedBox(
-                                width: MediaQuery.of(context).size.width / 7,
+                                width: MediaQuery.of(context).size.width / 3,
                                 //height: 20,
-                                child: Text(
-                                  '${totalCarbs}',
-                                  style: const TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500),
+                                child: Column(
+                                  children: <Widget>[
+                                    if (!showTotalCarbs)
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          _timer?.cancel();
+                                          totalCarbs =
+                                              calculateTotalCarbs(chosenMeals);
+                                          setState(
+                                            () {
+                                              showTotalCarbs = true;
+                                            },
+                                          );
+                                        },
+                                        child: Text('Calculate'),
+                                      ),
+                                    if (showTotalCarbs)
+                                      Text(
+                                        '$totalCarbs',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          color: Color.fromARGB(255, 0, 0, 0),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ),
                               const SizedBox(
-                                width: 10,
+                                width: 0,
                               ),
                               const Text(
                                 "grams",
@@ -676,8 +695,15 @@ class _AddInputState extends State<AddInput> {
                                   left: 0,
                                   child: GestureDetector(
                                     onTap: () {
+                                      _timer?.cancel();
+                                      totalCarbs =
+                                          calculateTotalCarbs(chosenMeals) -
+                                              (meal["carbohydrates"] *
+                                                  meal['quantity']);
                                       setState(() {
                                         chosenMeals.remove(meal);
+
+                                        showTotalCarbs = false;
                                       });
                                     },
                                     child: ClipRRect(
@@ -707,6 +733,13 @@ class _AddInputState extends State<AddInput> {
                               if (result == 'refresh') {
                                 refresh();
                               }
+                              _timer =
+                                  Timer.periodic(Duration(seconds: 1), (timer) {
+                                setState(() {});
+                              });
+                              setState(() {
+                                showTotalCarbs = false;
+                              });
                             },
                             child: Column(
                               children: [
@@ -769,22 +802,15 @@ class _ArticlesState extends State<Articles> {
     ];
 
     for (String s in searches) {
-      logger.info("getting $s");
       final response =
           await http.get(Uri.parse('http://$localhost:8000/News/$s'));
-      logger.info("got $s");
+
       if (response.statusCode == 200) {
         List<dynamic> responseData = jsonDecode(response.body);
-        DBHelper dbHelper = DBHelper.instance;
-        for (var article in responseData) {
-          List<Map> res = await dbHelper.checkArticle(article['title']);
-          starred!.add(res.isNotEmpty);
-          logger.info("Starred: ${starred!.last}");
-        }
 
         setState(() {
           articles.addAll(responseData);
-          starred;
+          starred?.addAll(List<bool>.filled(responseData.length, false));
         });
       }
     }
@@ -851,16 +877,7 @@ class _ArticlesState extends State<Articles> {
                         starred![index] ? Icons.star : Icons.star_border,
                         color: starred![index] ? Colors.yellow : null,
                       ),
-                      onPressed: () async {
-                        logger.info("clicked");
-                        DBHelper dbHelper = DBHelper.instance;
-                        var response;
-                        if (starred![index])
-                          response = await dbHelper.deleteFavorite(url);
-                        else
-                          response = await dbHelper.addFavorite(
-                              title, url, imageUrl!, date!);
-                        logger.info(response);
+                      onPressed: () {
                         setState(() {
                           starred![index] = !starred![index];
                         });
