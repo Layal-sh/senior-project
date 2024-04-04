@@ -40,6 +40,21 @@ class _MealsState extends State<Meals> {
     _mealsFuture = db.selectAllMeals();
   }
 
+  String? selectedCategory;
+  List<String> categories = [
+    'All',
+    'Breakfast',
+    'Lunch',
+    'Dinner',
+    'Drinks',
+    'Sweets & snacks',
+    'Pastries',
+    'Dairy products',
+    'Fruits',
+    'Lebanese dishes',
+    'Arabic desserts',
+    'Grains, pasta & rice'
+  ];
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -100,78 +115,223 @@ class _MealsState extends State<Meals> {
         children: [
           Container(
             color: const Color.fromARGB(255, 38, 20, 84),
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: TextField(
-                controller: _filter,
-                style: const TextStyle(
-                  color: Color.fromARGB(255, 38, 20, 84),
-                  fontSize: 15,
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w600,
-                ),
-                decoration: const InputDecoration(
-                  hintText: 'Search Food',
-                  prefixIcon: Icon(Icons.search),
-                  prefixIconColor: Color.fromARGB(255, 164, 164, 164),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(50)),
-                    borderSide: BorderSide(
-                      width: 2,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 15.0,
+                    right: 15,
+                    bottom: 10,
+                  ),
+                  child: TextField(
+                    controller: _filter,
+                    style: const TextStyle(
                       color: Color.fromARGB(255, 38, 20, 84),
+                      fontSize: 15,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w600,
+                    ),
+                    decoration: const InputDecoration(
+                      hintText: 'Search Food',
+                      prefixIcon: Icon(Icons.search),
+                      prefixIconColor: Color.fromARGB(255, 164, 164, 164),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                        borderSide: BorderSide(
+                          width: 2,
+                          color: Color.fromARGB(255, 38, 20, 84),
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 2,
+                          color: Color.fromARGB(255, 38, 20, 84),
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: EdgeInsets.all(7),
                     ),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 2,
-                      color: Color.fromARGB(255, 38, 20, 84),
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(50)),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: EdgeInsets.all(7),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 15.0,
+                    bottom: 5,
+                  ),
+                  child: SizedBox(
+                    height: 50,
+                    child: ListView(
+                      scrollDirection:
+                          Axis.horizontal, // Make it scroll horizontally
+                      children: categories
+                          .map((category) => Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 8.0,
+                                  bottom: 8,
+                                  left: 5,
+                                ),
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty
+                                        .resolveWith<Color>(
+                                      (Set<MaterialState> states) {
+                                        // If this category is the selected one, use a different color
+                                        if (selectedCategory ==
+                                            category.toLowerCase()) {
+                                          return Color.fromARGB(
+                                              255, 67, 223, 234);
+                                        }
+                                        return const Color.fromARGB(
+                                            255, 249, 255, 254);
+                                      },
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      if (selectedCategory ==
+                                          category.toLowerCase()) {
+                                        selectedCategory =
+                                            null; // Unselect the category
+                                      } else {
+                                        selectedCategory =
+                                            category.toLowerCase();
+                                      }
+                                    });
+                                  },
+                                  child: Text(
+                                    category,
+                                    style: TextStyle(
+                                      color: selectedCategory ==
+                                              category.toLowerCase()
+                                          ? Color.fromARGB(255, 255, 255, 255)
+                                          : Color.fromARGB(255, 122, 122, 122),
+                                      fontSize: 15,
+                                      fontFamily: 'Inter',
+                                      fontWeight: selectedCategory ==
+                                              category.toLowerCase()
+                                          ? FontWeight.w600
+                                          : FontWeight.w300,
+                                    ),
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<Map>>(
-              future: _mealsFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  List<Map> meals = snapshot.data!;
-                  return GridView.builder(
-                    padding: const EdgeInsets.all(10.0),
-                    itemCount: meals.length,
-                    itemBuilder: (ctx, i) => MealBox(
-                      meal: Meal(
-                        name: meals[i]['mealName'],
-                        imageUrl: 'assets/' +
-                            (meals[i]['mealPicture'] ?? 'AddDish.png'),
-                        id: meals[i]['mealId'],
-                        carbohydrates: meals[i]['carbohydrates'],
-                        unit: meals[i]['unit'],
-                        quantity: 1,
-                        ingredients: [],
+            child: (selectedCategory == null)
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(
+                          left: 15.0,
+                          right: 15,
+                          top: 10,
+                        ),
+                        child: Text(
+                          'My Meals: ',
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: Color.fromARGB(255, 38, 20, 84),
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Inter',
+                          ),
+                        ),
+                      ), // Add this line
+
+                      FutureBuilder<List<Map>>(
+                        future: db.searchCatgeory('myMeals'),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else if (snapshot.data!.isEmpty) {
+                            return const Text(
+                                'No meals found for this category');
+                          } else {
+                            List<Map> meals = snapshot.data!;
+                            return Expanded(
+                              child: GridView.builder(
+                                padding: const EdgeInsets.all(10.0),
+                                itemCount: meals.length,
+                                itemBuilder: (ctx, i) => MealBox(
+                                  meal: Meal(
+                                    name: meals[i]['mealName'],
+                                    imageUrl: 'assets/' +
+                                        (meals[i]['mealPicture'] ??
+                                            'AddDish.png'),
+                                    id: meals[i]['mealId'],
+                                    carbohydrates: meals[i]['carbohydrates'],
+                                    unit: meals[i]['unit'],
+                                    quantity: 1,
+                                    ingredients: [],
+                                  ),
+                                  ind: widget.Index,
+                                ),
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  childAspectRatio: 3 / 3.5,
+                                  crossAxisSpacing: 5,
+                                  mainAxisSpacing: 10,
+                                ),
+                              ),
+                            );
+                          }
+                        },
                       ),
-                      ind: widget.Index,
-                    ),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      childAspectRatio: 3 / 3.5,
-                      crossAxisSpacing: 5,
-                      mainAxisSpacing: 10,
-                    ),
-                  );
-                }
-              },
-            ),
+                    ],
+                  )
+                : FutureBuilder<List<Map>>(
+                    future: selectedCategory != 'all'
+                        ? db.searchCatgeory(selectedCategory!)
+                        : _mealsFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (snapshot.data!.isEmpty) {
+                        // Add this clause
+                        return Text('No meals found for this category');
+                      } else {
+                        List<Map> meals = snapshot.data!;
+                        return GridView.builder(
+                          padding: const EdgeInsets.all(10.0),
+                          itemCount: meals.length,
+                          itemBuilder: (ctx, i) => MealBox(
+                            meal: Meal(
+                              name: meals[i]['mealName'],
+                              imageUrl: 'assets/' +
+                                  (meals[i]['mealPicture'] ?? 'AddDish.png'),
+                              id: meals[i]['mealId'],
+                              carbohydrates: meals[i]['carbohydrates'],
+                              unit: meals[i]['unit'],
+                              quantity: 1,
+                              ingredients: [],
+                            ),
+                            ind: widget.Index,
+                          ),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            childAspectRatio: 3 / 3.5,
+                            crossAxisSpacing: 5,
+                            mainAxisSpacing: 10,
+                          ),
+                        );
+                      }
+                    },
+                  ),
           ),
         ],
       ),

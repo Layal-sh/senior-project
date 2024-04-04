@@ -506,6 +506,13 @@ class DBHelper {
     return response;
   }
 
+  Future<List<Map>> searchCatgeory(String input) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!
+        .rawQuery('SELECT * FROM "Meals" WHERE tags LIKE ?', ['%$input%']);
+    return response;
+  }
+
   //////////////////////////////////////////////////////////////////
   /////////////// Search and filtering of categories ////////////////
   //////////////////////////////////////////////////////////////////
