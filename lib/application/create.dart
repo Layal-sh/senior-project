@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
@@ -24,7 +26,7 @@ class _CreateMealState extends State<CreateMeal> {
     setState(() {});
   }
 
-  double totalCarbs = 0;
+  double totalCCarbs = 0;
   XFile? _selectedImage;
   void _pickImage() async {
     final ImagePicker _picker = ImagePicker();
@@ -69,7 +71,7 @@ class _CreateMealState extends State<CreateMeal> {
   void initState() {
     super.initState();
     loadMeals();
-    TotalCarbs();
+    TotalCCarbs();
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (mounted) {
         // Check if the widget is still in the tree
@@ -87,13 +89,18 @@ class _CreateMealState extends State<CreateMeal> {
   void dispose() {
     // Clean up the controller when the widget is disposed.
     _nameController.dispose();
-    chosenMeals.clear();
+    chosenCMeals.clear();
     _timer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: Color.fromARGB(255, 38, 20, 84), // Set status bar color
+      ));
+    });
     return Scaffold(
       body: SingleChildScrollView(
         child: SafeArea(
@@ -266,11 +273,11 @@ class _CreateMealState extends State<CreateMeal> {
                       ),
                     ),
                     const SizedBox(
-                      height: 10,
+                      height: 5,
                     ),
                     Wrap(
                       spacing: 8.0, // gap between adjacent chips
-                      runSpacing: 4.0, // gap between lines
+
                       children: [
                         for (var category in categories)
                           ChoiceChip(
@@ -305,9 +312,6 @@ class _CreateMealState extends State<CreateMeal> {
                             },
                           ),
                       ],
-                    ),
-                    const SizedBox(
-                      height: 20,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -367,7 +371,7 @@ class _CreateMealState extends State<CreateMeal> {
                                 var result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Meals()),
+                                      builder: (context) => Meals(Index: 1)),
                                 );
                                 if (result == 'refresh') {
                                   refresh();
@@ -460,16 +464,19 @@ class _CreateMealState extends State<CreateMeal> {
                       ],
                     )
                   */
+                    const SizedBox(
+                      height: 5,
+                    ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.9,
                       child: Wrap(
                         direction: Axis.horizontal,
-                        alignment: chosenMeals.isEmpty
+                        alignment: chosenCMeals.isEmpty
                             ? WrapAlignment.center
                             : WrapAlignment.start,
                         spacing: 10,
                         children: <Widget>[
-                          for (var meal in chosenMeals)
+                          for (var meal in chosenCMeals)
                             Stack(
                               clipBehavior: Clip.none,
                               children: [
@@ -490,12 +497,12 @@ class _CreateMealState extends State<CreateMeal> {
                                   child: GestureDetector(
                                     onTap: () {
                                       _timer?.cancel();
-                                      totalCarbs =
-                                          calculateTotalCarbs(chosenMeals) -
+                                      totalCCarbs =
+                                          calculateTotalCarbs(chosenCMeals) -
                                               (meal["carbohydrates"] *
                                                   meal['quantity']);
                                       setState(() {
-                                        chosenMeals.remove(meal);
+                                        chosenCMeals.remove(meal);
 
                                         showTotalCarbs = false;
                                       });

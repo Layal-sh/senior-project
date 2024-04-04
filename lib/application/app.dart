@@ -254,7 +254,7 @@ class _AddInputState extends State<AddInput> {
   int bolusCalculationResult = 0;
   double totalCarbs = 0;
   void updateBolusCalculation() {
-    if (_GlucoseController.text.isNotEmpty && showTotalCarbs==true) {
+    if (_GlucoseController.text.isNotEmpty && showTotalCarbs == true) {
       /* &&
         _CarbController.text.isNotEmpty && getChosenMeals().isNotEmpty*/
       glucoseLevel = double.parse(_GlucoseController.text);
@@ -623,6 +623,7 @@ class _AddInputState extends State<AddInput> {
                                           setState(
                                             () {
                                               showTotalCarbs = true;
+                                              updateBolusCalculation();
                                             },
                                           );
                                         },
@@ -728,14 +729,17 @@ class _AddInputState extends State<AddInput> {
                               var result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Meals()),
+                                    builder: (context) => Meals(Index: 0)),
                               );
                               if (result == 'refresh') {
                                 refresh();
                               }
                               _timer =
                                   Timer.periodic(Duration(seconds: 1), (timer) {
-                                setState(() {});
+                                if (mounted) {
+                                  // Check if the widget is still in the tree
+                                  setState(() {});
+                                }
                               });
                               setState(() {
                                 showTotalCarbs = false;
