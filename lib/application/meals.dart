@@ -11,16 +11,21 @@ import 'package:sugar_sense/main.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 
 class Meals extends StatefulWidget {
-  const Meals({Key? key}) : super(key: key);
+  final int Index;
+  const Meals({required this.Index});
 
   @override
   State<Meals> createState() => _MealsState();
 }
 
 List<Map> chosenMeals = [];
-
+List<Map> chosenCMeals = [];
 List<Map> getChosenMeals() {
   return chosenMeals;
+}
+
+List<Map> getChosenCMeals() {
+  return chosenCMeals;
 }
 
 DBHelper db = DBHelper.instance;
@@ -63,31 +68,33 @@ class _MealsState extends State<Meals> {
         ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
         elevation: 0,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextButton(
-              style: TextButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50.0),
+        actions: widget.Index == 0
+            ? [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50.0),
+                      ),
+                      backgroundColor: const Color.fromARGB(255, 45, 170, 178),
+                      //padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CreateMeal()),
+                      );
+                    },
+                    child: const Text(
+                      'Create',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ),
-                backgroundColor: const Color.fromARGB(255, 45, 170, 178),
-                //padding: const EdgeInsets.all(16),
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CreateMeal()),
-                );
-              },
-              child: const Text(
-                'Create',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
-        ],
+              ]
+            : [],
       ),
       body: Column(
         children: [
@@ -152,6 +159,7 @@ class _MealsState extends State<Meals> {
                         quantity: 1,
                         ingredients: [],
                       ),
+                      ind: widget.Index,
                     ),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
@@ -179,6 +187,7 @@ class Meal {
   final double quantity;
   final int unit;
   final List<eIngredient> ingredients;
+  //final int ind;
   Meal({
     required this.name,
     required this.imageUrl,
@@ -187,6 +196,7 @@ class Meal {
     required this.quantity,
     required this.unit,
     required this.ingredients,
+    //required this.ind,
   });
   String toString() {
     return 'Meal{name: $name, imageUrl: $imageUrl, id: $id, carbodydrates: $carbohydrates, quantity: $quantity, unit: $unit}';
@@ -214,44 +224,86 @@ double TotalCarbs() {
 }
 
 Function addToChosenMeals = (int id, double quantity) async {
-  bool found=false;
+  bool found = false;
   print("entered chosen meals");
   print(chosenMeals);
   chosenMeals.forEach((meal) {
-  if(meal['id']==id){
-    found=true;
-  }
+    if (meal['id'] == id) {
+      found = true;
+    }
   });
 
-  if(found){
+  if (found) {
     return false;
-  }else{
+  } else {
+    List<Map> meal = await db.getMealById(id);
 
-      List<Map> meal = await db.getMealById(id);
+    var imageUrl = 'assets/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
+    Map<String, dynamic> insertedMeal = {
+      'name': meal[0]['mealName'],
+      'imageUrl': imageUrl,
+      'id': id,
+      'carbohydrates': meal[0]['carbohydrates'],
+      'certainty': meal[0]['certainty'],
+      'quantity': quantity,
+      'unit': meal[0]['unit']
+    };
+    chosenMeals.add(insertedMeal);
 
-  var imageUrl = 'assets/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
-  Map<String, dynamic> insertedMeal = {
-    'name': meal[0]['mealName'],
-    'imageUrl': imageUrl,
-    'id': id,
-    'carbohydrates': meal[0]['carbohydrates'],
-    'certainty': meal[0]['certainty'],
-    'quantity': quantity,
-    'unit': meal[0]['unit']
-  };
-  chosenMeals.add(insertedMeal);
+    logger.info(
+        "Added meal to chosen meals --> name: ${insertedMeal['name']} carbs: ${insertedMeal['carbohydrates']} quantity: ${insertedMeal['quantity']} unit: ${insertedMeal['unit']} certainty: ${insertedMeal['certainty']}");
 
-  logger.info(
-      "Added meal to chosen meals --> name: ${insertedMeal['name']} carbs: ${insertedMeal['carbohydrates']} quantity: ${insertedMeal['quantity']} unit: ${insertedMeal['unit']} certainty: ${insertedMeal['certainty']}");
-    
+    return true;
+  }
+};
+
+double totalCCarbs = 0;
+double TotalCCarbs() {
+  for (var meal in chosenCMeals) {
+    double mealCarbohydrates = meal['carbohydrates'] * meal['quantity'];
+    totalCCarbs += mealCarbohydrates;
+  }
+  return totalCCarbs;
+}
+
+Function addToChosenCMeals = (int id, double quantity) async {
+  bool found = false;
+  print("entered chosen meals");
+  print(chosenCMeals);
+  chosenCMeals.forEach((meal) {
+    if (meal['id'] == id) {
+      found = true;
+    }
+  });
+
+  if (found) {
+    return false;
+  } else {
+    List<Map> meal = await db.getMealById(id);
+
+    var imageUrl = 'assets/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
+    Map<String, dynamic> insertedMeal = {
+      'name': meal[0]['mealName'],
+      'imageUrl': imageUrl,
+      'id': id,
+      'carbohydrates': meal[0]['carbohydrates'],
+      'certainty': meal[0]['certainty'],
+      'quantity': quantity,
+      'unit': meal[0]['unit']
+    };
+    chosenCMeals.add(insertedMeal);
+
+    logger.info(
+        "Added meal to chosen meals --> name: ${insertedMeal['name']} carbs: ${insertedMeal['carbohydrates']} quantity: ${insertedMeal['quantity']} unit: ${insertedMeal['unit']} certainty: ${insertedMeal['certainty']}");
+
     return true;
   }
 };
 
 class MealBox extends StatefulWidget {
   final Meal meal;
-
-  const MealBox({required this.meal});
+  final int ind;
+  const MealBox({required this.meal, required this.ind});
   @override
   _MealBoxState createState() => _MealBoxState();
 }
@@ -355,7 +407,7 @@ class _MealBoxState extends State<MealBox> {
                           color: Color.fromARGB(255, 45, 170, 178),
                         ),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         if (quantityController.text.isEmpty) {
                           print('Quantity is empty');
                           showDialog(
@@ -386,7 +438,28 @@ class _MealBoxState extends State<MealBox> {
                             },
                           );
                         } else {
-                          Navigator.of(context).pop(quantityController.text);
+                          bool found;
+                          if (widget.ind == 0) {
+                            found = await addToChosenMeals(widget.meal.id,
+                                double.parse(quantityController.text));
+                          } else {
+                            found = await addToChosenCMeals(widget.meal.id,
+                                double.parse(quantityController.text));
+                          }
+
+                          if (found) {
+                            Navigator.pop(context, 'refresh');
+                            Navigator.pop(context, 'refresh');
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const AlertDialog(
+                                  content: Text('Meal was already added'),
+                                );
+                              },
+                            );
+                          }
                         }
                       },
                     ),
@@ -482,11 +555,10 @@ class _MealBoxState extends State<MealBox> {
                         var result = await Navigator.push(
                           context,
                           PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    MealDetailsPage(
-                              meal: widget.meal,
-                            ),
+                            pageBuilder: (context, animation,
+                                    secondaryAnimation) =>
+                                MealDetailsPage(
+                                    meal: widget.meal, index: widget.ind),
                             transitionsBuilder: (context, animation,
                                 secondaryAnimation, child) {
                               return FadeTransition(
@@ -500,13 +572,13 @@ class _MealBoxState extends State<MealBox> {
                           Navigator.pop(context, 'refresh');
                         }
                       },
-                      child: const CircleAvatar(
-                        radius: 11,
+                      child: CircleAvatar(
+                        radius: MediaQuery.of(context).size.width * 0.027,
                         backgroundColor: Color.fromARGB(170, 64, 205, 215),
                         child: Icon(
                           Icons.arrow_forward_ios,
                           color: Color.fromARGB(255, 255, 255, 255),
-                          size: 14,
+                          size: MediaQuery.of(context).size.width * 0.035,
                         ),
                       ),
                     ),

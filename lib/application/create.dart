@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
@@ -16,7 +19,14 @@ class CreateMeal extends StatefulWidget {
   State<CreateMeal> createState() => _CreateMealState();
 }
 
+Timer? _timer;
+
 class _CreateMealState extends State<CreateMeal> {
+  void refresh() {
+    setState(() {});
+  }
+
+  double totalCCarbs = 0;
   XFile? _selectedImage;
   void _pickImage() async {
     final ImagePicker _picker = ImagePicker();
@@ -47,11 +57,27 @@ class _CreateMealState extends State<CreateMeal> {
   ];
 
   List<String> selectedCategories = [];
+  bool showTotalCarbs = false;
+  void addMeal() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {});
+    });
+    setState(() {
+      showTotalCarbs = false;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     loadMeals();
+    TotalCCarbs();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (mounted) {
+        // Check if the widget is still in the tree
+        setState(() {});
+      }
+    });
   }
 
   void loadMeals() async {
@@ -63,14 +89,21 @@ class _CreateMealState extends State<CreateMeal> {
   void dispose() {
     // Clean up the controller when the widget is disposed.
     _nameController.dispose();
+    chosenCMeals.clear();
+    _timer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: Color.fromARGB(255, 38, 20, 84), // Set status bar color
+      ));
+    });
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: SafeArea(
           child: Column(
             children: [
               Container(
@@ -93,6 +126,7 @@ class _CreateMealState extends State<CreateMeal> {
                             color: Colors.white,
                           ),
                           onPressed: () {
+                            _timer?.cancel();
                             Navigator.pop(context);
                           },
                         ),
@@ -188,7 +222,6 @@ class _CreateMealState extends State<CreateMeal> {
                 height: 20,
               ),
               Container(
-                height: MediaQuery.of(context).size.height - 280,
                 color: const Color.fromARGB(255, 231, 231, 231),
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -240,11 +273,11 @@ class _CreateMealState extends State<CreateMeal> {
                       ),
                     ),
                     const SizedBox(
-                      height: 10,
+                      height: 5,
                     ),
                     Wrap(
                       spacing: 8.0, // gap between adjacent chips
-                      runSpacing: 4.0, // gap between lines
+
                       children: [
                         for (var category in categories)
                           ChoiceChip(
@@ -279,9 +312,6 @@ class _CreateMealState extends State<CreateMeal> {
                             },
                           ),
                       ],
-                    ),
-                    const SizedBox(
-                      height: 20,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -337,12 +367,25 @@ class _CreateMealState extends State<CreateMeal> {
                             ),
                             const SizedBox(width: 20),
                             ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
+                              onPressed: () async {
+                                var result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Meals()),
+                                      builder: (context) => Meals(Index: 1)),
                                 );
+                                if (result == 'refresh') {
+                                  refresh();
+                                }
+                                _timer = Timer.periodic(Duration(seconds: 1),
+                                    (timer) {
+                                  if (mounted) {
+                                    // Check if the widget is still in the tree
+                                    setState(() {});
+                                  }
+                                });
+                                setState(() {
+                                  showTotalCarbs = false;
+                                });
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
@@ -364,70 +407,6 @@ class _CreateMealState extends State<CreateMeal> {
                         ),
                       ],
                     ),
-                    /*const Text(
-                      'Ingredients: ',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 38, 20, 84),
-                        fontSize: 17,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    */
-                    Column(
-                      children: <Widget>[
-                        // Replace this with your actual total carbs widget
-                        ListView.builder(
-                          shrinkWrap:
-                              true, // This allows the ListView to be inside a Column
-                          itemCount: chosenMeals.length,
-                          itemBuilder: (context, index) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text('${chosenMeals[index]['name']}'),
-                                Text(chosenMeals[index]['quantity'].toString()),
-                                Text(unitString(chosenMeals[index]['unit'])),
-                                IconButton(
-                                  icon: Icon(Icons.close),
-                                  onPressed: () {
-                                    setState(() {
-                                      chosenMeals.removeAt(index);
-                                    });
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                    selectedMeals.isEmpty
-                        ? Container()
-                        : Expanded(
-                            child: ListView.builder(
-                              itemCount: selectedMeals.length,
-                              itemBuilder: (context, index) {
-                                return Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(allMeals[index]['mealName']),
-                                    const Text('quantity'),
-                                    const Text('unit'),
-                                    IconButton(
-                                      icon: const Icon(Icons.close),
-                                      onPressed: () {
-                                        setState(() {
-                                          //selectedMeals.removeAt(index);
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                          ),
                     /*Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -485,6 +464,69 @@ class _CreateMealState extends State<CreateMeal> {
                       ],
                     )
                   */
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: Wrap(
+                        direction: Axis.horizontal,
+                        alignment: chosenCMeals.isEmpty
+                            ? WrapAlignment.center
+                            : WrapAlignment.start,
+                        spacing: 10,
+                        children: <Widget>[
+                          for (var meal in chosenCMeals)
+                            Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: SizedBox(
+                                    width: 80,
+                                    height: 80,
+                                    child: Image.asset(
+                                      '${meal['imageUrl']}',
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  left: 0,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      _timer?.cancel();
+                                      totalCCarbs =
+                                          calculateTotalCarbs(chosenCMeals) -
+                                              (meal["carbohydrates"] *
+                                                  meal['quantity']);
+                                      setState(() {
+                                        chosenCMeals.remove(meal);
+
+                                        showTotalCarbs = false;
+                                      });
+                                    },
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(50),
+                                      child: Container(
+                                        width: 30,
+                                        height: 30,
+                                        color: const Color.fromARGB(
+                                            255, 49, 205, 215),
+                                        child: const Icon(
+                                          Icons.remove,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -495,25 +537,3 @@ class _CreateMealState extends State<CreateMeal> {
     );
   }
 }
-
-List<Map> chosenMeals = [];
-List<Map> getChosenMeals() {
-  return chosenMeals;
-}
-
-Function addToChosenMeals = (int id, double quantity) async {
-  List<Map> meal = await db.getMealById(id);
-  var imageUrl = 'assets/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
-  Map<String, dynamic> insertedMeal = {
-    'name': meal[0]['mealName'],
-    'imageUrl': imageUrl,
-    'id': id,
-    'carbohydrates': meal[0]['carbohydrates'],
-    'certainty': meal[0]['certainty'],
-    'quantity': quantity,
-    'unit': meal[0]['unit']
-  };
-  chosenMeals.add(insertedMeal);
-  logger.info(
-      "Added meal to chosen meals --> name: ${insertedMeal['name']} carbs: ${insertedMeal['carbohydrates']} quantity: ${insertedMeal['quantity']} unit: ${insertedMeal['unit']} certainty: ${insertedMeal['certainty']}");
-};

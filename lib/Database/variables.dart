@@ -26,8 +26,8 @@ Future<void> loadPreferences() async {
   pid_ = prefs.getInt('pid_') ?? 0;
   insulinSensitivity_ = prefs.getInt('insulinSensitivity') ?? 20;
   carbRatio_ = prefs.getDouble('carbRatio') ?? 3;
-  carbRatio_2 = prefs.getDouble('carbRatio2') ?? 3;
-  carbRatio_3 = prefs.getDouble('carbRatio3') ?? 3;
+  carbRatio_2 = prefs.getDouble('carbRatio2') ?? 4;
+  carbRatio_3 = prefs.getDouble('carbRatio3') ?? 0;
   username_ = prefs.getString('username') ?? "";
   firstName_ = prefs.getString('firstName') ?? "";
   lastName_ = prefs.getString('lastName') ?? "";

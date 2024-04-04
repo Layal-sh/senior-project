@@ -14,7 +14,8 @@ import 'package:sugar_sense/main.dart';
 
 class MealDetailsPage extends StatefulWidget {
   final Meal meal;
-  const MealDetailsPage({required this.meal});
+  final int index;
+  const MealDetailsPage({required this.meal, required this.index});
 
   @override
   State<MealDetailsPage> createState() => _MealDetailsPageState();
@@ -105,260 +106,244 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                           left: 15,
                           right: 15,
                         ),
-                        child: Container(
-                          height: MediaQuery.of(context).size.height -
-                              MediaQuery.of(context).size.height * 0.3,
-                          decoration: const BoxDecoration(
-                            color: Color.fromARGB(255, 255, 249, 254),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20), // Top left corner
-                              topRight: Radius.circular(20), // Top right corner
-                              // Add other corners if needed
+                        child: Expanded(
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              color: Color.fromARGB(255, 255, 249, 254),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20), // Top left corner
+                                topRight:
+                                    Radius.circular(20), // Top right corner
+                                // Add other corners if needed
+                              ),
                             ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 25.0,
-                                  right: 25,
-                                  top: 25,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width -
-                                          80,
-                                      child: Expanded(
-                                        child: Text(
-                                          widget.meal.name,
-                                          style: const TextStyle(
-                                            color:
-                                                Color.fromARGB(255, 38, 20, 84),
-                                            fontSize: 35,
-                                            fontFamily: 'Inter',
-                                            letterSpacing: -0.75,
-                                            fontWeight: FontWeight.w900,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 25.0,
+                                    right: 25,
+                                    top: 25,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                80,
+                                        child: Expanded(
+                                          child: Text(
+                                            widget.meal.name,
+                                            style: const TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 38, 20, 84),
+                                              fontSize: 35,
+                                              fontFamily: 'Inter',
+                                              letterSpacing: -0.75,
+                                              fontWeight: FontWeight.w900,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      height: 15,
-                                    ),
-                                    const Text(
-                                      "Categories",
-                                      style: TextStyle(
-                                        color: Color.fromARGB(255, 38, 20, 84),
-                                        fontSize: 23,
-                                        fontFamily: 'InterBold',
-                                        letterSpacing: -0.75,
-                                        fontWeight: FontWeight.w700,
+                                      const SizedBox(
+                                        height: 15,
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    FutureBuilder<List<String>>(
-                                      future: db.getCategoryOfMeal(
-                                          widget.meal.id), // Call the function
-                                      builder: (BuildContext context,
-                                          AsyncSnapshot<List<String>>
-                                              snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return CircularProgressIndicator(); // Show a loading spinner while waiting
-                                        } else if (snapshot.hasError) {
-                                          return Text(
-                                              'Error: ${snapshot.error}'); // Show error if there is any
-                                        } else {
-                                          // Display the categories
-                                          return Wrap(
-                                            spacing: 10, // space between rows
-                                            runSpacing: 10,
-                                            children: snapshot.data!
-                                                .map(
-                                                  (category) => IntrinsicWidth(
-                                                    child: Container(
-                                                      height: 35,
-                                                      decoration: BoxDecoration(
-                                                        color: const Color
-                                                            .fromARGB(
-                                                            255, 30, 203, 215),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                left: 8.0,
-                                                                right: 8),
-                                                        child: Center(
-                                                          child: Text(
-                                                            category, // Display the category
-                                                            style:
-                                                                const TextStyle(
-                                                              color: Color
-                                                                  .fromARGB(
-                                                                      255,
-                                                                      255,
-                                                                      255,
-                                                                      255),
-                                                              fontSize: 18,
-                                                              fontFamily:
-                                                                  'Inter',
-                                                              letterSpacing:
-                                                                  -0.75,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w900,
+                                      const Text(
+                                        "Categories",
+                                        style: TextStyle(
+                                          color:
+                                              Color.fromARGB(255, 38, 20, 84),
+                                          fontSize: 23,
+                                          fontFamily: 'InterBold',
+                                          letterSpacing: -0.75,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      FutureBuilder<List<String>>(
+                                        future: db.getCategoryOfMeal(widget
+                                            .meal.id), // Call the function
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<List<String>>
+                                                snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return CircularProgressIndicator(); // Show a loading spinner while waiting
+                                          } else if (snapshot.hasError) {
+                                            return Text(
+                                                'Error: ${snapshot.error}'); // Show error if there is any
+                                          } else {
+                                            // Display the categories
+                                            return Wrap(
+                                              spacing: 10, // space between rows
+                                              runSpacing: 10,
+                                              children: snapshot.data!
+                                                  .map(
+                                                    (category) =>
+                                                        IntrinsicWidth(
+                                                      child: Container(
+                                                        height: 35,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: const Color
+                                                              .fromARGB(255, 30,
+                                                              203, 215),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 8.0,
+                                                                  right: 8),
+                                                          child: Center(
+                                                            child: Text(
+                                                              category, // Display the category
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                        255,
+                                                                        255,
+                                                                        255,
+                                                                        255),
+                                                                fontSize: 18,
+                                                                fontFamily:
+                                                                    'Inter',
+                                                                letterSpacing:
+                                                                    -0.75,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w900,
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                )
-                                                .toList(),
-                                          );
-                                        }
-                                      },
-                                    ),
-                                    FutureBuilder<List<Ingredient>>(
-                                      future: fetchIngredients(), //_ingFuture,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return const CircularProgressIndicator();
-                                        } else if (snapshot.hasError) {
-                                          return Text(
-                                              'Error: ${snapshot.error}');
-                                        } else {
-                                          if (snapshot.data!.isNotEmpty) {
-                                            var limitedData = snapshot.data!
-                                                .take(15)
-                                                .toList();
-                                            return Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const Padding(
-                                                  padding: EdgeInsets.only(
-                                                    bottom: 10,
-                                                  ),
-                                                  child: Text(
-                                                    'Ingredients:',
-                                                    style: TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 38, 20, 84),
-                                                      fontSize: 23,
-                                                      fontFamily: 'InterBold',
-                                                      letterSpacing: -0.75,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Column(
-                                                  children: List.generate(
-                                                    limitedData.length,
-                                                    (i) => IngBox(
-                                                        ingredient:
-                                                            snapshot.data![i]),
-                                                  ),
-                                                ),
-                                              ],
+                                                  )
+                                                  .toList(),
                                             );
-                                          } else {
-                                            return const SizedBox
-                                                .shrink(); // Return an empty widget if the list is empty
                                           }
-                                        }
-                                      },
-                                    ),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  bottom: 20.0,
-                                ),
-                                child: Center(
-                                  child: SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.8,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(10.0),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: const Color.fromARGB(
-                                                255, 0, 0, 0)),
-                                        borderRadius:
-                                            BorderRadius.circular(1.0),
+                                        },
                                       ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            'Carbohydrates',
-                                            style: TextStyle(
-                                              fontSize: 25.0,
-                                              fontFamily: 'InterBlack',
-                                            ),
-                                          ),
-                                          const Divider(
-                                            color: Color.fromARGB(255, 0, 0, 0),
-                                            //height: 10,
-                                            thickness: 1,
-                                          ),
-                                          const Text(
-                                            'Serving Size',
-                                            style: TextStyle(
-                                              fontSize: 20.0,
-                                              fontFamily: 'Inter',
-                                              fontWeight: FontWeight.w800,
-                                            ),
-                                          ),
-                                          Row(
-                                            children: [
-                                              Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
+                                      FutureBuilder<List<Ingredient>>(
+                                        future:
+                                            fetchIngredients(), //_ingFuture,
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const CircularProgressIndicator();
+                                          } else if (snapshot.hasError) {
+                                            return Text(
+                                                'Error: ${snapshot.error}');
+                                          } else {
+                                            if (snapshot.data!.isNotEmpty) {
+                                              var limitedData = snapshot.data!
+                                                  .take(15)
+                                                  .toList();
+                                              return Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                      Icons.arrow_drop_up,
-                                                      size: 40,
+                                                  const Padding(
+                                                    padding: EdgeInsets.only(
+                                                      bottom: 10,
                                                     ),
-                                                    onPressed: () {
-                                                      currentValue.value =
-                                                          double.parse(
-                                                              controller.text);
-                                                      if (currentValue.value <
-                                                          99) {
-                                                        currentValue.value +=
-                                                            1.0;
-                                                        controller.text =
-                                                            currentValue.value
-                                                                .toString();
-                                                      }
-                                                    },
+                                                    child: Text(
+                                                      'Ingredients:',
+                                                      style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 38, 20, 84),
+                                                        fontSize: 23,
+                                                        fontFamily: 'InterBold',
+                                                        letterSpacing: -0.75,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                      ),
+                                                    ),
                                                   ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            0.0),
-                                                    child: IconButton(
+                                                  Column(
+                                                    children: List.generate(
+                                                      limitedData.length,
+                                                      (i) => IngBox(
+                                                          ingredient: snapshot
+                                                              .data![i]),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            } else {
+                                              return const SizedBox
+                                                  .shrink(); // Return an empty widget if the list is empty
+                                            }
+                                          }
+                                        },
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: 20.0,
+                                  ),
+                                  child: Center(
+                                    child: SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(10.0),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: const Color.fromARGB(
+                                                  255, 0, 0, 0)),
+                                          borderRadius:
+                                              BorderRadius.circular(1.0),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              'Carbohydrates',
+                                              style: TextStyle(
+                                                fontSize: 25.0,
+                                                fontFamily: 'InterBlack',
+                                              ),
+                                            ),
+                                            const Divider(
+                                              color:
+                                                  Color.fromARGB(255, 0, 0, 0),
+                                              //height: 10,
+                                              thickness: 1,
+                                            ),
+                                            const Text(
+                                              'Serving Size',
+                                              style: TextStyle(
+                                                fontSize: 20.0,
+                                                fontFamily: 'Inter',
+                                                fontWeight: FontWeight.w800,
+                                              ),
+                                            ),
+                                            Row(
+                                              children: [
+                                                Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    IconButton(
                                                       icon: const Icon(
-                                                        Icons.arrow_drop_down,
+                                                        Icons.arrow_drop_up,
                                                         size: 40,
                                                       ),
                                                       onPressed: () {
@@ -366,110 +351,140 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                                                             double.parse(
                                                                 controller
                                                                     .text);
-                                                        if (currentValue.value >
-                                                            1) {
-                                                          currentValue.value -=
-                                                              1;
+                                                        if (currentValue.value <
+                                                            99) {
+                                                          currentValue.value +=
+                                                              1.0;
                                                           controller.text =
                                                               currentValue.value
-                                                                  .toString(); // decrementing value
+                                                                  .toString();
                                                         }
                                                       },
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.13,
-                                                height: 40.0,
-                                                child: TextField(
-                                                  controller: controller,
-                                                  keyboardType:
-                                                      TextInputType.number,
-                                                  textAlign: TextAlign.center,
-                                                  style: const TextStyle(
-                                                      fontSize: 20.0),
-                                                  decoration:
-                                                      const InputDecoration(
-                                                    contentPadding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 10.0),
-                                                    border:
-                                                        OutlineInputBorder(),
-                                                    hintText: '1',
-                                                  ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              0.0),
+                                                      child: IconButton(
+                                                        icon: const Icon(
+                                                          Icons.arrow_drop_down,
+                                                          size: 40,
+                                                        ),
+                                                        onPressed: () {
+                                                          currentValue.value =
+                                                              double.parse(
+                                                                  controller
+                                                                      .text);
+                                                          if (currentValue
+                                                                  .value >
+                                                              1) {
+                                                            currentValue
+                                                                .value -= 1;
+                                                            controller.text =
+                                                                currentValue
+                                                                    .value
+                                                                    .toString(); // decrementing value
+                                                          }
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              Expanded(
-                                                child: Text(
-                                                  "${widget.meal.name} (${unitString(widget.meal.unit)})", // Replace with your actual value
-                                                  style: const TextStyle(
-                                                    fontSize: 16.0,
-                                                    fontWeight: FontWeight.w900,
-                                                    fontFamily: 'Inter',
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const Divider(
-                                            color: Color.fromARGB(255, 0, 0, 0),
-                                            //height: 10,
-                                            thickness: 5,
-                                          ),
-                                          const SizedBox(
-                                            height: 10.0,
-                                          ),
-                                          const Text(
-                                            'Amount per Serving',
-                                            style: TextStyle(
-                                              fontSize: 17.0,
-                                              fontFamily: 'Inter',
-                                              //fontWeight: FontWeight.w800,
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 10.0,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text(
-                                                'Total Carbohydrates',
-                                                style: TextStyle(
-                                                  fontSize: 20.0,
-                                                  fontWeight: FontWeight.w800,
-                                                ),
-                                              ),
-                                              ValueListenableBuilder<double>(
-                                                valueListenable: currentValue,
-                                                builder:
-                                                    (context, value, child) {
-                                                  return Text(
-                                                    formatDouble(widget.meal
-                                                            .carbohydrates *
-                                                        value),
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.13,
+                                                  height: 40.0,
+                                                  child: TextField(
+                                                    controller: controller,
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                    textAlign: TextAlign.center,
                                                     style: const TextStyle(
-                                                        fontSize: 16.0),
-                                                  );
-                                                },
-                                              )
-                                            ],
-                                          ),
-                                        ],
+                                                        fontSize: 20.0),
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      contentPadding:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 10.0),
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      hintText: '1',
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    "${widget.meal.name} (${unitString(widget.meal.unit)})", // Replace with your actual value
+                                                    style: const TextStyle(
+                                                      fontSize: 16.0,
+                                                      fontWeight:
+                                                          FontWeight.w900,
+                                                      fontFamily: 'Inter',
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const Divider(
+                                              color:
+                                                  Color.fromARGB(255, 0, 0, 0),
+                                              //height: 10,
+                                              thickness: 5,
+                                            ),
+                                            const SizedBox(
+                                              height: 10.0,
+                                            ),
+                                            const Text(
+                                              'Amount per Serving',
+                                              style: TextStyle(
+                                                fontSize: 17.0,
+                                                fontFamily: 'Inter',
+                                                //fontWeight: FontWeight.w800,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 10.0,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                const Text(
+                                                  'Total Carbohydrates',
+                                                  style: TextStyle(
+                                                    fontSize: 20.0,
+                                                    fontWeight: FontWeight.w800,
+                                                  ),
+                                                ),
+                                                ValueListenableBuilder<double>(
+                                                  valueListenable: currentValue,
+                                                  builder:
+                                                      (context, value, child) {
+                                                    return Text(
+                                                      formatDouble(widget.meal
+                                                              .carbohydrates *
+                                                          value),
+                                                      style: const TextStyle(
+                                                          fontSize: 16.0),
+                                                    );
+                                                  },
+                                                )
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -621,17 +636,16 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                     onPressed: () async {
                       logger.info("adding to chosen meals");
                       try {
-                        if(_numberOfMeal.text.isEmpty){
+                        if (_numberOfMeal.text.isEmpty) {
                           showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const AlertDialog(
-                              content: Text('Specify the amount as a number'),
-                            );
-                          },
-                        );
-                        }
-                        else if (double.parse(_numberOfMeal.text) <= 0) {
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const AlertDialog(
+                                content: Text('Specify the amount as a number'),
+                              );
+                            },
+                          );
+                        } else if (double.parse(_numberOfMeal.text) <= 0) {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -642,36 +656,39 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                             },
                           );
                         } else {
-                          bool found= await addToChosenMeals(
-                              widget.meal.id, double.parse(_numberOfMeal.text));
+                          bool found;
+                          if (widget.index == 0) {
+                            found = await addToChosenMeals(widget.meal.id,
+                                double.parse(_numberOfMeal.text));
+                          } else {
+                            found = await addToChosenCMeals(widget.meal.id,
+                                double.parse(_numberOfMeal.text));
+                          }
 
-                            if(found){
-                              Navigator.pop(context, 'refresh');
-                            }
-                            else{
-                              showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return const AlertDialog(
-                                content: Text(
-                                    'Meal was already added'),
-                              );
-                            },
-                          );
-                            }
-                          
+                          if (found) {
+                            Navigator.pop(context, 'refresh');
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const AlertDialog(
+                                  content: Text('Meal was already added'),
+                                );
+                              },
+                            );
+                          }
+
                           //Navigator.of(context).pop(context, 'refresh');
                         }
                       } catch (e) {
                         showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return const AlertDialog(
-                                content: Text(
-                                    'an error occured'),
-                              );
-                            },
-                          );
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const AlertDialog(
+                              content: Text('an error occured'),
+                            );
+                          },
+                        );
                       }
                     },
                   ),
