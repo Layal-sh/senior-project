@@ -812,10 +812,14 @@ class _ArticlesState extends State<Articles> {
       logger.info("got $s");
       if (response.statusCode == 200) {
         List<dynamic> responseData = jsonDecode(response.body);
+        DBHelper dbHelper = DBHelper.instance;
+        for (var article in responseData) {
+          List<Map> result = await dbHelper.checkArticle(article['title']);
+          starred!.add(result.isNotEmpty);
+        }
 
         setState(() {
           articles.addAll(responseData);
-          starred?.addAll(List<bool>.filled(responseData.length, false));
         });
       }
     }
@@ -886,6 +890,7 @@ class _ArticlesState extends State<Articles> {
                         var response;
                         if (starred![index]) {
                           response = await dbHelper.deleteFavorite(url);
+                          logger.info(response);
                         } else {
                           response = await dbHelper.addFavorite(
                               title, url, imageUrl, date);
