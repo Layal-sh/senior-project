@@ -42,21 +42,6 @@ class _EditMealState extends State<EditMeal> {
     return ingredients;
   }
 
-  List<String> categories = [
-    'Drinks',
-    'Sweets & snacks',
-    'Pastries',
-    'Dairy products',
-    'Fruits',
-    'Lebanese dishes',
-    'Arabic desserts',
-    'Grains, pasta & rice',
-    'Breakfast',
-    'Lunch',
-    'Dinner'
-  ];
-
-  List<String> selectedCategories = [];
   List<double> globalControllers = [];
   @override
   void initState() {
@@ -67,7 +52,6 @@ class _EditMealState extends State<EditMeal> {
   }
 
   void loadCategories() async {
-    selectedCategories = await db.getCategoryOfMeal(widget.meal.id);
     setState(() {});
   }
 
@@ -312,58 +296,6 @@ class _EditMealState extends State<EditMeal> {
                         ),
                         const SizedBox(
                           height: 5,
-                        ),
-                        const Text(
-                          "Categories",
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 38, 20, 84),
-                            fontSize: 23,
-                            fontFamily: 'InterBold',
-                            letterSpacing: -0.75,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Wrap(
-                          spacing: 8.0, // gap between adjacent chips
-                          runSpacing: 4.0, // gap between lines
-                          children: [
-                            for (var category in categories)
-                              ChoiceChip(
-                                label: Opacity(
-                                  opacity: selectedCategories.contains(category)
-                                      ? 1.0
-                                      : 0.5, // Adjust the opacity based on whether the category is selected
-                                  child: Text(category),
-                                ),
-                                selected: selectedCategories.contains(category),
-                                selectedColor:
-                                    const Color.fromARGB(255, 51, 184, 194),
-                                backgroundColor:
-                                    const Color.fromARGB(126, 158, 158, 158),
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    color: selectedCategories.contains(category)
-                                        ? const Color.fromARGB(
-                                            255, 45, 170, 178)
-                                        : const Color.fromARGB(126, 158, 158,
-                                            158), // Adjust the border color based on whether the category is selected
-                                  ),
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                onSelected: (bool selected) {
-                                  setState(() {
-                                    if (selected) {
-                                      selectedCategories.add(category);
-                                    } else {
-                                      selectedCategories.remove(category);
-                                    }
-                                  });
-                                },
-                              ),
-                          ],
                         ),
                       ],
                     ),

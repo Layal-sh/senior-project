@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -208,7 +209,7 @@ class _MealsState extends State<Meals> {
                                           ? Color.fromARGB(255, 255, 255, 255)
                                           : Color.fromARGB(255, 122, 122, 122),
                                       fontSize: 15,
-                                      fontFamily: 'Inter',
+                                      fontFamily: 'Rubik',
                                       fontWeight: selectedCategory ==
                                               category.toLowerCase()
                                           ? FontWeight.w600
@@ -226,56 +227,82 @@ class _MealsState extends State<Meals> {
           ),
           Expanded(
             child: (selectedCategory == null)
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(
-                          left: 15.0,
-                          right: 15,
-                          top: 10,
-                        ),
-                        child: Text(
-                          'My Meals: ',
-                          style: TextStyle(
-                            fontSize: 24,
-                            color: Color.fromARGB(255, 38, 20, 84),
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Inter',
-                          ),
-                        ),
-                      ), // Add this line
-
-                      FutureBuilder<List<Map>>(
-                        future: db.searchCatgeory('myMeals'),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else if (snapshot.data!.isEmpty) {
-                            return const Text(
-                                'No meals found for this category');
-                          } else {
-                            List<Map> meals = snapshot.data!;
-                            return Expanded(
+                ? FutureBuilder<List<Map>>(
+                    future: db.searchCatgeory('myMeals'),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (snapshot.data!.isEmpty) {
+                        return const Text('No meals found for this category');
+                      } else {
+                        List<Map> meals = snapshot.data!;
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                left: 15.0,
+                                right: 15,
+                                top: 10,
+                              ),
+                              child: Text(
+                                'My Meals',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  color: Color.fromARGB(255, 38, 20, 84),
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'Rubik',
+                                ),
+                              ),
+                            ),
+                            Expanded(
                               child: GridView.builder(
-                                padding: const EdgeInsets.all(10.0),
+                                padding: const EdgeInsets.only(
+                                  left: 20.0,
+                                  top: 10,
+                                  bottom: 10,
+                                  right: 20,
+                                ),
                                 itemCount: meals.length,
-                                itemBuilder: (ctx, i) => MealBox(
-                                  meal: Meal(
-                                    name: meals[i]['mealName'],
-                                    imageUrl: 'assets/' +
-                                        (meals[i]['mealPicture'] ??
-                                            'AddDish.png'),
-                                    id: meals[i]['mealId'],
-                                    carbohydrates: meals[i]['carbohydrates'],
-                                    unit: meals[i]['unit'],
-                                    quantity: 1,
-                                    ingredients: [],
-                                  ),
-                                  ind: widget.Index,
+                                itemBuilder: (ctx, i) => Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    MealBox(
+                                      meal: Meal(
+                                        name: meals[i]['mealName'],
+                                        imageUrl: 'assets/' +
+                                            (meals[i]['mealPicture'] ??
+                                                'AddDish.png'),
+                                        id: meals[i]['mealId'],
+                                        carbohydrates: meals[i]
+                                            ['carbohydrates'],
+                                        unit: meals[i]['unit'],
+                                        quantity: 1,
+                                        ingredients: [],
+                                      ),
+                                      ind: widget.Index,
+                                    ),
+                                    Positioned(
+                                      top: -20,
+                                      left: -20,
+                                      child: IconButton(
+                                        icon: Icon(
+                                          Icons.delete,
+                                          size: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.1,
+                                          color:
+                                              Color.fromARGB(255, 12, 140, 149),
+                                        ),
+                                        onPressed: () {
+                                          // Add your delete functionality here
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 gridDelegate:
                                     const SliverGridDelegateWithFixedCrossAxisCount(
@@ -285,11 +312,11 @@ class _MealsState extends State<Meals> {
                                   mainAxisSpacing: 10,
                                 ),
                               ),
-                            );
-                          }
-                        },
-                      ),
-                    ],
+                            ),
+                          ],
+                        );
+                      }
+                    },
                   )
                 : FutureBuilder<List<Map>>(
                     future: selectedCategory != 'all'
