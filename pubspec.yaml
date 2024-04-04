@@ -257,7 +257,20 @@ flutter:
     - assets/yogurt with fruits.jpg
     - assets/Znoud El Set.jpg
     - assets/completed.png
-
+    - assets/All.png
+    - assets/Arabic desserts.png
+    - assets/Breakfast.png
+    - assets/Dairy products.png
+    - assets/Dinner.png
+    - assets/Fruits.png
+    - assets/Drinks.png
+    - assets/Grains, pasta & rice.png
+    - assets/Lebanese dishes.png
+    - assets/Lunch.png
+    - assets/My Meals.png
+    - assets/Pastries.png
+    - assets/Sweets & snacks.png
+    
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
