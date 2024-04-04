@@ -818,9 +818,10 @@ class _ArticlesState extends State<Articles> {
     ];
 
     for (String s in searches) {
+      logger.info("getting $s");
       final response =
           await http.get(Uri.parse('http://$localhost:8000/News/$s'));
-
+      logger.info("got $s");
       if (response.statusCode == 200) {
         List<dynamic> responseData = jsonDecode(response.body);
 
@@ -879,21 +880,29 @@ class _ArticlesState extends State<Articles> {
                     leading: imageUrl != null
                         ? Image.network(
                             imageUrl,
-                            width: 60, // adjust the width as needed
-                            height: 60, // adjust the height as needed
+                            width: 60,
+                            height: 60,
                             fit: BoxFit.cover,
                           )
                         : null,
                     title: Text(title),
-                    subtitle: date != null
-                        ? Text(date)
-                        : null, // display the date here
+                    subtitle: date != null ? Text(date) : null,
                     trailing: IconButton(
                       icon: Icon(
                         starred![index] ? Icons.star : Icons.star_border,
                         color: starred![index] ? Colors.yellow : null,
                       ),
-                      onPressed: () {
+                      onPressed: () async {
+                        logger.info("clicked");
+                        DBHelper dbHelper = DBHelper.instance;
+                        var response;
+                        if (starred![index]) {
+                          response = await dbHelper.deleteFavorite(url);
+                        } else {
+                          response = await dbHelper.addFavorite(
+                              title, url, imageUrl, date);
+                        }
+                        logger.info(response);
                         setState(() {
                           starred![index] = !starred![index];
                         });

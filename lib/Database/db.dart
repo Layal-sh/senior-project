@@ -464,7 +464,7 @@ class DBHelper {
     return response;
   }
 
-  addFavorite(String link, String title, String imageUrl, String date) async {
+  addFavorite(String link, String title, String? imageUrl, String? date) async {
     Database? mydb = await db;
     List<Map> chk = await checkArticle(link);
     if (chk.isNotEmpty) {
