@@ -826,7 +826,7 @@ class _ArticlesState extends State<Articles> {
         List<dynamic> responseData = jsonDecode(response.body);
         DBHelper dbHelper = DBHelper.instance;
         for (var article in responseData) {
-          List<Map> result = await dbHelper.checkArticle(article['title']);
+          List<Map> result = await dbHelper.checkArticle(article['link']);
           starred!.add(result.isNotEmpty);
         }
 
@@ -905,7 +905,7 @@ class _ArticlesState extends State<Articles> {
                           logger.info(response);
                         } else {
                           response = await dbHelper.addFavorite(
-                              title, url, imageUrl, date);
+                              url, title, imageUrl, date);
                         }
                         logger.info(response);
                         setState(() {

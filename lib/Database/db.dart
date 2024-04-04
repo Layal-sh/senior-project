@@ -152,6 +152,14 @@ class DBHelper {
     return response;
   }
 
+  dropAllArticles() async {
+    Database? mydb = await db;
+    int response = await mydb!.rawDelete('''
+    DELETE FROM Articles;
+    ''');
+    return response;
+  }
+
   ////////////////////////////////////////////////////////////
   /////////////// Display of Meals///////////////////////////
   ////////////////////////////////////////////////////////////
@@ -486,6 +494,7 @@ class DBHelper {
     return response;
   }
 
+//get all articles from the database
   selectAllArticle() async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
@@ -493,6 +502,7 @@ class DBHelper {
     ''');
     return response;
   }
+
   ///////////////////////////////////////////////////////////
   /////////////// Search for meals & category ////////////////
   ///////////////////////////////////////////////////////////
