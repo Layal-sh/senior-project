@@ -60,16 +60,21 @@ class _LoginState extends State<Login> {
       _isLoading = true;
     });
 
-    logger.info("syncing meals from the server to the local database");
+    //logger.info("syncing meals from the server to the local database");
     DBHelper dbHelper = DBHelper.instance;
-    await dbHelper.deleteMealComposition();
-    await dbHelper.syncMeals();
-    logger.info("synced meals successfully");
-    await dbHelper.syncMealComposition();
-    logger.info("synced meal compositions successfully");
+    //await dbHelper.deleteMealComposition();
+    //await dbHelper.syncMeals();
+    //logger.info("synced meals successfully");
+    //await dbHelper.syncMealComposition();
+    //logger.info("synced meal compositions successfully");
 
-    logger.info("saving values to shared preferences");
-    final response = await http
+    //logger.info("saving values to shared preferences");
+    logger.info("adding the favorite");
+    await dbHelper.addFavorite("test1", "test1", "tes1", "te1");
+    print(await dbHelper.selectAllArticle());
+    await dbHelper.deleteFavorite("test1");
+    print(await dbHelper.selectAllArticle());
+    /*final response = await http
         .post(
           Uri.parse('http://$localhost:8000/getUserDetails'), //$localhost
           headers: <String, String>{
@@ -137,7 +142,7 @@ class _LoginState extends State<Login> {
       }
       logger.info("saved values to shared preferences successfully");
     }
-
+*/
     setState(() {
       _isLoading = false;
     });

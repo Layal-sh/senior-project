@@ -486,6 +486,13 @@ class DBHelper {
     return response;
   }
 
+  selectAllArticle() async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+    SELECT * FROM Articles ;
+    ''');
+    return response;
+  }
   ///////////////////////////////////////////////////////////
   /////////////// Search for meals & category ////////////////
   ///////////////////////////////////////////////////////////
