@@ -62,13 +62,15 @@ class _LoginState extends State<Login> {
 
     logger.info("syncing meals from the server to the local database");
     DBHelper dbHelper = DBHelper.instance;
+    //dbHelper.dropAllArticles();
+    //print(await dbHelper.selectAllArticle());
     await dbHelper.deleteMealComposition();
     await dbHelper.syncMeals();
     logger.info("synced meals successfully");
     await dbHelper.syncMealComposition();
     logger.info("synced meal compositions successfully");
-
     logger.info("saving values to shared preferences");
+
     final response = await http
         .post(
           Uri.parse('http://$localhost:8000/getUserDetails'), //$localhost
@@ -137,7 +139,6 @@ class _LoginState extends State<Login> {
       }
       logger.info("saved values to shared preferences successfully");
     }
-
     setState(() {
       _isLoading = false;
     });

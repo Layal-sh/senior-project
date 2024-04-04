@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -11,16 +12,21 @@ import 'package:sugar_sense/main.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 
 class Meals extends StatefulWidget {
-  const Meals({Key? key}) : super(key: key);
+  final int Index;
+  const Meals({required this.Index});
 
   @override
   State<Meals> createState() => _MealsState();
 }
 
 List<Map> chosenMeals = [];
-
+List<Map> chosenCMeals = [];
 List<Map> getChosenMeals() {
   return chosenMeals;
+}
+
+List<Map> getChosenCMeals() {
+  return chosenCMeals;
 }
 
 DBHelper db = DBHelper.instance;
@@ -35,6 +41,21 @@ class _MealsState extends State<Meals> {
     _mealsFuture = db.selectAllMeals();
   }
 
+  String? selectedCategory;
+  List<String> categories = [
+    'All',
+    'Breakfast',
+    'Lunch',
+    'Dinner',
+    'Drinks',
+    'Sweets & snacks',
+    'Pastries',
+    'Dairy products',
+    'Fruits',
+    'Lebanese dishes',
+    'Arabic desserts',
+    'Grains, pasta & rice'
+  ];
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -63,107 +84,281 @@ class _MealsState extends State<Meals> {
         ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
         elevation: 0,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextButton(
-              style: TextButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50.0),
+        actions: widget.Index == 0
+            ? [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50.0),
+                      ),
+                      backgroundColor: const Color.fromARGB(255, 45, 170, 178),
+                      //padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CreateMeal()),
+                      );
+                    },
+                    child: const Text(
+                      'Create',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ),
-                backgroundColor: const Color.fromARGB(255, 45, 170, 178),
-                //padding: const EdgeInsets.all(16),
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CreateMeal()),
-                );
-              },
-              child: const Text(
-                'Create',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
-        ],
+              ]
+            : [],
       ),
       body: Column(
         children: [
           Container(
             color: const Color.fromARGB(255, 38, 20, 84),
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: TextField(
-                controller: _filter,
-                style: const TextStyle(
-                  color: Color.fromARGB(255, 38, 20, 84),
-                  fontSize: 15,
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w600,
-                ),
-                decoration: const InputDecoration(
-                  hintText: 'Search Food',
-                  prefixIcon: Icon(Icons.search),
-                  prefixIconColor: Color.fromARGB(255, 164, 164, 164),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(50)),
-                    borderSide: BorderSide(
-                      width: 2,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 15.0,
+                    right: 15,
+                    bottom: 10,
+                  ),
+                  child: TextField(
+                    controller: _filter,
+                    style: const TextStyle(
                       color: Color.fromARGB(255, 38, 20, 84),
+                      fontSize: 15,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w600,
+                    ),
+                    decoration: const InputDecoration(
+                      hintText: 'Search Food',
+                      prefixIcon: Icon(Icons.search),
+                      prefixIconColor: Color.fromARGB(255, 164, 164, 164),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                        borderSide: BorderSide(
+                          width: 2,
+                          color: Color.fromARGB(255, 38, 20, 84),
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 2,
+                          color: Color.fromARGB(255, 38, 20, 84),
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: EdgeInsets.all(7),
                     ),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 2,
-                      color: Color.fromARGB(255, 38, 20, 84),
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(50)),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: EdgeInsets.all(7),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 15.0,
+                    bottom: 5,
+                  ),
+                  child: SizedBox(
+                    height: 50,
+                    child: ListView(
+                      scrollDirection:
+                          Axis.horizontal, // Make it scroll horizontally
+                      children: categories
+                          .map((category) => Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 8.0,
+                                  bottom: 8,
+                                  left: 5,
+                                ),
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty
+                                        .resolveWith<Color>(
+                                      (Set<MaterialState> states) {
+                                        // If this category is the selected one, use a different color
+                                        if (selectedCategory ==
+                                            category.toLowerCase()) {
+                                          return Color.fromARGB(
+                                              255, 67, 223, 234);
+                                        }
+                                        return const Color.fromARGB(
+                                            255, 249, 255, 254);
+                                      },
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      if (selectedCategory ==
+                                          category.toLowerCase()) {
+                                        selectedCategory =
+                                            null; // Unselect the category
+                                      } else {
+                                        selectedCategory =
+                                            category.toLowerCase();
+                                      }
+                                    });
+                                  },
+                                  child: Text(
+                                    category,
+                                    style: TextStyle(
+                                      color: selectedCategory ==
+                                              category.toLowerCase()
+                                          ? Color.fromARGB(255, 255, 255, 255)
+                                          : Color.fromARGB(255, 122, 122, 122),
+                                      fontSize: 15,
+                                      fontFamily: 'Rubik',
+                                      fontWeight: selectedCategory ==
+                                              category.toLowerCase()
+                                          ? FontWeight.w600
+                                          : FontWeight.w300,
+                                    ),
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<Map>>(
-              future: _mealsFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  List<Map> meals = snapshot.data!;
-                  return GridView.builder(
-                    padding: const EdgeInsets.all(10.0),
-                    itemCount: meals.length,
-                    itemBuilder: (ctx, i) => MealBox(
-                      meal: Meal(
-                        name: meals[i]['mealName'],
-                        imageUrl: 'assets/' +
-                            (meals[i]['mealPicture'] ?? 'AddDish.png'),
-                        id: meals[i]['mealId'],
-                        carbohydrates: meals[i]['carbohydrates'],
-                        unit: meals[i]['unit'],
-                        quantity: 1,
-                        ingredients: [],
-                      ),
-                    ),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      childAspectRatio: 3 / 3.5,
-                      crossAxisSpacing: 5,
-                      mainAxisSpacing: 10,
-                    ),
-                  );
-                }
-              },
-            ),
+            child: (selectedCategory == null)
+                ? FutureBuilder<List<Map>>(
+                    future: db.searchCatgeory('myMeals'),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (snapshot.data!.isEmpty) {
+                        return const Text('No meals found for this category');
+                      } else {
+                        List<Map> meals = snapshot.data!;
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                left: 15.0,
+                                right: 15,
+                                top: 10,
+                              ),
+                              child: Text(
+                                'My Meals',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  color: Color.fromARGB(255, 38, 20, 84),
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'Rubik',
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: GridView.builder(
+                                padding: const EdgeInsets.only(
+                                  left: 20.0,
+                                  top: 10,
+                                  bottom: 10,
+                                  right: 20,
+                                ),
+                                itemCount: meals.length,
+                                itemBuilder: (ctx, i) => Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    MealBox(
+                                      meal: Meal(
+                                        name: meals[i]['mealName'],
+                                        imageUrl: 'assets/' +
+                                            (meals[i]['mealPicture'] ??
+                                                'AddDish.png'),
+                                        id: meals[i]['mealId'],
+                                        carbohydrates: meals[i]
+                                            ['carbohydrates'],
+                                        unit: meals[i]['unit'],
+                                        quantity: 1,
+                                        ingredients: [],
+                                      ),
+                                      ind: widget.Index,
+                                    ),
+                                    Positioned(
+                                      top: -20,
+                                      left: -20,
+                                      child: IconButton(
+                                        icon: Icon(
+                                          Icons.delete,
+                                          size: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.1,
+                                          color:
+                                              Color.fromARGB(255, 12, 140, 149),
+                                        ),
+                                        onPressed: () {
+                                          // Add your delete functionality here
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  childAspectRatio: 3 / 3.5,
+                                  crossAxisSpacing: 5,
+                                  mainAxisSpacing: 10,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    },
+                  )
+                : FutureBuilder<List<Map>>(
+                    future: selectedCategory != 'all'
+                        ? db.searchCatgeory(selectedCategory!)
+                        : _mealsFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (snapshot.data!.isEmpty) {
+                        // Add this clause
+                        return Text('No meals found for this category');
+                      } else {
+                        List<Map> meals = snapshot.data!;
+                        return GridView.builder(
+                          padding: const EdgeInsets.all(10.0),
+                          itemCount: meals.length,
+                          itemBuilder: (ctx, i) => MealBox(
+                            meal: Meal(
+                              name: meals[i]['mealName'],
+                              imageUrl: 'assets/' +
+                                  (meals[i]['mealPicture'] ?? 'AddDish.png'),
+                              id: meals[i]['mealId'],
+                              carbohydrates: meals[i]['carbohydrates'],
+                              unit: meals[i]['unit'],
+                              quantity: 1,
+                              ingredients: [],
+                            ),
+                            ind: widget.Index,
+                          ),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            childAspectRatio: 3 / 3.5,
+                            crossAxisSpacing: 5,
+                            mainAxisSpacing: 10,
+                          ),
+                        );
+                      }
+                    },
+                  ),
           ),
         ],
       ),
@@ -179,6 +374,7 @@ class Meal {
   final double quantity;
   final int unit;
   final List<eIngredient> ingredients;
+  //final int ind;
   Meal({
     required this.name,
     required this.imageUrl,
@@ -187,6 +383,7 @@ class Meal {
     required this.quantity,
     required this.unit,
     required this.ingredients,
+    //required this.ind,
   });
   String toString() {
     return 'Meal{name: $name, imageUrl: $imageUrl, id: $id, carbodydrates: $carbohydrates, quantity: $quantity, unit: $unit}';
@@ -214,44 +411,86 @@ double TotalCarbs() {
 }
 
 Function addToChosenMeals = (int id, double quantity) async {
-  bool found=false;
+  bool found = false;
   print("entered chosen meals");
   print(chosenMeals);
   chosenMeals.forEach((meal) {
-  if(meal['id']==id){
-    found=true;
-  }
+    if (meal['id'] == id) {
+      found = true;
+    }
   });
 
-  if(found){
+  if (found) {
     return false;
-  }else{
+  } else {
+    List<Map> meal = await db.getMealById(id);
 
-      List<Map> meal = await db.getMealById(id);
+    var imageUrl = 'assets/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
+    Map<String, dynamic> insertedMeal = {
+      'name': meal[0]['mealName'],
+      'imageUrl': imageUrl,
+      'id': id,
+      'carbohydrates': meal[0]['carbohydrates'],
+      'certainty': meal[0]['certainty'],
+      'quantity': quantity,
+      'unit': meal[0]['unit']
+    };
+    chosenMeals.add(insertedMeal);
 
-  var imageUrl = 'assets/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
-  Map<String, dynamic> insertedMeal = {
-    'name': meal[0]['mealName'],
-    'imageUrl': imageUrl,
-    'id': id,
-    'carbohydrates': meal[0]['carbohydrates'],
-    'certainty': meal[0]['certainty'],
-    'quantity': quantity,
-    'unit': meal[0]['unit']
-  };
-  chosenMeals.add(insertedMeal);
+    logger.info(
+        "Added meal to chosen meals --> name: ${insertedMeal['name']} carbs: ${insertedMeal['carbohydrates']} quantity: ${insertedMeal['quantity']} unit: ${insertedMeal['unit']} certainty: ${insertedMeal['certainty']}");
 
-  logger.info(
-      "Added meal to chosen meals --> name: ${insertedMeal['name']} carbs: ${insertedMeal['carbohydrates']} quantity: ${insertedMeal['quantity']} unit: ${insertedMeal['unit']} certainty: ${insertedMeal['certainty']}");
-    
+    return true;
+  }
+};
+
+double totalCCarbs = 0;
+double TotalCCarbs() {
+  for (var meal in chosenCMeals) {
+    double mealCarbohydrates = meal['carbohydrates'] * meal['quantity'];
+    totalCCarbs += mealCarbohydrates;
+  }
+  return totalCCarbs;
+}
+
+Function addToChosenCMeals = (int id, double quantity) async {
+  bool found = false;
+  print("entered chosen meals");
+  print(chosenCMeals);
+  chosenCMeals.forEach((meal) {
+    if (meal['id'] == id) {
+      found = true;
+    }
+  });
+
+  if (found) {
+    return false;
+  } else {
+    List<Map> meal = await db.getMealById(id);
+
+    var imageUrl = 'assets/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
+    Map<String, dynamic> insertedMeal = {
+      'name': meal[0]['mealName'],
+      'imageUrl': imageUrl,
+      'id': id,
+      'carbohydrates': meal[0]['carbohydrates'],
+      'certainty': meal[0]['certainty'],
+      'quantity': quantity,
+      'unit': meal[0]['unit']
+    };
+    chosenCMeals.add(insertedMeal);
+    print("Chosen Meals: $chosenCMeals");
+    logger.info(
+        "Added meal to chosen meals --> name: ${insertedMeal['name']} carbs: ${insertedMeal['carbohydrates']} quantity: ${insertedMeal['quantity']} unit: ${insertedMeal['unit']} certainty: ${insertedMeal['certainty']}");
+
     return true;
   }
 };
 
 class MealBox extends StatefulWidget {
   final Meal meal;
-
-  const MealBox({required this.meal});
+  final int ind;
+  const MealBox({required this.meal, required this.ind});
   @override
   _MealBoxState createState() => _MealBoxState();
 }
@@ -355,7 +594,7 @@ class _MealBoxState extends State<MealBox> {
                           color: Color.fromARGB(255, 45, 170, 178),
                         ),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         if (quantityController.text.isEmpty) {
                           print('Quantity is empty');
                           showDialog(
@@ -386,7 +625,28 @@ class _MealBoxState extends State<MealBox> {
                             },
                           );
                         } else {
-                          Navigator.of(context).pop(quantityController.text);
+                          bool found;
+                          if (widget.ind == 0) {
+                            found = await addToChosenMeals(widget.meal.id,
+                                double.parse(quantityController.text));
+                          } else {
+                            found = await addToChosenCMeals(widget.meal.id,
+                                double.parse(quantityController.text));
+                          }
+
+                          if (found) {
+                            Navigator.pop(context, 'refresh');
+                            Navigator.pop(context, 'refresh');
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const AlertDialog(
+                                  content: Text('Meal was already added'),
+                                );
+                              },
+                            );
+                          }
                         }
                       },
                     ),
@@ -482,11 +742,10 @@ class _MealBoxState extends State<MealBox> {
                         var result = await Navigator.push(
                           context,
                           PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    MealDetailsPage(
-                              meal: widget.meal,
-                            ),
+                            pageBuilder: (context, animation,
+                                    secondaryAnimation) =>
+                                MealDetailsPage(
+                                    meal: widget.meal, index: widget.ind),
                             transitionsBuilder: (context, animation,
                                 secondaryAnimation, child) {
                               return FadeTransition(
@@ -500,13 +759,13 @@ class _MealBoxState extends State<MealBox> {
                           Navigator.pop(context, 'refresh');
                         }
                       },
-                      child: const CircleAvatar(
-                        radius: 11,
+                      child: CircleAvatar(
+                        radius: MediaQuery.of(context).size.width * 0.027,
                         backgroundColor: Color.fromARGB(170, 64, 205, 215),
                         child: Icon(
                           Icons.arrow_forward_ios,
                           color: Color.fromARGB(255, 255, 255, 255),
-                          size: 14,
+                          size: MediaQuery.of(context).size.width * 0.035,
                         ),
                       ),
                     ),
