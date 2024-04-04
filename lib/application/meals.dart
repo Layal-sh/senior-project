@@ -292,7 +292,7 @@ Function addToChosenCMeals = (int id, double quantity) async {
       'unit': meal[0]['unit']
     };
     chosenCMeals.add(insertedMeal);
-
+    print("Chosen Meals: $chosenCMeals");
     logger.info(
         "Added meal to chosen meals --> name: ${insertedMeal['name']} carbs: ${insertedMeal['carbohydrates']} quantity: ${insertedMeal['quantity']} unit: ${insertedMeal['unit']} certainty: ${insertedMeal['certainty']}");
 

@@ -84,6 +84,9 @@ String unitString(int unit) {
     case 6:
       ans = "scoops";
       break;
+    case 7:
+      ans = "serving";
+      break;
   }
   return ans;
 }
