@@ -779,7 +779,7 @@ class _ArticlesState extends State<Articles> {
         for (var article in responseData) {
           List<Map> res = await dbHelper.checkArticle(article['title']);
           starred!.add(res.isNotEmpty);
-          logger.info("Starred: ${starred!.last}");
+          //logger.info("Starred: ${starred!.last}");
         }
 
         setState(() {
@@ -855,11 +855,12 @@ class _ArticlesState extends State<Articles> {
                         logger.info("clicked");
                         DBHelper dbHelper = DBHelper.instance;
                         var response;
-                        if (starred![index])
+                        if (starred![index]) {
                           response = await dbHelper.deleteFavorite(url);
-                        else
+                        } else {
                           response = await dbHelper.addFavorite(
-                              title, url, imageUrl!, date!);
+                              title, url, imageUrl, date);
+                        }
                         logger.info(response);
                         setState(() {
                           starred![index] = !starred![index];
