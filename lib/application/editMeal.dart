@@ -151,13 +151,15 @@ class _EditMealState extends State<EditMeal> {
                                 await createChildMeal());
 
                             if (response != -1) {
-                              await addToChosenCMeals(response, 1.0);
+                              await addToChosenMeals(response, 1.0);
+                              //here the amount is set to 1.0 by default, you still have to make the user choose the amount
+                              //RAJ3INA AALA L ADD INPUTSSSS
                             } else {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return const AlertDialog(
-                                    content: Text('Meal could not be edited'),
+                                    content: Text('Meal Name Already Exists!'),
                                   );
                                 },
                               );
