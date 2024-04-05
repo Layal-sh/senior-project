@@ -218,6 +218,14 @@ class DBHelper {
     return response;
   }
 
+  deleteMealById(String mealName) async{
+     Database? mydb = await db;
+    int response = await mydb!.rawDelete('''
+    DELETE FROM Meals WHERE mealName = "$mealName";
+    ''');
+    return response;
+  }
+
   ////////////////////////////////////////////////////////////
   /////////////// Functions For AI///////////////////////////
   ////////////////////////////////////////////////////////////
@@ -515,10 +523,10 @@ class DBHelper {
   /////////////// Search for meals & category ////////////////
   ///////////////////////////////////////////////////////////
 
-  searchMeal(String input) async {
+  Future<List<Map>> searchMeal(String input) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery(
-        'SELECT mealId, mealName FROM "Meals" WHERE mealName = ? OR tags LIKE ?',
+        'SELECT * FROM "Meals" WHERE mealName = ? OR tags LIKE ?',
         [input, '%$input%']);
     return response;
   }

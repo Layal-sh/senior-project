@@ -34,6 +34,8 @@ String _formatCategory(String category) {
   return category.replaceAll(' ', '').toLowerCase();
 }
 
+String? selectedCategory;
+
 class _MealsState extends State<Meals> {
   final TextEditingController _filter = TextEditingController();
   late Future<List<Map>> _mealsFuture;
@@ -42,9 +44,14 @@ class _MealsState extends State<Meals> {
   void initState() {
     super.initState();
     _mealsFuture = db.selectAllMeals();
+    _filter.addListener(_onSearchChanged);
   }
 
-  String? selectedCategory;
+  void _onSearchChanged() {
+    selectedCategory = null;
+    setState(() {});
+  }
+
   List<String> categories = [
     'All',
     'Breakfast',
@@ -72,6 +79,7 @@ class _MealsState extends State<Meals> {
         leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => {
+                  selectedCategory = null,
                   Navigator.of(context).pop(),
                 }),
         iconTheme: const IconThemeData(
@@ -158,12 +166,17 @@ class _MealsState extends State<Meals> {
                       fillColor: Colors.white,
                       contentPadding: EdgeInsets.all(7),
                     ),
+                    onChanged: (value) {
+                      setState(() {
+                        _filter.text = value;
+                      });
+                    },
                   ),
                 ),
               ],
             ),
           ),
-          selectedCategory == null
+          (selectedCategory == null && _filter.text.isEmpty)
               ? Padding(
                   padding: const EdgeInsets.only(
                     top: 10,
@@ -301,6 +314,11 @@ class _MealsState extends State<Meals> {
                                       } else {
                                         selectedCategory =
                                             category.toLowerCase();
+                                        if (_filter.text.isNotEmpty) {
+                                          _filter.clear();
+                                          selectedCategory = category
+                                              .toLowerCase(); // Clear the filter text
+                                        }
                                       }
                                     });
                                   },
@@ -327,73 +345,55 @@ class _MealsState extends State<Meals> {
                 ),
           Expanded(
             child: (selectedCategory == null)
-                ? Container() /*FutureBuilder<List<Map>>(
-                    future: db.searchCatgeory('myMeals'),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else if (snapshot.data!.isEmpty) {
-                        return const Text('No meals found for this category');
-                      } else {
-                        List<Map> meals = snapshot.data!;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                left: 15.0,
+                ? _filter.text.isNotEmpty
+                    ? FutureBuilder<List<Map>>(
+                        future: db.searchMeal(_filter.text),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else if (snapshot.data!.isEmpty) {
+                            return Text('No meals is found');
+                          } else {
+                            List<Map> meals = snapshot.data!;
+                            return GridView.builder(
+                              padding: const EdgeInsets.only(
+                                top: 10.0,
+                                bottom: 10,
+                                left: 15,
                                 right: 15,
-                                top: 10,
                               ),
-                              child: Text(
-                                'My Meals',
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  color: Color.fromARGB(255, 38, 20, 84),
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: 'Rubik',
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: GridView.builder(
-                                padding: const EdgeInsets.only(
-                                  left: 20.0,
-                                  top: 10,
-                                  bottom: 10,
-                                  right: 20,
-                                ),
-                                itemCount: meals.length,
-                                itemBuilder: (ctx, i) => Stack(
-                                  clipBehavior: Clip.none,
-                                  children: [
-                                    MealBox(
-                                      meal: Meal(
-                                        name: meals[i]['mealName'],
-                                        imageUrl: 'assets/' +
-                                            (meals[i]['mealPicture'] ??
-                                                'AddDish.png'),
-                                        id: meals[i]['mealId'],
-                                        carbohydrates: meals[i]
-                                            ['carbohydrates'],
-                                        unit: meals[i]['unit'],
-                                        quantity: 1,
-                                        ingredients: [],
-                                      ),
-                                      ind: widget.Index,
+                              itemCount: meals.length,
+                              itemBuilder: (ctx, i) => Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  MealBox(
+                                    meal: Meal(
+                                      name: meals[i]['mealName'],
+                                      imageUrl: 'assets/' +
+                                          (meals[i]['mealPicture'] ??
+                                              'AddDish.png'),
+                                      id: meals[i]['mealId'],
+                                      carbohydrates: meals[i]['carbohydrates'],
+                                      unit: meals[i]['unit'],
+                                      quantity: 1,
+                                      ingredients: [],
                                     ),
+                                    ind: widget.Index,
+                                  ),
+                                  if (selectedCategory == 'my meals')
                                     Positioned(
-                                      top: -20,
-                                      left: -20,
+                                      top: -15,
+                                      left: -15,
                                       child: IconButton(
                                         icon: Icon(
                                           Icons.delete,
                                           size: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              0.1,
+                                              0.09,
                                           color:
                                               Color.fromARGB(255, 12, 140, 149),
                                         ),
@@ -402,25 +402,23 @@ class _MealsState extends State<Meals> {
                                         },
                                       ),
                                     ),
-                                  ],
-                                ),
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  childAspectRatio: 3 / 3.5,
-                                  crossAxisSpacing: 5,
-                                  mainAxisSpacing: 10,
-                                ),
+                                ],
                               ),
-                            ),
-                          ],
-                        );
-                      }
-                    },
-                  )*/
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                childAspectRatio: 3 / 3.6,
+                                crossAxisSpacing: 5,
+                                mainAxisSpacing: 10,
+                              ),
+                            );
+                          }
+                        },
+                      )
+                    : Container()
                 : FutureBuilder<List<Map>>(
-                    future: selectedCategory == 'My Meals'
-                        ? db.searchCatgeory('myMeals')
+                    future: _filter.text.isNotEmpty
+                        ? db.searchMeal(_filter.text)
                         : selectedCategory != 'all'
                             ? db.searchCatgeory(
                                 _formatCategory(selectedCategory!))
@@ -442,40 +440,18 @@ class _MealsState extends State<Meals> {
                             right: 15,
                           ),
                           itemCount: meals.length,
-                          itemBuilder: (ctx, i) => Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              MealBox(
-                                meal: Meal(
-                                  name: meals[i]['mealName'],
-                                  imageUrl: 'assets/' +
-                                      (meals[i]['mealPicture'] ??
-                                          'AddDish.png'),
-                                  id: meals[i]['mealId'],
-                                  carbohydrates: meals[i]['carbohydrates'],
-                                  unit: meals[i]['unit'],
-                                  quantity: 1,
-                                  ingredients: [],
-                                ),
-                                ind: widget.Index,
-                              ),
-                              if (selectedCategory == 'my meals')
-                                Positioned(
-                                  top: -15,
-                                  left: -15,
-                                  child: IconButton(
-                                    icon: Icon(
-                                      Icons.delete,
-                                      size: MediaQuery.of(context).size.width *
-                                          0.09,
-                                      color: Color.fromARGB(255, 12, 140, 149),
-                                    ),
-                                    onPressed: () {
-                                      // Add your delete functionality here
-                                    },
-                                  ),
-                                ),
-                            ],
+                          itemBuilder: (ctx, i) => MealBox(
+                            meal: Meal(
+                              name: meals[i]['mealName'],
+                              imageUrl: 'assets/' +
+                                  (meals[i]['mealPicture'] ?? 'AddDish.png'),
+                              id: meals[i]['mealId'],
+                              carbohydrates: meals[i]['carbohydrates'],
+                              unit: meals[i]['unit'],
+                              quantity: 1,
+                              ingredients: [],
+                            ),
+                            ind: widget.Index,
                           ),
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
@@ -789,122 +765,144 @@ class _MealBoxState extends State<MealBox> {
           },
         );
       },
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5), // Change this value as needed
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 90,
-              child: FutureBuilder<ByteData>(
-                future:
-                    DefaultAssetBundle.of(context).load(widget.meal.imageUrl),
-                builder:
-                    (BuildContext context, AsyncSnapshot<ByteData> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.hasError) {
-                      //print('No');
-                      return ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(5),
-                          topRight: Radius.circular(5),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Card(
+            shape: RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.circular(5), // Change this value as needed
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 90,
+                  child: FutureBuilder<ByteData>(
+                    future: DefaultAssetBundle.of(context)
+                        .load(widget.meal.imageUrl),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<ByteData> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (snapshot.hasError) {
+                          //print('No');
+                          return ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(5),
+                              topRight: Radius.circular(5),
+                            ),
+                            child: Image.asset(
+                              'assets/AddDish.png',
+                              width: MediaQuery.of(context).size.width,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        } else {
+                          return ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(5),
+                              topRight: Radius.circular(5),
+                            ),
+                            child: Image.asset(
+                              widget.meal.imageUrl,
+                              width: MediaQuery.of(context).size.width,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        }
+                      } else {
+                        return const CircularProgressIndicator(); // Show a loading spinner while waiting for the asset to load
+                      }
+                    },
+                  ),
+                ),
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 8,
+                        right: 8,
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.7,
+                          child: Text(
+                            widget.meal.name,
+                            softWrap: true,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 38, 20, 84),
+                              fontSize: 35,
+                              fontFamily: 'Ruda',
+                              letterSpacing: -0.75,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
-                        child: Image.asset(
-                          'assets/AddDish.png',
-                          width: MediaQuery.of(context).size.width,
-                          fit: BoxFit.cover,
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: InkWell(
+                          onTap: () async {
+                            var result = await Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        MealDetailsPage(
+                                            meal: widget.meal,
+                                            index: widget.ind),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  );
+                                },
+                              ),
+                            );
+                            if (result == 'refresh') {
+                              Navigator.pop(context, 'refresh');
+                            }
+                          },
+                          child: CircleAvatar(
+                            radius: MediaQuery.of(context).size.width * 0.027,
+                            backgroundColor: Color.fromARGB(170, 64, 205, 215),
+                            child: Icon(
+                              Icons.arrow_forward_ios,
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              size: MediaQuery.of(context).size.width * 0.035,
+                            ),
+                          ),
                         ),
-                      );
-                    } else {
-                      return ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(5),
-                          topRight: Radius.circular(5),
-                        ),
-                        child: Image.asset(
-                          widget.meal.imageUrl,
-                          width: MediaQuery.of(context).size.width,
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                    }
-                  } else {
-                    return const CircularProgressIndicator(); // Show a loading spinner while waiting for the asset to load
-                  }
+                      ),
+                    ),
+                  ],
+                ),
+                //meal name
+              ],
+            ),
+          ),
+          if (selectedCategory == 'my meals')
+            Positioned(
+              top: -15,
+              left: -15,
+              child: IconButton(
+                icon: Icon(
+                  Icons.delete,
+                  size: MediaQuery.of(context).size.width * 0.09,
+                  color: Color.fromARGB(255, 12, 140, 149),
+                ),
+                onPressed: () {
+                  db.deleteMealById(widget.meal.name);
                 },
               ),
             ),
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 8,
-                    right: 8,
-                  ),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.7,
-                      child: Text(
-                        widget.meal.name,
-                        softWrap: true,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Color.fromARGB(255, 38, 20, 84),
-                          fontSize: 35,
-                          fontFamily: 'Ruda',
-                          letterSpacing: -0.75,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: InkWell(
-                      onTap: () async {
-                        var result = await Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder: (context, animation,
-                                    secondaryAnimation) =>
-                                MealDetailsPage(
-                                    meal: widget.meal, index: widget.ind),
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              return FadeTransition(
-                                opacity: animation,
-                                child: child,
-                              );
-                            },
-                          ),
-                        );
-                        if (result == 'refresh') {
-                          Navigator.pop(context, 'refresh');
-                        }
-                      },
-                      child: CircleAvatar(
-                        radius: MediaQuery.of(context).size.width * 0.027,
-                        backgroundColor: Color.fromARGB(170, 64, 205, 215),
-                        child: Icon(
-                          Icons.arrow_forward_ios,
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          size: MediaQuery.of(context).size.width * 0.035,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            //meal name
-          ],
-        ),
+        ],
       ),
     );
   }

@@ -22,16 +22,18 @@ class EditMeal extends StatefulWidget {
 }
 
 DBHelper db = DBHelper.instance;
+List<double> controllers = [];
 
 class _EditMealState extends State<EditMeal> {
   String? _selectedImagePath;
   final TextEditingController _nameController = TextEditingController();
   late Future<List<eIngredient>> ingredients;
+
   Future<List<eIngredient>> efetchIngredients() async {
     List<Map> response =
         await db.getIngredients(widget.meal.id); // Call getIngredients
 
-    // Convert the response into a list of Ingredient objects
+    controllers = List.filled(response.length, 0.0);
     List<eIngredient> ingredients = response
         .map((item) {
           return eIngredient(
@@ -45,31 +47,44 @@ class _EditMealState extends State<EditMeal> {
     return ingredients;
   }
 
-  List<double> globalControllers = [];
-
   createChildMeal() async {
     List<Map> childMeal = [];
     List<Map> response = await db.getIngredients(widget.meal.id);
-    print("get ingredients response: $response");
-    print("global Controllers: $globalControllers");
-    for (int i = 0; i < globalControllers.length; i++) {
+
+    print(controllers);
+    for (int i = 0; i < controllers.length; i++) {
       childMeal.add({
         'mealID': response[i]['mealId'],
         'mealName': response[i]['mealName'],
         'carbohydrates': response[i]['carbohydrates'],
         'unit': response[i]['unit'],
-        'quantity': globalControllers[i],
+        'quantity': controllers[i],
       });
     }
     return childMeal;
   }
 
+  List<eIngBox> boxes = [];
   @override
   void initState() {
     super.initState();
     loadCategories();
     _selectedImagePath = widget.meal.imageUrl;
     _nameController.text = widget.meal.name;
+    efetchIngredients().then((ingredients) {
+      boxes = List.generate(
+        ingredients.length,
+        (i) {
+          eIngBox box = eIngBox(
+            ingredient: ingredients[i],
+            index: i,
+          );
+
+          return box;
+        },
+      );
+      setState(() {}); // Call setState to trigger a rebuild
+    });
   }
 
   void loadCategories() async {
@@ -119,6 +134,7 @@ class _EditMealState extends State<EditMeal> {
                                 const EdgeInsets.symmetric(horizontal: 16.0),
                           ),
                           onPressed: () async {
+                            print(controllers);
                             DBHelper db = DBHelper.instance;
                             print(await createChildMeal());
                             int response = await db.editNewMeal(
@@ -280,24 +296,8 @@ class _EditMealState extends State<EditMeal> {
                               return Text('Error: ${snapshot.error}');
                             } else {
                               if (snapshot.data!.isNotEmpty) {
-                                var limitedData =
-                                    snapshot.data!.take(15).toList();
-                                List<eIngBox> boxes = List.generate(
-                                  limitedData.length,
-                                  (i) => eIngBox(ingredient: snapshot.data![i]),
-                                );
+                                //globalControllers = controllers;
 
-                                // Create a list of controllers
-                                List<double> controllers = boxes.map((box) {
-                                  try {
-                                    return double.parse(
-                                        box.quantityController.text);
-                                  } catch (e) {
-                                    return 0.0; // Return 0.0 if the text is not a valid double
-                                  }
-                                }).toList();
-
-                                globalControllers = controllers;
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -356,23 +356,34 @@ class eIngredient {
   final String name;
   //final double quantity;
   final int unit;
-  final double quantity;
+  double quantity;
 
   eIngredient({required this.name, required this.quantity, required this.unit});
 }
 
 class eIngBox extends StatefulWidget {
   final eIngredient ingredient;
-
-  const eIngBox({required this.ingredient});
+  final int index;
+  final TextEditingController quantityController = TextEditingController();
+  eIngBox({required this.index, required this.ingredient}) {
+    quantityController.text = ingredient.quantity.toString();
+  }
   @override
   _eIngBoxState createState() => _eIngBoxState();
-  TextEditingController get quantityController =>
-      _eIngBoxState().quantityController;
 }
 
 class _eIngBoxState extends State<eIngBox> {
-  final TextEditingController quantityController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    widget.quantityController.addListener(() {
+      setState(() {
+        widget.ingredient.quantity =
+            double.tryParse(widget.quantityController.text) ?? 0.0;
+        controllers[widget.index] = widget.ingredient.quantity;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -413,12 +424,18 @@ class _eIngBoxState extends State<eIngBox> {
               height: 35,
               child: TextFormField(
                 textAlign: TextAlign.center,
-                controller: quantityController,
+                controller: widget.quantityController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   hintText: '0.0',
                   border: InputBorder.none,
                 ),
+                onChanged: (value) {
+                  widget.quantityController.text = value;
+
+                  print(widget.ingredient.quantity);
+                  //print(controllers);
+                },
               ),
             ),
             Container(
@@ -430,15 +447,15 @@ class _eIngBoxState extends State<eIngBox> {
                 ),
                 border: Border(
                   top: BorderSide(
-                    color: const Color.fromARGB(255, 0, 0, 0),
+                    color: Color.fromARGB(255, 0, 0, 0),
                     width: 1.0,
                   ),
                   right: BorderSide(
-                    color: const Color.fromARGB(255, 0, 0, 0),
+                    color: Color.fromARGB(255, 0, 0, 0),
                     width: 1.0,
                   ),
                   bottom: BorderSide(
-                    color: const Color.fromARGB(255, 0, 0, 0),
+                    color: Color.fromARGB(255, 0, 0, 0),
                     width: 1.0,
                   ),
                 ),
