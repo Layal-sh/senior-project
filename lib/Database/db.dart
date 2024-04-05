@@ -590,9 +590,31 @@ class DBHelper {
   }
 
   Future<List<Map>> searchCatgeory(String input) async {
-    Database? mydb = await db;
-    List<Map> response = await mydb!
-        .rawQuery('SELECT * FROM "Meals" WHERE tags LIKE ?', ['%$input%']);
+    // Database? mydb = await db;
+    // List<Map> response = await mydb!
+    //     .rawQuery('SELECT * FROM "Meals" WHERE tags LIKE ?', ['%$input%']);
+    // return response;
+
+     Database? mydb = await db;
+    List<String> words = input.split(' '); // split the input into words
+
+    // create a SQL query that matches each word separately
+    String query = 'SELECT * FROM "Meals" WHERE ';
+    for (int i = 0; i < words.length; i++) {
+      query += 'mealName LIKE ? OR tags LIKE ?';
+      if (i != words.length - 1) {
+        query += ' OR ';
+      }
+    }
+
+    // create a list of parameters for the query
+    List<String> params = [];
+    for (String word in words) {
+      params.add('%$word%');
+      params.add('%$word%');
+    }
+
+    List<Map> response = await mydb!.rawQuery(query, params);
     return response;
   }
 
