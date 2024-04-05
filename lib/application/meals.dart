@@ -58,7 +58,7 @@ class _MealsState extends State<Meals> {
     'Lunch',
     'Dinner',
     'Drinks',
-    'Sweets & snacks',
+    'Sweet & snacks',
     'Pastries',
     'Dairy products',
     'Fruits',
@@ -67,6 +67,22 @@ class _MealsState extends State<Meals> {
     'Grains, pasta & rice',
     'My Meals'
   ];
+  /*List<String> catnb = [
+    'All',
+    '9',
+    '10',
+    '11',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '12'
+  ];
+*/
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -420,8 +436,10 @@ class _MealsState extends State<Meals> {
                     future: _filter.text.isNotEmpty
                         ? db.searchMeal(_filter.text)
                         : selectedCategory != 'all'
-                            ? db.searchCatgeory(
-                                _formatCategory(selectedCategory!))
+                            ? selectedCategory != 'Grains, pasta & rice'
+                                ? db.searchCatgeory(
+                                    _formatCategory(selectedCategory!))
+                                : db.searchCatgeory("grains & pasta & rice")
                             : _mealsFuture,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -887,7 +905,7 @@ class _MealBoxState extends State<MealBox> {
               ],
             ),
           ),
-          if (selectedCategory == 'my meals')
+          if (selectedCategory == 'My Meals')
             Positioned(
               top: -15,
               left: -15,
@@ -898,7 +916,11 @@ class _MealBoxState extends State<MealBox> {
                   color: Color.fromARGB(255, 12, 140, 149),
                 ),
                 onPressed: () {
-                  db.deleteMealById(widget.meal.name);
+                  db.deleteMealById(widget.meal.name).then((_) {
+                    setState(() {
+                      selectedCategory = null;
+                    });
+                  });
                 },
               ),
             ),

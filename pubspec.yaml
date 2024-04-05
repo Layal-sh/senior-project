@@ -270,7 +270,7 @@ flutter:
     - assets/Lunch.png
     - assets/My Meals.png
     - assets/Pastries.png
-    - assets/Sweets & snacks.png
+    - assets/Sweet & snacks.png
     
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

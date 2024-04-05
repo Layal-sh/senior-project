@@ -218,8 +218,8 @@ class DBHelper {
     return response;
   }
 
-  deleteMealById(String mealName) async{
-     Database? mydb = await db;
+  deleteMealById(String mealName) async {
+    Database? mydb = await db;
     int response = await mydb!.rawDelete('''
     DELETE FROM Meals WHERE mealName = "$mealName";
     ''');
@@ -588,7 +588,7 @@ class DBHelper {
         response = "arabic desserts";
         break;
       case 8:
-        response = "grains, pasta & rice";
+        response = "grains & pasta & rice";
         break;
       case 9:
         response = "breakfast";
@@ -632,7 +632,7 @@ class DBHelper {
     if ((await searchMealForCatgeory(mealId, "arabic desserts")).isNotEmpty) {
       categories.add("arabic desserts");
     }
-    if ((await searchMealForCatgeory(mealId, "grains, pasta & rice"))
+    if ((await searchMealForCatgeory(mealId, "grains & pasta & rice"))
         .isNotEmpty) {
       categories.add("grains, pasta & rice");
     }

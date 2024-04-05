@@ -181,8 +181,8 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                                         height: 5,
                                       ),
                                       FutureBuilder<List<String>>(
-                                        future: db.getCategoryOfMeal(widget
-                                            .meal.id), // Call the function
+                                        future: db
+                                            .getCategoryOfMeal(widget.meal.id),
                                         builder: (BuildContext context,
                                             AsyncSnapshot<List<String>>
                                                 snapshot) {
