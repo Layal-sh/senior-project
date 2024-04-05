@@ -30,6 +30,9 @@ List<Map> getChosenCMeals() {
 }
 
 DBHelper db = DBHelper.instance;
+String _formatCategory(String category) {
+  return category.replaceAll(' ', '').toLowerCase();
+}
 
 class _MealsState extends State<Meals> {
   final TextEditingController _filter = TextEditingController();
@@ -54,7 +57,8 @@ class _MealsState extends State<Meals> {
     'Fruits',
     'Lebanese dishes',
     'Arabic desserts',
-    'Grains, pasta & rice'
+    'Grains, pasta & rice',
+    'My Meals'
   ];
   @override
   Widget build(BuildContext context) {
@@ -156,7 +160,106 @@ class _MealsState extends State<Meals> {
                     ),
                   ),
                 ),
-                Padding(
+              ],
+            ),
+          ),
+          selectedCategory == null
+              ? Padding(
+                  padding: const EdgeInsets.only(
+                    top: 10,
+                    left: 10.0,
+                    bottom: 5,
+                    right: 10,
+                  ),
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.8,
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3, // Display 3 categories on each row
+                        childAspectRatio: 3 / 3.2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                      ),
+                      itemCount: categories.length,
+                      itemBuilder: (ctx, i) => ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.resolveWith<Color>(
+                            (Set<MaterialState> states) {
+                              // If this category is the selected one, use a different color
+                              if (selectedCategory ==
+                                  categories[i].toLowerCase()) {
+                                return Color.fromARGB(255, 67, 223, 234);
+                              }
+                              return Color.fromARGB(255, 249, 249, 255);
+                            },
+                          ),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                          padding:
+                              MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                  const EdgeInsets.all(0)),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            if (selectedCategory ==
+                                categories[i].toLowerCase()) {
+                              selectedCategory = null; // Unselect the category
+                            } else {
+                              selectedCategory = categories[i].toLowerCase();
+                            }
+                          });
+                        },
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(top: 5.0),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.2,
+                                child: Opacity(
+                                  opacity: 0.7,
+                                  child: Image.asset(
+                                    'assets/${categories[i]}.png',
+
+                                    //fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ), // Replace with your image path
+                            Flexible(
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.25,
+                                child: Text(
+                                  textAlign: TextAlign.center,
+                                  categories[i],
+                                  style: TextStyle(
+                                    color: selectedCategory ==
+                                            categories[i].toLowerCase()
+                                        ? Color.fromARGB(255, 255, 255, 255)
+                                        : Color.fromARGB(255, 122, 122, 122),
+                                    fontSize: 14,
+                                    fontFamily: 'Ruda',
+                                    letterSpacing: -0.75,
+                                    fontWeight: selectedCategory ==
+                                            categories[i].toLowerCase()
+                                        ? FontWeight.w600
+                                        : FontWeight.w300,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              : Padding(
                   padding: const EdgeInsets.only(
                     left: 15.0,
                     bottom: 5,
@@ -222,12 +325,9 @@ class _MealsState extends State<Meals> {
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
           Expanded(
             child: (selectedCategory == null)
-                ? FutureBuilder<List<Map>>(
+                ? Container() /*FutureBuilder<List<Map>>(
                     future: db.searchCatgeory('myMeals'),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -317,41 +417,70 @@ class _MealsState extends State<Meals> {
                         );
                       }
                     },
-                  )
+                  )*/
                 : FutureBuilder<List<Map>>(
-                    future: selectedCategory != 'all'
-                        ? db.searchCatgeory(selectedCategory!)
-                        : _mealsFuture,
+                    future: selectedCategory == 'My Meals'
+                        ? db.searchCatgeory('myMeals')
+                        : selectedCategory != 'all'
+                            ? db.searchCatgeory(
+                                _formatCategory(selectedCategory!))
+                            : _mealsFuture,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator();
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       } else if (snapshot.data!.isEmpty) {
-                        // Add this clause
                         return Text('No meals found for this category');
                       } else {
                         List<Map> meals = snapshot.data!;
                         return GridView.builder(
-                          padding: const EdgeInsets.all(10.0),
+                          padding: const EdgeInsets.only(
+                            top: 10.0,
+                            bottom: 10,
+                            left: 15,
+                            right: 15,
+                          ),
                           itemCount: meals.length,
-                          itemBuilder: (ctx, i) => MealBox(
-                            meal: Meal(
-                              name: meals[i]['mealName'],
-                              imageUrl: 'assets/' +
-                                  (meals[i]['mealPicture'] ?? 'AddDish.png'),
-                              id: meals[i]['mealId'],
-                              carbohydrates: meals[i]['carbohydrates'],
-                              unit: meals[i]['unit'],
-                              quantity: 1,
-                              ingredients: [],
-                            ),
-                            ind: widget.Index,
+                          itemBuilder: (ctx, i) => Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              MealBox(
+                                meal: Meal(
+                                  name: meals[i]['mealName'],
+                                  imageUrl: 'assets/' +
+                                      (meals[i]['mealPicture'] ??
+                                          'AddDish.png'),
+                                  id: meals[i]['mealId'],
+                                  carbohydrates: meals[i]['carbohydrates'],
+                                  unit: meals[i]['unit'],
+                                  quantity: 1,
+                                  ingredients: [],
+                                ),
+                                ind: widget.Index,
+                              ),
+                              if (selectedCategory == 'my meals')
+                                Positioned(
+                                  top: -15,
+                                  left: -15,
+                                  child: IconButton(
+                                    icon: Icon(
+                                      Icons.delete,
+                                      size: MediaQuery.of(context).size.width *
+                                          0.09,
+                                      color: Color.fromARGB(255, 12, 140, 149),
+                                    ),
+                                    onPressed: () {
+                                      // Add your delete functionality here
+                                    },
+                                  ),
+                                ),
+                            ],
                           ),
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
-                            childAspectRatio: 3 / 3.5,
+                            childAspectRatio: 3 / 3.6,
                             crossAxisSpacing: 5,
                             mainAxisSpacing: 10,
                           ),
