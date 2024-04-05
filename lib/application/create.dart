@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:io';
 
@@ -38,7 +40,7 @@ class _CreateMealState extends State<CreateMeal> {
   }
 
   final _nameController = TextEditingController();
-
+  final gramsController = TextEditingController();
   DBHelper dbHelper = DBHelper.instance;
   List<Map> allMeals = [];
   List<int> selectedMeals = [];
@@ -149,7 +151,35 @@ class _CreateMealState extends State<CreateMeal> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 16.0),
                           ),
-                          onPressed: () {},
+                          onPressed: () async {
+                            ///////////////////////////////////////////////////////////////////////
+                            DBHelper dbHelper = DBHelper.instance;
+                            String image = "";
+                            if (_selectedImage == null) {
+                              image = "All.png";
+                            } else {
+                              image = _selectedImage!.path;
+                            }
+                            int createdMeal = await dbHelper.createMeal(
+                                _nameController.text,
+                                image,
+                                chosenCMeals,
+                                selectedCategories,
+                                double.parse(gramsController.text));
+                            print("Created Meal: $createdMeal");
+                            if (createdMeal == -1) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const AlertDialog(
+                                    content: Text('Meal Name Already Exists!'),
+                                  );
+                                },
+                              );
+                            } else {
+                              //RAJ3INA 3ALA L MEALS
+                            }
+                          },
                           child: const Text(
                             'Create',
                             style: TextStyle(color: Colors.white),
@@ -333,6 +363,7 @@ class _CreateMealState extends State<CreateMeal> {
                                   width:
                                       MediaQuery.of(context).size.width * 0.15,
                                   child: TextFormField(
+                                    controller: gramsController,
                                     textAlign: TextAlign.center,
                                     keyboardType:
                                         const TextInputType.numberWithOptions(

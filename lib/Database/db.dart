@@ -194,6 +194,14 @@ class DBHelper {
     return response;
   }
 
+  displayMostFrequentMeals(int top) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+    SELECT * FROM "Meals" ORDER BY frequency DESC LIMIT ?;
+    ''', [top]);
+    return response;
+  }
+
   //////////////////////////////////////////////////////////////////////
   /////////////// Retreive Meals by Id or Name///////////////////////////
   /////////////////////////////////////////////////////////////////////
@@ -218,8 +226,8 @@ class DBHelper {
     return response;
   }
 
-  deleteMealById(String mealName) async{
-     Database? mydb = await db;
+  deleteMealById(String mealName) async {
+    Database? mydb = await db;
     int response = await mydb!.rawDelete('''
     DELETE FROM Meals WHERE mealName = "$mealName";
     ''');
@@ -261,6 +269,7 @@ class DBHelper {
   createEntry(double glucose, int insulin, String date, List<Map> meals) async {
     Database? mydb = await db;
     //print('$glucose $insulin $date');
+    print(meals);
     int entryId = await mydb!.rawInsert('''
   INSERT INTO Entry (glucoseLevel, insulinDosage, entryDate)
   VALUES($glucose,$insulin,'$date');
@@ -273,9 +282,11 @@ class DBHelper {
   VALUES($idEntry,${element['id']},${element['quantity']},"${element['unit']}");
   ''');
       logger.info("hasMeal has been created successfully.");
+      updateFrequency(element['id']);
+      logger.info("meal with id: ${element['id']} increased in frequency");
     });
-    logger.info("Created entry with id $entryId");
-    return entryId;
+    logger.info("Created entry with id $idEntry");
+    return idEntry;
   }
 
   //create hasMeal for each entry
@@ -288,14 +299,24 @@ class DBHelper {
     return response;
   }
 
+  // updateFrequency(int mealId) async {
+  //   Database? mydb = await db;
+  //   int response = await mydb!.rawUpdate('''
+  //   UPDATE Meals SET frequency = frequency + 1;
+  //   WHERE mealId = $mealId
+  //   ''');
+  //   logger.info("Frequency for meal $mealId has been updated successfully.");
+  //   return response;
+  // }
+
   updateFrequency(int mealId) async {
     Database? mydb = await db;
-    int response = await mydb!.rawUpdate('''
-    UPDATE Meals SET frequency = frequency + 1;
-    WHERE mealId = $mealId
-    ''');
-    logger.info("Frequency for meal $mealId has been updated successfully.");
-    return response;
+    await mydb!.rawUpdate('''
+    UPDATE Meals
+    SET frequency = frequency + 1
+    WHERE mealId = ?
+  ''', [mealId]);
+    logger.info("Meal with id: $mealId increased in frequency");
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -399,8 +420,12 @@ class DBHelper {
       mealName = "My ${response[0]['mealName']}";
     }
 
-    int newMealID = await createNewMeal(mealName, totalCarbs,
-        response[0]['unit'], picture, response[0]['tags'] + ', myMeals');
+    int newMealID = await createNewMeal(
+        mealName,
+        totalCarbs,
+        response[0]['unit'],
+        response[0]['mealPicture'],
+        response[0]['tags'] + ', myMeals');
 
     if (newMealID != -1) {
       if (childMeals != null) {
@@ -411,6 +436,39 @@ class DBHelper {
       }
       logger.info("Meal has been edited successfully with id $newMealID.");
       return newMealID;
+    } else {
+      logger.info("Error meal wasn't edited.");
+      return -1;
+    }
+  }
+
+  createMeal(String mealName, String picture, List<Map> childMeals,
+      List<String> categories, double carbohydrates) async {
+    double totalCarbs = carbohydrates;
+
+    if (picture == null || picture == "") {
+      picture = "All.png";
+    }
+    if (childMeals.isNotEmpty) {
+      childMeals.forEach((element) {
+        totalCarbs += element['carbohydrates'] * element['quantity'];
+      });
+    }
+    String tags = "";
+    categories.forEach((element) {
+      tags += element + ", ";
+    });
+    tags += "myMeals";
+    int newMealId = await createNewMeal(mealName, totalCarbs, 7, picture, tags);
+    if (newMealId != -1) {
+      if (childMeals.isNotEmpty) {
+        childMeals.forEach((element) {
+          createMealComposition(newMealId, element['mealID'], element['unit'],
+              element['quantity']);
+        });
+      }
+      logger.info("Meal has been edited successfully with id $newMealId.");
+      return newMealId;
     } else {
       logger.info("Error meal wasn't edited.");
       return -1;
@@ -523,14 +581,6 @@ class DBHelper {
   /////////////// Search for meals & category ////////////////
   ///////////////////////////////////////////////////////////
 
-  Future<List<Map>> searchMeal(String input) async {
-    Database? mydb = await db;
-    List<Map> response = await mydb!.rawQuery(
-        'SELECT * FROM "Meals" WHERE mealName = ? OR tags LIKE ?',
-        [input, '%$input%']);
-    return response;
-  }
-
   searchMealForCatgeory(int mealId, String input) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery(
@@ -543,6 +593,31 @@ class DBHelper {
     Database? mydb = await db;
     List<Map> response = await mydb!
         .rawQuery('SELECT * FROM "Meals" WHERE tags LIKE ?', ['%$input%']);
+    return response;
+  }
+
+//copilot's function won over ours :(
+  Future<List<Map>> searchMeal(String input) async {
+    Database? mydb = await db;
+    List<String> words = input.split(' '); // split the input into words
+
+    // create a SQL query that matches each word separately
+    String query = 'SELECT * FROM "Meals" WHERE ';
+    for (int i = 0; i < words.length; i++) {
+      query += 'mealName LIKE ? OR tags LIKE ?';
+      if (i != words.length - 1) {
+        query += ' OR ';
+      }
+    }
+
+    // create a list of parameters for the query
+    List<String> params = [];
+    for (String word in words) {
+      params.add('%$word%');
+      params.add('%$word%');
+    }
+
+    List<Map> response = await mydb!.rawQuery(query, params);
     return response;
   }
 
@@ -588,7 +663,7 @@ class DBHelper {
         response = "arabic desserts";
         break;
       case 8:
-        response = "grains, pasta & rice";
+        response = "grains & pasta & rice";
         break;
       case 9:
         response = "breakfast";
@@ -632,7 +707,7 @@ class DBHelper {
     if ((await searchMealForCatgeory(mealId, "arabic desserts")).isNotEmpty) {
       categories.add("arabic desserts");
     }
-    if ((await searchMealForCatgeory(mealId, "grains, pasta & rice"))
+    if ((await searchMealForCatgeory(mealId, "grains & pasta & rice"))
         .isNotEmpty) {
       categories.add("grains, pasta & rice");
     }

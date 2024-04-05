@@ -69,8 +69,8 @@ class _EditMealState extends State<EditMeal> {
   void initState() {
     super.initState();
     loadCategories();
-    _selectedImagePath = widget.meal.imageUrl;
-    _nameController.text = widget.meal.name;
+
+    updateImageAndName(widget.meal.imageUrl, widget.meal.name);
     efetchIngredients().then((ingredients) {
       boxes = List.generate(
         ingredients.length,
@@ -84,6 +84,13 @@ class _EditMealState extends State<EditMeal> {
         },
       );
       setState(() {}); // Call setState to trigger a rebuild
+    });
+  }
+
+  void updateImageAndName(String newImagePath, String newName) {
+    setState(() {
+      _selectedImagePath = newImagePath;
+      _nameController.text = newName;
     });
   }
 
@@ -144,13 +151,15 @@ class _EditMealState extends State<EditMeal> {
                                 await createChildMeal());
 
                             if (response != -1) {
-                              await addToChosenCMeals(response, 1.0);
+                              await addToChosenMeals(response, 1.0);
+                              //here the amount is set to 1.0 by default, you still have to make the user choose the amount
+                              //RAJ3INA AALA L ADD INPUTSSSS
                             } else {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return const AlertDialog(
-                                    content: Text('Meal could not be edited'),
+                                    content: Text('Meal Name Already Exists!'),
                                   );
                                 },
                               );
@@ -377,11 +386,13 @@ class _eIngBoxState extends State<eIngBox> {
   void initState() {
     super.initState();
     widget.quantityController.addListener(() {
-      setState(() {
-        widget.ingredient.quantity =
-            double.tryParse(widget.quantityController.text) ?? 0.0;
-        controllers[widget.index] = widget.ingredient.quantity;
-      });
+      if (mounted) {
+        setState(() {
+          widget.ingredient.quantity =
+              double.tryParse(widget.quantityController.text) ?? 0.0;
+          controllers[widget.index] = widget.ingredient.quantity;
+        });
+      }
     });
   }
 

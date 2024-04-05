@@ -64,14 +64,12 @@ class _LoginState extends State<Login> {
     DBHelper dbHelper = DBHelper.instance;
     //dbHelper.dropAllArticles();
     //print(await dbHelper.selectAllArticle());
-    // await dbHelper.deleteMealComposition();
-    // await dbHelper.syncMeals();
-    // logger.info("synced meals successfully");
-    // await dbHelper.syncMealComposition();
-    // logger.info("synced meal compositions successfully");
-    // logger.info("saving values to shared preferences");
-    print("lebanese dishes");
-    print(await dbHelper.chooseCategory(6));
+    await dbHelper.deleteMealComposition();
+    await dbHelper.syncMeals();
+    logger.info("synced meals successfully");
+    await dbHelper.syncMealComposition();
+    logger.info("synced meal compositions successfully");
+    logger.info("saving values to shared preferences");
 
     final response = await http
         .post(
