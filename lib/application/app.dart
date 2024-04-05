@@ -353,18 +353,17 @@ class _AddInputState extends State<AddInput> {
                               /*bolusCalculation =
                                   calculateDosage(totalCarbs, glucoseLevel);
 */
+                              DBHelper dbHelper = DBHelper.instance;
+                              dbHelper.createEntry(glucoseLevel,
+                                  bolusCalculationResult, date, chosenMeals);
                               print('Chosen Meals:');
                               print(chosenMeals);
                               print('Total Carbs:');
                               print(calculateTotalCarbs(getChosenMeals()));
-                              print('Bolus Calculation:');
-                              print(bolusCalculation);
+                              //refresh the page after pressing the save button or go back to dashboard idk
                             } else {
                               print("NO WORKY");
                             }
-                            DBHelper dbHelper = DBHelper.instance;
-                            dbHelper.createEntry(glucoseLevel,
-                                bolusCalculationResult, date, meals);
                           },
                           child: const Text(
                             'Save',
