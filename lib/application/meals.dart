@@ -897,7 +897,9 @@ class _MealBoxState extends State<MealBox> {
                   size: MediaQuery.of(context).size.width * 0.09,
                   color: Color.fromARGB(255, 12, 140, 149),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  db.deleteMealById(widget.meal.name);
+                },
               ),
             ),
         ],
