@@ -50,6 +50,21 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
     return ingredients;
   }
 
+  Future<List<Ingredient>> fetchAllIngredients() async {
+    List<Map> response =
+        await db.getIngredients(widget.meal.id); // Call getIngredients
+
+    // Convert the response into a list of Ingredient objects
+    List<Ingredient> ingredients = response.map((item) {
+      return Ingredient(
+        name: item['mealName'],
+        unit: item['unit'],
+        quantity: item['quantity'],
+      );
+    }).toList();
+    return ingredients;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -500,53 +515,90 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                 right: 10,
               ),
               child: SizedBox(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: const Color.fromARGB(79, 0, 236, 253),
-                      child: IconButton(
-                        padding: EdgeInsets.zero,
-                        icon: const Icon(
-                          Icons.arrow_back_rounded,
-                          size: 35,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
-                    CircleAvatar(
-                      backgroundColor: const Color.fromARGB(79, 0, 236, 253),
-                      child: IconButton(
-                        padding: EdgeInsets.zero,
-                        icon: const Icon(
-                          Icons.edit,
-                          color: Color.fromARGB(255, 255, 255, 255),
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                              pageBuilder:
-                                  (context, animation, secondaryAnimation) =>
-                                      EditMeal(
-                                meal: widget.meal,
-                              ),
-                              transitionsBuilder: (context, animation,
-                                  secondaryAnimation, child) {
-                                return FadeTransition(
-                                  opacity: animation,
-                                  child: child,
-                                );
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
+                child: FutureBuilder<List<Ingredient>>(
+                  future: fetchAllIngredients(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator(); // Show loading indicator while waiting for the future to complete
+                    } else if (snapshot.hasError) {
+                      return Text(
+                          'Error: ${snapshot.error}'); // Show error if the future completes with an error
+                    } else {
+                      // Check if the meal has ingredients
+                      return snapshot.data!.isNotEmpty
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor:
+                                      const Color.fromARGB(79, 0, 236, 253),
+                                  child: IconButton(
+                                    padding: EdgeInsets.zero,
+                                    icon: const Icon(
+                                      Icons.arrow_back_rounded,
+                                      size: 35,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ),
+                                CircleAvatar(
+                                  backgroundColor:
+                                      const Color.fromARGB(79, 0, 236, 253),
+                                  child: IconButton(
+                                    padding: EdgeInsets.zero,
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Color.fromARGB(255, 255, 255, 255),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        PageRouteBuilder(
+                                          pageBuilder: (context, animation,
+                                                  secondaryAnimation) =>
+                                              EditMeal(
+                                            meal: widget.meal,
+                                          ),
+                                          transitionsBuilder: (context,
+                                              animation,
+                                              secondaryAnimation,
+                                              child) {
+                                            return FadeTransition(
+                                              opacity: animation,
+                                              child: child,
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor:
+                                      const Color.fromARGB(79, 0, 236, 253),
+                                  child: IconButton(
+                                    padding: EdgeInsets.zero,
+                                    icon: const Icon(
+                                      Icons.arrow_back_rounded,
+                                      size: 35,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ); // Empty container when there are no ingredients
+                    }
+                  },
                 ),
               ),
             ),
