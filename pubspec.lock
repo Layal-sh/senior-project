@@ -343,6 +343,7 @@ packages:
       sha256: "087ce49c3f0dc39180befefc60fdb4acd8f8620e5682fe2476afd0b3688bb4af"
       url: "https://pub.dev"
     source: hosted
+<<<<<<< HEAD
     version: "1.8.3"
   path_provider:
     dependency: "direct main"
@@ -368,6 +369,9 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.2"
+=======
+    version: "1.9.0"
+>>>>>>> 97629de92f2c840442b1a7ed4f767903e2b7118b
   path_provider_linux:
     dependency: transitive
     description:

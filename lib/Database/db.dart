@@ -218,6 +218,14 @@ class DBHelper {
     return response;
   }
 
+  deleteMealById(String mealName) async{
+     Database? mydb = await db;
+    int response = await mydb!.rawDelete('''
+    DELETE FROM Meals WHERE mealName = "$mealName";
+    ''');
+    return response;
+  }
+
   ////////////////////////////////////////////////////////////
   /////////////// Functions For AI///////////////////////////
   ////////////////////////////////////////////////////////////
