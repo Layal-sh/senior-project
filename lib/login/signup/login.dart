@@ -64,7 +64,6 @@ class _LoginState extends State<Login> {
     DBHelper dbHelper = DBHelper.instance;
     //dbHelper.dropAllArticles();
     //print(await dbHelper.selectAllArticle());
-    print(await dbHelper.displayMostFrequentMeals(3));
     await dbHelper.deleteMealComposition();
     await dbHelper.syncMeals();
     logger.info("synced meals successfully");
