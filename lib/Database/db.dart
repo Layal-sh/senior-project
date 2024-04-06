@@ -5,6 +5,11 @@ import 'package:path/path.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:image_picker/image_picker.dart';
+
 import '../main.dart';
 
 class DBHelper {
@@ -370,7 +375,8 @@ class DBHelper {
 
     if (mealId < 0) {
       int response = await mydb!.rawInsert(
-          '''INSERT INTO Meals(mealId,mealName,carbohydrates,unit,mealPicture,tags,certainty,frequency) VALUES($nextId,"$name",$carbs,$unit,"$picture","$tags",$certainty,$frequency);''');
+          '''INSERT INTO Meals(mealId,mealName,carbohydrates,unit,mealPicture,tags,certainty,frequency) 
+          VALUES($nextId,"$name",$carbs,$unit,"$picture","$tags",$certainty,$frequency);''');
       logger.info("New meal $name has been created successfully.");
 
       return nextId;
@@ -442,6 +448,42 @@ class DBHelper {
     }
   }
 
+
+
+// ...
+
+// Future<int> createMeal(String mealName,  XFile? image, List<Map> childMeals, List<String> categories, double carbohydrates) async {
+//   double totalCarbs = carbohydrates;
+//   String picture = "All.png";
+
+//   if (image != null) {
+//     // Get the application documents directory
+//     final Directory directory = await getApplicationDocumentsDirectory();
+
+//     // Copy the image to the application documents directory
+//     final File newImage = await File(image.path).copy('${directory.path}/${image.name}');
+
+//     // Get the path to the new image
+//     picture = newImage.path;
+//   }
+
+//   if (childMeals.isNotEmpty) {
+//     childMeals.forEach((element) {
+//       totalCarbs += element['carbohydrates'] * element['quantity'];
+//     });
+//   }
+
+//   String tags = "";
+//   categories.forEach((element) {
+//     tags += element + ", ";
+//   });
+//   tags += "myMeals";
+
+//   int newMealId = await createNewMeal(mealName, totalCarbs, 7, picture, tags);
+
+//   return newMealId;
+// }
+
   createMeal(String mealName, String picture, List<Map> childMeals,
       List<String> categories, double carbohydrates) async {
     double totalCarbs = carbohydrates;
@@ -474,6 +516,10 @@ class DBHelper {
       return -1;
     }
   }
+
+
+// // ...
+
 
   ////////////////////////////////////////////////////////////////////
   /////////////// Syncing Of Meals & Meals Composition ////////////////

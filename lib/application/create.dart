@@ -162,7 +162,7 @@ class _CreateMealState extends State<CreateMeal> {
                             }
                             int createdMeal = await dbHelper.createMeal(
                                 _nameController.text,
-                                image,
+                                image, //_selectedImage
                                 chosenCMeals,
                                 selectedCategories,
                                 double.parse(gramsController.text));
