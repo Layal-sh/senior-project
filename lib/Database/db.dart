@@ -270,37 +270,62 @@ class DBHelper {
   /////////////// Create Entrires with its Meals /////////////
   ////////////////////////////////////////////////////////////
 
-  //create an entry for the insulin dosage
-  createEntry(double glucose, int insulin, String date, List<Map> meals) async {
+  generateNewEntry(double glucose, int insulin, String date) async{
     Database? mydb = await db;
-    //print('$glucose $insulin $date');
-    print(meals);
     int entryId = await mydb!.rawInsert('''
   INSERT INTO Entry (glucoseLevel, insulinDosage, entryDate)
   VALUES($glucose,$insulin,'$date');
   ''');
-    int idEntry = await getLatestEntryId();
+  if(entryId >0){
+    return await getLatestEntryId();
+  }
+  else{
+    return -1;
+  }
+  }
 
-    meals.forEach((element) {
-      mydb.rawInsert('''
-  INSERT INTO hasMeal (entryId,mealId,quantity,unit)
-  VALUES($idEntry,${element['id']},${element['quantity']},"${element['unit']}");
-  ''');
+  generateHasMeals(int idEntry, List<Map> meals) async{
+    bool hasmeal=false;
+    meals.forEach((element) async {
+      int response= await createMealForEntry(idEntry, element['id'], element['quantity'], element['unit']);
       logger.info("hasMeal has been created successfully.");
-      updateFrequency(element['id']);
-      logger.info("meal with id: ${element['id']} increased in frequency");
+
+      if(response>0){
+      await updateFrequency(element['id']);
+      hasmeal=true;
+      }
+      else{
+        logger.info("has meal didnt work");
+        hasmeal=false;
+      }
     });
-    logger.info("Created entry with id $idEntry");
+    return hasmeal;
+  }
+  //create an entry for the insulin dosage
+  createEntry(double glucose, int insulin, String date, List<Map> meals) async {
+
+    Database? mydb = await db;
+    int idEntry = await generateNewEntry(glucose, insulin, date);
+
+    if(await generateHasMeals(idEntry, meals)){
+      logger.info("Created entry with id $idEntry");
+    }
     return idEntry;
   }
 
   //create hasMeal for each entry
-  createMealForEntry(int entryId, int mealId, int qtty, int unit) async {
+  createMealForEntry(int entryId, int mealId, double qtty, int unit) async {
     Database? mydb = await db;
     int response = await mydb!.rawInsert('''
-  INSERT INTO "hasMeal"(entryId,mealId,quantity)
-  VALUES($entryId,$mealId,$qtty);
+  INSERT INTO "hasMeal"(entryId,mealId,quantity,unit)
+  VALUES($entryId,$mealId,$qtty,$unit);
   ''');
+
+  if(response>0)
+    logger.info("meal was add to entry $entryId");
+  else{
+    logger.info("meal couldn't be added add to entry $entryId");
+  }
     return response;
   }
 
