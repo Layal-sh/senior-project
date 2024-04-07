@@ -60,7 +60,7 @@ FROM_EMAIL = "sugarsenseteam@gmail.com"
 email = "alisinno16@gmail.com"
 maxTime = ""
 generatedCode = ""
-maxTime = datetime.datetime.now() + datetime.timedelta(minutes=10)
+maxTime = ""
 AppPassword = "onux jcdl joir mvld"
 ##############################################################
 
@@ -139,24 +139,23 @@ def checkCode(code):
 
 @app.get("/forgotPassword/{email}")
 def forgot_password(email: str):
+    global maxTime
+    global generatedCode
+    maxTime = datetime.datetime.now() + datetime.timedelta(minutes=10)
     user = cursor.execute("SELECT * FROM Users WHERE email = ?", (email,)).fetchone()
     if(user is None):
         return {"error": "Email not found"}
     else:
-        code = generateCode()
-        message = """From: From the SugarSense team <sugarsenseteam@gmail.com>
-        To: <{email}>
-        Subject: Password Reset
+        generateCode()
+        message = ("""From: From the SugarSense team <sugarsenseteam@gmail.com>
+To: <{}>
+Subject: Password Reset
 
-        To reset your password, please enter the following code: {code}
-        
-        This code will expire in 10 minutes.
-        
-        If you did not request a password reset, please ignore this email.
-        
-        From the SugarSense team
-        """
-        sendEmail(FROM_EMAIL, email, AppPassword, message)
+To reset your password, please enter the following code: {}
+This code will expire in 10 minutes.
+If you did not request a password reset, please ignore this email.
+From the SugarSense team""").format(email, generatedCode)
+    sendEmail(FROM_EMAIL, email, AppPassword, message)
 
 
 @app.get("/checkCode/{code}")
