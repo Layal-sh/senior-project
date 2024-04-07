@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
@@ -204,9 +206,9 @@ class _MealsState extends State<Meals> {
                               // If this category is the selected one, use a different color
                               if (selectedCategory ==
                                   categories[i].toLowerCase()) {
-                                return Color.fromARGB(255, 67, 223, 234);
+                                return const Color.fromARGB(255, 67, 223, 234);
                               }
-                              return Color.fromARGB(255, 249, 249, 255);
+                              return const Color.fromARGB(255, 249, 249, 255);
                             },
                           ),
                           shape:
@@ -256,8 +258,10 @@ class _MealsState extends State<Meals> {
                                   style: TextStyle(
                                     color: selectedCategory ==
                                             categories[i].toLowerCase()
-                                        ? Color.fromARGB(255, 255, 255, 255)
-                                        : Color.fromARGB(255, 122, 122, 122),
+                                        ? const Color.fromARGB(
+                                            255, 255, 255, 255)
+                                        : const Color.fromARGB(
+                                            255, 122, 122, 122),
                                     fontSize: 14,
                                     fontFamily: 'Ruda',
                                     letterSpacing: -0.75,
@@ -300,7 +304,7 @@ class _MealsState extends State<Meals> {
                                         // If this category is the selected one, use a different color
                                         if (selectedCategory ==
                                             category.toLowerCase()) {
-                                          return Color.fromARGB(
+                                          return const Color.fromARGB(
                                               255, 67, 223, 234);
                                         }
                                         return const Color.fromARGB(
@@ -362,7 +366,7 @@ class _MealsState extends State<Meals> {
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else if (snapshot.data!.isEmpty) {
-                            return Text('No meals is found');
+                            return const Text('No meals is found');
                           } else {
                             List<Map> meals = snapshot.data!;
                             return GridView.builder(
@@ -379,6 +383,7 @@ class _MealsState extends State<Meals> {
                                   MealBox(
                                     meal: Meal(
                                       name: meals[i]['mealName'],
+                                      // ignore: prefer_interpolation_to_compose_strings
                                       imageUrl: 'assets/' +
                                           (meals[i]['mealPicture'] ??
                                               'AddDish.png'),
@@ -401,8 +406,8 @@ class _MealsState extends State<Meals> {
                                                   .size
                                                   .width *
                                               0.09,
-                                          color:
-                                              Color.fromARGB(255, 12, 140, 149),
+                                          color: const Color.fromARGB(
+                                              255, 12, 140, 149),
                                         ),
                                         onPressed: () {
                                           // Add your delete functionality here
@@ -443,8 +448,6 @@ class _MealsState extends State<Meals> {
                               'You have no meals',
                               style: TextStyle(
                                 color: Color.fromARGB(255, 139, 139, 139),
-                                //fontSize: 20,
-                                //fontWeight: FontWeight.w600,
                               ),
                             ));
                           } else {
@@ -460,6 +463,7 @@ class _MealsState extends State<Meals> {
                               itemBuilder: (ctx, i) => MealBox(
                                 meal: Meal(
                                   name: meals[i]['mealName'],
+                                  // ignore: prefer_interpolation_to_compose_strings
                                   imageUrl: 'assets/' +
                                       (meals[i]['mealPicture'] ??
                                           'AddDish.png'),
@@ -546,7 +550,7 @@ class _MealsState extends State<Meals> {
                                           ),
                                         GridView.builder(
                                           physics:
-                                              NeverScrollableScrollPhysics(),
+                                              const NeverScrollableScrollPhysics(),
                                           shrinkWrap: true,
                                           padding: const EdgeInsets.only(
                                             top: 10.0,
@@ -559,6 +563,7 @@ class _MealsState extends State<Meals> {
                                             meal: Meal(
                                               name: frequentMeals[i]
                                                   ['mealName'],
+                                              // ignore: prefer_interpolation_to_compose_strings
                                               imageUrl: 'assets/' +
                                                   (frequentMeals[i]
                                                           ['mealPicture'] ??
@@ -610,7 +615,7 @@ class _MealsState extends State<Meals> {
                                           ),
                                         GridView.builder(
                                           physics:
-                                              NeverScrollableScrollPhysics(),
+                                              const NeverScrollableScrollPhysics(),
                                           shrinkWrap: true,
                                           padding: const EdgeInsets.only(
                                             top: 10.0,
@@ -623,6 +628,7 @@ class _MealsState extends State<Meals> {
                                             meal: Meal(
                                               name: categoryMeals[i]
                                                   ['mealName'],
+                                              // ignore: prefer_interpolation_to_compose_strings
                                               imageUrl: 'assets/' +
                                                   (categoryMeals[i]
                                                           ['mealPicture'] ??
@@ -646,232 +652,10 @@ class _MealsState extends State<Meals> {
                                         ),
                                       ],
                                     );
-                                    /*Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Padding(
-                                        padding: EdgeInsets.only(left: 20.0),
-                                        child: Text(
-                                          'My Meals',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontFamily: 'Inter',
-                                            color:
-                                                Color.fromARGB(255, 38, 20, 84),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      const Divider(
-                                        color: Color.fromARGB(139, 61, 35, 129),
-                                        thickness: 1,
-                                        indent: 20,
-                                        endIndent: 20,
-                                      ),
-                                      GridView.builder(
-                                        physics: NeverScrollableScrollPhysics(),
-                                        shrinkWrap: true,
-                                        padding: const EdgeInsets.only(
-                                          top: 10.0,
-                                          bottom: 10,
-                                          left: 15,
-                                          right: 15,
-                                        ),
-                                        itemCount: categoryMeals.length,
-                                        itemBuilder: (ctx, i) => MealBox(
-                                          meal: Meal(
-                                            name: categoryMeals[i]['mealName'],
-                                            imageUrl: 'assets/' +
-                                                (categoryMeals[i]['mealPicture'] ??
-                                                    'AddDish.png'),
-                                            id: categoryMeals[i]['mealId'],
-                                            carbohydrates: categoryMeals[i]
-                                                ['carbohydrates'],
-                                            unit: categoryMeals[i]['unit'],
-                                            quantity: 1,
-                                            ingredients: [],
-                                          ),
-                                          ind: widget.Index,
-                                        ),
-                                        gridDelegate:
-                                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 3,
-                                          childAspectRatio: 3 / 3.6,
-                                          crossAxisSpacing: 5,
-                                          mainAxisSpacing: 10,
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                */
                                   }
                                 }
                               },
                             ),
-                            /*FutureBuilder<List<Map>>(
-                              future: db.displayMostFrequentMeals(5),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const CircularProgressIndicator();
-                                } else if (snapshot.hasError) {
-                                  return Text('Error: ${snapshot.error}');
-                                } else if (snapshot.data!.isEmpty) {
-                                  return const Center(
-                                      child: Text(
-                                    '',
-                                    style: TextStyle(
-                                      color: Color.fromARGB(255, 139, 139, 139),
-                                      //fontSize: 20,
-                                      //fontWeight: FontWeight.w600,
-                                    ),
-                                  ));
-                                } else {
-                                  List<Map> meals = snapshot.data!;
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Padding(
-                                        padding: EdgeInsets.only(left: 20.0),
-                                        child: Text(
-                                          'Frequent Meals',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontFamily: 'Inter',
-                                            color:
-                                                Color.fromARGB(255, 38, 20, 84),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      const Divider(
-                                        color: Color.fromARGB(139, 61, 35, 129),
-                                        thickness: 1,
-                                        indent: 20,
-                                        endIndent: 20,
-                                      ),
-                                      GridView.builder(
-                                        physics: NeverScrollableScrollPhysics(),
-                                        shrinkWrap: true,
-                                        padding: const EdgeInsets.only(
-                                          top: 10.0,
-                                          bottom: 10,
-                                          left: 15,
-                                          right: 15,
-                                        ),
-                                        itemCount: meals.length,
-                                        itemBuilder: (ctx, i) => MealBox(
-                                          meal: Meal(
-                                            name: meals[i]['mealName'],
-                                            imageUrl: 'assets/' +
-                                                (meals[i]['mealPicture'] ??
-                                                    'AddDish.png'),
-                                            id: meals[i]['mealId'],
-                                            carbohydrates: meals[i]
-                                                ['carbohydrates'],
-                                            unit: meals[i]['unit'],
-                                            quantity: 1,
-                                            ingredients: [],
-                                          ),
-                                          ind: widget.Index,
-                                        ),
-                                        gridDelegate:
-                                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 3,
-                                          childAspectRatio: 3 / 3.6,
-                                          crossAxisSpacing: 5,
-                                          mainAxisSpacing: 10,
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                }
-                              },
-                            ),
-                            FutureBuilder<List<Map>>(
-                              future: db.searchCatgeory(
-                                  _formatCategory(selectedCategory!)),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const CircularProgressIndicator();
-                                } else if (snapshot.hasError) {
-                                  return Text('Error: ${snapshot.error}');
-                                } else if (snapshot.data!.isEmpty) {
-                                  return const Text(
-                                    '',
-                                    style: TextStyle(
-                                      color: Color.fromARGB(255, 139, 139, 139),
-                                      //fontSize: 20,
-                                      //fontWeight: FontWeight.w600,
-                                    ),
-                                  );
-                                } else {
-                                  List<Map> meals = snapshot.data!;
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Padding(
-                                        padding: EdgeInsets.only(left: 20.0),
-                                        child: Text(
-                                          'My Meals',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontFamily: 'Inter',
-                                            color:
-                                                Color.fromARGB(255, 38, 20, 84),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      const Divider(
-                                        color: Color.fromARGB(139, 61, 35, 129),
-                                        thickness: 1,
-                                        indent: 20,
-                                        endIndent: 20,
-                                      ),
-                                      GridView.builder(
-                                        physics: NeverScrollableScrollPhysics(),
-                                        shrinkWrap: true,
-                                        padding: const EdgeInsets.only(
-                                          top: 10.0,
-                                          bottom: 10,
-                                          left: 15,
-                                          right: 15,
-                                        ),
-                                        itemCount: meals.length,
-                                        itemBuilder: (ctx, i) => MealBox(
-                                          meal: Meal(
-                                            name: meals[i]['mealName'],
-                                            imageUrl: 'assets/' +
-                                                (meals[i]['mealPicture'] ??
-                                                    'AddDish.png'),
-                                            id: meals[i]['mealId'],
-                                            carbohydrates: meals[i]
-                                                ['carbohydrates'],
-                                            unit: meals[i]['unit'],
-                                            quantity: 1,
-                                            ingredients: [],
-                                          ),
-                                          ind: widget.Index,
-                                        ),
-                                        gridDelegate:
-                                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 3,
-                                          childAspectRatio: 3 / 3.6,
-                                          crossAxisSpacing: 5,
-                                          mainAxisSpacing: 10,
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                }
-                              },
-                            )
-                          */
                           ],
                         ),
                       ),
@@ -890,7 +674,7 @@ class Meal {
   final double quantity;
   final int unit;
   final List<eIngredient> ingredients;
-  //final int ind;
+
   Meal({
     required this.name,
     required this.imageUrl,
@@ -899,7 +683,6 @@ class Meal {
     required this.quantity,
     required this.unit,
     required this.ingredients,
-    //required this.ind,
   });
   String toString() {
     return 'Meal{name: $name, imageUrl: $imageUrl, id: $id, carbodydrates: $carbohydrates, quantity: $quantity, unit: $unit}';
@@ -1286,10 +1069,11 @@ class _MealBoxState extends State<MealBox> {
                           },
                           child: CircleAvatar(
                             radius: MediaQuery.of(context).size.width * 0.027,
-                            backgroundColor: Color.fromARGB(170, 64, 205, 215),
+                            backgroundColor:
+                                const Color.fromARGB(170, 64, 205, 215),
                             child: Icon(
                               Icons.arrow_forward_ios,
-                              color: Color.fromARGB(255, 255, 255, 255),
+                              color: const Color.fromARGB(255, 255, 255, 255),
                               size: MediaQuery.of(context).size.width * 0.035,
                             ),
                           ),
@@ -1306,7 +1090,7 @@ class _MealBoxState extends State<MealBox> {
             future: db.searchMealForCat(widget.meal.id, 'mymeal'),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator(); // Show a loading spinner while waiting for the data
+                return const CircularProgressIndicator(); // Show a loading spinner while waiting for the data
               } else if (snapshot.hasError) {
                 return Text(
                     'Error: ${snapshot.error}'); // Show an error message if something goes wrong
@@ -1320,28 +1104,29 @@ class _MealBoxState extends State<MealBox> {
                       icon: Icon(
                         Icons.delete,
                         size: MediaQuery.of(context).size.width * 0.09,
-                        color: Color.fromARGB(255, 26, 199, 211),
+                        color: const Color.fromARGB(255, 26, 199, 211),
                       ),
                       onPressed: () {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: Text('Confirm Deletion'),
-                              content: Text(
+                              title: const Text('Confirm Deletion'),
+                              content: const Text(
                                   'Are you sure you want to delete this meal?'),
                               actions: <Widget>[
                                 TextButton(
-                                  child: Text('Cancel'),
+                                  child: const Text('Cancel'),
                                   onPressed: () {
                                     Navigator.of(context)
                                         .pop(); // Close the dialog
                                   },
                                 ),
                                 TextButton(
-                                  child: Text('Yes'),
+                                  child: const Text('Yes'),
                                   onPressed: () async {
                                     await db.deleteMealById(widget.meal.name);
+                                    // ignore: use_build_context_synchronously
                                     Navigator.of(context).pop();
                                     Navigator.of(context).pop();
                                     Navigator.of(context).push(
