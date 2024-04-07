@@ -534,8 +534,8 @@ class DBHelper {
     if (newMealId != -1) {
       if (childMeals.isNotEmpty) {
         childMeals.forEach((element) {
-          createMealComposition(newMealId, element['mealID'], element['unit'],
-              element['quantity']);
+          createMealComposition(newMealId, element['mealID'],
+              element['unit'] ?? 7, element['quantity']);
         });
       }
       logger.info("Meal has been edited successfully with id $newMealId.");
