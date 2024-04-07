@@ -162,7 +162,7 @@ class _CreateMealState extends State<CreateMeal> {
                             }
                             int createdMeal = await dbHelper.createMeal(
                                 _nameController.text,
-                                image, //_selectedImage
+                                image,
                                 chosenCMeals,
                                 selectedCategories,
                                 double.parse(gramsController.text));
@@ -177,7 +177,24 @@ class _CreateMealState extends State<CreateMeal> {
                                 },
                               );
                             } else {
-                              //RAJ3INA 3ALA L MEALS
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation,
+                                          secondaryAnimation) =>
+                                      const Meals(Index: 0),
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    );
+                                  },
+                                ),
+                              );
+                              selectedCategory = 'mymeals';
                             }
                           },
                           child: const Text(
@@ -307,7 +324,7 @@ class _CreateMealState extends State<CreateMeal> {
                     ),
                     Wrap(
                       spacing: 8.0, // gap between adjacent chips
-
+                      runSpacing: 5,
                       children: [
                         for (var category in categories)
                           ChoiceChip(
@@ -359,31 +376,60 @@ class _CreateMealState extends State<CreateMeal> {
                           children: [
                             Row(
                               children: [
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.15,
-                                  child: TextFormField(
-                                    controller: gramsController,
-                                    textAlign: TextAlign.center,
-                                    keyboardType:
-                                        const TextInputType.numberWithOptions(
-                                            decimal: true),
-                                    decoration: const InputDecoration(
-                                      hintText: '0.0',
-                                      hintStyle: TextStyle(
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                    ),
-                                    validator: (value) {
-                                      /*if (value.isEmpty) {
+                                chosenCMeals.isEmpty
+                                    ? SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.15,
+                                        child: TextFormField(
+                                          controller: gramsController,
+                                          textAlign: TextAlign.center,
+                                          keyboardType: const TextInputType
+                                              .numberWithOptions(decimal: true),
+                                          decoration: const InputDecoration(
+                                            hintText: '0.0',
+                                            hintStyle: TextStyle(
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                          style: const TextStyle(
+                                            fontSize: 20,
+                                            color:
+                                                Color.fromARGB(255, 38, 20, 84),
+                                          ),
+                                          validator: (value) {
+                                            /*if (value.isEmpty) {
                                         return 'Please enter a number';
                                       }
                                       return null;*/
-                                    },
-                                  ),
+                                          },
+                                        ),
+                                      )
+                                    : !showTotalCarbs
+                                        ? ElevatedButton(
+                                            onPressed: () {
+                                              _timer?.cancel();
+                                              totalCCarbs = calculateTotalCarbs(
+                                                  chosenCMeals);
+                                              setState(
+                                                () {
+                                                  showTotalCarbs = true;
+                                                },
+                                              );
+                                            },
+                                            child: const Text('Calculate'),
+                                          )
+                                        : Text(
+                                            '$totalCCarbs',
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                              color: Color.fromARGB(
+                                                  255, 38, 20, 84),
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                const SizedBox(
+                                  width: 10,
                                 ),
                                 const Text(
                                   'grams',
@@ -391,12 +437,11 @@ class _CreateMealState extends State<CreateMeal> {
                                     color: Color.fromARGB(255, 38, 20, 84),
                                     fontSize: 17,
                                     fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(width: 20),
                             ElevatedButton(
                               onPressed: () async {
                                 var result = await Navigator.push(
@@ -438,63 +483,6 @@ class _CreateMealState extends State<CreateMeal> {
                         ),
                       ],
                     ),
-                    /*Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.add),
-                          color: const Color.fromARGB(255, 38, 20, 84),
-                          iconSize: 30,
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => Meals()),
-                            );
-                          },
-                        ),
-                        const Text(
-                          'Add Ingredients',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 38, 20, 84),
-                            fontSize: 17,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
-                            decoration: const InputDecoration(
-                              fillColor: Colors.white,
-                              filled: true,
-                              border: OutlineInputBorder(),
-                              hintText: 'Carbohydrates number',
-                            ),
-                            validator: (value) {
-                              /*if (value.isEmpty) {
-                                return 'Please enter a number';
-                              }
-                              return null;*/
-                            },
-                          ),
-                        ),
-                        const SizedBox(
-                            width:
-                                10), // Add some spacing between the TextFormField and the Button
-                        ElevatedButton(
-                          onPressed: () {
-                            // Add your calculation logic here
-                          },
-                          child: Text('Default Calculate'),
-                        ),
-                      ],
-                    )
-                  */
                     const SizedBox(
                       height: 5,
                     ),

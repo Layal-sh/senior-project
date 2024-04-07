@@ -198,7 +198,7 @@ class DBHelper {
     return response;
   }
 
-  displayMostFrequentMeals(int top) async {
+  Future<List<Map>> displayMostFrequentMeals(int top) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
     SELECT * FROM "Meals" ORDER BY frequency DESC LIMIT ?;
