@@ -277,44 +277,43 @@ class DBHelper {
   /////////////// Create Entrires with its Meals /////////////
   ////////////////////////////////////////////////////////////
 
-  generateNewEntry(double glucose, int insulin, String date) async{
+  generateNewEntry(double glucose, int insulin, String date) async {
     Database? mydb = await db;
     int entryId = await mydb!.rawInsert('''
   INSERT INTO Entry (glucoseLevel, insulinDosage, entryDate)
   VALUES($glucose,$insulin,'$date');
   ''');
-  if(entryId >0){
-    return await getLatestEntryId();
-  }
-  else{
-    return -1;
-  }
+    if (entryId > 0) {
+      return await getLatestEntryId();
+    } else {
+      return -1;
+    }
   }
 
-  generateHasMeals(int idEntry, List<Map> meals) async{
-    bool hasmeal=false;
+  generateHasMeals(int idEntry, List<Map> meals) async {
+    bool hasmeal = false;
     meals.forEach((element) async {
-      int response= await createMealForEntry(idEntry, element['id'], element['quantity'], element['unit']);
+      int response = await createMealForEntry(
+          idEntry, element['id'], element['quantity'], element['unit']);
       logger.info("hasMeal has been created successfully.");
 
-      if(response>0){
-      await updateFrequency(element['id']);
-      hasmeal=true;
-      }
-      else{
+      if (response > 0) {
+        await updateFrequency(element['id']);
+        hasmeal = true;
+      } else {
         logger.info("has meal didnt work");
-        hasmeal=false;
+        hasmeal = false;
       }
     });
     return hasmeal;
   }
+
   //create an entry for the insulin dosage
   createEntry(double glucose, int insulin, String date, List<Map> meals) async {
-
     Database? mydb = await db;
     int idEntry = await generateNewEntry(glucose, insulin, date);
 
-    if(await generateHasMeals(idEntry, meals)){
+    if (await generateHasMeals(idEntry, meals)) {
       logger.info("Created entry with id $idEntry");
     }
     return idEntry;
@@ -328,11 +327,11 @@ class DBHelper {
   VALUES($entryId,$mealId,$qtty,$unit);
   ''');
 
-  if(response>0)
-    logger.info("meal was add to entry $entryId");
-  else{
-    logger.info("meal couldn't be added add to entry $entryId");
-  }
+    if (response > 0)
+      logger.info("meal was add to entry $entryId");
+    else {
+      logger.info("meal couldn't be added add to entry $entryId");
+    }
     return response;
   }
 
@@ -535,8 +534,8 @@ class DBHelper {
     if (newMealId != -1) {
       if (childMeals.isNotEmpty) {
         childMeals.forEach((element) {
-          createMealComposition(newMealId, element['mealID'], element['unit'],
-              element['quantity']);
+          createMealComposition(newMealId, element['mealID'],
+              element['unit'] ?? 7, element['quantity']);
         });
       }
       logger.info("Meal has been edited successfully with id $newMealId.");
