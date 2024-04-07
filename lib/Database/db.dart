@@ -5,7 +5,6 @@ import 'package:path/path.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
@@ -221,6 +220,14 @@ class DBHelper {
       return response.first['mealId'] as int;
     }
     return -1;
+  }
+
+  getMealByName(String name) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+    SELECT mealId FROM "Meals" WHERE mealName = "$name";
+    ''');
+    return response;
   }
 
   getMealById(int id) async {
@@ -448,8 +455,6 @@ class DBHelper {
     }
   }
 
-
-
 // ...
 
 // Future<int> createMeal(String mealName,  XFile? image, List<Map> childMeals, List<String> categories, double carbohydrates) async {
@@ -517,9 +522,7 @@ class DBHelper {
     }
   }
 
-
 // // ...
-
 
   ////////////////////////////////////////////////////////////////////
   /////////////// Syncing Of Meals & Meals Composition ////////////////
@@ -641,7 +644,7 @@ class DBHelper {
     //     .rawQuery('SELECT * FROM "Meals" WHERE tags LIKE ?', ['%$input%']);
     // return response;
 
-     Database? mydb = await db;
+    Database? mydb = await db;
     List<String> words = input.split(' '); // split the input into words
 
     // create a SQL query that matches each word separately

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -31,7 +32,7 @@ List<Map> getChosenCMeals() {
 
 DBHelper db = DBHelper.instance;
 String _formatCategory(String category) {
-  return category.replaceAll(' ', '').toLowerCase();
+  return category.toLowerCase();
 }
 
 String? selectedCategory;
@@ -58,14 +59,14 @@ class _MealsState extends State<Meals> {
     'Lunch',
     'Dinner',
     'Drinks',
-    'Sweets & snacks',
+    'Sweet & snacks',
     'Pastries',
     'Dairy products',
     'Fruits',
     'Lebanese dishes',
     'Arabic desserts',
     'Grains, pasta & rice',
-    'My Meals'
+    'myMeals'
   ];
   @override
   Widget build(BuildContext context) {
@@ -237,9 +238,9 @@ class _MealsState extends State<Meals> {
                                 child: Opacity(
                                   opacity: 0.7,
                                   child: Image.asset(
-                                    'assets/${categories[i]}.png',
-
-                                    //fit: BoxFit.cover,
+                                    categories[i] == 'myMeals'
+                                        ? 'assets/My Meals.png'
+                                        : 'assets/${categories[i]}.png',
                                   ),
                                 ),
                               ),
@@ -249,7 +250,9 @@ class _MealsState extends State<Meals> {
                                 width: MediaQuery.of(context).size.width * 0.25,
                                 child: Text(
                                   textAlign: TextAlign.center,
-                                  categories[i],
+                                  categories[i] == "myMeals"
+                                      ? "My Meals"
+                                      : categories[i],
                                   style: TextStyle(
                                     color: selectedCategory ==
                                             categories[i].toLowerCase()
@@ -323,12 +326,16 @@ class _MealsState extends State<Meals> {
                                     });
                                   },
                                   child: Text(
-                                    category,
+                                    category == "myMeals"
+                                        ? "My Meals"
+                                        : category,
                                     style: TextStyle(
                                       color: selectedCategory ==
                                               category.toLowerCase()
-                                          ? Color.fromARGB(255, 255, 255, 255)
-                                          : Color.fromARGB(255, 122, 122, 122),
+                                          ? const Color.fromARGB(
+                                              255, 255, 255, 255)
+                                          : const Color.fromARGB(
+                                              255, 122, 122, 122),
                                       fontSize: 15,
                                       fontFamily: 'Rubik',
                                       fontWeight: selectedCategory ==
@@ -429,7 +436,7 @@ class _MealsState extends State<Meals> {
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       } else if (snapshot.data!.isEmpty) {
-                        return Text('No meals found for this category');
+                        return const Text('No meals are available');
                       } else {
                         List<Map> meals = snapshot.data!;
                         return GridView.builder(
@@ -601,6 +608,10 @@ class MealBox extends StatefulWidget {
 }
 
 class _MealBoxState extends State<MealBox> {
+  void refresh() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -887,7 +898,7 @@ class _MealBoxState extends State<MealBox> {
               ],
             ),
           ),
-          if (selectedCategory == 'my meals')
+          if (selectedCategory == 'mymeals')
             Positioned(
               top: -15,
               left: -15,
@@ -898,7 +909,47 @@ class _MealBoxState extends State<MealBox> {
                   color: Color.fromARGB(255, 12, 140, 149),
                 ),
                 onPressed: () {
-                  db.deleteMealById(widget.meal.name);
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Confirm Deletion'),
+                        content:
+                            Text('Are you sure you want to delete this meal?'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('Cancel'),
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Close the dialog
+                            },
+                          ),
+                          TextButton(
+                            child: Text('Yes'),
+                            onPressed: () async {
+                              await db.deleteMealById(widget.meal.name);
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation,
+                                          secondaryAnimation) =>
+                                      Meals(Index: widget.ind),
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    );
+                                  },
+                                ),
+                              );
+                              selectedCategory = 'mymeals';
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
               ),
             ),
