@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, prefer_interpolation_to_compose_strings
 
 import 'dart:typed_data';
 
@@ -724,6 +724,7 @@ Function addToChosenMeals = (int id, double quantity) async {
   } else {
     List<Map> meal = await db.getMealById(id);
 
+    // ignore: prefer_interpolation_to_compose_strings
     var imageUrl = 'assets/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
     Map<String, dynamic> insertedMeal = {
       'name': meal[0]['mealName'],
