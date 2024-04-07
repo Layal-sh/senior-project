@@ -10,12 +10,14 @@ import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 import 'package:sugar_sense/Database/db.dart';
+import 'package:sugar_sense/application/mealDetails.dart';
 import 'package:sugar_sense/application/meals.dart';
 import 'package:sugar_sense/application/meals.dart';
 
 class EditMeal extends StatefulWidget {
   final Meal meal;
-  const EditMeal({required this.meal});
+  final int index;
+  const EditMeal({required this.meal, required this.index});
 
   @override
   State<EditMeal> createState() => _EditMealState();
@@ -143,7 +145,7 @@ class _EditMealState extends State<EditMeal> {
                           onPressed: () async {
                             print(controllers);
                             DBHelper db = DBHelper.instance;
-                            print(await createChildMeal());
+                           // print(await createChildMeal());
                             int response = await db.editNewMeal(
                                 widget.meal.id,
                                 _nameController.text,
@@ -151,7 +153,28 @@ class _EditMealState extends State<EditMeal> {
                                 await createChildMeal());
 
                             if (response != -1) {
-                              await addToChosenMeals(response, 1.0);
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation,
+                                          secondaryAnimation) =>
+                                      Meals(Index: widget.index),
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    );
+                                  },
+                                ),
+                              );
+                              selectedCategory = 'mymeals';
+                              //selectedCategory = 'myMeals';
+                              //await addToChosenMeals(response, 1.0);
+
                               //here the amount is set to 1.0 by default, you still have to make the user choose the amount
                               //RAJ3INA AALA L ADD INPUTSSSS
                             } else {
@@ -363,11 +386,17 @@ class _EditMealState extends State<EditMeal> {
 
 class eIngredient {
   final String name;
-  //final double quantity;
   final int unit;
   double quantity;
 
   eIngredient({required this.name, required this.quantity, required this.unit});
+  factory eIngredient.fromMap(Map<dynamic, dynamic> map) {
+    return eIngredient(
+      name: map['name'] as String,
+      quantity: map['quantity'] as double,
+      unit: map['unit'] as int,
+    );
+  }
 }
 
 class eIngBox extends StatefulWidget {

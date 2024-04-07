@@ -561,6 +561,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                                                   secondaryAnimation) =>
                                               EditMeal(
                                             meal: widget.meal,
+                                            index: widget.index,
                                           ),
                                           transitionsBuilder: (context,
                                               animation,
@@ -793,7 +794,7 @@ class _IngBoxState extends State<IngBox> {
   @override
   Widget build(BuildContext context) {
     return Row(
-      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.4,
@@ -811,7 +812,7 @@ class _IngBoxState extends State<IngBox> {
           ),
         ),
         SizedBox(
-          width: MediaQuery.of(context).size.width * 0.2,
+          width: MediaQuery.of(context).size.width * 0.1,
           child: Text(
             "${widget.ingredient.quantity}",
             softWrap: true,
