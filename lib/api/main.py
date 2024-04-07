@@ -1,3 +1,7 @@
+import datetime
+import random
+import smtplib
+import string
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import pyodbc
@@ -8,16 +12,20 @@ import requests
 from serpapi import GoogleSearch
 import time
 import threading
-
+###########################################
+##########|API functionality|##############
+###########################################
+##############################################################
 app = FastAPI()
-# Set up logging
 
+#what localhosts the api accepts (i think they don't do anything anymore but i'm too scared to remove them)
 origins = [
-    "http://localhost:8000",  # Allow requests from your FastAPI server
+    "http://localhost:8000",  
     "http://localhost:49581",
-    "http://localhost:3000"  # Allow requests from your Flutter app
+    "http://localhost:3000"  
 ]
 
+#this is to fix the cors error to allow all ports to access the api
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -26,7 +34,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-#connectionString = "Server=localhost;Database=SugarSense;Trusted_Connection=True;"
+###########################################
+######|Database Connection String|#########
+###########################################
+##############################################################
 server = 'sugarsense.database.windows.net'
 database = 'sugarsensedb'
 username = 'sugaradmin'
@@ -35,8 +46,28 @@ driver= '{ODBC Driver 17 for SQL Server}'
 #driver= '{ODBC Driver 18 for SQL Server}'
 
 connection_string = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password};'
+cnxn = pyodbc.connect(connection_string)
+cursor = cnxn.cursor()
+##############################################################
 
+###########################################
+######|Forgot Password Variables|##########
+###########################################
+##############################################################
+HOST = "smtp.gmail.com"
+PORT = 465
+FROM_EMAIL = "sugarsenseteam@gmail.com"
+email = "alisinno16@gmail.com"
+maxTime = ""
+generatedCode = ""
+maxTime = datetime.datetime.now() + datetime.timedelta(minutes=10)
+AppPassword = "onux jcdl joir mvld"
+##############################################################
 
+###########################################
+############|Pydantic Models|##############
+###########################################
+##############################################################
 class User(BaseModel):
     username: str
     password: str
@@ -59,31 +90,90 @@ class NewPatient(BaseModel):
     carbRatio3 : float
     privacy : str
 
+class ForgetPasswordRequest(BaseModel):
+    email: str
 
-conn_str = ("DRIVER={ODBC Driver 17 for SQL Server};"
-            "Server=localhost;" #MSI22\SQLEXPRESS
-            "Database=SugarSense;"
-            "Trusted_Connection=yes;")
-cnxn = pyodbc.connect(connection_string)
-cursor = cnxn.cursor()
-print(Pmodel.BaseModel)
-row = cursor.execute("Select * from Users WHERE userId = 1")
-print(row.fetchone())
-#print(row)
-#print(type(Pmodel.BaseModel))
-#engine = sal.create_engine('mssql+pyodbc://localhost/SugarSense')
-#sql_query = pd.read_sql_query('SELECT * FROM Users')
-#conn = engine.connect()
-#row = cursor.fetchone()
+##############################################################
 
-#cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES ({user.fname}, {user.lname}, {user.username}, {user.email}, {user.password})")
-#row = cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES ('botato', 'sweet', 'sweet botato', 'sweetbotato@gmail.com', 'unsweetbotato')")
-#print(cursor.rowcount)
-#cnxn.commit()
+###########################################
+############|Forgot Password|##############
+###########################################
+##############################################################
+
+def sendEmail(fromEmail, toEmail, password, message):
+    maxTime = datetime.datetime.now() + datetime.timedelta(minutes=10)
+    try:
+        server = smtplib.SMTP_SSL(HOST, PORT)
+        server.ehlo()
+        server.login(fromEmail, password)
+        server.sendmail(fromEmail, toEmail, message)
+        server.close()
+        print("Email sent")
+        
+    except Exception as e:
+        print("SOMETHING NO WORKY: ", e)
+        return {"message": "Error connecting to the server"}
+
+def generateCode():
+    global generatedCode
+    code = ""
+    for i in range(6):
+        code += str(random.choice(string.ascii_letters))
+    code = code.upper()
+    print(code)
+    generatedCode = code
+    return code
+
+def checkCode(code):
+    global generatedCode
+    currentTime = datetime.datetime.now()
+    if currentTime > maxTime:
+        print("code expired")
+        return "Code has expired"
+    if code == generatedCode:
+        generatedCode = ""
+        print("code is goooddddd")
+        return "Code is correct"
+    else:
+        print("CODE IS NU UHHH")
+
+@app.get("/forgotPassword/{email}")
+def forgot_password(email: str):
+    user = cursor.execute("SELECT * FROM Users WHERE email = ?", (email,)).fetchone()
+    if(user is None):
+        return {"error": "Email not found"}
+    else:
+        code = generateCode()
+        message = """From: From the SugarSense team <sugarsenseteam@gmail.com>
+        To: <{email}>
+        Subject: Password Reset
+
+        To reset your password, please enter the following code: {code}
+        
+        This code will expire in 10 minutes.
+        
+        If you did not request a password reset, please ignore this email.
+        
+        From the SugarSense team
+        """
+        sendEmail(FROM_EMAIL, email, AppPassword, message)
+
+
+@app.get("/checkCode/{code}")
+def checkCode(code):
+    global maxTime
+    currentTime = datetime.datetime.now()
+    if currentTime > maxTime:
+        return "Code has expired"
+    if code == generatedCode:
+        generatedCode = ""
+        return "Code is correct"
+
+##############################################################
 
 @app.get('/')
 def get():
-    return {"Hello":"get request"}
+    return {"Success":"get request"}
 
 @app.post('/')
 def post():
@@ -93,8 +183,12 @@ def post():
 def patch():
     return {"Success": "You just Patched"}
 
+###########################################
+############|Checking Users|###############
+###########################################
+##############################################################
 @app.get("/checkUsername/{user_id}")
-async def read_item(user_id: str):
+async def checkUsername(user_id: str):
     cursor.execute("Select * from Users WHERE CAST(userName AS NVARCHAR(MAX)) = ?", (user_id,))
     row = cursor.fetchone()
     if row is None:
@@ -103,7 +197,7 @@ async def read_item(user_id: str):
         return {description[0]: column for description, column in zip(cursor.description, row)}
 
 @app.get("/checkEmail/{user_id}")
-async def read_item(user_id: str):
+async def checkEmail(user_id: str):
     cursor.execute("Select * from Users WHERE CAST(email AS NVARCHAR(MAX)) = ?", (user_id,))
     row = cursor.fetchone()
     if row is None:
@@ -112,15 +206,30 @@ async def read_item(user_id: str):
         return {description[0]: column for description, column in zip(cursor.description, row)}
 
 @app.get("/checkDoc/{user_id}")
-async def read_item(user_id: str):
+async def checkDoc(user_id: str):
     cursor.execute("Select * from Doctors WHERE CAST(doctorCode AS NVARCHAR(MAX)) = ?", (user_id,))
     row = cursor.fetchone()
     if row is None:
         return None
     else:
         return {description[0]: column for description, column in zip(cursor.description, row)}
+    
+##############################################################       
         
-        
+###########################################
+#|Displaying Meals and Meals Composition|##
+###########################################
+##############################################################
+
+@app.get("/MealComposition")
+async def get_mealComposition():
+    cursor.execute("Select * from MealComposition") 
+    rows = cursor.fetchall()
+    if rows is None:
+        return {"error": "No meals found"}
+    else:
+        return [{description[0]: column for description, column in zip(cursor.description, row)} for row in rows]
+   
 @app.get("/meals")
 async def get_meals():
     cursor.execute("Select * from Meals") 
@@ -131,7 +240,7 @@ async def get_meals():
         return [{description[0]: column for description, column in zip(cursor.description, row)} for row in rows]
 
 @app.get("/meals/{meal_id}")
-async def read_item(meal_id: int):
+async def DisplayMeal(meal_id: int):
     cursor.execute("Select * from Meals WHERE mealID = ?", (meal_id,))
     row = cursor.fetchone()
     if row is None:
@@ -139,6 +248,12 @@ async def read_item(meal_id: int):
     else:
         return {description[0]: column for description, column in zip(cursor.description, row)}
     
+############################################################## 
+
+###########################################
+########|Getting Users' Details|###########
+###########################################
+##############################################################
 @app.post("/getUserDetails")
 async def getUserDetails(user: User):
     cursor.execute("SELECT userPassword FROM Users WHERE CAST(userName AS NVARCHAR(MAX)) = ?", (user.username,))
@@ -157,13 +272,18 @@ async def getUserDetails(user: User):
     return "stop trying to hack me man"
 
 @app.post("/getPatientDetails")
-async def getUserDetails(user: User):
+async def getPatientDetails(user: User):
     id = getUserById(user.username)
     
     cursor.execute("SELECT * FROM Patients WHERE patientID = ?",(id))
     row = cursor.fetchone()
     return {description[0]: column for description, column in zip(cursor.description, row)}
+##############################################################
 
+###########################################
+##########|User Authentication|############
+###########################################
+##############################################################
 @app.post("/authenticate")
 async def authenticate(user: User):
     try:
@@ -190,7 +310,12 @@ async def authenticate(user: User):
         raise e
     except Exception as e:
         return {"error": str(e)}
-    
+############################################################## 
+
+###########################################
+##########|User Registration|##############
+###########################################   
+##############################################################
 @app.post("/register")
 async def registerfunction(user: NewUser):
     try:
@@ -229,38 +354,38 @@ async def registerfunction(user: NewPatient):
         raise e
     except Exception as e:
         return {"error": str(e)}
-    
-def checkUsername(username):
+##############################################################
+###########################################
+######|Functions Used In Routes|###########
+###########################################
+##############################################################
+def checkUsername(username):##used in /register and in checkUsername##
     row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(username,)).fetchone()
     if(row is None):
         return True
     else:
         return False
     
-def checkEmail(email):
+def checkEmail(email):##used in /register and in checkEmail##
     row = cursor.execute("SELECT userID FROM Users WHERE CAST(email AS VARCHAR(255)) = ?",(email,)).fetchone()
     if(row is None):
         return True
     else:
         return False
-def getUserById(username):
+def getUserById(username):##used in /getPatientDetails and in /regPatient##
     row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(username,)).fetchone()
     if row is not None:
         return row[0]
     else:
         return None
-@app.get("/MealComposition")
-async def get_mealComposition():
-    cursor.execute("Select * from MealComposition") 
-    rows = cursor.fetchall()
-    if rows is None:
-        return {"error": "No meals found"}
-    else:
-        return [{description[0]: column for description, column in zip(cursor.description, row)} for row in rows]
-    
-#News Api Key: 52583f3a26ca4ba0b9631f43f66abb3d
-apiKey = 'd9cb4bee70915b0f8ad912e10388ab16f02a2f0b7e84724806d40e5700461781'
+ 
+ 
+###########################################
+########|Articles API Integration|#########
+###########################################
+##############################################################
 
+apiKey = 'd9cb4bee70915b0f8ad912e10388ab16f02a2f0b7e84724806d40e5700461781'
 def get_results(search):
     global results
     results = search.get_dict()
@@ -291,11 +416,4 @@ async def get_news(query: str):
             print("frfr")
             return results["organic_results"]
     print("wifi do be no cap not working")
-    return {"error": "Failed to get results after 3 attempts"}
-
-    
-#combined_results = results["organic_results"] + results2["organic_results"]
-# Convert each dictionary in the list to a frozenset so it can be added to a set
-# This will remove duplicates because sets only allow unique elements
-#unique_results = [dict(item) for item in set(frozenset(d.items()) for d in combined_results)]
-#return unique_results
+    return {"error": "Failed to get results after 3 attempts"}   
