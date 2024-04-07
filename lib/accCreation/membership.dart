@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/accCreation/thanks.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Membership extends StatefulWidget {
   final String username;

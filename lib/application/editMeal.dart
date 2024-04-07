@@ -2,16 +2,12 @@
 
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 import 'package:sugar_sense/Database/db.dart';
-import 'package:sugar_sense/application/mealDetails.dart';
-import 'package:sugar_sense/application/meals.dart';
 import 'package:sugar_sense/application/meals.dart';
 
 class EditMeal extends StatefulWidget {
@@ -145,7 +141,7 @@ class _EditMealState extends State<EditMeal> {
                           onPressed: () async {
                             print(controllers);
                             DBHelper db = DBHelper.instance;
-                           // print(await createChildMeal());
+                            // print(await createChildMeal());
                             int response = await db.editNewMeal(
                                 widget.meal.id,
                                 _nameController.text,
@@ -362,8 +358,7 @@ class _EditMealState extends State<EditMeal> {
                                   ],
                                 );
                               } else {
-                                return const SizedBox
-                                    .shrink(); // Return an empty widget if the list is empty
+                                return const SizedBox.shrink();
                               }
                             }
                           },

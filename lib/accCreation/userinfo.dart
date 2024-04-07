@@ -1,10 +1,7 @@
 import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/widgets.dart';
 import 'dart:math';
 
 import 'package:sugar_sense/Database/variables.dart';
@@ -150,7 +147,7 @@ class _UserInfoState extends State<UserInfo> {
                           if (currentPage > 0) {
                             currentPage--;
                             controller.previousPage(
-                              duration: Duration(milliseconds: 500),
+                              duration: const Duration(milliseconds: 500),
                               curve: Curves.ease,
                             );
                           }
@@ -181,7 +178,7 @@ class _UserInfoState extends State<UserInfo> {
           ),
           Expanded(
               child: PageView.builder(
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             controller: controller,
             itemCount: questions.length,
             itemBuilder: (context, index) {
@@ -668,7 +665,7 @@ class _UserInfoState extends State<UserInfo> {
                                                     ),
                                                   ),
                                                   IconButton(
-                                                    icon: Icon(
+                                                    icon: const Icon(
                                                       Icons.delete,
                                                       size: 20,
                                                     ),
@@ -1091,7 +1088,7 @@ class _UserInfoState extends State<UserInfo> {
                                                 color: options[index].isSelected
                                                     ? const Color.fromARGB(
                                                         255, 22, 161, 170)
-                                                    : Color.fromARGB(
+                                                    : const Color.fromARGB(
                                                         0, 255, 255, 255),
                                               ),
                                             ),
@@ -1141,7 +1138,7 @@ class _UserInfoState extends State<UserInfo> {
                           currentPage = controller.page!.round() + 1;
                           if (currentPage < questions.length) {
                             controller.nextPage(
-                              duration: Duration(milliseconds: 500),
+                              duration: const Duration(milliseconds: 500),
                               curve: Curves.ease,
                             );
                           }
@@ -1155,7 +1152,7 @@ class _UserInfoState extends State<UserInfo> {
                         currentPage = controller.page!.round() + 1;
                         if (currentPage < questions.length) {
                           controller.nextPage(
-                            duration: Duration(milliseconds: 500),
+                            duration: const Duration(milliseconds: 500),
                             curve: Curves.ease,
                           );
                         }
@@ -1189,78 +1186,77 @@ class _UserInfoState extends State<UserInfo> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                onPressed: () async{
+                onPressed: () async {
                   setState(
                     () {
                       updatelastAnswers();
                     },
                   );
                   final response = await registerPatient();
-                  if(response.statusCode == 200){
+                  if (response.statusCode == 200) {
                     logger.info("registered patient successfully");
                     showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (BuildContext context) {
-                      Future.delayed(Duration(seconds: 3), () {
-                        // Close the dialog
-                        Navigator.of(context).pop();
-                        // Navigate to the new page
-                        Navigator.of(context).pushReplacementNamed('/login');
-                      });
-                      return Dialog(
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          height: MediaQuery.of(context).size.height * 0.6,
-                          child: AlertDialog(
-                            insetPadding: const EdgeInsets.only(
-                              left: 10,
-                              right: 10,
-                              top: 20,
-                              bottom: 20,
-                            ),
-                            backgroundColor: Colors.white,
-                            content: Column(
-                              children: [
-                                Image.asset(
-                                    'assets/completed.png'), // Replace with your image path
-                                const SizedBox(
-                                  height: 30,
-                                ),
-                                const Text(
-                                  'Congratulations!',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Inter',
-                                    color: Color.fromARGB(255, 0, 0, 0),
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        Future.delayed(const Duration(seconds: 3), () {
+                          // Close the dialog
+                          Navigator.of(context).pop();
+                          // Navigate to the new page
+                          Navigator.of(context).pushReplacementNamed('/login');
+                        });
+                        return Dialog(
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.6,
+                            child: AlertDialog(
+                              insetPadding: const EdgeInsets.only(
+                                left: 10,
+                                right: 10,
+                                top: 20,
+                                bottom: 20,
+                              ),
+                              backgroundColor: Colors.white,
+                              content: Column(
+                                children: [
+                                  Image.asset(
+                                      'assets/completed.png'), // Replace with your image path
+                                  const SizedBox(
+                                    height: 30,
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                const Text(
-                                  'Your account is ready to use. You will be redirected to the Home Page in a few seconds...',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontFamily: 'Inter',
-                                    color: Color.fromARGB(255, 107, 114, 128),
+                                  const Text(
+                                    'Congratulations!',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Inter',
+                                      color: Color.fromARGB(255, 0, 0, 0),
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                CustomLoading(),
-                              ],
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Text(
+                                    'Your account is ready to use. You will be redirected to the Home Page in a few seconds...',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontFamily: 'Inter',
+                                      color: Color.fromARGB(255, 107, 114, 128),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomLoading(),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  );
+                        );
+                      },
+                    );
                   }
-                  
                 },
                 child: const Text(
                   "Finish",
@@ -1289,7 +1285,6 @@ class _UserInfoState extends State<UserInfo> {
   }
 
   Future<http.Response> registerPatient() async {
-   
     double insulinSensitivity = (answers[1] as num).toDouble();
     double targetGlucosed = (answers[2] as num).toDouble();
 
@@ -1361,7 +1356,7 @@ class _CustomLoadingState extends State<CustomLoading>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 2),
+      duration: const Duration(seconds: 2),
     )..repeat();
   }
 
@@ -1373,7 +1368,7 @@ class _CustomLoadingState extends State<CustomLoading>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 75,
       height: 75,
       child: AnimatedBuilder(

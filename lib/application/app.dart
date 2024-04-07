@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+//import 'package:flutter/widgets.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/meals.dart';
@@ -29,7 +29,7 @@ class _AppState extends State<App> {
   void initState() {
     super.initState();
     TotalCarbs();
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {});
     });
   }
@@ -52,10 +52,10 @@ class _AppState extends State<App> {
         page = Settings();
         break;
       case 2:
-        page = AddInput();
+        page = const AddInput();
         break;
       case 3:
-        page = Articles();
+        page = const Articles();
         break;
       case 4:
         page = Profile();
@@ -255,14 +255,8 @@ class _AddInputState extends State<AddInput> {
   double totalCarbs = 0;
   void updateBolusCalculation() {
     if (_GlucoseController.text.isNotEmpty && showTotalCarbs == true) {
-      /* &&
-        _CarbController.text.isNotEmpty && getChosenMeals().isNotEmpty*/
       glucoseLevel = double.parse(_GlucoseController.text);
-      /*double totalCarbs = _CarbController.text.isNotEmpty
-          ? double.parse(_CarbController.text)
-          : 0.0;
-      meals = getChosenMeals();
-      double totalCarbs_ = calculateTotalCarbs(meals);*/
+
       int bolusCalculationResult = calculateDosage(totalCarbs, glucoseLevel);
       bolusCalculation.value = bolusCalculationResult + 0;
       DBHelper dbHelper = DBHelper.instance;
@@ -292,7 +286,7 @@ class _AddInputState extends State<AddInput> {
 
   bool showTotalCarbs = false;
   void addMeal() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {});
     });
     setState(() {
@@ -638,12 +632,12 @@ class _AddInputState extends State<AddInput> {
                                             },
                                           );
                                         },
-                                        child: Text('Calculate'),
+                                        child: const Text('Calculate'),
                                       ),
                                     if (showTotalCarbs)
                                       Text(
                                         '$totalCarbs',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 20,
                                           color: Color.fromARGB(255, 0, 0, 0),
                                           fontWeight: FontWeight.w700,
@@ -740,13 +734,14 @@ class _AddInputState extends State<AddInput> {
                               var result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Meals(Index: 0)),
+                                    builder: (context) =>
+                                        const Meals(Index: 0)),
                               );
                               if (result == 'refresh') {
                                 refresh();
                               }
-                              _timer =
-                                  Timer.periodic(Duration(seconds: 1), (timer) {
+                              _timer = Timer.periodic(
+                                  const Duration(seconds: 1), (timer) {
                                 if (mounted) {
                                   // Check if the widget is still in the tree
                                   setState(() {});
@@ -766,7 +761,8 @@ class _AddInputState extends State<AddInput> {
                                 Text(
                                   'Add Meals',
                                   style: TextStyle(
-                                    color: Color.fromARGB(255, 38, 20, 84),
+                                    color:
+                                        const Color.fromARGB(255, 38, 20, 84),
                                     fontSize: chosenMeals.isEmpty ? 20 : 17,
                                     fontFamily: 'Ruda',
                                     fontWeight: FontWeight.w500,

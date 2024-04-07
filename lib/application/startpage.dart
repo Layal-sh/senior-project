@@ -97,13 +97,14 @@ class _StartState extends State<Start> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Login()),
+                          MaterialPageRoute(
+                              builder: (context) => const Login()),
                         );
                       },
                       child: const Text(
                         "GET STARTED",
                         style: TextStyle(
-                          color: const Color.fromARGB(255, 255, 249, 254),
+                          color: Color.fromARGB(255, 255, 249, 254),
                           fontSize: 24,
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w600,

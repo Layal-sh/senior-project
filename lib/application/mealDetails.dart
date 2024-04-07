@@ -1,14 +1,9 @@
-import 'dart:typed_data';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/application/editMeal.dart';
 import 'package:sugar_sense/application/meals.dart';
-import 'package:sugar_sense/application/app.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 import 'package:sugar_sense/main.dart';
 
@@ -188,7 +183,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                                                 snapshot) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
-                                            return CircularProgressIndicator(); // Show a loading spinner while waiting
+                                            return const CircularProgressIndicator(); // Show a loading spinner while waiting
                                           } else if (snapshot.hasError) {
                                             return Text(
                                                 'Error: ${snapshot.error}'); // Show error if there is any
@@ -519,7 +514,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                   future: fetchAllIngredients(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(); // Show loading indicator while waiting for the future to complete
+                      return const CircularProgressIndicator(); // Show loading indicator while waiting for the future to complete
                     } else if (snapshot.hasError) {
                       return Text(
                           'Error: ${snapshot.error}'); // Show error if the future completes with an error
@@ -607,7 +602,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
         ),
       ),
       bottomNavigationBar: Container(
-        color: Color.fromARGB(255, 255, 249, 254),
+        color: const Color.fromARGB(255, 255, 249, 254),
         child: Padding(
           padding: const EdgeInsets.only(
             left: 25,

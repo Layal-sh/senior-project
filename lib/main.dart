@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sugar_sense/Database/db.dart';
+//import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/app.dart';
 import 'package:sugar_sense/login/signup/login.dart';
@@ -46,11 +46,11 @@ class MyApp extends StatelessWidget {
       statusBarIconBrightness: Brightness.light, // top bar icons
     ));
     return MaterialApp(debugShowCheckedModeBanner: false, routes: {
-      "/": (context) => Splash(),
-      '/start': (context) => Start(),
-      '/login': (context) => Login(),
-      '/signup': (context) => SignUp(),
-      '/app': (context) => App(),
+      "/": (context) => const Splash(),
+      '/start': (context) => const Start(),
+      '/login': (context) => const Login(),
+      '/signup': (context) => const SignUp(),
+      '/app': (context) => const App(),
     });
   }
 }
