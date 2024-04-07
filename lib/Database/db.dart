@@ -666,6 +666,18 @@ class DBHelper {
     }
   }
 
+  Future<bool> searchMealForCat(int mealId, String input) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery(
+        'SELECT * FROM "Meals" WHERE mealId = ? AND tags LIKE ?',
+        [mealId, '%$input%']);
+    if (response.isEmpty) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   Future<List<Map>> searchCatgeory(String input) async {
     // Database? mydb = await db;
     // List<Map> response = await mydb!

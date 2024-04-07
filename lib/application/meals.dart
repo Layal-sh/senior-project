@@ -486,14 +486,230 @@ class _MealsState extends State<Meals> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Frequent Meals',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            FutureBuilder<List<List<Map>>>(
+                              future: Future.wait([
+                                db.displayMostFrequentMeals(5),
+                                db.searchCatgeory(
+                                    _formatCategory(selectedCategory!))
+                              ]),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const CircularProgressIndicator();
+                                } else if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                } else {
+                                  List<Map> frequentMeals = snapshot.data![0];
+                                  List<Map> categoryMeals = snapshot.data![1];
+
+                                  if (frequentMeals.isEmpty &&
+                                      categoryMeals.isEmpty) {
+                                    return const Text(
+                                      'No meals found',
+                                      style: TextStyle(
+                                        color:
+                                            Color.fromARGB(255, 139, 139, 139),
+                                      ),
+                                    );
+                                  } else {
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        if (frequentMeals.isNotEmpty)
+                                          const Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 20.0),
+                                                child: Text(
+                                                  'Frequent Meals',
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontFamily: 'Inter',
+                                                    color: Color.fromARGB(
+                                                        255, 38, 20, 84),
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                              Divider(
+                                                color: Color.fromARGB(
+                                                    139, 61, 35, 129),
+                                                thickness: 1,
+                                                indent: 20,
+                                                endIndent: 20,
+                                              ),
+                                            ],
+                                          ),
+                                        GridView.builder(
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          padding: const EdgeInsets.only(
+                                            top: 10.0,
+                                            bottom: 10,
+                                            left: 15,
+                                            right: 15,
+                                          ),
+                                          itemCount: frequentMeals.length,
+                                          itemBuilder: (ctx, i) => MealBox(
+                                            meal: Meal(
+                                              name: frequentMeals[i]
+                                                  ['mealName'],
+                                              imageUrl: 'assets/' +
+                                                  (frequentMeals[i]
+                                                          ['mealPicture'] ??
+                                                      'AddDish.png'),
+                                              id: frequentMeals[i]['mealId'],
+                                              carbohydrates: frequentMeals[i]
+                                                  ['carbohydrates'],
+                                              unit: frequentMeals[i]['unit'],
+                                              quantity: 1,
+                                              ingredients: [],
+                                            ),
+                                            ind: widget.Index,
+                                          ),
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 3,
+                                            childAspectRatio: 3 / 3.6,
+                                            crossAxisSpacing: 5,
+                                            mainAxisSpacing: 10,
+                                          ),
+                                        ),
+                                        if (categoryMeals.isNotEmpty)
+                                          const Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 20.0),
+                                                child: Text(
+                                                  'My Meals',
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontFamily: 'Inter',
+                                                    color: Color.fromARGB(
+                                                        255, 38, 20, 84),
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                              Divider(
+                                                color: Color.fromARGB(
+                                                    139, 61, 35, 129),
+                                                thickness: 1,
+                                                indent: 20,
+                                                endIndent: 20,
+                                              ),
+                                            ],
+                                          ),
+                                        GridView.builder(
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          padding: const EdgeInsets.only(
+                                            top: 10.0,
+                                            bottom: 10,
+                                            left: 15,
+                                            right: 15,
+                                          ),
+                                          itemCount: categoryMeals.length,
+                                          itemBuilder: (ctx, i) => MealBox(
+                                            meal: Meal(
+                                              name: categoryMeals[i]
+                                                  ['mealName'],
+                                              imageUrl: 'assets/' +
+                                                  (categoryMeals[i]
+                                                          ['mealPicture'] ??
+                                                      'AddDish.png'),
+                                              id: categoryMeals[i]['mealId'],
+                                              carbohydrates: categoryMeals[i]
+                                                  ['carbohydrates'],
+                                              unit: categoryMeals[i]['unit'],
+                                              quantity: 1,
+                                              ingredients: [],
+                                            ),
+                                            ind: widget.Index,
+                                          ),
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 3,
+                                            childAspectRatio: 3 / 3.6,
+                                            crossAxisSpacing: 5,
+                                            mainAxisSpacing: 10,
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                    /*Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.only(left: 20.0),
+                                        child: Text(
+                                          'My Meals',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontFamily: 'Inter',
+                                            color:
+                                                Color.fromARGB(255, 38, 20, 84),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      const Divider(
+                                        color: Color.fromARGB(139, 61, 35, 129),
+                                        thickness: 1,
+                                        indent: 20,
+                                        endIndent: 20,
+                                      ),
+                                      GridView.builder(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        shrinkWrap: true,
+                                        padding: const EdgeInsets.only(
+                                          top: 10.0,
+                                          bottom: 10,
+                                          left: 15,
+                                          right: 15,
+                                        ),
+                                        itemCount: categoryMeals.length,
+                                        itemBuilder: (ctx, i) => MealBox(
+                                          meal: Meal(
+                                            name: categoryMeals[i]['mealName'],
+                                            imageUrl: 'assets/' +
+                                                (categoryMeals[i]['mealPicture'] ??
+                                                    'AddDish.png'),
+                                            id: categoryMeals[i]['mealId'],
+                                            carbohydrates: categoryMeals[i]
+                                                ['carbohydrates'],
+                                            unit: categoryMeals[i]['unit'],
+                                            quantity: 1,
+                                            ingredients: [],
+                                          ),
+                                          ind: widget.Index,
+                                        ),
+                                        gridDelegate:
+                                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 3,
+                                          childAspectRatio: 3 / 3.6,
+                                          crossAxisSpacing: 5,
+                                          mainAxisSpacing: 10,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                */
+                                  }
+                                }
+                              },
                             ),
-                            FutureBuilder<List<Map>>(
+                            /*FutureBuilder<List<Map>>(
                               future: db.displayMostFrequentMeals(5),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
@@ -504,7 +720,7 @@ class _MealsState extends State<Meals> {
                                 } else if (snapshot.data!.isEmpty) {
                                   return const Center(
                                       child: Text(
-                                    'You have no meals',
+                                    '',
                                     style: TextStyle(
                                       color: Color.fromARGB(255, 139, 139, 139),
                                       //fontSize: 20,
@@ -513,48 +729,66 @@ class _MealsState extends State<Meals> {
                                   ));
                                 } else {
                                   List<Map> meals = snapshot.data!;
-                                  return GridView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    padding: const EdgeInsets.only(
-                                      top: 10.0,
-                                      bottom: 10,
-                                      left: 15,
-                                      right: 15,
-                                    ),
-                                    itemCount: meals.length,
-                                    itemBuilder: (ctx, i) => MealBox(
-                                      meal: Meal(
-                                        name: meals[i]['mealName'],
-                                        imageUrl: 'assets/' +
-                                            (meals[i]['mealPicture'] ??
-                                                'AddDish.png'),
-                                        id: meals[i]['mealId'],
-                                        carbohydrates: meals[i]
-                                            ['carbohydrates'],
-                                        unit: meals[i]['unit'],
-                                        quantity: 1,
-                                        ingredients: [],
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.only(left: 20.0),
+                                        child: Text(
+                                          'Frequent Meals',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontFamily: 'Inter',
+                                            color:
+                                                Color.fromARGB(255, 38, 20, 84),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                       ),
-                                      ind: widget.Index,
-                                    ),
-                                    gridDelegate:
-                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3,
-                                      childAspectRatio: 3 / 3.6,
-                                      crossAxisSpacing: 5,
-                                      mainAxisSpacing: 10,
-                                    ),
+                                      const Divider(
+                                        color: Color.fromARGB(139, 61, 35, 129),
+                                        thickness: 1,
+                                        indent: 20,
+                                        endIndent: 20,
+                                      ),
+                                      GridView.builder(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        shrinkWrap: true,
+                                        padding: const EdgeInsets.only(
+                                          top: 10.0,
+                                          bottom: 10,
+                                          left: 15,
+                                          right: 15,
+                                        ),
+                                        itemCount: meals.length,
+                                        itemBuilder: (ctx, i) => MealBox(
+                                          meal: Meal(
+                                            name: meals[i]['mealName'],
+                                            imageUrl: 'assets/' +
+                                                (meals[i]['mealPicture'] ??
+                                                    'AddDish.png'),
+                                            id: meals[i]['mealId'],
+                                            carbohydrates: meals[i]
+                                                ['carbohydrates'],
+                                            unit: meals[i]['unit'],
+                                            quantity: 1,
+                                            ingredients: [],
+                                          ),
+                                          ind: widget.Index,
+                                        ),
+                                        gridDelegate:
+                                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 3,
+                                          childAspectRatio: 3 / 3.6,
+                                          crossAxisSpacing: 5,
+                                          mainAxisSpacing: 10,
+                                        ),
+                                      ),
+                                    ],
                                   );
                                 }
                               },
-                            ),
-                            const Text(
-                              'My Meals',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
                             ),
                             FutureBuilder<List<Map>>(
                               future: db.searchCatgeory(
@@ -566,8 +800,8 @@ class _MealsState extends State<Meals> {
                                 } else if (snapshot.hasError) {
                                   return Text('Error: ${snapshot.error}');
                                 } else if (snapshot.data!.isEmpty) {
-                                  return Text(
-                                    'You have no meals',
+                                  return const Text(
+                                    '',
                                     style: TextStyle(
                                       color: Color.fromARGB(255, 139, 139, 139),
                                       //fontSize: 20,
@@ -576,42 +810,68 @@ class _MealsState extends State<Meals> {
                                   );
                                 } else {
                                   List<Map> meals = snapshot.data!;
-                                  return GridView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    padding: const EdgeInsets.only(
-                                      top: 10.0,
-                                      bottom: 10,
-                                      left: 15,
-                                      right: 15,
-                                    ),
-                                    itemCount: meals.length,
-                                    itemBuilder: (ctx, i) => MealBox(
-                                      meal: Meal(
-                                        name: meals[i]['mealName'],
-                                        imageUrl: 'assets/' +
-                                            (meals[i]['mealPicture'] ??
-                                                'AddDish.png'),
-                                        id: meals[i]['mealId'],
-                                        carbohydrates: meals[i]
-                                            ['carbohydrates'],
-                                        unit: meals[i]['unit'],
-                                        quantity: 1,
-                                        ingredients: [],
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.only(left: 20.0),
+                                        child: Text(
+                                          'My Meals',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontFamily: 'Inter',
+                                            color:
+                                                Color.fromARGB(255, 38, 20, 84),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                       ),
-                                      ind: widget.Index,
-                                    ),
-                                    gridDelegate:
-                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3,
-                                      childAspectRatio: 3 / 3.6,
-                                      crossAxisSpacing: 5,
-                                      mainAxisSpacing: 10,
-                                    ),
+                                      const Divider(
+                                        color: Color.fromARGB(139, 61, 35, 129),
+                                        thickness: 1,
+                                        indent: 20,
+                                        endIndent: 20,
+                                      ),
+                                      GridView.builder(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        shrinkWrap: true,
+                                        padding: const EdgeInsets.only(
+                                          top: 10.0,
+                                          bottom: 10,
+                                          left: 15,
+                                          right: 15,
+                                        ),
+                                        itemCount: meals.length,
+                                        itemBuilder: (ctx, i) => MealBox(
+                                          meal: Meal(
+                                            name: meals[i]['mealName'],
+                                            imageUrl: 'assets/' +
+                                                (meals[i]['mealPicture'] ??
+                                                    'AddDish.png'),
+                                            id: meals[i]['mealId'],
+                                            carbohydrates: meals[i]
+                                                ['carbohydrates'],
+                                            unit: meals[i]['unit'],
+                                            quantity: 1,
+                                            ingredients: [],
+                                          ),
+                                          ind: widget.Index,
+                                        ),
+                                        gridDelegate:
+                                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 3,
+                                          childAspectRatio: 3 / 3.6,
+                                          crossAxisSpacing: 5,
+                                          mainAxisSpacing: 10,
+                                        ),
+                                      ),
+                                    ],
                                   );
                                 }
                               },
                             )
+                          */
                           ],
                         ),
                       ),
@@ -1043,7 +1303,7 @@ class _MealBoxState extends State<MealBox> {
             ),
           ),
           FutureBuilder<bool>(
-            future: db.isMealInMyMeals(widget.meal.id),
+            future: db.searchMealForCat(widget.meal.id, 'mymeal'),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return CircularProgressIndicator(); // Show a loading spinner while waiting for the data
@@ -1051,67 +1311,66 @@ class _MealBoxState extends State<MealBox> {
                 return Text(
                     'Error: ${snapshot.error}'); // Show an error message if something goes wrong
               } else {
-                // Check if the category is 'mymeals'
-                return (snapshot.data! && selectedCategory == 'mymeals')
-                    ? Positioned(
-                        top: -15,
-                        left: -15,
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.delete,
-                            size: MediaQuery.of(context).size.width * 0.09,
-                            color: Color.fromARGB(255, 12, 140, 149),
-                          ),
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Confirm Deletion'),
-                                  content: Text(
-                                      'Are you sure you want to delete this meal?'),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: Text('Cancel'),
-                                      onPressed: () {
-                                        Navigator.of(context)
-                                            .pop(); // Close the dialog
-                                      },
-                                    ),
-                                    TextButton(
-                                      child: Text('Yes'),
-                                      onPressed: () async {
-                                        await db
-                                            .deleteMealById(widget.meal.name);
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context).push(
-                                          PageRouteBuilder(
-                                            pageBuilder: (context, animation,
-                                                    secondaryAnimation) =>
-                                                Meals(Index: widget.ind),
-                                            transitionsBuilder: (context,
-                                                animation,
-                                                secondaryAnimation,
-                                                child) {
-                                              return FadeTransition(
-                                                opacity: animation,
-                                                child: child,
-                                              );
-                                            },
-                                          ),
-                                        );
-                                        selectedCategory = 'mymeals';
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
+                // Use snapshot.data in a condition
+                if (snapshot.data == true) {
+                  return Positioned(
+                    top: -15,
+                    left: -15,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.delete,
+                        size: MediaQuery.of(context).size.width * 0.09,
+                        color: Color.fromARGB(255, 26, 199, 211),
+                      ),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Confirm Deletion'),
+                              content: Text(
+                                  'Are you sure you want to delete this meal?'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('Cancel'),
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .pop(); // Close the dialog
+                                  },
+                                ),
+                                TextButton(
+                                  child: Text('Yes'),
+                                  onPressed: () async {
+                                    await db.deleteMealById(widget.meal.name);
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).push(
+                                      PageRouteBuilder(
+                                        pageBuilder: (context, animation,
+                                                secondaryAnimation) =>
+                                            Meals(Index: widget.ind),
+                                        transitionsBuilder: (context, animation,
+                                            secondaryAnimation, child) {
+                                          return FadeTransition(
+                                            opacity: animation,
+                                            child: child,
+                                          );
+                                        },
+                                      ),
+                                    );
+                                    selectedCategory = 'mymeals';
+                                  },
+                                ),
+                              ],
                             );
                           },
-                        ),
-                      )
-                    : Container(); // Render an empty Container if the category is not 'mymeals'
+                        );
+                      },
+                    ),
+                  );
+                } else {
+                  return Container(); // Return an empty container if the Future returned false or null
+                }
               }
             },
           ),

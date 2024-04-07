@@ -165,7 +165,9 @@ class _CreateMealState extends State<CreateMeal> {
                                 image,
                                 chosenCMeals,
                                 selectedCategories,
-                                double.parse(gramsController.text));
+                                chosenCMeals.isEmpty
+                                    ? double.parse(gramsController.text)
+                                    : totalCCarbs);
                             print("Created Meal: $createdMeal");
                             if (createdMeal == -1) {
                               showDialog(
