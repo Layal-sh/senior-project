@@ -659,7 +659,11 @@ class DBHelper {
     List<Map> response = await mydb!.rawQuery(
         'SELECT * FROM "Meals" WHERE mealId = ? AND tags LIKE ?',
         [mealId, '%$input%']);
-    return response;
+    if (response.isEmpty) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   Future<List<Map>> searchCatgeory(String input) async {
