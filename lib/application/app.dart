@@ -957,7 +957,6 @@ class _ArticlesState extends State<Articles> {
                         return Padding(
                           padding: const EdgeInsets.only(left: 0.0),
                           child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.6,
                             child: InkWell(
                               onTap: () => launch(url),
                               child: Card(
@@ -1145,7 +1144,7 @@ class _ArticlesState extends State<Articles> {
                                 clipBehavior: Clip.antiAlias,
                                 child: Padding(
                                   padding: const EdgeInsets.only(
-                                    bottom: 5.0,
+                                    //bottom: 5.0,
                                     left: 10,
                                     right: 10,
                                   ),
@@ -1176,6 +1175,8 @@ class _ArticlesState extends State<Articles> {
                                           children: [
                                             Text(
                                               title,
+                                              maxLines: 3,
+                                              overflow: TextOverflow.ellipsis,
                                               style: const TextStyle(
                                                 fontSize: 16,
                                                 fontFamily: 'InriaSerif',
@@ -1199,6 +1200,8 @@ class _ArticlesState extends State<Articles> {
                                                     ),
                                                     Text(
                                                       date,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                       style: const TextStyle(
                                                         color: Color.fromARGB(
                                                             255, 106, 106, 106),
