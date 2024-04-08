@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 //import 'package:flutter/widgets.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
@@ -850,7 +851,6 @@ class _ArticlesState extends State<Articles> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
     List filteredArticles =
         articles.where((article) => article['thumbnail'] != null).toList();
     filteredArticles.sort((a, b) {
@@ -910,7 +910,7 @@ class _ArticlesState extends State<Articles> {
                 fontSize: 27,
                 fontFamily: 'InriaSerifBold',
                 color: Color.fromARGB(255, 38, 20, 84),
-                //fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w900,
               ),
             ),
           ),
@@ -930,89 +930,139 @@ class _ArticlesState extends State<Articles> {
                         String? date = filteredArticles[index]['date'];
 
                         return Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
+                          padding: const EdgeInsets.only(left: 0.0),
                           child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.5,
+                            width: MediaQuery.of(context).size.width * 0.6,
                             child: InkWell(
                               onTap: () => launch(url),
                               child: Card(
+                                color: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                surfaceTintColor: Colors.transparent,
                                 clipBehavior: Clip.antiAlias,
                                 child: Column(
                                   children: [
-                                    imageUrl != null
-                                        ? Image.network(
-                                            imageUrl,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.4,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.15,
-                                            fit: BoxFit.fitWidth,
-                                          )
-                                        : Container(),
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.38,
-                                          child: Text(
-                                            title,
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontFamily: 'InriaSerif',
-                                              color: Color.fromARGB(
-                                                  255, 38, 20, 84),
-                                              //fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(10.0),
+                                          topRight: Radius.circular(10.0),
                                         ),
-                                        IconButton(
-                                          icon: Icon(
-                                            starred![index]
-                                                ? Icons.bookmark
-                                                : Icons.bookmark_border,
-                                            color: starred![index]
-                                                ? const Color.fromARGB(
-                                                    255,
-                                                    49,
-                                                    205,
-                                                    215) // Corrected color definition
-                                                : const Color.fromARGB(
-                                                    255, 49, 205, 215),
-                                            size: 27,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color.fromARGB(
+                                                    185, 77, 77, 77)
+                                                .withOpacity(0.5),
+                                            spreadRadius: 1,
+                                            blurRadius: 7,
+                                            offset: const Offset(0, 5),
                                           ),
-                                          onPressed: () async {
-                                            logger.info("clicked");
-                                            DBHelper dbHelper =
-                                                DBHelper.instance;
-                                            var response;
-                                            if (starred![index]) {
-                                              response = await dbHelper
-                                                  .deleteFavorite(url);
-                                              logger.info(response);
-                                            } else {
-                                              response =
-                                                  await dbHelper.addFavorite(
-                                                      url,
-                                                      title,
-                                                      imageUrl,
-                                                      date);
-                                            }
-                                            logger.info(response);
-                                            setState(
-                                              () {
-                                                starred![index] =
-                                                    !starred![index];
-                                              },
-                                            );
+                                        ],
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(10.0),
+                                          topRight: Radius.circular(10.0),
+                                          bottomLeft: Radius.circular(10),
+                                          bottomRight: Radius.circular(10),
+                                        ),
+                                        child: imageUrl != null
+                                            ? Image.network(
+                                                imageUrl,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.5,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.15,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Container(),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 8.0,
+                                          left: 25,
+                                          //right: 15,
+                                        ),
+                                        child: ShaderMask(
+                                          shaderCallback: (Rect bounds) {
+                                            return const LinearGradient(
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                              colors: <Color>[
+                                                Colors.black,
+                                                Color.fromARGB(51, 0, 0, 0)
+                                              ],
+                                              stops: <double>[0.7, 1.0],
+                                            ).createShader(bounds);
                                           },
+                                          blendMode: BlendMode.dstIn,
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.4,
+                                                child: Text(
+                                                  title,
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontFamily: 'InriaSerif',
+                                                    color: Color.fromARGB(
+                                                        255, 38, 20, 84),
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  starred![index]
+                                                      ? Icons.bookmark_rounded
+                                                      : Icons
+                                                          .bookmark_border_rounded,
+                                                  color: starred![index]
+                                                      ? const Color.fromARGB(
+                                                          255,
+                                                          49,
+                                                          205,
+                                                          215) // Corrected color definition
+                                                      : const Color.fromARGB(
+                                                          255, 49, 205, 215),
+                                                  size: 27,
+                                                ),
+                                                onPressed: () async {
+                                                  logger.info("clicked");
+                                                  DBHelper dbHelper =
+                                                      DBHelper.instance;
+                                                  var response;
+                                                  if (starred![index]) {
+                                                    response = await dbHelper
+                                                        .deleteFavorite(url);
+                                                    logger.info(response);
+                                                  } else {
+                                                    response = await dbHelper
+                                                        .addFavorite(url, title,
+                                                            imageUrl, date);
+                                                  }
+                                                  logger.info(response);
+                                                  setState(
+                                                    () {
+                                                      starred![index] =
+                                                          !starred![index];
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ],
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -1024,6 +1074,168 @@ class _ArticlesState extends State<Articles> {
                     ),
                   ),
                 ),
+          const Padding(
+            padding: EdgeInsets.only(
+              left: 25.0,
+              //top: 5,
+              //bottom: 20,
+            ),
+            child: Text(
+              'For You',
+              style: TextStyle(
+                fontSize: 22,
+                fontFamily: 'InriaSerifBold',
+                color: Color.fromARGB(255, 38, 20, 84),
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+          Expanded(
+            child: (articles.isEmpty || starred == null)
+                ? const Center(child: CircularProgressIndicator())
+                : Padding(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    child: SizedBox(
+                      child: ListView.builder(
+                        itemCount: articles
+                            .where((article) =>
+                                !filteredArticles.contains(article))
+                            .toList()
+                            .length,
+                        itemBuilder: (context, index) {
+                          String? imageUrl = articles[index]['thumbnail'];
+                          String title = articles[index]['title'];
+                          String url = articles[index]['link'];
+                          String? date = articles[index]['date'];
+
+                          return SizedBox(
+                            height: imageUrl != null
+                                ? MediaQuery.of(context).size.height * 0.13
+                                : null,
+                            child: InkWell(
+                              onTap: () => launch(url),
+                              child: Card(
+                                color: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                surfaceTintColor: Colors.transparent,
+                                clipBehavior: Clip.antiAlias,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: 5.0,
+                                    left: 10,
+                                    right: 10,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      imageUrl != null
+                                          ? ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                              child: Image.network(
+                                                imageUrl,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.25,
+                                                height:
+                                                    120, // Adjust the height as needed
+                                                fit: BoxFit.cover,
+                                              ),
+                                            )
+                                          : Container(),
+                                      const SizedBox(
+                                          width: 10), // Add some spacing
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              title,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontFamily: 'InriaSerif',
+                                                color: Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            if (date != null)
+                                              SizedBox(
+                                                child: Row(
+                                                  children: [
+                                                    const Icon(
+                                                      Icons.access_time,
+                                                      size: 17,
+                                                      color: Color.fromARGB(
+                                                          255, 106, 106, 106),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 7,
+                                                    ),
+                                                    Text(
+                                                      date,
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 106, 106, 106),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: Icon(
+                                          starred![index +
+                                                  filteredArticles.length]
+                                              ? Icons.bookmark
+                                              : Icons.bookmark_border,
+                                          color: starred![index +
+                                                  filteredArticles.length]
+                                              ? const Color.fromARGB(
+                                                  255, 49, 205, 215)
+                                              : const Color.fromARGB(
+                                                  255, 49, 205, 215),
+                                          size: 25,
+                                        ),
+                                        onPressed: () async {
+                                          logger.info("clicked");
+                                          DBHelper dbHelper = DBHelper.instance;
+                                          var response;
+                                          if (starred![index +
+                                              filteredArticles.length]) {
+                                            response = await dbHelper
+                                                .deleteFavorite(url);
+                                            logger.info(response);
+                                          } else {
+                                            response =
+                                                await dbHelper.addFavorite(
+                                                    url, title, imageUrl, date);
+                                          }
+                                          logger.info(response);
+                                          setState(
+                                            () {
+                                              starred![index +
+                                                      filteredArticles.length] =
+                                                  !starred![index +
+                                                      filteredArticles.length];
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+          ),
         ],
       ),
       /*ListView.builder(

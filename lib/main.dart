@@ -42,8 +42,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Color.fromARGB(255, 38, 20, 84), // top bar color
-      statusBarIconBrightness: Brightness.light, // top bar icons
+      statusBarColor: Color.fromARGB(255, 38, 20, 84),
+      statusBarIconBrightness: Brightness.light,
     ));
     return MaterialApp(debugShowCheckedModeBanner: false, routes: {
       "/": (context) => const Splash(),
