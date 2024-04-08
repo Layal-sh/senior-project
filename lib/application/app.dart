@@ -849,6 +849,7 @@ class _ArticlesState extends State<Articles> {
     }
   }
 
+  bool _isPressed = false;
   @override
   Widget build(BuildContext context) {
     List filteredArticles =
@@ -898,20 +899,40 @@ class _ArticlesState extends State<Articles> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(
               left: 25.0,
+              right: 25,
               top: 30,
               bottom: 20,
             ),
-            child: Text(
-              'Todays Read',
-              style: TextStyle(
-                fontSize: 27,
-                fontFamily: 'InriaSerifBold',
-                color: Color.fromARGB(255, 38, 20, 84),
-                fontWeight: FontWeight.w900,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Todays Read',
+                  style: TextStyle(
+                    fontSize: 27,
+                    fontFamily: 'InriaSerifBold',
+                    color: Color.fromARGB(255, 38, 20, 84),
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isPressed = !_isPressed;
+                    });
+                  },
+                  child: Icon(
+                    _isPressed
+                        ? Icons.notifications
+                        : Icons.notifications_none_outlined,
+                    size: 30,
+                    color: const Color.fromARGB(255, 38, 20, 84),
+                  ),
+                ),
+              ],
             ),
           ),
           (filteredArticles.isEmpty || starred == null)
