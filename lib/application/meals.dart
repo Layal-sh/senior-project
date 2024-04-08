@@ -188,7 +188,7 @@ class _MealsState extends State<Meals> {
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3, // Display 3 categories on each row
-                        childAspectRatio: 3 / 3.2,
+                        childAspectRatio: 3 / 3.4,
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 10,
                       ),
@@ -244,7 +244,7 @@ class _MealsState extends State<Meals> {
                             ), // Replace with your image path
                             Flexible(
                               child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.25,
+                                width: MediaQuery.of(context).size.width * 0.3,
                                 child: Text(
                                   textAlign: TextAlign.center,
                                   categories[i] == "myMeals"
@@ -257,7 +257,9 @@ class _MealsState extends State<Meals> {
                                             255, 255, 255, 255)
                                         : const Color.fromARGB(
                                             255, 122, 122, 122),
-                                    fontSize: 14,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.043,
                                     fontFamily: 'Ruda',
                                     letterSpacing: -0.75,
                                     fontWeight: selectedCategory ==
@@ -412,11 +414,26 @@ class _MealsState extends State<Meals> {
                                 ],
                               ),
                               gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                childAspectRatio: 3 / 3.6,
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount:
+                                    MediaQuery.of(context).size.width > 500
+                                        ? 4
+                                        : 3,
+                                childAspectRatio: MediaQuery.of(context)
+                                            .size
+                                            .width <
+                                        500
+                                    ? MediaQuery.of(context).size.width /
+                                        (MediaQuery.of(context).size.height *
+                                            0.65)
+                                    : MediaQuery.of(context).size.width /
+                                        (MediaQuery.of(context).size.height *
+                                            0.9),
                                 crossAxisSpacing: 5,
-                                mainAxisSpacing: 10,
+                                mainAxisSpacing:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 10
+                                        : 20,
                               ),
                             );
                           }
@@ -471,11 +488,26 @@ class _MealsState extends State<Meals> {
                                 ind: widget.Index,
                               ),
                               gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                childAspectRatio: 3 / 3.6,
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount:
+                                    MediaQuery.of(context).size.width > 500
+                                        ? 4
+                                        : 3,
+                                childAspectRatio: MediaQuery.of(context)
+                                            .size
+                                            .width <
+                                        500
+                                    ? MediaQuery.of(context).size.width /
+                                        (MediaQuery.of(context).size.height *
+                                            0.65)
+                                    : MediaQuery.of(context).size.width /
+                                        (MediaQuery.of(context).size.height *
+                                            0.9),
                                 crossAxisSpacing: 5,
-                                mainAxisSpacing: 10,
+                                mainAxisSpacing:
+                                    MediaQuery.of(context).size.width < 500
+                                        ? 10
+                                        : 20,
                               ),
                             );
                           }
@@ -573,9 +605,22 @@ class _MealsState extends State<Meals> {
                                             ind: widget.Index,
                                           ),
                                           gridDelegate:
-                                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 3,
-                                            childAspectRatio: 3 / 3.6,
+                                              SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount:
+                                                MediaQuery.of(context)
+                                                            .size
+                                                            .width >
+                                                        500
+                                                    ? 4
+                                                    : 3,
+                                            childAspectRatio:
+                                                MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    (MediaQuery.of(context)
+                                                            .size
+                                                            .height *
+                                                        0.6),
                                             crossAxisSpacing: 5,
                                             mainAxisSpacing: 10,
                                           ),
@@ -638,11 +683,41 @@ class _MealsState extends State<Meals> {
                                             ind: widget.Index,
                                           ),
                                           gridDelegate:
-                                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 3,
-                                            childAspectRatio: 3 / 3.6,
+                                              SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount:
+                                                MediaQuery.of(context)
+                                                            .size
+                                                            .width >
+                                                        500
+                                                    ? 4
+                                                    : 3,
+                                            childAspectRatio:
+                                                MediaQuery.of(context)
+                                                            .size
+                                                            .width <
+                                                        500
+                                                    ? MediaQuery.of(context)
+                                                            .size
+                                                            .width /
+                                                        (MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.65)
+                                                    : MediaQuery.of(context)
+                                                            .size
+                                                            .width /
+                                                        (MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.9),
                                             crossAxisSpacing: 5,
-                                            mainAxisSpacing: 10,
+                                            mainAxisSpacing:
+                                                MediaQuery.of(context)
+                                                            .size
+                                                            .width <
+                                                        500
+                                                    ? 10
+                                                    : 20,
                                           ),
                                         ),
                                       ],
@@ -838,7 +913,9 @@ class _MealBoxState extends State<MealBox> {
                       Row(
                         children: <Widget>[
                           Expanded(
-                            flex: 3,
+                            flex: unitString(widget.meal.unit) != 'tablespoons'
+                                ? 3
+                                : 3,
                             child: TextField(
                               controller: quantityController,
                               keyboardType: TextInputType.number,
@@ -856,15 +933,20 @@ class _MealBoxState extends State<MealBox> {
                             ),
                           ),
                           Expanded(
-                            flex: 1,
+                            flex: unitString(widget.meal.unit) != 'tablespoons'
+                                ? 1
+                                : 2,
                             child: Text(
                               unitString(widget.meal.unit),
                               textAlign: TextAlign.center,
                               overflow: TextOverflow.fade,
                               softWrap: false,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: Color.fromARGB(255, 38, 20, 84),
-                                fontSize: 16,
+                                fontSize: unitString(widget.meal.unit) !=
+                                        'tablespoons'
+                                    ? 16
+                                    : 14,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -971,7 +1053,7 @@ class _MealBoxState extends State<MealBox> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 90,
+                  height: MediaQuery.of(context).size.height * 0.12,
                   child: FutureBuilder<ByteData>(
                     future: DefaultAssetBundle.of(context)
                         .load(widget.meal.imageUrl),
@@ -1063,14 +1145,17 @@ class _MealBoxState extends State<MealBox> {
                               Navigator.pop(context, 'refresh');
                             }
                           },
-                          child: CircleAvatar(
-                            radius: MediaQuery.of(context).size.width * 0.027,
-                            backgroundColor:
-                                const Color.fromARGB(170, 64, 205, 215),
-                            child: Icon(
-                              Icons.arrow_forward_ios,
-                              color: const Color.fromARGB(255, 255, 255, 255),
-                              size: MediaQuery.of(context).size.width * 0.035,
+                          child: Expanded(
+                            child: CircleAvatar(
+                              radius: MediaQuery.of(context).size.width * 0.024,
+                              backgroundColor:
+                                  const Color.fromARGB(170, 64, 205, 215),
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                color: const Color.fromARGB(255, 255, 255, 255),
+                                size: MediaQuery.of(context).size.width /
+                                    (MediaQuery.of(context).size.height * 0.05),
+                              ),
                             ),
                           ),
                         ),

@@ -800,25 +800,25 @@ class DBHelper {
     if (await searchMealForCatgeory(mealId, "drinks")) {
       categories.add("drinks");
     }
-    if ((await searchMealForCatgeory(mealId, "sweet & snacks"))) {
+    if (await searchMealForCatgeory(mealId, "sweet & snacks")) {
       categories.add("sweet & snacks");
     }
-    if ((await searchMealForCatgeory(mealId, "pastries"))) {
+    if (await searchMealForCatgeory(mealId, "pastries")) {
       categories.add("pastries");
     }
-    if ((await searchMealForCatgeory(mealId, "dairy products"))) {
+    if (await searchMealForCatgeory(mealId, "dairy products")) {
       categories.add("dairy products");
     }
-    if ((await searchMealForCatgeory(mealId, "fruits"))) {
+    if (await searchMealForCatgeory(mealId, "fruits")) {
       categories.add("fruits");
     }
-    if ((await searchMealForCatgeory(mealId, "lebanese dishes"))) {
+    if (await searchMealForCatgeory(mealId, "lebanese dishes")) {
       categories.add("lebanese dishes");
     }
-    if ((await searchMealForCatgeory(mealId, "arabic desserts"))) {
+    if (await searchMealForCatgeory(mealId, "arabic desserts")) {
       categories.add("arabic desserts");
     }
-    if ((await searchMealForCatgeory(mealId, "grains & pasta & rice"))) {
+    if (await searchMealForCatgeory(mealId, "grains & pasta & rice")) {
       categories.add("grains, pasta & rice");
     }
     return categories;
