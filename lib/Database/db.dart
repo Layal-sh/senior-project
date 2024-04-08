@@ -797,29 +797,28 @@ class DBHelper {
 
   Future<List<String>> getCategoryOfMeal(int mealId) async {
     List<String> categories = [];
-    if ((await searchMealForCatgeory(mealId, "drinks")).isNotEmpty) {
+    if (await searchMealForCatgeory(mealId, "drinks")) {
       categories.add("drinks");
     }
-    if ((await searchMealForCatgeory(mealId, "sweet & snacks")).isNotEmpty) {
+    if ((await searchMealForCatgeory(mealId, "sweet & snacks"))) {
       categories.add("sweet & snacks");
     }
-    if ((await searchMealForCatgeory(mealId, "pastries")).isNotEmpty) {
+    if ((await searchMealForCatgeory(mealId, "pastries"))) {
       categories.add("pastries");
     }
-    if ((await searchMealForCatgeory(mealId, "dairy products")).isNotEmpty) {
+    if ((await searchMealForCatgeory(mealId, "dairy products"))) {
       categories.add("dairy products");
     }
-    if ((await searchMealForCatgeory(mealId, "fruits")).isNotEmpty) {
+    if ((await searchMealForCatgeory(mealId, "fruits"))) {
       categories.add("fruits");
     }
-    if ((await searchMealForCatgeory(mealId, "lebanese dishes")).isNotEmpty) {
+    if ((await searchMealForCatgeory(mealId, "lebanese dishes"))) {
       categories.add("lebanese dishes");
     }
-    if ((await searchMealForCatgeory(mealId, "arabic desserts")).isNotEmpty) {
+    if ((await searchMealForCatgeory(mealId, "arabic desserts"))) {
       categories.add("arabic desserts");
     }
-    if ((await searchMealForCatgeory(mealId, "grains & pasta & rice"))
-        .isNotEmpty) {
+    if ((await searchMealForCatgeory(mealId, "grains & pasta & rice"))) {
       categories.add("grains, pasta & rice");
     }
     return categories;

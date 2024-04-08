@@ -186,7 +186,7 @@ class Dashboard extends StatelessWidget {
         ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
-      body: const SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Center(
           child: Text('Home!'), // Replace with your desired text
         ),
