@@ -137,6 +137,13 @@ def checkCode(code):
     else:
         print("CODE IS NU UHHH")
 
+def UpdatePassword(email, password):
+    hashed_password = hashlib.md5(password.encode()).hexdigest()
+    response = cursor.execute("UPDATE Users SET userPassword = ? WHERE email = ?", (hashed_password, email))
+    if response is None:
+        return False
+    return True
+
 @app.get("/forgotPassword/{email}")
 def forgot_password(email: str):
     global maxTime
@@ -167,6 +174,8 @@ def checkCode(code):
     if code == generatedCode:
         generatedCode = ""
         return "Code is correct"
+
+
 
 ##############################################################
 
