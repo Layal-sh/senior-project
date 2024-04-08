@@ -47,18 +47,22 @@ class _AppState extends State<App> {
     switch (selectedIndex) {
       case 0:
         page = Dashboard();
+        _timer?.cancel();
         break;
       case 1:
         page = Settings();
+        _timer?.cancel();
         break;
       case 2:
         page = const AddInput();
         break;
       case 3:
         page = const Articles();
+        _timer?.cancel();
         break;
       case 4:
         page = Profile();
+        _timer?.cancel();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -824,7 +828,19 @@ class _ArticlesState extends State<Articles> {
           List<Map> result = await dbHelper.checkArticle(article['link']);
           starred!.add(result.isNotEmpty);
         }
-
+        responseData.sort((a, b) {
+          if (a['date'] != null && b['date'] != null) {
+            try {
+              DateFormat format = DateFormat("MMM dd, yyyy");
+              DateTime dateA = format.parse(a['date']);
+              DateTime dateB = format.parse(b['date']);
+              return dateB.compareTo(dateA);
+            } catch (e) {
+              return 0;
+            }
+          }
+          return 0;
+        });
         setState(() {
           articles.addAll(responseData);
         });
@@ -835,6 +851,22 @@ class _ArticlesState extends State<Articles> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    List filteredArticles =
+        articles.where((article) => article['thumbnail'] != null).toList();
+    filteredArticles.sort((a, b) {
+      if (a['date'] != null && b['date'] != null) {
+        try {
+          DateFormat format = DateFormat("MMM dd, yyyy");
+          DateTime dateA = format.parse(a['date']);
+          DateTime dateB = format.parse(b['date']);
+          return dateB.compareTo(dateA);
+        } catch (e) {
+          return 0;
+        }
+      }
+      return 0;
+    });
+    filteredArticles = filteredArticles.take(5).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -863,9 +895,138 @@ class _ArticlesState extends State<Articles> {
         ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
-      body: (articles.isEmpty || starred == null)
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(
+              left: 25.0,
+              top: 30,
+              bottom: 20,
+            ),
+            child: Text(
+              'Todays Read',
+              style: TextStyle(
+                fontSize: 27,
+                fontFamily: 'InriaSerifBold',
+                color: Color.fromARGB(255, 38, 20, 84),
+                //fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          (filteredArticles.isEmpty || starred == null)
+              ? const Center(child: CircularProgressIndicator())
+              : Padding(
+                  padding: const EdgeInsets.only(left: 5.0),
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.25,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: filteredArticles.length,
+                      itemBuilder: (context, index) {
+                        String? imageUrl = filteredArticles[index]['thumbnail'];
+                        String title = filteredArticles[index]['title'];
+                        String url = filteredArticles[index]['link'];
+                        String? date = filteredArticles[index]['date'];
+
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            child: InkWell(
+                              onTap: () => launch(url),
+                              child: Card(
+                                clipBehavior: Clip.antiAlias,
+                                child: Column(
+                                  children: [
+                                    imageUrl != null
+                                        ? Image.network(
+                                            imageUrl,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.4,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.15,
+                                            fit: BoxFit.fitWidth,
+                                          )
+                                        : Container(),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.38,
+                                          child: Text(
+                                            title,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontFamily: 'InriaSerif',
+                                              color: Color.fromARGB(
+                                                  255, 38, 20, 84),
+                                              //fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: Icon(
+                                            starred![index]
+                                                ? Icons.bookmark
+                                                : Icons.bookmark_border,
+                                            color: starred![index]
+                                                ? const Color.fromARGB(
+                                                    255,
+                                                    49,
+                                                    205,
+                                                    215) // Corrected color definition
+                                                : const Color.fromARGB(
+                                                    255, 49, 205, 215),
+                                            size: 27,
+                                          ),
+                                          onPressed: () async {
+                                            logger.info("clicked");
+                                            DBHelper dbHelper =
+                                                DBHelper.instance;
+                                            var response;
+                                            if (starred![index]) {
+                                              response = await dbHelper
+                                                  .deleteFavorite(url);
+                                              logger.info(response);
+                                            } else {
+                                              response =
+                                                  await dbHelper.addFavorite(
+                                                      url,
+                                                      title,
+                                                      imageUrl,
+                                                      date);
+                                            }
+                                            logger.info(response);
+                                            setState(
+                                              () {
+                                                starred![index] =
+                                                    !starred![index];
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+        ],
+      ),
+      /*ListView.builder(
               itemCount: articles.length,
               itemBuilder: (context, index) {
                 String? imageUrl = articles[index]['thumbnail'];
@@ -912,7 +1073,7 @@ class _ArticlesState extends State<Articles> {
                   ),
                 );
               },
-            ),
+            ),*/
     );
   }
 }

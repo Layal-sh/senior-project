@@ -46,6 +46,7 @@ dependencies:
   url_launcher: ^6.0.12
   intl: ^0.19.0
   path_provider: ^2.0.8
+  
 
 dev_dependencies:
   flutter_test:
@@ -306,6 +307,14 @@ flutter:
     - family: Inder
       fonts:
         - asset: fonts/Inder-Regular.ttf
-
+    - family: InriaSerif
+      fonts:
+        - asset: fonts/InriaSerif-Regular.ttf
+    - family: InriaSerifBold
+      fonts:
+        - asset: fonts/InriaSerif-Bold.ttf
+        - weight: 800
+        
+        
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
