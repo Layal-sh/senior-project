@@ -445,7 +445,7 @@ class _MealsState extends State<Meals> {
                         future: _filter.text.isNotEmpty
                             ? db.searchMeal(_filter.text)
                             : selectedCategory != 'all'
-                                ? db.searchCatgeory(
+                                ? db.searchMeal(
                                     _formatCategory(selectedCategory!))
                                 : _mealsFuture,
                         builder: (context, snapshot) {
@@ -520,7 +520,7 @@ class _MealsState extends State<Meals> {
                             FutureBuilder<List<List<Map>>>(
                               future: Future.wait([
                                 db.displayMostFrequentMeals(5),
-                                db.searchCatgeory(
+                                db.searchMeal(
                                     _formatCategory(selectedCategory!))
                               ]),
                               builder: (context, snapshot) {

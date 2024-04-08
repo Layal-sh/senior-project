@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-//import 'package:flutter/widgets.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/meals.dart';
@@ -22,14 +21,14 @@ class App extends StatefulWidget {
 }
 
 Timer? _timer;
+var selectedIndex = 0;
 
 class _AppState extends State<App> {
-  var selectedIndex = 0;
-
   @override
   void initState() {
     super.initState();
     TotalCarbs();
+    selectedIndex = 0;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {});
     });
@@ -41,13 +40,23 @@ class _AppState extends State<App> {
     super.dispose();
   }
 
+  void onTabTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    Widget page = Dashboard();
+    Widget page = Dashboard(
+      changeTab: onTabTapped,
+    );
 
     switch (selectedIndex) {
       case 0:
-        page = Dashboard();
+        page = Dashboard(
+          changeTab: onTabTapped,
+        );
         _timer?.cancel();
         break;
       case 1:
@@ -154,8 +163,18 @@ class _AppState extends State<App> {
   }
 }
 
-class Dashboard extends StatelessWidget {
-  //const Dashboard({Key? key}) : super(key: key);
+class Dashboard extends StatefulWidget {
+  final Function changeTab;
+  Dashboard({required this.changeTab});
+
+  @override
+  _DashboardState createState() => _DashboardState();
+}
+
+class _DashboardState extends State<Dashboard> {
+  bool today = true;
+  bool monthly = false;
+  bool yearly = false;
 
   @override
   Widget build(BuildContext context) {
@@ -187,10 +206,546 @@ class Dashboard extends StatelessWidget {
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
       body: SingleChildScrollView(
-        child: Center(
-          child: Text('Home!'), // Replace with your desired text
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(
+                left: 20.0,
+                top: 20,
+              ),
+              child: Text(
+                "Welcome back !",
+                style: TextStyle(
+                  fontSize: 23,
+                  fontFamily: 'Ruda',
+                  color: Color.fromARGB(255, 38, 20, 84),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(
+                left: 20.0,
+                top: 10,
+              ),
+              child: Text(
+                "Dashboard",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'RudaBlack',
+                  color: Color.fromARGB(255, 38, 20, 84),
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0, left: 20, right: 20),
+              child: Row(
+                children: [
+                  SizedBox(
+                    //width: 60,
+                    height: MediaQuery.of(context).size.height * 0.03,
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          today = true;
+                          yearly = false;
+                          monthly = false;
+                        });
+                      },
+                      child: Text(
+                        'Today',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: today
+                              ? const Color.fromARGB(255, 22, 161, 170)
+                              : const Color.fromARGB(255, 26, 11, 63),
+                          fontWeight: today ? FontWeight.w700 : FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    //width: 60,
+                    height: MediaQuery.of(context).size.height * 0.03,
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          yearly = false;
+                          today = false;
+                          monthly = true;
+                        });
+                      },
+                      child: Text(
+                        'Monthly',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: monthly
+                              ? const Color.fromARGB(255, 22, 161, 170)
+                              : const Color.fromARGB(255, 26, 11, 63),
+                          fontWeight:
+                              monthly ? FontWeight.w700 : FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    //width: 60,
+                    height: MediaQuery.of(context).size.height * 0.03,
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          yearly = true;
+                          today = false;
+                          monthly = false;
+                        });
+                      },
+                      child: Text(
+                        'Yearly',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: yearly
+                              ? const Color.fromARGB(255, 22, 161, 170)
+                              : const Color.fromARGB(255, 26, 11, 63),
+                          fontWeight:
+                              yearly ? FontWeight.w700 : FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            AspectRatio(
+              aspectRatio: 1.60,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  right: 18,
+                  left: 12,
+                  top: 10,
+                  bottom: 12,
+                ),
+                child: LineChart(
+                  /*today ? mainData() : */ mainData(),
+                ),
+              ),
+            ),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.circle,
+                  size: 13,
+                  color: Color.fromARGB(255, 38, 20, 84),
+                ),
+                Text('Bolus'),
+                SizedBox(width: 15),
+                Icon(
+                  Icons.circle,
+                  size: 13,
+                  color: Color.fromARGB(255, 132, 135, 195),
+                ),
+                Text('Glucose Levels'),
+                SizedBox(width: 15),
+                Icon(
+                  Icons.circle,
+                  size: 13,
+                  color: Color.fromARGB(255, 22, 161, 170),
+                ),
+                Text('Carbs'),
+              ],
+            ),
+            const Padding(
+              padding: EdgeInsets.only(
+                left: 20.0,
+                top: 10,
+              ),
+              child: Text(
+                "Daily Inputs",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'RudaBlack',
+                  color: Color.fromARGB(255, 38, 20, 84),
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 8.0,
+                    left: 20,
+                    right: 20,
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        widget.changeTab(2);
+                      });
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.3,
+                      height: MediaQuery.of(context).size.height * 0.2,
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 135, 117, 181),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          CircleAvatar(
+                            radius: 25, // Half of your icon size
+                            backgroundColor: Color.fromARGB(255, 255, 255,
+                                255), // Replace with your desired background color
+                            child: Icon(
+                              Icons.add,
+                              size: 50,
+                              color: Color.fromARGB(255, 135, 117, 181),
+                            ),
+                          ),
+                          Text(
+                            'Add your logs',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Ruda',
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ], // Replace with your desired text
         ),
       ),
+    );
+  }
+
+  Widget bottomTitleWidgets(double value, TitleMeta meta) {
+    const style = TextStyle(
+      fontWeight: FontWeight.w500,
+      fontSize: 13,
+      color: Color.fromARGB(255, 178, 178, 178),
+    );
+    Widget text;
+    if (today) {
+      switch (value.toInt()) {
+        case 0:
+          text = const Text('0', style: style);
+          break;
+
+        case 2:
+          text = const Text('2', style: style);
+          break;
+
+        case 4:
+          text = const Text('4', style: style);
+          break;
+
+        case 6:
+          text = const Text('6', style: style);
+          break;
+
+        case 8:
+          text = const Text('8', style: style);
+          break;
+        case 10:
+          text = const Text('10', style: style);
+          break;
+
+        case 12:
+          text = const Text('12', style: style);
+          break;
+
+        case 14:
+          text = const Text('2', style: style);
+          break;
+
+        case 16:
+          text = const Text('4', style: style);
+          break;
+        case 18:
+          text = const Text('6', style: style);
+          break;
+
+        case 20:
+          text = const Text('8', style: style);
+          break;
+        case 22:
+          text = const Text('10', style: style);
+          break;
+
+        default:
+          text = const Text('', style: style);
+          break;
+      }
+    } else if (monthly) {
+      switch (value.toInt()) {
+        case 2:
+          text = const Text('2', style: style);
+          break;
+
+        case 4:
+          text = const Text('4', style: style);
+          break;
+
+        case 6:
+          text = const Text('6', style: style);
+          break;
+
+        case 8:
+          text = const Text('8', style: style);
+          break;
+        case 10:
+          text = const Text('10', style: style);
+          break;
+
+        case 12:
+          text = const Text('12', style: style);
+          break;
+
+        case 14:
+          text = const Text('14', style: style);
+          break;
+
+        case 16:
+          text = const Text('16', style: style);
+          break;
+        case 18:
+          text = const Text('18', style: style);
+          break;
+
+        case 20:
+          text = const Text('20', style: style);
+          break;
+        case 22:
+          text = const Text('22', style: style);
+          break;
+        case 24:
+          text = const Text('24', style: style);
+          break;
+        case 26:
+          text = const Text('26', style: style);
+          break;
+
+        case 28:
+          text = const Text('28', style: style);
+          break;
+        case 30:
+          text = const Text('30', style: style);
+          break;
+
+        default:
+          text = const Text('', style: style);
+          break;
+      }
+    } else {
+      switch (value.toInt()) {
+        case 2:
+          text = const Text('2', style: style);
+          break;
+
+        case 4:
+          text = const Text('4', style: style);
+          break;
+
+        case 6:
+          text = const Text('6', style: style);
+          break;
+
+        case 8:
+          text = const Text('8', style: style);
+          break;
+        case 10:
+          text = const Text('10', style: style);
+          break;
+
+        case 12:
+          text = const Text('12', style: style);
+          break;
+
+        default:
+          text = const Text('', style: style);
+          break;
+      }
+    }
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      child: text,
+    );
+  }
+
+  Widget leftTitleWidgets(double value, TitleMeta meta) {
+    const style = TextStyle(
+      fontWeight: FontWeight.w500,
+      fontSize: 13,
+      color: Color.fromARGB(255, 178, 178, 178),
+    );
+    String text;
+    switch (value.toInt()) {
+      case 1:
+        text = '1';
+        break;
+      case 2:
+        text = '2';
+        break;
+      case 3:
+        text = '3';
+        break;
+      case 4:
+        text = '4';
+        break;
+      case 5:
+        text = '5';
+        break;
+      case 6:
+        text = '6';
+        break;
+      case 7:
+        text = '7';
+        break;
+      case 8:
+        text = '8';
+        break;
+      case 9:
+        text = '9';
+        break;
+      default:
+        return Container();
+    }
+
+    return Text(text, style: style, textAlign: TextAlign.left);
+  }
+
+  LineChartData mainData() {
+    return LineChartData(
+      gridData: FlGridData(
+        show: true,
+        drawVerticalLine: true,
+        horizontalInterval: 1,
+        verticalInterval: 1,
+        getDrawingHorizontalLine: (value) {
+          //hori grids color
+          return const FlLine(
+            color: Color.fromARGB(103, 162, 162, 162),
+            strokeWidth: 1,
+            dashArray: [1, 10],
+          );
+        },
+        getDrawingVerticalLine: (value) {
+          //ver grids color
+          return const FlLine(
+            color: Color.fromARGB(103, 162, 162, 162),
+            strokeWidth: 1,
+            dashArray: [2, 11],
+          );
+        },
+      ),
+      titlesData: FlTitlesData(
+        show: true,
+        rightTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        topTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        bottomTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            reservedSize: 25,
+            interval: 2,
+            getTitlesWidget: bottomTitleWidgets,
+          ),
+        ),
+        leftTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            interval: 1,
+            getTitlesWidget: leftTitleWidgets,
+            reservedSize: 17,
+          ),
+        ),
+      ),
+      borderData: FlBorderData(
+        show: true,
+        border: Border.all(
+          color: const Color.fromARGB(103, 162, 162, 162),
+        ),
+      ),
+      minX: 0,
+      maxX: today
+          ? 24
+          : monthly
+              ? 31
+              : 12,
+      minY: 0,
+      maxY: 9,
+      lineBarsData: [
+        LineChartBarData(
+          spots: const [
+            FlSpot(0, 4),
+            FlSpot(2.6, 2),
+            FlSpot(4.9, 5),
+            FlSpot(6.8, 3.1),
+            FlSpot(8, 4),
+            //FlSpot(9.5, 3),
+            //FlSpot(11, 4),
+          ],
+          isCurved: true,
+          color: const Color.fromARGB(255, 38, 20, 84),
+          barWidth: 3,
+          isStrokeCapRound: true,
+          dotData: const FlDotData(
+            show: true,
+          ),
+          belowBarData: BarAreaData(
+            show: true,
+            color: const Color.fromARGB(255, 38, 20, 84).withOpacity(0.3),
+          ),
+        ),
+        LineChartBarData(
+          spots: const [
+            FlSpot(0, 2),
+            FlSpot(1, 1),
+            FlSpot(2, 4),
+          ],
+          isCurved: true,
+          color: const Color.fromARGB(255, 132, 135, 195),
+          barWidth: 3,
+          isStrokeCapRound: true,
+          dotData: const FlDotData(
+            show: true,
+          ),
+          belowBarData: BarAreaData(
+            show: true,
+            color: const Color.fromARGB(255, 132, 135, 195).withOpacity(0.3),
+          ),
+        ),
+        LineChartBarData(
+          spots: const [
+            FlSpot(0, 3),
+            FlSpot(1, 2),
+            FlSpot(2, 1),
+          ],
+          isCurved: true,
+          color: const Color.fromARGB(255, 22, 161, 170),
+          barWidth: 3,
+          isStrokeCapRound: true,
+          dotData: const FlDotData(
+            show: true,
+          ),
+          belowBarData: BarAreaData(
+            show: true,
+            color: const Color.fromARGB(255, 22, 161, 170).withOpacity(0.3),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -250,7 +805,6 @@ class _AddInputState extends State<AddInput> {
   }
 
   final TextEditingController _GlucoseController = TextEditingController();
-  //final TextEditingController _CarbController = TextEditingController();
   String? carbRatioSelected = carbRatio_.toString();
   ValueNotifier<double> glucoseLevelNotifier = ValueNotifier<double>(0.0);
   ValueNotifier<double> carbsTotalNotifier = ValueNotifier<double>(0.0);
@@ -849,6 +1403,8 @@ class _ArticlesState extends State<Articles> {
             articles.addAll(responseData);
           });
         }
+      } else {
+        const Text("Could not connect to the internet");
       }
     }
   }
