@@ -51,18 +51,20 @@ class _AppState extends State<App> {
         _timer?.cancel();
         break;
       case 1:
-        page = Settings();
+        page = const Articles();
+
         _timer?.cancel();
         break;
       case 2:
         page = const AddInput();
         break;
       case 3:
-        page = const Articles();
+        page = Profile();
         _timer?.cancel();
         break;
       case 4:
-        page = Profile();
+        page = Settings();
+
         _timer?.cancel();
         break;
       default:
@@ -98,9 +100,9 @@ class _AppState extends State<App> {
                       label: 'Home',
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.settings_outlined, size: 30),
-                      activeIcon: Icon(Icons.settings, size: 30),
-                      label: 'Settings',
+                      icon: Icon(Icons.newspaper_rounded, size: 30),
+                      activeIcon: Icon(Icons.newspaper_rounded, size: 30),
+                      label: 'Articles',
                     ),
                     BottomNavigationBarItem(
                       icon: CircleAvatar(
@@ -126,14 +128,14 @@ class _AppState extends State<App> {
                       label: 'Add Input',
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.newspaper_rounded, size: 30),
-                      activeIcon: Icon(Icons.newspaper_rounded, size: 30),
-                      label: 'Articles',
-                    ),
-                    BottomNavigationBarItem(
                       icon: Icon(Icons.person_outlined, size: 30),
                       activeIcon: Icon(Icons.person, size: 30),
                       label: 'Profile',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.settings_outlined, size: 30),
+                      activeIcon: Icon(Icons.settings, size: 30),
+                      label: 'Settings',
                     ),
                   ],
                   currentIndex: selectedIndex,
@@ -842,9 +844,11 @@ class _ArticlesState extends State<Articles> {
           }
           return 0;
         });
-        setState(() {
-          articles.addAll(responseData);
-        });
+        if (mounted) {
+          setState(() {
+            articles.addAll(responseData);
+          });
+        }
       }
     }
   }
@@ -900,7 +904,7 @@ class _ArticlesState extends State<Articles> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               left: 25.0,
               right: 25,
               top: 30,
@@ -1098,8 +1102,7 @@ class _ArticlesState extends State<Articles> {
           const Padding(
             padding: EdgeInsets.only(
               left: 25.0,
-              //top: 5,
-              //bottom: 20,
+              bottom: 5,
             ),
             child: Text(
               'For You',
@@ -1259,54 +1262,6 @@ class _ArticlesState extends State<Articles> {
           ),
         ],
       ),
-      /*ListView.builder(
-              itemCount: articles.length,
-              itemBuilder: (context, index) {
-                String? imageUrl = articles[index]['thumbnail'];
-                String title = articles[index]['title'];
-                String url = articles[index]['link'];
-                String? date = articles[index]['date'];
-
-                return Card(
-                  clipBehavior: Clip.antiAlias,
-                  child: ListTile(
-                    leading: imageUrl != null
-                        ? Image.network(
-                            imageUrl,
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                    title: Text(title),
-                    subtitle: date != null ? Text(date) : null,
-                    trailing: IconButton(
-                      icon: Icon(
-                        starred![index] ? Icons.star : Icons.star_border,
-                        color: starred![index] ? Colors.yellow : null,
-                      ),
-                      onPressed: () async {
-                        logger.info("clicked");
-                        DBHelper dbHelper = DBHelper.instance;
-                        var response;
-                        if (starred![index]) {
-                          response = await dbHelper.deleteFavorite(url);
-                          logger.info(response);
-                        } else {
-                          response = await dbHelper.addFavorite(
-                              url, title, imageUrl, date);
-                        }
-                        logger.info(response);
-                        setState(() {
-                          starred![index] = !starred![index];
-                        });
-                      },
-                    ),
-                    onTap: () => launch(url),
-                  ),
-                );
-              },
-            ),*/
     );
   }
 }
