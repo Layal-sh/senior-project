@@ -284,7 +284,8 @@ class DBHelper {
   VALUES($glucose,$insulin,'$date');
   ''');
     if (entryId > 0) {
-      return await getLatestEntryId(1);
+      var latestEntry = await getLatestEntryId(1);
+      return latestEntry[0]['entryId'];
     } else {
       return -1;
     }
@@ -385,7 +386,8 @@ class DBHelper {
     return response;
   }
 
-  getLatestEntry() async {
+  getLatestEntry
+  () async {
     Database? mydb = await db;
     List<Map> response = await getLatestEntryId(1);
     List<Map> hasMeals = await getMealsFromEntryID(response[0]['entryId']);
