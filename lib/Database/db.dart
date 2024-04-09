@@ -386,6 +386,55 @@ class DBHelper {
     return response;
   }
 
+  // insertEntry(double glucose, int insulin, String date) async {
+  //   Database? mydb = await db;
+  //   int response = await mydb!.rawInsert('''
+  //   INSERT INTO Entry(glucoseLevel, insulinDosage, entryDate)
+  //   VALUES($glucose, $insulin, "$date");
+  //   ''');
+  //   return response;
+  // }
+  getAllEntries() async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+    SELECT * from Entry 
+    ORDER BY entryDate
+    ''');
+    return response;
+  }
+
+  getEntriesDaily() async {
+    Database? mydb = await db;
+  var res = await mydb!.rawQuery('''
+    SELECT * FROM Entry WHERE substr(entryDate, 1, 10) = date('now')
+  ''');
+  return res;
+  }
+
+  getEntriesWeekly() async {
+    Database? mydb = await db;
+  var res = await mydb!.rawQuery('''
+    SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-7 day') AND date('now')
+  ''');
+  return res;
+  }
+
+  getEntriesMonthly() async {
+     Database? mydb = await db;
+  var res = await mydb!.rawQuery('''
+    SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-1 month') AND date('now')
+  ''');
+  return res;
+  }
+
+   getEntriesYearly() async {
+     Database? mydb = await db;
+  var res = await mydb!.rawQuery('''
+    SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-1 year') AND date('now')
+  ''');
+  return res;
+  }
+
   getLatestEntry
   () async {
     Database? mydb = await db;
@@ -393,10 +442,29 @@ class DBHelper {
     List<Map> hasMeals = await getMealsFromEntryID(response[0]['entryId']);
     return organizeEntries(response[0], hasMeals);
   }
+  
 
-  getAllEntries() async {
+  /*layaaaallllllll wee didd itt:
+  to get evrything: n=0
+  to get for the day: n=1
+  to get for the past week: n=2
+  to get for the past month: n=3
+  to get for the past year: n=4
+  */
+  getEntries(int n) async {
     Database? mydb = await db;
-    List<Map> response = await getLatestEntryId(20);
+  List<Map> response=[];
+   if(n==0){
+    response= await getAllEntries();
+   }else if(n==1){
+     response= await getEntriesDaily();
+   }else if(n==2){
+    response= await getEntriesWeekly();
+   }else if(n==3){
+     response= await getEntriesMonthly();
+   }else if(n==4){
+     response= await getEntriesYearly();
+   }
 
     List<Map> allMeals = [];
     for (var entry in response) {
@@ -404,13 +472,11 @@ class DBHelper {
       Map organized = await organizeEntries(entry, entryMeals);
       allMeals.add(organized);
     }
-
     return allMeals;
   }
 
   organizeEntries(Map response, List<Map> hasMeals) async {
     int target = 0;
-
     double totalCarbs = await getCarbsHasMeal(hasMeals);
 
     double currentGlucose = response['glucoseLevel'];

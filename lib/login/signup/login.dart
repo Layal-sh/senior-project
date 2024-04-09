@@ -64,11 +64,12 @@ class _LoginState extends State<Login> {
     //print(await dbHelper.selectAllArticle());
     // await dbHelper.deleteMealComposition();
     await dbHelper.syncMeals();
-    // logger.info("synced meals successfully");
+    //logger.info("synced meals successfully");
     await dbHelper.syncMealComposition();
     // logger.info("synced meal compositions successfully");
     // logger.info("saving values to shared preferences");
 
+    print(await dbHelper.getEntries(2));
     final response = await http
         .post(
           Uri.parse('http://$localhost:8000/getUserDetails'), //$localhost
