@@ -21,7 +21,7 @@ double calculateTotalCarbs(List<Map> meals) {
 
 void updatePrevMeals(double bloodSugar) async {
   DBHelper dbHelper = DBHelper.instance;
-  int prevEntryId = await dbHelper.getLatestEntryId();
+  int prevEntryId = await (dbHelper.getLatestEntryId(1)[0]['entryId']);
   List<Map> hasMeals = await dbHelper.getMealsFromEntryID(prevEntryId);
   List<Map> meals = [];
   double bloodSugarDiff = bloodSugar - targetBloodSugar_;

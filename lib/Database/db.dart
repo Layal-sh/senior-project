@@ -284,7 +284,7 @@ class DBHelper {
   VALUES($glucose,$insulin,'$date');
   ''');
     if (entryId > 0) {
-      return await getLatestEntryId();
+      return await getLatestEntryId(1);
     } else {
       return -1;
     }
@@ -375,30 +375,43 @@ class DBHelper {
     return response[0];
   }
 
-  getLatestEntryId() async {
+  getLatestEntryId(int n) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
     SELECT * from Entry 
     ORDER BY entryDate DESC
-    LIMIT 1
+    LIMIT $n
     ''');
-    return response[0]['entryId'];
+    return response;
   }
 
   getLatestEntry() async {
     Database? mydb = await db;
-    List<Map> response = await mydb!.rawQuery('''
-    SELECT * from Entry 
-    ORDER BY entryDate DESC
-    LIMIT 1
-    ''');
-
+    List<Map> response = await getLatestEntryId(1);
     List<Map> hasMeals = await getMealsFromEntryID(response[0]['entryId']);
+    return organizeEntries(response[0], hasMeals);
+  }
+
+  getAllEntries() async {
+    Database? mydb = await db;
+    List<Map> response = await getLatestEntryId(20);
+
+    List<Map> allMeals = [];
+    for (var entry in response) {
+      List<Map> entryMeals = await getMealsFromEntryID(entry['entryId']);
+      Map organized = await organizeEntries(entry, entryMeals);
+      allMeals.add(organized);
+    }
+
+    return allMeals;
+  }
+
+  organizeEntries(Map response, List<Map> hasMeals) async {
     int target = 0;
 
     double totalCarbs = await getCarbsHasMeal(hasMeals);
 
-    double currentGlucose = response[0]['glucoseLevel'];
+    double currentGlucose = response['glucoseLevel'];
     if (currentGlucose >= 80 && currentGlucose <= 120) {
       target = 0;
     } else if (currentGlucose < 80) {
@@ -410,11 +423,11 @@ class DBHelper {
     }
 
     Map<String, dynamic> result = {
-      'entryId': response[0]['entryId'],
+      'entryId': response['entryId'],
       'glucoseLevel': currentGlucose,
-      'insulinDosage': response[0]['insulinDosage'],
+      'insulinDosage': response['insulinDosage'],
       'totalCarbs': totalCarbs,
-      'date': response[0]['entryDate'],
+      'date': response['entryDate'],
       'target': target
     };
     return result;
