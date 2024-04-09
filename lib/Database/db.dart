@@ -405,44 +405,42 @@ class DBHelper {
 
   getEntriesDaily() async {
     Database? mydb = await db;
-  var res = await mydb!.rawQuery('''
+    var res = await mydb!.rawQuery('''
     SELECT * FROM Entry WHERE substr(entryDate, 1, 10) = date('now')
   ''');
-  return res;
+    return res;
   }
 
   getEntriesWeekly() async {
     Database? mydb = await db;
-  var res = await mydb!.rawQuery('''
+    var res = await mydb!.rawQuery('''
     SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-7 day') AND date('now')
   ''');
-  return res;
+    return res;
   }
 
   getEntriesMonthly() async {
-     Database? mydb = await db;
-  var res = await mydb!.rawQuery('''
+    Database? mydb = await db;
+    var res = await mydb!.rawQuery('''
     SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-1 month') AND date('now')
   ''');
-  return res;
+    return res;
   }
 
-   getEntriesYearly() async {
-     Database? mydb = await db;
-  var res = await mydb!.rawQuery('''
+  getEntriesYearly() async {
+    Database? mydb = await db;
+    var res = await mydb!.rawQuery('''
     SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-1 year') AND date('now')
   ''');
-  return res;
+    return res;
   }
 
-  getLatestEntry
-  () async {
+  getLatestEntry() async {
     Database? mydb = await db;
     List<Map> response = await getLatestEntryId(1);
     List<Map> hasMeals = await getMealsFromEntryID(response[0]['entryId']);
     return organizeEntries(response[0], hasMeals);
   }
-  
 
   /*layaaaallllllll wee didd itt:
   to get evrything: n=0
@@ -451,20 +449,20 @@ class DBHelper {
   to get for the past month: n=3
   to get for the past year: n=4
   */
-  getEntries(int n) async {
+  Future<List<Map>> getEntries(int n) async {
     Database? mydb = await db;
-  List<Map> response=[];
-   if(n==0){
-    response= await getAllEntries();
-   }else if(n==1){
-     response= await getEntriesDaily();
-   }else if(n==2){
-    response= await getEntriesWeekly();
-   }else if(n==3){
-     response= await getEntriesMonthly();
-   }else if(n==4){
-     response= await getEntriesYearly();
-   }
+    List<Map> response = [];
+    if (n == 0) {
+      response = await getAllEntries();
+    } else if (n == 1) {
+      response = await getEntriesDaily();
+    } else if (n == 2) {
+      response = await getEntriesWeekly();
+    } else if (n == 3) {
+      response = await getEntriesMonthly();
+    } else if (n == 4) {
+      response = await getEntriesYearly();
+    }
 
     List<Map> allMeals = [];
     for (var entry in response) {

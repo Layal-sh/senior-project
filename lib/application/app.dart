@@ -178,11 +178,17 @@ class _DashboardState extends State<Dashboard> {
   bool monthly = false;
   bool yearly = false;
   Map<String, dynamic> latestEntry = {};
+  List<Map> entries = [];
 
   @override
   void initState() {
     super.initState();
     loadLatestEntry();
+    db.getEntries(2).then((result) {
+      setState(() {
+        entries = result;
+      });
+    });
   }
 
   loadLatestEntry() async {
@@ -194,6 +200,16 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    Map<String, List<Map>> entriesByDate = {};
+    for (var entry in entries) {
+      String date =
+          DateFormat('yyyy-MM-dd').format(DateTime.parse(entry['date']));
+      if (entriesByDate[date] == null) {
+        entriesByDate[date] = [entry];
+      } else {
+        entriesByDate[date]!.add(entry);
+      }
+    }
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -802,258 +818,969 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ),
             ),
-            latestEntry.isNotEmpty
-                ? Padding(
-                    padding: const EdgeInsets.only(
-                      top: 8.0,
-                      left: 20,
-                      right: 10,
-                      bottom: 10,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          DateFormat.jm()
-                              .format(DateTime.parse(latestEntry['date'])),
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.04,
-                            fontFamily: 'Ruda',
-                            color: const Color.fromARGB(255, 38, 20, 84),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Column(
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.15,
-                              height: MediaQuery.of(context).size.width * 0.15,
-                              //padding: const EdgeInsets.all(10.0),
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color.fromARGB(255, 38, 20, 84),
-                              ),
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      '${latestEntry['insulinDosage']}',
-                                      style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.04,
-                                        fontFamily: 'Ruda',
-                                        color: Colors.white,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Text(
-                                      'units',
-                                      style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.03,
-                                        fontFamily: 'Ruda',
-                                        color: Colors.white,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
+            FutureBuilder<List<Map>>(
+              future: db.getEntries(1),
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<Map>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (snapshot.data!.isEmpty) {
+                  return Container();
+                } else {
+                  var reversedData = snapshot.data!.reversed.toList();
+                  return Column(
+                    children: [
+                      ListView.builder(
+                        shrinkWrap:
+                            true, // This tells the ListView to size itself to its children's height
+                        physics:
+                            NeverScrollableScrollPhysics(), // This disables scrolling inside the ListView
+                        itemCount: reversedData.length,
+                        itemBuilder: (context, index) {
+                          Map entry = reversedData[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                              top: 8.0,
+                              left: 20,
+                              right: 10,
+                              bottom: 10,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  DateFormat.jm()
+                                      .format(DateTime.parse(entry['date'])),
+                                  style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.04,
+                                    fontFamily: 'Ruda',
+                                    color:
+                                        const Color.fromARGB(255, 38, 20, 84),
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                              ),
-                            ),
-                            Text(
-                              'Bolus',
-                              style: TextStyle(
-                                letterSpacing: 0.1,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.025,
-                                fontFamily: 'Ruda',
-                                color: const Color.fromARGB(255, 38, 20, 84),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.15,
-                              height: MediaQuery.of(context).size.width * 0.15,
-                              //padding: const EdgeInsets.all(10.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: const Color.fromARGB(255, 38, 20, 84),
-                              ),
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                Column(
                                   children: [
-                                    Text(
-                                      '${latestEntry['glucoseLevel']}',
-                                      style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.04,
-                                        fontFamily: 'Ruda',
-                                        color: Colors.white,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Text(
-                                      'mmol/L',
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.03,
-                                        fontFamily: 'Ruda',
-                                        color: Colors.white,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Text(
-                              'Blood Sugar',
-                              style: TextStyle(
-                                letterSpacing: 0.1,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.025,
-                                fontFamily: 'Ruda',
-                                color: const Color.fromARGB(255, 38, 20, 84),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.15,
-                              height: MediaQuery.of(context).size.width * 0.15,
-                              //padding: const EdgeInsets.all(10.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: const Color.fromARGB(255, 38, 20, 84),
-                              ),
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      '${latestEntry['totalCarbs']}',
-                                      style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.04,
-                                        fontFamily: 'Ruda',
-                                        color: Colors.white,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Text(
-                                      'grams',
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.03,
-                                        fontFamily: 'Ruda',
-                                        color: Colors.white,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Text(
-                              'Carbohydrates',
-                              style: TextStyle(
-                                letterSpacing: 0.1,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.025,
-                                fontFamily: 'Ruda',
-                                color: const Color.fromARGB(255, 38, 20, 84),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.15,
-                              height: MediaQuery.of(context).size.width * 0.15,
-                              //padding: const EdgeInsets.all(10.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: const Color.fromARGB(255, 38, 20, 84),
-                              ),
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      latestEntry['target'] == 2 ? '1' : '0',
-                                      style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.035,
-                                        fontFamily: 'Ruda',
-                                        color: Colors.white,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    SizedBox(
+                                    Container(
                                       width: MediaQuery.of(context).size.width *
-                                          0.08,
+                                          0.15,
                                       height:
-                                          MediaQuery.of(context).size.height *
-                                              0.007,
-                                      child: const Divider(
-                                        color: Colors.white,
-                                        thickness: 1,
+                                          MediaQuery.of(context).size.width *
+                                              0.15,
+                                      //padding: const EdgeInsets.all(10.0),
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Color.fromARGB(255, 38, 20, 84),
+                                      ),
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '${entry['insulinDosage']}',
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.04,
+                                                fontFamily: 'Ruda',
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Text(
+                                              'units',
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.03,
+                                                fontFamily: 'Ruda',
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                     Text(
-                                      latestEntry['target'] == 1 ? '1' : '0',
-                                      overflow: TextOverflow.ellipsis,
+                                      'Bolus',
                                       style: TextStyle(
+                                        letterSpacing: 0.1,
                                         fontSize:
                                             MediaQuery.of(context).size.width *
-                                                0.035,
+                                                0.025,
                                         fontFamily: 'Ruda',
-                                        color: Colors.white,
+                                        color: const Color.fromARGB(
+                                            255, 38, 20, 84),
+                                        fontWeight: FontWeight.w600,
                                       ),
-                                      textAlign: TextAlign.center,
                                     ),
                                   ],
                                 ),
-                              ),
+                                Column(
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.15,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.15,
+                                      //padding: const EdgeInsets.all(10.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: const Color.fromARGB(
+                                            255, 38, 20, 84),
+                                      ),
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '${entry['glucoseLevel']}',
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.04,
+                                                fontFamily: 'Ruda',
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Text(
+                                              'mmol/L',
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.03,
+                                                fontFamily: 'Ruda',
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      'Blood Sugar',
+                                      style: TextStyle(
+                                        letterSpacing: 0.1,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.025,
+                                        fontFamily: 'Ruda',
+                                        color: const Color.fromARGB(
+                                            255, 38, 20, 84),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.15,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.15,
+                                      //padding: const EdgeInsets.all(10.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: const Color.fromARGB(
+                                            255, 38, 20, 84),
+                                      ),
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '${entry['totalCarbs']}',
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.04,
+                                                fontFamily: 'Ruda',
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Text(
+                                              'grams',
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.03,
+                                                fontFamily: 'Ruda',
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      'Carbohydrates',
+                                      style: TextStyle(
+                                        letterSpacing: 0.1,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.025,
+                                        fontFamily: 'Ruda',
+                                        color: const Color.fromARGB(
+                                            255, 38, 20, 84),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.15,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.15,
+                                      //padding: const EdgeInsets.all(10.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: const Color.fromARGB(
+                                            255, 38, 20, 84),
+                                      ),
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              entry['target'] == 2 ? '1' : '0',
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.035,
+                                                fontFamily: 'Ruda',
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.08,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.007,
+                                              child: const Divider(
+                                                color: Colors.white,
+                                                thickness: 1,
+                                              ),
+                                            ),
+                                            Text(
+                                              entry['target'] == 1 ? '1' : '0',
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.035,
+                                                fontFamily: 'Ruda',
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      'Hypers/Hypos',
+                                      style: TextStyle(
+                                        letterSpacing: 0.1,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.025,
+                                        fontFamily: 'Ruda',
+                                        color: const Color.fromARGB(
+                                            255, 38, 20, 84),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
+                          );
+                        },
+                      ),
+                      // Add more widgets here if needed
+                    ],
+                  );
+                }
+              },
+            ),
+            const Padding(
+              padding: EdgeInsets.only(
+                left: 20.0,
+                top: 10,
+              ),
+              child: Text(
+                "Last Week Entries",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'RudaBlack',
+                  color: Color.fromARGB(255, 38, 20, 84),
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+            Column(
+              children: entriesByDate.entries.map((e) {
+                var date = e.key;
+                var entries = e.value;
+                return Padding(
+                  padding: const EdgeInsets.only(
+                    top: 8.0,
+                    left: 20,
+                    right: 10,
+                    bottom: 10,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        date,
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width * 0.04,
+                          fontFamily: 'Ruda',
+                          color: const Color.fromARGB(255, 38, 20, 84),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      ...entries.map((entry) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
                             Text(
-                              'Hypers/Hypos',
+                              //DateFormat('EEEE')
+                              // .format(DateTime.parse(entry['date'])),
+                              '${entry['entryId']}',
                               style: TextStyle(
-                                letterSpacing: 0.1,
                                 fontSize:
-                                    MediaQuery.of(context).size.width * 0.025,
+                                    MediaQuery.of(context).size.width * 0.04,
                                 fontFamily: 'Ruda',
                                 color: const Color.fromARGB(255, 38, 20, 84),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
+                            Column(
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.15,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.15,
+                                  //padding: const EdgeInsets.all(10.0),
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color.fromARGB(255, 38, 20, 84),
+                                  ),
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          '${entry['insulinDosage']}',
+                                          style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.04,
+                                            fontFamily: 'Ruda',
+                                            color: Colors.white,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        Text(
+                                          'units',
+                                          style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.03,
+                                            fontFamily: 'Ruda',
+                                            color: Colors.white,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  'Bolus',
+                                  style: TextStyle(
+                                    letterSpacing: 0.1,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.025,
+                                    fontFamily: 'Ruda',
+                                    color:
+                                        const Color.fromARGB(255, 38, 20, 84),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.15,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.15,
+                                  //padding: const EdgeInsets.all(10.0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color:
+                                        const Color.fromARGB(255, 38, 20, 84),
+                                  ),
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          '${entry['glucoseLevel']}',
+                                          style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.04,
+                                            fontFamily: 'Ruda',
+                                            color: Colors.white,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        Text(
+                                          'mmol/L',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.03,
+                                            fontFamily: 'Ruda',
+                                            color: Colors.white,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  'Blood Sugar',
+                                  style: TextStyle(
+                                    letterSpacing: 0.1,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.025,
+                                    fontFamily: 'Ruda',
+                                    color:
+                                        const Color.fromARGB(255, 38, 20, 84),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.15,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.15,
+                                  //padding: const EdgeInsets.all(10.0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color:
+                                        const Color.fromARGB(255, 38, 20, 84),
+                                  ),
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          '${entry['totalCarbs']}',
+                                          style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.04,
+                                            fontFamily: 'Ruda',
+                                            color: Colors.white,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        Text(
+                                          'grams',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.03,
+                                            fontFamily: 'Ruda',
+                                            color: Colors.white,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  'Carbohydrates',
+                                  style: TextStyle(
+                                    letterSpacing: 0.1,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.025,
+                                    fontFamily: 'Ruda',
+                                    color:
+                                        const Color.fromARGB(255, 38, 20, 84),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.15,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.15,
+                                  //padding: const EdgeInsets.all(10.0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color:
+                                        const Color.fromARGB(255, 38, 20, 84),
+                                  ),
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          entry['target'] == 2 ? '1' : '0',
+                                          style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.035,
+                                            fontFamily: 'Ruda',
+                                            color: Colors.white,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.08,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.007,
+                                          child: const Divider(
+                                            color: Colors.white,
+                                            thickness: 1,
+                                          ),
+                                        ),
+                                        Text(
+                                          entry['target'] == 1 ? '1' : '0',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.035,
+                                            fontFamily: 'Ruda',
+                                            color: Colors.white,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  'Hypers/Hypos',
+                                  style: TextStyle(
+                                    letterSpacing: 0.1,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.025,
+                                    fontFamily: 'Ruda',
+                                    color:
+                                        const Color.fromARGB(255, 38, 20, 84),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
-                        ),
-                      ],
-                    ),
-                  )
-                : Container(),
-          ], // Replace with your desired text
+                        );
+                      }).toList(),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+            /*FutureBuilder<List<Map>>(
+              future: db.getEntries(2),
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<Map>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (snapshot.data!.isEmpty) {
+                  return Container();
+                } else {
+                  var reversedData = snapshot.data!.reversed.toList();
+                  return Column(
+                    children: [
+                      ListView.builder(
+                        shrinkWrap:
+                            true, // This tells the ListView to size itself to its children's height
+                        physics:
+                            NeverScrollableScrollPhysics(), // This disables scrolling inside the ListView
+                        itemCount: reversedData.length,
+                        itemBuilder: (context, index) {
+                          Map entry = reversedData[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                              top: 8.0,
+                              left: 20,
+                              right: 10,
+                              bottom: 10,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '${entry['entryId']}',
+                                  style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.04,
+                                    fontFamily: 'Ruda',
+                                    color:
+                                        const Color.fromARGB(255, 38, 20, 84),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Column(
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.15,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.15,
+                                      //padding: const EdgeInsets.all(10.0),
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Color.fromARGB(255, 38, 20, 84),
+                                      ),
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '${entry['insulinDosage']}',
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.04,
+                                                fontFamily: 'Ruda',
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Text(
+                                              'units',
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.03,
+                                                fontFamily: 'Ruda',
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      'Bolus',
+                                      style: TextStyle(
+                                        letterSpacing: 0.1,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.025,
+                                        fontFamily: 'Ruda',
+                                        color: const Color.fromARGB(
+                                            255, 38, 20, 84),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.15,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.15,
+                                      //padding: const EdgeInsets.all(10.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: const Color.fromARGB(
+                                            255, 38, 20, 84),
+                                      ),
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '${entry['glucoseLevel']}',
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.04,
+                                                fontFamily: 'Ruda',
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Text(
+                                              'mmol/L',
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.03,
+                                                fontFamily: 'Ruda',
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      'Blood Sugar',
+                                      style: TextStyle(
+                                        letterSpacing: 0.1,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.025,
+                                        fontFamily: 'Ruda',
+                                        color: const Color.fromARGB(
+                                            255, 38, 20, 84),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.15,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.15,
+                                      //padding: const EdgeInsets.all(10.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: const Color.fromARGB(
+                                            255, 38, 20, 84),
+                                      ),
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '${entry['totalCarbs']}',
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.04,
+                                                fontFamily: 'Ruda',
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Text(
+                                              'grams',
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.03,
+                                                fontFamily: 'Ruda',
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      'Carbohydrates',
+                                      style: TextStyle(
+                                        letterSpacing: 0.1,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.025,
+                                        fontFamily: 'Ruda',
+                                        color: const Color.fromARGB(
+                                            255, 38, 20, 84),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.15,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.15,
+                                      //padding: const EdgeInsets.all(10.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: const Color.fromARGB(
+                                            255, 38, 20, 84),
+                                      ),
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              entry['target'] == 2 ? '1' : '0',
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.035,
+                                                fontFamily: 'Ruda',
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.08,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.007,
+                                              child: const Divider(
+                                                color: Colors.white,
+                                                thickness: 1,
+                                              ),
+                                            ),
+                                            Text(
+                                              entry['target'] == 1 ? '1' : '0',
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.035,
+                                                fontFamily: 'Ruda',
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      'Hypers/Hypos',
+                                      style: TextStyle(
+                                        letterSpacing: 0.1,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.025,
+                                        fontFamily: 'Ruda',
+                                        color: const Color.fromARGB(
+                                            255, 38, 20, 84),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      // Add more widgets here if needed
+                    ],
+                  );
+                }
+              },
+            ),
+          */
+          ],
         ),
       ),
     );
@@ -1321,10 +2048,10 @@ class _DashboardState extends State<Dashboard> {
       lineBarsData: [
         LineChartBarData(
           spots: const [
-            FlSpot(0, 4),
-            FlSpot(2.6, 2),
-            FlSpot(4.9, 5),
-            FlSpot(6.8, 3.1),
+            //FlSpot(0, 4),
+            //FlSpot(2.6, 2),
+            //FlSpot(4.9, 5),
+            //FlSpot(6.8, 3.1),
             FlSpot(8, 4),
             //FlSpot(9.5, 3),
             //FlSpot(11, 4),
@@ -1382,182 +2109,6 @@ class _DashboardState extends State<Dashboard> {
   }
 }
 
-class Settings extends StatefulWidget {
-  const Settings({super.key});
-
-  @override
-  _SettingsState createState() => _SettingsState();
-}
-
-class _SettingsState extends State<Settings> {
-  Widget unitChanger(
-      int unit, String option1, String option2, Function(int) onUnitChanged) {
-    return Row(
-      children: [
-        Expanded(
-          child: GestureDetector(
-            onTap: () {
-              setState(() {
-                onUnitChanged(0);
-              });
-            },
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.055,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
-                ),
-                color: unit == 0
-                    ? const Color.fromARGB(255, 22, 161, 170)
-                    : const Color.fromARGB(255, 217, 217, 217),
-                border: Border.all(
-                  color: const Color.fromARGB(0, 101, 73, 152),
-                  width: 0,
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  option1,
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 255, 255, 255),
-                    fontWeight: FontWeight.w900,
-                    fontFamily: 'Rubik',
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: GestureDetector(
-            onTap: () {
-              setState(() {
-                onUnitChanged(1);
-              });
-            },
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.055,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
-                ),
-                color: unit == 1
-                    ? const Color.fromARGB(255, 22, 161, 170)
-                    : const Color.fromARGB(255, 217, 217, 217),
-                border: Border.all(
-                  color: const Color.fromARGB(0, 101, 73, 152),
-                  width: 0,
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  option2,
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 255, 255, 255),
-                    fontWeight: FontWeight.w900,
-                    fontFamily: 'Rubik',
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Row(
-          children: [
-            Text(
-              'Sugar',
-              style: TextStyle(
-                color: Color.fromARGB(255, 255, 249, 254),
-                fontSize: 21,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            Text(
-              'Sense',
-              style: TextStyle(
-                color: Color.fromARGB(255, 255, 249, 254),
-                fontSize: 21,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: const Color.fromARGB(255, 38, 20, 84),
-      ),
-      body: ListView(
-        children: <Widget>[
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                const Expanded(
-                  flex: 2,
-                  child: Text(
-                    'Glucose Unit:',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 38, 20, 84),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child:
-                      unitChanger(glucoseUnit_, 'mmol/L', 'mg/dL', (newUnit) {
-                    glucoseUnit_ = newUnit;
-                    saveUnits();
-                  }),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20), // Add space between unit changers
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                const Expanded(
-                  flex: 2,
-                  child: Text(
-                    'Carb Unit:',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 38, 20, 84),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: unitChanger(carbUnit_, 'Carbs', 'Exchange', (newUnit) {
-                    carbUnit_ = newUnit;
-                    saveUnits();
-                  }),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // class Settings extends StatelessWidget {
 //   //const Settings({Key? key}) : super(key: key);
 
@@ -1598,6 +2149,484 @@ class _SettingsState extends State<Settings> {
 //     );
 //   }
 // }
+class Articles extends StatefulWidget {
+  const Articles({super.key});
+
+  @override
+  _ArticlesState createState() => _ArticlesState();
+}
+
+class _ArticlesState extends State<Articles> {
+  List articles = [];
+  List<bool>? starred;
+
+  @override
+  void initState() {
+    super.initState();
+    articles = [];
+    starred = [];
+    fetchArticles();
+  }
+
+  void fetchArticles() async {
+    List<String> searches = [
+      'diabetes type 1',
+      'diabetes lifestyle',
+      'diabetes article',
+      'diabetes insulin'
+    ];
+
+    for (String s in searches) {
+      logger.info("getting $s");
+      final response =
+          await http.get(Uri.parse('http://$localhost:8000/News/$s'));
+      logger.info("got $s");
+      if (response.statusCode == 200) {
+        List<dynamic> responseData = jsonDecode(response.body);
+        DBHelper dbHelper = DBHelper.instance;
+        for (var article in responseData) {
+          List<Map> result = await dbHelper.checkArticle(article['link']);
+          starred!.add(result.isNotEmpty);
+        }
+        responseData.sort((a, b) {
+          if (a['date'] != null && b['date'] != null) {
+            try {
+              DateFormat format = DateFormat("MMM dd, yyyy");
+              DateTime dateA = format.parse(a['date']);
+              DateTime dateB = format.parse(b['date']);
+              return dateB.compareTo(dateA);
+            } catch (e) {
+              return 0;
+            }
+          }
+          return 0;
+        });
+        if (mounted) {
+          setState(() {
+            articles.addAll(responseData);
+          });
+        }
+      } else {
+        const Text("Could not connect to the internet");
+      }
+    }
+  }
+
+  bool _isPressed = false;
+  @override
+  Widget build(BuildContext context) {
+    List filteredArticles =
+        articles.where((article) => article['thumbnail'] != null).toList();
+    filteredArticles.sort((a, b) {
+      if (a['date'] != null && b['date'] != null) {
+        try {
+          DateFormat format = DateFormat("MMM dd, yyyy");
+          DateTime dateA = format.parse(a['date']);
+          DateTime dateB = format.parse(b['date']);
+          return dateB.compareTo(dateA);
+        } catch (e) {
+          return 0;
+        }
+      }
+      return 0;
+    });
+    filteredArticles = filteredArticles.take(5).toList();
+
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Row(
+          children: [
+            Text(
+              'Sugar',
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 249, 254),
+                fontSize: 21,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            Text(
+              'Sense',
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 249, 254),
+                fontSize: 21,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color.fromARGB(255, 38, 20, 84),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 25.0,
+              right: 25,
+              top: 30,
+              bottom: 20,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Todays Read',
+                  style: TextStyle(
+                    fontSize: 27,
+                    fontFamily: 'InriaSerifBold',
+                    color: Color.fromARGB(255, 38, 20, 84),
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isPressed = !_isPressed;
+                    });
+                  },
+                  child: Icon(
+                    _isPressed
+                        ? Icons.notifications
+                        : Icons.notifications_none_outlined,
+                    size: 30,
+                    color: const Color.fromARGB(255, 38, 20, 84),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          (filteredArticles.isEmpty || starred == null)
+              ? const Center(child: CircularProgressIndicator())
+              : Padding(
+                  padding: const EdgeInsets.only(left: 5.0),
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.25,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: filteredArticles.length,
+                      itemBuilder: (context, index) {
+                        String? imageUrl = filteredArticles[index]['thumbnail'];
+                        String title = filteredArticles[index]['title'];
+                        String url = filteredArticles[index]['link'];
+                        String? date = filteredArticles[index]['date'];
+
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 0.0),
+                          child: SizedBox(
+                            child: InkWell(
+                              onTap: () => launch(url),
+                              child: Card(
+                                color: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                surfaceTintColor: Colors.transparent,
+                                clipBehavior: Clip.antiAlias,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(10.0),
+                                          topRight: Radius.circular(10.0),
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color.fromARGB(
+                                                    185, 77, 77, 77)
+                                                .withOpacity(0.5),
+                                            spreadRadius: 1,
+                                            blurRadius: 7,
+                                            offset: const Offset(0, 5),
+                                          ),
+                                        ],
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(10.0),
+                                          topRight: Radius.circular(10.0),
+                                          bottomLeft: Radius.circular(10),
+                                          bottomRight: Radius.circular(10),
+                                        ),
+                                        child: imageUrl != null
+                                            ? Image.network(
+                                                imageUrl,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.5,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.15,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Container(),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 8.0,
+                                          left: 25,
+                                          //right: 15,
+                                        ),
+                                        child: ShaderMask(
+                                          shaderCallback: (Rect bounds) {
+                                            return const LinearGradient(
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                              colors: <Color>[
+                                                Colors.black,
+                                                Color.fromARGB(51, 0, 0, 0)
+                                              ],
+                                              stops: <double>[0.7, 1.0],
+                                            ).createShader(bounds);
+                                          },
+                                          blendMode: BlendMode.dstIn,
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.4,
+                                                child: Text(
+                                                  title,
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontFamily: 'InriaSerif',
+                                                    color: Color.fromARGB(
+                                                        255, 38, 20, 84),
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  starred![index]
+                                                      ? Icons.bookmark_rounded
+                                                      : Icons
+                                                          .bookmark_border_rounded,
+                                                  color: starred![index]
+                                                      ? const Color.fromARGB(
+                                                          255,
+                                                          49,
+                                                          205,
+                                                          215) // Corrected color definition
+                                                      : const Color.fromARGB(
+                                                          255, 49, 205, 215),
+                                                  size: 27,
+                                                ),
+                                                onPressed: () async {
+                                                  logger.info("clicked");
+                                                  DBHelper dbHelper =
+                                                      DBHelper.instance;
+                                                  var response;
+                                                  if (starred![index]) {
+                                                    response = await dbHelper
+                                                        .deleteFavorite(url);
+                                                    logger.info(response);
+                                                  } else {
+                                                    response = await dbHelper
+                                                        .addFavorite(url, title,
+                                                            imageUrl, date);
+                                                  }
+                                                  logger.info(response);
+                                                  setState(
+                                                    () {
+                                                      starred![index] =
+                                                          !starred![index];
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+          const Padding(
+            padding: EdgeInsets.only(
+              left: 25.0,
+              bottom: 5,
+            ),
+            child: Text(
+              'For You',
+              style: TextStyle(
+                fontSize: 22,
+                fontFamily: 'InriaSerifBold',
+                color: Color.fromARGB(255, 38, 20, 84),
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+          Expanded(
+            child: (articles.isEmpty || starred == null)
+                ? const Center(child: CircularProgressIndicator())
+                : Padding(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    child: SizedBox(
+                      child: ListView.builder(
+                        itemCount: articles
+                            .where((article) =>
+                                !filteredArticles.contains(article))
+                            .toList()
+                            .length,
+                        itemBuilder: (context, index) {
+                          String? imageUrl = articles[index]['thumbnail'];
+                          String title = articles[index]['title'];
+                          String url = articles[index]['link'];
+                          String? date = articles[index]['date'];
+
+                          return SizedBox(
+                            height: imageUrl != null
+                                ? MediaQuery.of(context).size.height * 0.13
+                                : null,
+                            child: InkWell(
+                              onTap: () => launch(url),
+                              child: Card(
+                                color: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                surfaceTintColor: Colors.transparent,
+                                clipBehavior: Clip.antiAlias,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    //bottom: 5.0,
+                                    left: 10,
+                                    right: 10,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      imageUrl != null
+                                          ? ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                              child: Image.network(
+                                                imageUrl,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.25,
+                                                height:
+                                                    120, // Adjust the height as needed
+                                                fit: BoxFit.cover,
+                                              ),
+                                            )
+                                          : Container(),
+                                      const SizedBox(
+                                          width: 10), // Add some spacing
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              title,
+                                              maxLines: 3,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontFamily: 'InriaSerif',
+                                                color: Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            if (date != null)
+                                              SizedBox(
+                                                child: Row(
+                                                  children: [
+                                                    const Icon(
+                                                      Icons.access_time,
+                                                      size: 17,
+                                                      color: Color.fromARGB(
+                                                          255, 106, 106, 106),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 7,
+                                                    ),
+                                                    Text(
+                                                      date,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 106, 106, 106),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: Icon(
+                                          starred![index +
+                                                  filteredArticles.length]
+                                              ? Icons.bookmark
+                                              : Icons.bookmark_border,
+                                          color: starred![index +
+                                                  filteredArticles.length]
+                                              ? const Color.fromARGB(
+                                                  255, 49, 205, 215)
+                                              : const Color.fromARGB(
+                                                  255, 49, 205, 215),
+                                          size: 25,
+                                        ),
+                                        onPressed: () async {
+                                          logger.info("clicked");
+                                          DBHelper dbHelper = DBHelper.instance;
+                                          var response;
+                                          if (starred![index +
+                                              filteredArticles.length]) {
+                                            response = await dbHelper
+                                                .deleteFavorite(url);
+                                            logger.info(response);
+                                          } else {
+                                            response =
+                                                await dbHelper.addFavorite(
+                                                    url, title, imageUrl, date);
+                                          }
+                                          logger.info(response);
+                                          setState(
+                                            () {
+                                              starred![index +
+                                                      filteredArticles.length] =
+                                                  !starred![index +
+                                                      filteredArticles.length];
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class AddInput extends StatefulWidget {
   const AddInput({super.key});
@@ -2154,485 +3183,6 @@ class _AddInputState extends State<AddInput> {
   }
 }
 
-class Articles extends StatefulWidget {
-  const Articles({super.key});
-
-  @override
-  _ArticlesState createState() => _ArticlesState();
-}
-
-class _ArticlesState extends State<Articles> {
-  List articles = [];
-  List<bool>? starred;
-
-  @override
-  void initState() {
-    super.initState();
-    articles = [];
-    starred = [];
-    fetchArticles();
-  }
-
-  void fetchArticles() async {
-    List<String> searches = [
-      'diabetes type 1',
-      'diabetes lifestyle',
-      'diabetes article',
-      'diabetes insulin'
-    ];
-
-    for (String s in searches) {
-      logger.info("getting $s");
-      final response =
-          await http.get(Uri.parse('http://$localhost:8000/News/$s'));
-      logger.info("got $s");
-      if (response.statusCode == 200) {
-        List<dynamic> responseData = jsonDecode(response.body);
-        DBHelper dbHelper = DBHelper.instance;
-        for (var article in responseData) {
-          List<Map> result = await dbHelper.checkArticle(article['link']);
-          starred!.add(result.isNotEmpty);
-        }
-        responseData.sort((a, b) {
-          if (a['date'] != null && b['date'] != null) {
-            try {
-              DateFormat format = DateFormat("MMM dd, yyyy");
-              DateTime dateA = format.parse(a['date']);
-              DateTime dateB = format.parse(b['date']);
-              return dateB.compareTo(dateA);
-            } catch (e) {
-              return 0;
-            }
-          }
-          return 0;
-        });
-        if (mounted) {
-          setState(() {
-            articles.addAll(responseData);
-          });
-        }
-      } else {
-        const Text("Could not connect to the internet");
-      }
-    }
-  }
-
-  bool _isPressed = false;
-  @override
-  Widget build(BuildContext context) {
-    List filteredArticles =
-        articles.where((article) => article['thumbnail'] != null).toList();
-    filteredArticles.sort((a, b) {
-      if (a['date'] != null && b['date'] != null) {
-        try {
-          DateFormat format = DateFormat("MMM dd, yyyy");
-          DateTime dateA = format.parse(a['date']);
-          DateTime dateB = format.parse(b['date']);
-          return dateB.compareTo(dateA);
-        } catch (e) {
-          return 0;
-        }
-      }
-      return 0;
-    });
-    filteredArticles = filteredArticles.take(5).toList();
-
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Row(
-          children: [
-            Text(
-              'Sugar',
-              style: TextStyle(
-                color: Color.fromARGB(255, 255, 249, 254),
-                fontSize: 21,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            Text(
-              'Sense',
-              style: TextStyle(
-                color: Color.fromARGB(255, 255, 249, 254),
-                fontSize: 21,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: const Color.fromARGB(255, 38, 20, 84),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 25.0,
-              right: 25,
-              top: 30,
-              bottom: 20,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Todays Read',
-                  style: TextStyle(
-                    fontSize: 27,
-                    fontFamily: 'InriaSerifBold',
-                    color: Color.fromARGB(255, 38, 20, 84),
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _isPressed = !_isPressed;
-                    });
-                  },
-                  child: Icon(
-                    _isPressed
-                        ? Icons.notifications
-                        : Icons.notifications_none_outlined,
-                    size: 30,
-                    color: const Color.fromARGB(255, 38, 20, 84),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          (filteredArticles.isEmpty || starred == null)
-              ? const Center(child: CircularProgressIndicator())
-              : Padding(
-                  padding: const EdgeInsets.only(left: 5.0),
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.25,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: filteredArticles.length,
-                      itemBuilder: (context, index) {
-                        String? imageUrl = filteredArticles[index]['thumbnail'];
-                        String title = filteredArticles[index]['title'];
-                        String url = filteredArticles[index]['link'];
-                        String? date = filteredArticles[index]['date'];
-
-                        return Padding(
-                          padding: const EdgeInsets.only(left: 0.0),
-                          child: SizedBox(
-                            child: InkWell(
-                              onTap: () => launch(url),
-                              child: Card(
-                                color: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                surfaceTintColor: Colors.transparent,
-                                clipBehavior: Clip.antiAlias,
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(10.0),
-                                          topRight: Radius.circular(10.0),
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: const Color.fromARGB(
-                                                    185, 77, 77, 77)
-                                                .withOpacity(0.5),
-                                            spreadRadius: 1,
-                                            blurRadius: 7,
-                                            offset: const Offset(0, 5),
-                                          ),
-                                        ],
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(10.0),
-                                          topRight: Radius.circular(10.0),
-                                          bottomLeft: Radius.circular(10),
-                                          bottomRight: Radius.circular(10),
-                                        ),
-                                        child: imageUrl != null
-                                            ? Image.network(
-                                                imageUrl,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.5,
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.15,
-                                                fit: BoxFit.cover,
-                                              )
-                                            : Container(),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 8.0,
-                                          left: 25,
-                                          //right: 15,
-                                        ),
-                                        child: ShaderMask(
-                                          shaderCallback: (Rect bounds) {
-                                            return const LinearGradient(
-                                              begin: Alignment.topCenter,
-                                              end: Alignment.bottomCenter,
-                                              colors: <Color>[
-                                                Colors.black,
-                                                Color.fromARGB(51, 0, 0, 0)
-                                              ],
-                                              stops: <double>[0.7, 1.0],
-                                            ).createShader(bounds);
-                                          },
-                                          blendMode: BlendMode.dstIn,
-                                          child: Row(
-                                            children: [
-                                              SizedBox(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.4,
-                                                child: Text(
-                                                  title,
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontFamily: 'InriaSerif',
-                                                    color: Color.fromARGB(
-                                                        255, 38, 20, 84),
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                              ),
-                                              IconButton(
-                                                icon: Icon(
-                                                  starred![index]
-                                                      ? Icons.bookmark_rounded
-                                                      : Icons
-                                                          .bookmark_border_rounded,
-                                                  color: starred![index]
-                                                      ? const Color.fromARGB(
-                                                          255,
-                                                          49,
-                                                          205,
-                                                          215) // Corrected color definition
-                                                      : const Color.fromARGB(
-                                                          255, 49, 205, 215),
-                                                  size: 27,
-                                                ),
-                                                onPressed: () async {
-                                                  logger.info("clicked");
-                                                  DBHelper dbHelper =
-                                                      DBHelper.instance;
-                                                  var response;
-                                                  if (starred![index]) {
-                                                    response = await dbHelper
-                                                        .deleteFavorite(url);
-                                                    logger.info(response);
-                                                  } else {
-                                                    response = await dbHelper
-                                                        .addFavorite(url, title,
-                                                            imageUrl, date);
-                                                  }
-                                                  logger.info(response);
-                                                  setState(
-                                                    () {
-                                                      starred![index] =
-                                                          !starred![index];
-                                                    },
-                                                  );
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-          const Padding(
-            padding: EdgeInsets.only(
-              left: 25.0,
-              bottom: 5,
-            ),
-            child: Text(
-              'For You',
-              style: TextStyle(
-                fontSize: 22,
-                fontFamily: 'InriaSerifBold',
-                color: Color.fromARGB(255, 38, 20, 84),
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-          Expanded(
-            child: (articles.isEmpty || starred == null)
-                ? const Center(child: CircularProgressIndicator())
-                : Padding(
-                    padding: const EdgeInsets.only(left: 5.0),
-                    child: SizedBox(
-                      child: ListView.builder(
-                        itemCount: articles
-                            .where((article) =>
-                                !filteredArticles.contains(article))
-                            .toList()
-                            .length,
-                        itemBuilder: (context, index) {
-                          String? imageUrl = articles[index]['thumbnail'];
-                          String title = articles[index]['title'];
-                          String url = articles[index]['link'];
-                          String? date = articles[index]['date'];
-
-                          return SizedBox(
-                            height: imageUrl != null
-                                ? MediaQuery.of(context).size.height * 0.13
-                                : null,
-                            child: InkWell(
-                              onTap: () => launch(url),
-                              child: Card(
-                                color: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                surfaceTintColor: Colors.transparent,
-                                clipBehavior: Clip.antiAlias,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    //bottom: 5.0,
-                                    left: 10,
-                                    right: 10,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      imageUrl != null
-                                          ? ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0),
-                                              child: Image.network(
-                                                imageUrl,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.25,
-                                                height:
-                                                    120, // Adjust the height as needed
-                                                fit: BoxFit.cover,
-                                              ),
-                                            )
-                                          : Container(),
-                                      const SizedBox(
-                                          width: 10), // Add some spacing
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              title,
-                                              maxLines: 3,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontFamily: 'InriaSerif',
-                                                color: Color.fromARGB(
-                                                    255, 38, 20, 84),
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            if (date != null)
-                                              SizedBox(
-                                                child: Row(
-                                                  children: [
-                                                    const Icon(
-                                                      Icons.access_time,
-                                                      size: 17,
-                                                      color: Color.fromARGB(
-                                                          255, 106, 106, 106),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 7,
-                                                    ),
-                                                    Text(
-                                                      date,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: const TextStyle(
-                                                        color: Color.fromARGB(
-                                                            255, 106, 106, 106),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(
-                                          starred![index +
-                                                  filteredArticles.length]
-                                              ? Icons.bookmark
-                                              : Icons.bookmark_border,
-                                          color: starred![index +
-                                                  filteredArticles.length]
-                                              ? const Color.fromARGB(
-                                                  255, 49, 205, 215)
-                                              : const Color.fromARGB(
-                                                  255, 49, 205, 215),
-                                          size: 25,
-                                        ),
-                                        onPressed: () async {
-                                          logger.info("clicked");
-                                          DBHelper dbHelper = DBHelper.instance;
-                                          var response;
-                                          if (starred![index +
-                                              filteredArticles.length]) {
-                                            response = await dbHelper
-                                                .deleteFavorite(url);
-                                            logger.info(response);
-                                          } else {
-                                            response =
-                                                await dbHelper.addFavorite(
-                                                    url, title, imageUrl, date);
-                                          }
-                                          logger.info(response);
-                                          setState(
-                                            () {
-                                              starred![index +
-                                                      filteredArticles.length] =
-                                                  !starred![index +
-                                                      filteredArticles.length];
-                                            },
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class Profile extends StatelessWidget {
   //const Settings({Key? key}) : super(key: key);
 
@@ -2669,6 +3219,182 @@ class Profile extends StatelessWidget {
         child: Center(
           child: Text('Profile!'), // Replace with your desired text
         ),
+      ),
+    );
+  }
+}
+
+class Settings extends StatefulWidget {
+  const Settings({super.key});
+
+  @override
+  _SettingsState createState() => _SettingsState();
+}
+
+class _SettingsState extends State<Settings> {
+  Widget unitChanger(
+      int unit, String option1, String option2, Function(int) onUnitChanged) {
+    return Row(
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                onUnitChanged(0);
+              });
+            },
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.055,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  bottomLeft: Radius.circular(10),
+                ),
+                color: unit == 0
+                    ? const Color.fromARGB(255, 22, 161, 170)
+                    : const Color.fromARGB(255, 217, 217, 217),
+                border: Border.all(
+                  color: const Color.fromARGB(0, 101, 73, 152),
+                  width: 0,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  option1,
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    fontWeight: FontWeight.w900,
+                    fontFamily: 'Rubik',
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                onUnitChanged(1);
+              });
+            },
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.055,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
+                ),
+                color: unit == 1
+                    ? const Color.fromARGB(255, 22, 161, 170)
+                    : const Color.fromARGB(255, 217, 217, 217),
+                border: Border.all(
+                  color: const Color.fromARGB(0, 101, 73, 152),
+                  width: 0,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  option2,
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    fontWeight: FontWeight.w900,
+                    fontFamily: 'Rubik',
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Row(
+          children: [
+            Text(
+              'Sugar',
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 249, 254),
+                fontSize: 21,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            Text(
+              'Sense',
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 249, 254),
+                fontSize: 21,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color.fromARGB(255, 38, 20, 84),
+      ),
+      body: ListView(
+        children: <Widget>[
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                const Expanded(
+                  flex: 2,
+                  child: Text(
+                    'Glucose Unit:',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 38, 20, 84),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child:
+                      unitChanger(glucoseUnit_, 'mmol/L', 'mg/dL', (newUnit) {
+                    glucoseUnit_ = newUnit;
+                    saveUnits();
+                  }),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20), // Add space between unit changers
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                const Expanded(
+                  flex: 2,
+                  child: Text(
+                    'Carb Unit:',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 38, 20, 84),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: unitChanger(carbUnit_, 'Carbs', 'Exchange', (newUnit) {
+                    carbUnit_ = newUnit;
+                    saveUnits();
+                  }),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
