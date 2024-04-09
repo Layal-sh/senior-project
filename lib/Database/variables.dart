@@ -17,6 +17,8 @@ Future<void> savePreferences() async {
   await prefs.setString('phoneNumber', phoneNumber_);
   await prefs.setString('profilePicture', profilePicture_);
   await prefs.setString('privacy', privacy_);
+  await prefs.setInt('glucoseUnit', glucoseUnit_);
+  await prefs.setInt('carbUnit', carbUnit_);
 }
 
 Future<void> loadPreferences() async {
@@ -37,6 +39,8 @@ Future<void> loadPreferences() async {
   phoneNumber_ = prefs.getString('phoneNumber') ?? "";
   profilePicture_ = prefs.getString('profilePicture') ?? "";
   privacy_ = prefs.getString('privacy') ?? "111";
+  glucoseUnit_ = prefs.getInt('glucoseUnit') ?? 0;
+  carbUnit_ = prefs.getInt('carbUnit') ?? 0;
 }
 
 int targetBloodSugar_ = 100;
@@ -54,3 +58,5 @@ String phoneNumber_ = "";
 String profilePicture_ = "";
 int pid_ = 0;
 String privacy_ = "111";
+int glucoseUnit_ = 0;
+int carbUnit_ = 0;
