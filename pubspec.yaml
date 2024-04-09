@@ -273,6 +273,9 @@ flutter:
     - assets/My Meals.png
     - assets/Pastries.png
     - assets/Sweet & snacks.png
+    - assets/bread.png
+    - assets/insulin.png
+    - assets/blood.png
     
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -299,6 +302,9 @@ flutter:
     - family: Ruda
       fonts:
         - asset: fonts/Ruda-Regular.ttf
+    - family: Ruda-SemiBold
+      fonts:
+        - asset: fonts/Ruda-SemiBold.ttf
     - family: Rubik
       fonts:
         - asset: fonts/Rubik-Regular.ttf

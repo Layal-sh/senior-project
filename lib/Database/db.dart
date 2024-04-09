@@ -393,50 +393,54 @@ class DBHelper {
     LIMIT 1
     ''');
 
-    List<Map> hasMeals= await getMealsFromEntryID(response[0]['entryId']); 
-    bool target=true;
+    List<Map> hasMeals = await getMealsFromEntryID(response[0]['entryId']);
+    int target = 0;
 
-    double totalCarbs= await getCarbsHasMeal(hasMeals);
+    double totalCarbs = await getCarbsHasMeal(hasMeals);
 
-    double currentGlucose=response[0]['glucoseLevel'];
-    if(currentGlucose< 80 || currentGlucose >120){
-      target=false;
+    double currentGlucose = response[0]['glucoseLevel'];
+    if (currentGlucose >= 80 && currentGlucose <= 120) {
+      target = 0;
+    } else if (currentGlucose < 80) {
+      //hypoglycemia
+      target = 1;
+    } else {
+      //hyperglycemia
+      target = 2;
     }
 
     Map<String, dynamic> result = {
-      'entryId':response[0]['entryId'],
+      'entryId': response[0]['entryId'],
       'glucoseLevel': currentGlucose,
       'insulinDosage': response[0]['insulinDosage'],
-      'totalCarbs': totalCarbs, 
+      'totalCarbs': totalCarbs,
       'date': response[0]['entryDate'],
       'target': target
-      };
+    };
     return result;
   }
 
-  
+  getCarbsHasMeal(List<Map> hasMeals) async {
+    double totalCarbs = 0;
 
-  getCarbsHasMeal(List<Map> hasMeals) async{
- double totalCarbs = 0;
+    for (var meal in hasMeals) {
+      var mealId = meal['mealId'];
+      var mealCarbs = await getCarbsByMealId(mealId);
+      double qty = meal['quantity'];
+      totalCarbs += (mealCarbs * qty);
+    }
 
-for (var meal in hasMeals) {
-  var mealId = meal['mealId'];
-  var mealCarbs = await getCarbsByMealId(mealId);
-  double qty=meal['quantity'];
-  totalCarbs += (mealCarbs * qty);
-}
-
-return totalCarbs;
+    return totalCarbs;
   }
 
-  getCarbsByMealId(int mealId) async{
+  getCarbsByMealId(int mealId) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
       SELECT carbohydrates from Meals
       WHERE mealId = $mealId
       ''');
 
-      return response[0]['carbohydrates'];
+    return response[0]['carbohydrates'];
   }
   ////////////////////////////////////////////////
   /////////////// Create & Edit Meals /////////////

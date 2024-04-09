@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/widgets.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/meals.dart';
@@ -175,6 +177,20 @@ class _DashboardState extends State<Dashboard> {
   bool today = true;
   bool monthly = false;
   bool yearly = false;
+  Map<String, dynamic> latestEntry = {};
+
+  @override
+  void initState() {
+    super.initState();
+    loadLatestEntry();
+  }
+
+  loadLatestEntry() async {
+    var entry = await db.getLatestEntry();
+    setState(() {
+      latestEntry = entry;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -371,56 +387,672 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ),
             ),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 8.0,
-                    left: 20,
-                    right: 20,
-                  ),
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        widget.changeTab(2);
-                      });
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.3,
-                      height: MediaQuery.of(context).size.height * 0.2,
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 135, 117, 181),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          CircleAvatar(
-                            radius: 25, // Half of your icon size
-                            backgroundColor: Color.fromARGB(255, 255, 255,
-                                255), // Replace with your desired background color
-                            child: Icon(
-                              Icons.add,
-                              size: 50,
-                              color: Color.fromARGB(255, 135, 117, 181),
-                            ),
-                          ),
-                          Text(
-                            'Add your logs',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Ruda',
-                              fontSize: 11,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 8.0,
+                bottom: 5,
+                left: 20,
+              ),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.width *
+                    15 /
+                    (MediaQuery.of(context).size.height * 0.05),
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: latestEntry.isNotEmpty ? 4 : 1,
+                  itemBuilder: (context, index) {
+                    return Row(
+                      children: [
+                        index == 0
+                            ? GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    widget.changeTab(2);
+                                  });
+                                },
+                                child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.3,
+                                  //padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromARGB(
+                                        255, 135, 117, 181),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: const Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      CircleAvatar(
+                                        radius: 25, // Half of your icon size
+                                        backgroundColor: Color.fromARGB(
+                                            255,
+                                            255,
+                                            255,
+                                            255), // Replace with your desired background color
+                                        child: Icon(
+                                          Icons.add,
+                                          size: 50,
+                                          color: Color.fromARGB(
+                                              255, 135, 117, 181),
+                                        ),
+                                      ),
+                                      Text(
+                                        'Add your logs',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'Ruda',
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : index == 1
+                                ? Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.3,
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: const Color.fromARGB(
+                                          255, 156, 232, 237),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 2.0,
+                                        right: 2.0,
+                                        top: 5,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.08,
+                                            child: Image.asset(
+                                              'assets/insulin.png',
+                                              fit: BoxFit.fitWidth,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.01,
+                                          ),
+                                          Text(
+                                            'Bolus Dose',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.04,
+                                              fontFamily: 'Ruda-SemiBold',
+                                              color: const Color.fromARGB(
+                                                  255, 0, 138, 147),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.001,
+                                          ),
+                                          Text(
+                                            '${latestEntry['insulinDosage']}',
+                                            style: TextStyle(
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.065,
+                                              fontFamily: 'Ruda-SemiBold',
+                                              color: const Color.fromARGB(
+                                                  255, 38, 20, 84),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'units',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Ruda-SemiBold',
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.03,
+                                                    color: const Color.fromARGB(
+                                                        255, 96, 79, 139),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  DateFormat.jm().format(
+                                                      DateTime.parse(
+                                                          latestEntry['date'])),
+                                                  style: TextStyle(
+                                                    fontFamily: 'Ruda-SemiBold',
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.03,
+                                                    color: const Color.fromARGB(
+                                                        255, 96, 79, 139),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                : index == 2
+                                    ? Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.3,
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromARGB(
+                                              255, 186, 172, 223),
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                            left: 2.0,
+                                            right: 2.0,
+                                            top: 5,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.085,
+                                                child: Image.asset(
+                                                  'assets/blood.png',
+                                                  fit: BoxFit.fitWidth,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.01,
+                                              ),
+                                              Text(
+                                                'Blood Sugar',
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.04,
+                                                  fontFamily: 'Ruda-SemiBold',
+                                                  color: const Color.fromARGB(
+                                                      255, 90, 67, 148),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.001,
+                                              ),
+                                              Text(
+                                                '${latestEntry['glucoseLevel']}',
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.065,
+                                                  fontFamily: 'Ruda-SemiBold',
+                                                  color: const Color.fromARGB(
+                                                      255, 38, 20, 84),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      'mmol/L',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            'Ruda-SemiBold',
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.03,
+                                                        color: const Color
+                                                            .fromARGB(
+                                                            255, 96, 79, 139),
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      DateFormat.jm().format(
+                                                          DateTime.parse(
+                                                              latestEntry[
+                                                                  'date'])),
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            'Ruda-SemiBold',
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.03,
+                                                        color: const Color
+                                                            .fromARGB(
+                                                            255, 96, 79, 139),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    : Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.3,
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromARGB(
+                                              255, 156, 232, 237),
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                            left: 2.0,
+                                            right: 2.0,
+                                            top: 5,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.08,
+                                                child: Image.asset(
+                                                  'assets/bread.png',
+                                                  fit: BoxFit.fitWidth,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.01,
+                                              ),
+                                              Text(
+                                                'Carbohydrates',
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.04,
+                                                  fontFamily: 'Ruda-SemiBold',
+                                                  color: const Color.fromARGB(
+                                                      255, 0, 138, 147),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.001,
+                                              ),
+                                              Text(
+                                                '${latestEntry['totalCarbs']}',
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.065,
+                                                  fontFamily: 'Ruda-SemiBold',
+                                                  color: const Color.fromARGB(
+                                                      255, 38, 20, 84),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      'grams',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            'Ruda-SemiBold',
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.03,
+                                                        color: const Color
+                                                            .fromARGB(
+                                                            255, 96, 79, 139),
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      DateFormat.jm().format(
+                                                          DateTime.parse(
+                                                              latestEntry[
+                                                                  'date'])),
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            'Ruda-SemiBold',
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.03,
+                                                        color: const Color
+                                                            .fromARGB(
+                                                            255, 96, 79, 139),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                      ],
+                    );
+                  },
                 ),
-              ],
+              ),
             ),
+            latestEntry.isNotEmpty
+                ? Padding(
+                    padding: const EdgeInsets.only(
+                      top: 8.0,
+                      left: 20,
+                      right: 10,
+                      bottom: 10,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          DateFormat.jm()
+                              .format(DateTime.parse(latestEntry['date'])),
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
+                            fontFamily: 'Ruda',
+                            color: const Color.fromARGB(255, 38, 20, 84),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.15,
+                              height: MediaQuery.of(context).size.width * 0.15,
+                              //padding: const EdgeInsets.all(10.0),
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Color.fromARGB(255, 38, 20, 84),
+                              ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      '${latestEntry['insulinDosage']}',
+                                      style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.04,
+                                        fontFamily: 'Ruda',
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Text(
+                                      'units',
+                                      style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.03,
+                                        fontFamily: 'Ruda',
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Text(
+                              'Bolus',
+                              style: TextStyle(
+                                letterSpacing: 0.1,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.025,
+                                fontFamily: 'Ruda',
+                                color: const Color.fromARGB(255, 38, 20, 84),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.15,
+                              height: MediaQuery.of(context).size.width * 0.15,
+                              //padding: const EdgeInsets.all(10.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: const Color.fromARGB(255, 38, 20, 84),
+                              ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      '${latestEntry['glucoseLevel']}',
+                                      style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.04,
+                                        fontFamily: 'Ruda',
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Text(
+                                      'mmol/L',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.03,
+                                        fontFamily: 'Ruda',
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Text(
+                              'Blood Sugar',
+                              style: TextStyle(
+                                letterSpacing: 0.1,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.025,
+                                fontFamily: 'Ruda',
+                                color: const Color.fromARGB(255, 38, 20, 84),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.15,
+                              height: MediaQuery.of(context).size.width * 0.15,
+                              //padding: const EdgeInsets.all(10.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: const Color.fromARGB(255, 38, 20, 84),
+                              ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      '${latestEntry['totalCarbs']}',
+                                      style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.04,
+                                        fontFamily: 'Ruda',
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Text(
+                                      'grams',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.03,
+                                        fontFamily: 'Ruda',
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Text(
+                              'Carbohydrates',
+                              style: TextStyle(
+                                letterSpacing: 0.1,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.025,
+                                fontFamily: 'Ruda',
+                                color: const Color.fromARGB(255, 38, 20, 84),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.15,
+                              height: MediaQuery.of(context).size.width * 0.15,
+                              //padding: const EdgeInsets.all(10.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: const Color.fromARGB(255, 38, 20, 84),
+                              ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      latestEntry['target'] == 2 ? '1' : '0',
+                                      style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.035,
+                                        fontFamily: 'Ruda',
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.08,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.007,
+                                      child: const Divider(
+                                        color: Colors.white,
+                                        thickness: 1,
+                                      ),
+                                    ),
+                                    Text(
+                                      latestEntry['target'] == 1 ? '1' : '0',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.035,
+                                        fontFamily: 'Ruda',
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Text(
+                              'Hypers/Hypos',
+                              style: TextStyle(
+                                letterSpacing: 0.1,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.025,
+                                fontFamily: 'Ruda',
+                                color: const Color.fromARGB(255, 38, 20, 84),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
+                : Container(),
           ], // Replace with your desired text
         ),
       ),
@@ -910,7 +1542,7 @@ class _AddInputState extends State<AddInput> {
 */
                               DBHelper dbHelper = DBHelper.instance;
                               dbHelper.createEntry(glucoseLevel,
-                                  bolusCalculationResult, date, chosenMeals);
+                                  bolusCalculation.value, date, chosenMeals);
                               print('Chosen Meals:');
                               print(chosenMeals);
                               print('Total Carbs:');
