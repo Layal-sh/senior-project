@@ -1382,8 +1382,91 @@ class _DashboardState extends State<Dashboard> {
   }
 }
 
-class Settings extends StatelessWidget {
-  //const Settings({Key? key}) : super(key: key);
+class Settings extends StatefulWidget {
+  const Settings({super.key});
+
+  @override
+  _SettingsState createState() => _SettingsState();
+}
+
+class _SettingsState extends State<Settings> {
+  Widget unitChanger(
+      int unit, String option1, String option2, Function(int) onUnitChanged) {
+    return Row(
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                onUnitChanged(0);
+              });
+            },
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.055,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  bottomLeft: Radius.circular(10),
+                ),
+                color: unit == 0
+                    ? const Color.fromARGB(255, 22, 161, 170)
+                    : const Color.fromARGB(255, 217, 217, 217),
+                border: Border.all(
+                  color: const Color.fromARGB(0, 101, 73, 152),
+                  width: 0,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  option1,
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    fontWeight: FontWeight.w900,
+                    fontFamily: 'Rubik',
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                onUnitChanged(1);
+              });
+            },
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.055,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
+                ),
+                color: unit == 1
+                    ? const Color.fromARGB(255, 22, 161, 170)
+                    : const Color.fromARGB(255, 217, 217, 217),
+                border: Border.all(
+                  color: const Color.fromARGB(0, 101, 73, 152),
+                  width: 0,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  option2,
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    fontWeight: FontWeight.w900,
+                    fontFamily: 'Rubik',
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1414,14 +1497,107 @@ class Settings extends StatelessWidget {
         ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
-      body: const SingleChildScrollView(
-        child: Center(
-          child: Text('Setting!'), // Replace with your desired text
-        ),
+      body: ListView(
+        children: <Widget>[
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                const Expanded(
+                  flex: 2,
+                  child: Text(
+                    'Glucose Unit:',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 38, 20, 84),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child:
+                      unitChanger(glucoseUnit_, 'mmol/L', 'mg/dL', (newUnit) {
+                    glucoseUnit_ = newUnit;
+                    saveUnits();
+                  }),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20), // Add space between unit changers
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                const Expanded(
+                  flex: 2,
+                  child: Text(
+                    'Carb Unit:',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 38, 20, 84),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: unitChanger(carbUnit_, 'Carbs', 'Exchange', (newUnit) {
+                    carbUnit_ = newUnit;
+                    saveUnits();
+                  }),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 }
+
+// class Settings extends StatelessWidget {
+//   //const Settings({Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         automaticallyImplyLeading: false,
+//         title: const Row(
+//           children: [
+//             Text(
+//               'Sugar',
+//               style: TextStyle(
+//                 color: Color.fromARGB(255, 255, 249, 254),
+//                 fontSize: 21,
+//                 fontFamily: 'Inter',
+//                 fontWeight: FontWeight.w900,
+//               ),
+//             ),
+//             Text(
+//               'Sense',
+//               style: TextStyle(
+//                 color: Color.fromARGB(255, 255, 249, 254),
+//                 fontSize: 21,
+//                 fontFamily: 'Inter',
+//                 fontWeight: FontWeight.w500,
+//               ),
+//             ),
+//           ],
+//         ),
+//         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
+//       ),
+//       body: const SingleChildScrollView(
+//         child: Center(
+//           child: Text('Setting!'), // Replace with your desired text
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class AddInput extends StatefulWidget {
   const AddInput({super.key});
