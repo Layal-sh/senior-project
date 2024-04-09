@@ -1468,6 +1468,69 @@ class _SettingsState extends State<Settings> {
     );
   }
 
+  Widget settingItem(String title, String value, VoidCallback onTap) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 3, // Increase this to give more space to the title
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 1, // Decrease this to give less space to the value and icon
+          child: Row(
+            children: [
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: onTap,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget numberInputDialog(String title, double initialValue) {
+    TextEditingController controller =
+        TextEditingController(text: initialValue.toString());
+    return AlertDialog(
+      title: Text(title),
+      content: TextField(
+        controller: controller,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+        ],
+      ),
+      actions: [
+        TextButton(
+          child: const Text('Cancel'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        TextButton(
+          child: const Text('OK'),
+          onPressed: () {
+            Navigator.of(context).pop(double.parse(controller.text));
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1549,6 +1612,63 @@ class _SettingsState extends State<Settings> {
                     saveUnits();
                   }),
                 ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                settingItem('Carb Ratio:', carbRatio_.toString(), () async {
+                  double? newCarbRatio = await showDialog<double>(
+                    context: context,
+                    builder: (context) =>
+                        numberInputDialog('Enter new carb ratio', carbRatio_),
+                  );
+                  if (newCarbRatio != null) {
+                    setState(() {
+                      carbRatio_ = newCarbRatio;
+                      //save
+                    });
+                  }
+                }),
+                const SizedBox(height: 20),
+                settingItem('Target Glucose:', targetBloodSugar_.toString(),
+                    () async {
+                  double? newTargetBloodSugar = await showDialog(
+                    context: context,
+                    builder: (context) => numberInputDialog(
+                        'Enter new target glucose',
+                        targetBloodSugar_.toDouble()),
+                  );
+                  if (newTargetBloodSugar != null) {
+                    setState(() {
+                      targetBloodSugar_ = glucoseUnit_ == 1
+                          ? (newTargetBloodSugar).toInt()
+                          : (newTargetBloodSugar * 18.0156).toInt();
+                      saveValues();
+                    });
+                  }
+                }),
+                const SizedBox(height: 20),
+                settingItem(
+                    'Insulin Sensitivity:', insulinSensitivity_.toString(),
+                    () async {
+                  double? newInsulinSensitivity = await showDialog(
+                    context: context,
+                    builder: (context) => numberInputDialog(
+                        'Enter new insulin sensitivity',
+                        insulinSensitivity_.toDouble()),
+                  );
+                  if (newInsulinSensitivity != null) {
+                    setState(() {
+                      insulinSensitivity_ = glucoseUnit_ == 1
+                          ? (newInsulinSensitivity).toInt()
+                          : (newInsulinSensitivity * 18.0156).toInt();
+                      saveValues();
+                    });
+                  }
+                }),
               ],
             ),
           ),

@@ -19,6 +19,18 @@ Future<void> savePreferences() async {
   await prefs.setString('privacy', privacy_);
 }
 
+Future<void> saveValues() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  await prefs.setInt('targetBloodSugar', targetBloodSugar_);
+  await prefs.setInt('insulinSensitivity', insulinSensitivity_);
+  await prefs.setDouble('carbRatio', carbRatio_);
+  await prefs.setDouble('carbRatio2', carbRatio_2);
+  await prefs.setDouble('carbRatio3', carbRatio_3);
+  await prefs.setString('username', username_);
+  await prefs.setString('privacy', privacy_);
+}
+
 Future<void> saveUnits() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setInt('glucoseUnit', glucoseUnit_);
