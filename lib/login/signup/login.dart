@@ -72,6 +72,7 @@ class _LoginState extends State<Login> {
    
     print(await dbHelper.getLatestEntry());
     print("///////////////////////////////////");
+    print(await dbHelper.getAllEntries());
 
     final response = await http
         .post(
