@@ -385,6 +385,59 @@ class DBHelper {
     return response[0]['entryId'];
   }
 
+  getLatestEntry() async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+    SELECT * from Entry 
+    ORDER BY entryDate DESC
+    LIMIT 1
+    ''');
+
+    List<Map> hasMeals= await getMealsFromEntryID(response[0]['entryId']); 
+    bool target=true;
+
+    double totalCarbs= await getCarbsHasMeal(hasMeals);
+
+    double currentGlucose=response[0]['glucoseLevel'];
+    if(currentGlucose< 80 || currentGlucose >120){
+      target=false;
+    }
+
+    Map<String, dynamic> result = {
+      'entryId':response[0]['entryId'],
+      'glucoseLevel': currentGlucose,
+      'insulinDosage': response[0]['insulinDosage'],
+      'totalCarbs': totalCarbs, 
+      'date': response[0]['entryDate'],
+      'target': target
+      };
+    return result;
+  }
+
+  
+
+  getCarbsHasMeal(List<Map> hasMeals) async{
+ double totalCarbs = 0;
+
+for (var meal in hasMeals) {
+  var mealId = meal['mealId'];
+  var mealCarbs = await getCarbsByMealId(mealId);
+  double qty=meal['quantity'];
+  totalCarbs += (mealCarbs * qty);
+}
+
+return totalCarbs;
+  }
+
+  getCarbsByMealId(int mealId) async{
+    Database? mydb = await db;
+    List<Map> response = await mydb!.rawQuery('''
+      SELECT carbohydrates from Meals
+      WHERE mealId = $mealId
+      ''');
+
+      return response[0]['carbohydrates'];
+  }
   ////////////////////////////////////////////////
   /////////////// Create & Edit Meals /////////////
   /////////////////////////////////////////////////
