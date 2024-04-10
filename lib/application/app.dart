@@ -3232,8 +3232,50 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  Widget settingItem(String title, String value, VoidCallback onTap) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 3,
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              color: Color.fromARGB(255, 38, 20, 84),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                  textAlign: TextAlign.right, // Align text to the right
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight, // Align icon to the right
+                child: IconButton(
+                  icon: const Icon(Icons.edit,
+                      color: Color.fromARGB(255, 22, 161, 170)),
+                  onPressed: onTap,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget unitChanger(
-      int unit, String option1, String option2, Function(int) onUnitChanged) {
+      int unit, String unit1, String unit2, Function(int) onUnitChanged) {
     return Row(
       children: [
         Expanded(
@@ -3260,7 +3302,7 @@ class _SettingsState extends State<Settings> {
               ),
               child: Center(
                 child: Text(
-                  option1,
+                  unit1,
                   style: const TextStyle(
                     color: Color.fromARGB(255, 255, 255, 255),
                     fontWeight: FontWeight.w900,
@@ -3295,7 +3337,7 @@ class _SettingsState extends State<Settings> {
               ),
               child: Center(
                 child: Text(
-                  option2,
+                  unit2,
                   style: const TextStyle(
                     color: Color.fromARGB(255, 255, 255, 255),
                     fontWeight: FontWeight.w900,
@@ -3305,6 +3347,43 @@ class _SettingsState extends State<Settings> {
               ),
             ),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget numberInputDialog(String title, double initialValue) {
+    TextEditingController controller =
+        TextEditingController(text: initialValue.toStringAsFixed(2));
+    return AlertDialog(
+      title: Text(title),
+      content: TextField(
+        controller: controller,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+        ],
+      ),
+      actions: <Widget>[
+        TextButton(
+          style: TextButton.styleFrom(
+              foregroundColor: const Color.fromARGB(
+                  255, 22, 161, 170) // Change this to your desired color
+              ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(
+              foregroundColor: const Color.fromARGB(
+                  255, 22, 161, 170) // Change this to your desired color
+              ),
+          onPressed: () {
+            Navigator.of(context).pop(double.parse(controller.text));
+          },
+          child: const Text('OK'),
         ),
       ],
     );
@@ -3368,7 +3447,7 @@ class _SettingsState extends State<Settings> {
               ],
             ),
           ),
-          const SizedBox(height: 20), // Add space between unit changers
+          const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
@@ -3391,6 +3470,77 @@ class _SettingsState extends State<Settings> {
                     saveUnits();
                   }),
                 ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                settingItem('Carb Ratio:', carbRatio_.toString(), () async {
+                  double? newCarbRatio = await showDialog<double>(
+                    context: context,
+                    builder: (context) =>
+                        numberInputDialog('Enter new carb ratio', carbRatio_),
+                  );
+                  if (newCarbRatio != null) {
+                    setState(() {
+                      carbRatio_ = newCarbRatio;
+                      saveValues();
+                    });
+                  }
+                }),
+                const SizedBox(height: 20),
+                settingItem(
+                    'Target Glucose:',
+                    (glucoseUnit_ == 1
+                            ? targetBloodSugar_
+                            : targetBloodSugar_ / 18.0156)
+                        .toStringAsFixed(glucoseUnit_ == 0 ? 2 : 0), () async {
+                  double? newTargetBloodSugar = await showDialog(
+                    context: context,
+                    builder: (context) => numberInputDialog(
+                        'Enter new target glucose',
+                        (glucoseUnit_ == 1
+                                ? targetBloodSugar_
+                                : targetBloodSugar_ / 18.0156)
+                            .toDouble()),
+                  );
+                  if (newTargetBloodSugar != null) {
+                    setState(() {
+                      targetBloodSugar_ = glucoseUnit_ == 1
+                          ? (newTargetBloodSugar).toInt()
+                          : (newTargetBloodSugar * 18.0156).toInt();
+                      saveValues();
+                    });
+                  }
+                }),
+                const SizedBox(height: 20),
+                settingItem(
+                    'Insulin Sensitivity:',
+                    (glucoseUnit_ == 1
+                            ? insulinSensitivity_
+                            : insulinSensitivity_ / 18.0156)
+                        .toStringAsFixed(glucoseUnit_ == 0 ? 2 : 0), () async {
+                  double? newInsulinSensitivity = await showDialog(
+                    context: context,
+                    builder: (context) => numberInputDialog(
+                        'Enter new insulin sensitivity',
+                        (glucoseUnit_ == 1
+                                ? insulinSensitivity_
+                                : insulinSensitivity_ / 18.0156)
+                            .toDouble()),
+                  );
+                  if (newInsulinSensitivity != null) {
+                    setState(() {
+                      insulinSensitivity_ = glucoseUnit_ == 1
+                          ? (newInsulinSensitivity).toInt()
+                          : (newInsulinSensitivity * 18.0156).toInt();
+                      saveValues();
+                    });
+                  }
+                }),
               ],
             ),
           ),
