@@ -69,11 +69,7 @@ class _LoginState extends State<Login> {
     // logger.info("synced meal compositions successfully");
     // logger.info("saving values to shared preferences");
 
-    print(await dbHelper.getLatestEntry());
-    print("///////////////////////////////////////////");
-    print(await dbHelper.getEntries(2));
-    print("///////////////////////////////////////////");
-    print(await dbHelper.deleteEntryById(39));
+    print(await dbHelper.deleteAllEntries());
     print("///////////////////////////////////////////");
     print(await dbHelper.getEntries(2));
     final response = await http

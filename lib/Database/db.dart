@@ -538,6 +538,18 @@ class DBHelper {
     }
       
   }
+
+  deleteAllEntries() async{
+    Database? mydb = await db;
+    int response = await mydb!.rawDelete('''
+    DELETE FROM hasMeal;
+''');
+    logger.info("delete evrything in hasMeals");
+    int response2 = await mydb.rawDelete('''
+    DELETE FROM Entry;
+''');
+    logger.info("delete evrything in entries");
+  }
   
   ////////////////////////////////////////////////
   /////////////// Create & Edit Meals /////////////
