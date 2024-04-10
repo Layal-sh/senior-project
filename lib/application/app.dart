@@ -198,9 +198,19 @@ class _DashboardState extends State<Dashboard> {
               .map((e) => double.parse(e['insulinDosage'].toString()))
               .reduce((a, b) => a + b) /
           entries.length;
+      double averageGlucose = entries
+              .map((e) => double.parse(e['glucoseLevel'].toString()))
+              .reduce((a, b) => a + b) /
+          entries.length;
+      double averageCarbs = entries
+              .map((e) => double.parse(e['totalCarbs'].toString()))
+              .reduce((a, b) => a + b) /
+          entries.length;
       averageInsulinDosagePerDay.add({
         'day': day,
         'averageInsulinDosage': averageInsulinDosage,
+        'averageGlucose': averageGlucose,
+        'averageCarbs': averageCarbs,
       });
     });
   }
@@ -215,9 +225,19 @@ class _DashboardState extends State<Dashboard> {
               .map((e) => double.parse(e['insulinDosage'].toString()))
               .reduce((a, b) => a + b) /
           entries.length;
+      double averageGlucose = entries
+              .map((e) => double.parse(e['glucoseLevel'].toString()))
+              .reduce((a, b) => a + b) /
+          entries.length;
+      double averageCarbs = entries
+              .map((e) => double.parse(e['totalCarbs'].toString()))
+              .reduce((a, b) => a + b) /
+          entries.length;
       averageInsulinDosagePerMonth.add({
         'month': month,
         'averageInsulinDosage': averageInsulinDosage,
+        'averageGlucose': averageGlucose,
+        'averageCarbs': averageCarbs,
       });
     });
   }
@@ -1989,14 +2009,29 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
         LineChartBarData(
-          spots: dayentries.map((entry) {
-            return FlSpot(
-              DateTime.parse(entry['date']).hour +
-                  DateTime.parse(entry['date']).minute /
-                      60.0, // Convert date to double
-              double.parse(entry['glucoseLevel'].toString()),
-            );
-          }).toList(),
+          spots: (today
+                  ? dayentries.map((entry) {
+                      return FlSpot(
+                        DateTime.parse(entry['date']).hour +
+                            DateTime.parse(entry['date']).minute /
+                                60.0, // Convert date to double
+                        double.parse(entry['glucoseLevel'].toString()),
+                      );
+                    })
+                  : monthly
+                      ? averageInsulinDosagePerDay.map((entry) {
+                          return FlSpot(
+                            entry['day'].toDouble(),
+                            double.parse(entry['averageGlucose'].toString()),
+                          );
+                        })
+                      : averageInsulinDosagePerMonth.map((entry) {
+                          return FlSpot(
+                            entry['month'].toDouble(),
+                            double.parse(entry['averageGlucose'].toString()),
+                          );
+                        }))
+              .toList(),
           isCurved: true,
           color: const Color.fromARGB(255, 132, 135, 195),
           barWidth: 3,
@@ -2010,14 +2045,29 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
         LineChartBarData(
-          spots: dayentries.map((entry) {
-            return FlSpot(
-              DateTime.parse(entry['date']).hour +
-                  DateTime.parse(entry['date']).minute /
-                      60.0, // Convert date to double
-              double.parse(entry['totalCarbs'].toString()),
-            );
-          }).toList(),
+          spots: (today
+                  ? dayentries.map((entry) {
+                      return FlSpot(
+                        DateTime.parse(entry['date']).hour +
+                            DateTime.parse(entry['date']).minute /
+                                60.0, // Convert date to double
+                        double.parse(entry['totalCarbs'].toString()),
+                      );
+                    })
+                  : monthly
+                      ? averageInsulinDosagePerDay.map((entry) {
+                          return FlSpot(
+                            entry['day'].toDouble(),
+                            double.parse(entry['averageCarbs'].toString()),
+                          );
+                        })
+                      : averageInsulinDosagePerMonth.map((entry) {
+                          return FlSpot(
+                            entry['month'].toDouble(),
+                            double.parse(entry['averageCarbs'].toString()),
+                          );
+                        }))
+              .toList(),
           isCurved: true,
           color: const Color.fromARGB(255, 22, 161, 170),
           barWidth: 3,
