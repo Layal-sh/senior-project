@@ -59,6 +59,8 @@ Future<void> loadPreferences() async {
   carbUnit_ = prefs.getInt('carbUnit') ?? 0;
 }
 
+//0 mmol/L
+//1 mg/dL
 int targetBloodSugar_ = 100;
 int insulinSensitivity_ = 20;
 double carbRatio_ = 3;

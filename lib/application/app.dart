@@ -3055,9 +3055,9 @@ class _AddInputState extends State<AddInput> {
                               const SizedBox(
                                 width: 10,
                               ),
-                              const Text(
-                                "mg/dL",
-                                style: TextStyle(
+                              Text(
+                                glucoseUnit_ == 0 ? "mmol/L" : "mg/dL",
+                                style: const TextStyle(
                                     fontSize: 18,
                                     color: Color.fromARGB(255, 0, 0, 0),
                                     fontWeight: FontWeight.w300),
