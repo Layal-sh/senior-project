@@ -69,7 +69,7 @@ class _LoginState extends State<Login> {
     // logger.info("synced meal compositions successfully");
     // logger.info("saving values to shared preferences");
 
-    print(await dbHelper.getEntries(2));
+    print(await dbHelper.getLatestEntry());
     final response = await http
         .post(
           Uri.parse('http://$localhost:8000/getUserDetails'), //$localhost

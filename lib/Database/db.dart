@@ -31,25 +31,15 @@ class DBHelper {
     String DbPath = await getDatabasesPath();
     String path = join(DbPath, 'SugarSense.db');
     Database database = await openDatabase(path,
-        onCreate: _onCreate, version: 31, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 32, onUpgrade: _onUpgrade);
     return database;
   }
 
   _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < newVersion) {
-      await db.execute('''DROP TABLE IF EXISTS "Favorites";''');
-      print("Dropped Favorites table");
-      await db.execute('''DROP TABLE IF EXISTS "Articles";''');
-      print("Dropped Articles table");
       await db.execute('''
-      CREATE TABLE "Articles"(
-        url TEXT NOT NULL PRIMARY KEY,
-        title TEXT NOT NULL,
-        imageUrl TEXT NULL,
-        date TEXT NULL
-      );
+      ALTER TABLE Entry ADD COLUMN unit INTEGER NULL;
       ''');
-      print("Created Articles table");
     }
   }
 
@@ -277,11 +267,11 @@ class DBHelper {
   /////////////// Create Entrires with its Meals /////////////
   ////////////////////////////////////////////////////////////
 
-  generateNewEntry(double glucose, int insulin, String date) async {
+  generateNewEntry(double glucose, int insulin, String date,int unit) async {
     Database? mydb = await db;
     int entryId = await mydb!.rawInsert('''
-  INSERT INTO Entry (glucoseLevel, insulinDosage, entryDate)
-  VALUES($glucose,$insulin,'$date');
+  INSERT INTO Entry (glucoseLevel, insulinDosage, entryDate, unit)
+  VALUES($glucose,$insulin,'$date',$unit);
   ''');
     if (entryId > 0) {
       var latestEntry = await getLatestEntryId(1);
@@ -308,11 +298,12 @@ class DBHelper {
     });
     return hasmeal;
   }
-
+  //0 mmol/L
+  //1 mg/dL
   //create an entry for the insulin dosage
-  createEntry(double glucose, int insulin, String date, List<Map> meals) async {
+  createEntry(double glucose, int insulin, String date, List<Map> meals,int unit) async {
     Database? mydb = await db;
-    int idEntry = await generateNewEntry(glucose, insulin, date);
+    int idEntry = await generateNewEntry(glucose, insulin, date,unit);
 
     if (await generateHasMeals(idEntry, meals)) {
       logger.info("Created entry with id $idEntry");
