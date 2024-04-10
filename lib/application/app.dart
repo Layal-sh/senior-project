@@ -25,16 +25,60 @@ class App extends StatefulWidget {
 
 Timer? _timer;
 var selectedIndex = 0;
+List articles = [];
+List<bool>? starred;
 
 class _AppState extends State<App> {
+  void fetchArticles() async {
+    List<String> searches = [
+      'diabetes type 1',
+      'diabetes lifestyle',
+      'diabetes article',
+      'diabetes insulin'
+    ];
+
+    for (String s in searches) {
+      logger.info("getting $s");
+      final response =
+          await http.get(Uri.parse('http://$localhost:8000/News/$s'));
+      logger.info("got $s");
+      if (response.statusCode == 200) {
+        List<dynamic> responseData = jsonDecode(response.body);
+        DBHelper dbHelper = DBHelper.instance;
+        for (var article in responseData) {
+          List<Map> result = await dbHelper.checkArticle(article['link']);
+          starred!.add(result.isNotEmpty);
+        }
+        responseData.sort((a, b) {
+          if (a['date'] != null && b['date'] != null) {
+            try {
+              DateFormat format = DateFormat("MMM dd, yyyy");
+              DateTime dateA = format.parse(a['date']);
+              DateTime dateB = format.parse(b['date']);
+              return dateB.compareTo(dateA);
+            } catch (e) {
+              return 0;
+            }
+          }
+          return 0;
+        });
+        if (mounted) {
+          setState(() {
+            articles.addAll(responseData);
+          });
+        }
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     TotalCarbs();
     selectedIndex = 0;
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {});
-    });
+
+    starred = [];
+    fetchArticles();
   }
 
   @override
@@ -68,7 +112,9 @@ class _AppState extends State<App> {
         _timer?.cancel();
         break;
       case 2:
-        page = const AddInput();
+        page = AddInput(
+          changeTab: onTabTapped,
+        );
         break;
       case 3:
         page = Profile();
@@ -2133,7 +2179,7 @@ class Articles extends StatefulWidget {
 }
 
 class _ArticlesState extends State<Articles> {
-  List articles = [];
+  /*List articles = [];
   List<bool>? starred;
 
   @override
@@ -2182,10 +2228,13 @@ class _ArticlesState extends State<Articles> {
             articles.addAll(responseData);
           });
         }
-      } else {
-        const Text("Could not connect to the internet");
       }
     }
+  }
+*/
+  @override
+  void initState() {
+    super.initState();
   }
 
   bool _isPressed = false;
@@ -2605,7 +2654,8 @@ class _ArticlesState extends State<Articles> {
 }
 
 class AddInput extends StatefulWidget {
-  const AddInput({super.key});
+  final Function changeTab;
+  AddInput({required this.changeTab});
 
   @override
   _AddInputState createState() => _AddInputState();
@@ -2714,23 +2764,97 @@ class _AddInputState extends State<AddInput> {
                                 );
                               },
                             );
-                            double glucoseLevel =
-                                double.parse(_GlucoseController.text);
+
                             if (getChosenMeals().isNotEmpty &&
                                 _GlucoseController.text.isNotEmpty) {
                               /*bolusCalculation =
                                   calculateDosage(totalCarbs, glucoseLevel);
 */
-                              DBHelper dbHelper = DBHelper.instance;
-                              dbHelper.createEntry(glucoseLevel,
-                                  bolusCalculation.value, date, chosenMeals);
-                              print('Chosen Meals:');
-                              print(chosenMeals);
-                              print('Total Carbs:');
-                              print(calculateTotalCarbs(getChosenMeals()));
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text(
+                                        'Are you sure you want to save the input?'),
+                                    actions: <Widget>[
+                                      Row(
+                                        children: [
+                                          TextButton(
+                                            child: const Text('No'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: const Text('Yes'),
+                                            onPressed: () {
+                                              double glucoseLevel =
+                                                  double.parse(
+                                                      _GlucoseController.text);
+                                              DBHelper dbHelper =
+                                                  DBHelper.instance;
+                                              dbHelper.createEntry(
+                                                  glucoseLevel,
+                                                  bolusCalculation.value,
+                                                  date,
+                                                  chosenMeals);
+                                              print('Chosen Meals:');
+                                              print(chosenMeals);
+                                              print('Total Carbs:');
+                                              print(calculateTotalCarbs(
+                                                  getChosenMeals()));
+                                              Navigator.of(context).pop();
+                                              setState(() {
+                                                widget.changeTab(0);
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+
                               //refresh the page after pressing the save button or go back to dashboard idk
-                            } else {
-                              print("NO WORKY");
+                            } else if (getChosenMeals().isEmpty) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('No Meals Chosen'),
+                                    content: const Text(
+                                        'Please add your meals and press on calculate'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: const Text('Close'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            } else if (_GlucoseController.text.isEmpty) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('Invalid Glucose input'),
+                                    content: const Text(
+                                        'Please enter your glucose levels'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: const Text('Close'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
                             }
                           },
                           child: const Text(
