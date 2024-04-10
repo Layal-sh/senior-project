@@ -649,41 +649,45 @@ class _DashboardState extends State<Dashboard> {
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: [
-                                                    Text(
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      'mmol/L',
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Ruda-SemiBold',
-                                                        fontSize: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.03,
-                                                        color: const Color
-                                                            .fromARGB(
-                                                            255, 96, 79, 139),
+                                                    Flexible(
+                                                      child: Text(
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        'mmol/L',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Ruda-SemiBold',
+                                                          fontSize: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.03,
+                                                          color: const Color
+                                                              .fromARGB(
+                                                              255, 96, 79, 139),
+                                                        ),
                                                       ),
                                                     ),
-                                                    Text(
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      DateFormat.jm().format(
-                                                          DateTime.parse(
-                                                              latestEntry[
-                                                                  'date'])),
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Ruda-SemiBold',
-                                                        fontSize: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.03,
-                                                        color: const Color
-                                                            .fromARGB(
-                                                            255, 96, 79, 139),
+                                                    Flexible(
+                                                      child: Text(
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        DateFormat.jm().format(
+                                                            DateTime.parse(
+                                                                latestEntry[
+                                                                    'date'])),
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Ruda-SemiBold',
+                                                          fontSize: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.03,
+                                                          color: const Color
+                                                              .fromARGB(
+                                                              255, 96, 79, 139),
+                                                        ),
                                                       ),
                                                     ),
                                                   ],
@@ -769,37 +773,45 @@ class _DashboardState extends State<Dashboard> {
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: [
-                                                    Text(
-                                                      'grams',
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Ruda-SemiBold',
-                                                        fontSize: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.03,
-                                                        color: const Color
-                                                            .fromARGB(
-                                                            255, 96, 79, 139),
+                                                    Flexible(
+                                                      child: Text(
+                                                        'grams',
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Ruda-SemiBold',
+                                                          fontSize: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.03,
+                                                          color: const Color
+                                                              .fromARGB(
+                                                              255, 96, 79, 139),
+                                                        ),
                                                       ),
                                                     ),
-                                                    Text(
-                                                      DateFormat.jm().format(
-                                                          DateTime.parse(
-                                                              latestEntry[
-                                                                  'date'])),
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Ruda-SemiBold',
-                                                        fontSize: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.03,
-                                                        color: const Color
-                                                            .fromARGB(
-                                                            255, 96, 79, 139),
+                                                    Flexible(
+                                                      child: Text(
+                                                        DateFormat.jm().format(
+                                                            DateTime.parse(
+                                                                latestEntry[
+                                                                    'date'])),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Ruda-SemiBold',
+                                                          fontSize: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.03,
+                                                          color: const Color
+                                                              .fromARGB(
+                                                              255, 96, 79, 139),
+                                                        ),
                                                       ),
                                                     ),
                                                   ],
@@ -844,8 +856,8 @@ class _DashboardState extends State<Dashboard> {
                             padding: const EdgeInsets.only(
                               top: 8.0,
                               left: 20,
-                              right: 10,
-                              bottom: 10,
+                              right: 20,
+                              bottom: 5,
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -867,10 +879,10 @@ class _DashboardState extends State<Dashboard> {
                                   children: [
                                     Container(
                                       width: MediaQuery.of(context).size.width *
-                                          0.15,
+                                          0.12,
                                       height:
                                           MediaQuery.of(context).size.width *
-                                              0.15,
+                                              0.12,
                                       //padding: const EdgeInsets.all(10.0),
                                       decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
@@ -887,7 +899,7 @@ class _DashboardState extends State<Dashboard> {
                                                 fontSize: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.04,
+                                                    0.035,
                                                 fontFamily: 'Ruda',
                                                 color: Colors.white,
                                               ),
@@ -899,7 +911,7 @@ class _DashboardState extends State<Dashboard> {
                                                 fontSize: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.03,
+                                                    0.025,
                                                 fontFamily: 'Ruda',
                                                 color: Colors.white,
                                               ),
@@ -928,10 +940,10 @@ class _DashboardState extends State<Dashboard> {
                                   children: [
                                     Container(
                                       width: MediaQuery.of(context).size.width *
-                                          0.15,
+                                          0.12,
                                       height:
                                           MediaQuery.of(context).size.width *
-                                              0.15,
+                                              0.12,
                                       //padding: const EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
@@ -949,7 +961,7 @@ class _DashboardState extends State<Dashboard> {
                                                 fontSize: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.04,
+                                                    0.035,
                                                 fontFamily: 'Ruda',
                                                 color: Colors.white,
                                               ),
@@ -962,7 +974,7 @@ class _DashboardState extends State<Dashboard> {
                                                 fontSize: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.03,
+                                                    0.025,
                                                 fontFamily: 'Ruda',
                                                 color: Colors.white,
                                               ),
@@ -991,10 +1003,10 @@ class _DashboardState extends State<Dashboard> {
                                   children: [
                                     Container(
                                       width: MediaQuery.of(context).size.width *
-                                          0.15,
+                                          0.12,
                                       height:
                                           MediaQuery.of(context).size.width *
-                                              0.15,
+                                              0.12,
                                       //padding: const EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
@@ -1012,7 +1024,7 @@ class _DashboardState extends State<Dashboard> {
                                                 fontSize: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.04,
+                                                    0.035,
                                                 fontFamily: 'Ruda',
                                                 color: Colors.white,
                                               ),
@@ -1025,7 +1037,7 @@ class _DashboardState extends State<Dashboard> {
                                                 fontSize: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.03,
+                                                    0.025,
                                                 fontFamily: 'Ruda',
                                                 color: Colors.white,
                                               ),
@@ -1054,10 +1066,10 @@ class _DashboardState extends State<Dashboard> {
                                   children: [
                                     Container(
                                       width: MediaQuery.of(context).size.width *
-                                          0.15,
+                                          0.12,
                                       height:
                                           MediaQuery.of(context).size.width *
-                                              0.15,
+                                              0.12,
                                       //padding: const EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
@@ -1075,7 +1087,7 @@ class _DashboardState extends State<Dashboard> {
                                                 fontSize: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.035,
+                                                    0.03,
                                                 fontFamily: 'Ruda',
                                                 color: Colors.white,
                                               ),
@@ -1102,7 +1114,7 @@ class _DashboardState extends State<Dashboard> {
                                                 fontSize: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.035,
+                                                    0.03,
                                                 fontFamily: 'Ruda',
                                                 color: Colors.white,
                                               ),
@@ -1138,21 +1150,23 @@ class _DashboardState extends State<Dashboard> {
                 }
               },
             ),
-            const Padding(
-              padding: EdgeInsets.only(
-                left: 20.0,
-                top: 10,
-              ),
-              child: Text(
-                "Last Week Entries",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontFamily: 'RudaBlack',
-                  color: Color.fromARGB(255, 38, 20, 84),
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
+            entriesByDate.isNotEmpty
+                ? const Padding(
+                    padding: EdgeInsets.only(
+                      left: 20.0,
+                      top: 10,
+                    ),
+                    child: Text(
+                      "Last Week Entries",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: 'RudaBlack',
+                        color: Color.fromARGB(255, 38, 20, 84),
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  )
+                : Container(),
             Column(
               children: entriesByDate.entries.map((e) {
                 var date = e.key;
@@ -1161,361 +1175,63 @@ class _DashboardState extends State<Dashboard> {
                   padding: const EdgeInsets.only(
                     top: 8.0,
                     left: 20,
-                    right: 10,
+                    right: 20,
                     bottom: 10,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        date,
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.04,
-                          fontFamily: 'Ruda',
-                          color: const Color.fromARGB(255, 38, 20, 84),
-                          fontWeight: FontWeight.w600,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: ExpansionTile(
+                        backgroundColor: const Color.fromARGB(255, 38, 20, 84),
+                        collapsedBackgroundColor:
+                            const Color.fromARGB(255, 38, 20, 84),
+                        iconColor: Colors.white,
+                        collapsedIconColor: Colors.white,
+                        title: Text(
+                          DateFormat('EEEE, d MMMM yyyy')
+                              .format(DateTime.parse(date)),
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
+                            fontFamily: 'Ruda',
+                            color: const Color.fromARGB(255, 255, 255, 255),
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                      ...entries.map((entry) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              //DateFormat('EEEE')
-                              // .format(DateTime.parse(entry['date'])),
-                              '${entry['entryId']}',
-                              style: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.04,
-                                fontFamily: 'Ruda',
-                                color: const Color.fromARGB(255, 38, 20, 84),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Column(
-                              children: [
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.15,
-                                  height:
-                                      MediaQuery.of(context).size.width * 0.15,
-                                  //padding: const EdgeInsets.all(10.0),
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color.fromARGB(255, 38, 20, 84),
-                                  ),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '${entry['insulinDosage']}',
-                                          style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.04,
-                                            fontFamily: 'Ruda',
-                                            color: Colors.white,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        Text(
-                                          'units',
-                                          style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.03,
-                                            fontFamily: 'Ruda',
-                                            color: Colors.white,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  'Bolus',
-                                  style: TextStyle(
-                                    letterSpacing: 0.1,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.025,
-                                    fontFamily: 'Ruda',
-                                    color:
-                                        const Color.fromARGB(255, 38, 20, 84),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.15,
-                                  height:
-                                      MediaQuery.of(context).size.width * 0.15,
-                                  //padding: const EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color:
-                                        const Color.fromARGB(255, 38, 20, 84),
-                                  ),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '${entry['glucoseLevel']}',
-                                          style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.04,
-                                            fontFamily: 'Ruda',
-                                            color: Colors.white,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        Text(
-                                          'mmol/L',
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.03,
-                                            fontFamily: 'Ruda',
-                                            color: Colors.white,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  'Blood Sugar',
-                                  style: TextStyle(
-                                    letterSpacing: 0.1,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.025,
-                                    fontFamily: 'Ruda',
-                                    color:
-                                        const Color.fromARGB(255, 38, 20, 84),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.15,
-                                  height:
-                                      MediaQuery.of(context).size.width * 0.15,
-                                  //padding: const EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color:
-                                        const Color.fromARGB(255, 38, 20, 84),
-                                  ),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '${entry['totalCarbs']}',
-                                          style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.04,
-                                            fontFamily: 'Ruda',
-                                            color: Colors.white,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        Text(
-                                          'grams',
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.03,
-                                            fontFamily: 'Ruda',
-                                            color: Colors.white,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  'Carbohydrates',
-                                  style: TextStyle(
-                                    letterSpacing: 0.1,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.025,
-                                    fontFamily: 'Ruda',
-                                    color:
-                                        const Color.fromARGB(255, 38, 20, 84),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.15,
-                                  height:
-                                      MediaQuery.of(context).size.width * 0.15,
-                                  //padding: const EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color:
-                                        const Color.fromARGB(255, 38, 20, 84),
-                                  ),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          entry['target'] == 2 ? '1' : '0',
-                                          style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.035,
-                                            fontFamily: 'Ruda',
-                                            color: Colors.white,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.08,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.007,
-                                          child: const Divider(
-                                            color: Colors.white,
-                                            thickness: 1,
-                                          ),
-                                        ),
-                                        Text(
-                                          entry['target'] == 1 ? '1' : '0',
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.035,
-                                            fontFamily: 'Ruda',
-                                            color: Colors.white,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  'Hypers/Hypos',
-                                  style: TextStyle(
-                                    letterSpacing: 0.1,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.025,
-                                    fontFamily: 'Ruda',
-                                    color:
-                                        const Color.fromARGB(255, 38, 20, 84),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        );
-                      }).toList(),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
-            /*FutureBuilder<List<Map>>(
-              future: db.getEntries(2),
-              builder:
-                  (BuildContext context, AsyncSnapshot<List<Map>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else if (snapshot.data!.isEmpty) {
-                  return Container();
-                } else {
-                  var reversedData = snapshot.data!.reversed.toList();
-                  return Column(
-                    children: [
-                      ListView.builder(
-                        shrinkWrap:
-                            true, // This tells the ListView to size itself to its children's height
-                        physics:
-                            NeverScrollableScrollPhysics(), // This disables scrolling inside the ListView
-                        itemCount: reversedData.length,
-                        itemBuilder: (context, index) {
-                          Map entry = reversedData[index];
+                        children: entries.map<Widget>((entry) {
                           return Padding(
-                            padding: const EdgeInsets.only(
-                              top: 8.0,
-                              left: 20,
-                              right: 10,
-                              bottom: 10,
-                            ),
+                            padding: const EdgeInsets.all(8.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  '${entry['entryId']}',
+                                  DateFormat.jm()
+                                      .format(DateTime.parse(entry['date'])),
                                   style: TextStyle(
                                     fontSize:
                                         MediaQuery.of(context).size.width *
                                             0.04,
                                     fontFamily: 'Ruda',
-                                    color:
-                                        const Color.fromARGB(255, 38, 20, 84),
-                                    fontWeight: FontWeight.w600,
+                                    color: const Color.fromARGB(
+                                        255, 255, 255, 255),
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 Column(
                                   children: [
                                     Container(
                                       width: MediaQuery.of(context).size.width *
-                                          0.15,
+                                          0.12,
                                       height:
                                           MediaQuery.of(context).size.width *
-                                              0.15,
+                                              0.12,
                                       //padding: const EdgeInsets.all(10.0),
                                       decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: Color.fromARGB(255, 38, 20, 84),
+                                        color:
+                                            Color.fromARGB(255, 255, 255, 255),
                                       ),
                                       child: Center(
                                         child: Column(
@@ -1528,9 +1244,11 @@ class _DashboardState extends State<Dashboard> {
                                                 fontSize: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.04,
+                                                    0.035,
                                                 fontFamily: 'Ruda',
-                                                color: Colors.white,
+                                                color: const Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                                fontWeight: FontWeight.w600,
                                               ),
                                               textAlign: TextAlign.center,
                                             ),
@@ -1540,9 +1258,11 @@ class _DashboardState extends State<Dashboard> {
                                                 fontSize: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.03,
+                                                    0.025,
                                                 fontFamily: 'Ruda',
-                                                color: Colors.white,
+                                                color: const Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                                fontWeight: FontWeight.w600,
                                               ),
                                               textAlign: TextAlign.center,
                                             ),
@@ -1559,8 +1279,8 @@ class _DashboardState extends State<Dashboard> {
                                                 0.025,
                                         fontFamily: 'Ruda',
                                         color: const Color.fromARGB(
-                                            255, 38, 20, 84),
-                                        fontWeight: FontWeight.w600,
+                                            255, 255, 255, 255),
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ],
@@ -1569,15 +1289,15 @@ class _DashboardState extends State<Dashboard> {
                                   children: [
                                     Container(
                                       width: MediaQuery.of(context).size.width *
-                                          0.15,
+                                          0.12,
                                       height:
                                           MediaQuery.of(context).size.width *
-                                              0.15,
+                                              0.12,
                                       //padding: const EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
-                                        color: const Color.fromARGB(
-                                            255, 38, 20, 84),
+                                        color:
+                                            Color.fromARGB(255, 255, 255, 255),
                                       ),
                                       child: Center(
                                         child: Column(
@@ -1590,9 +1310,11 @@ class _DashboardState extends State<Dashboard> {
                                                 fontSize: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.04,
+                                                    0.035,
                                                 fontFamily: 'Ruda',
-                                                color: Colors.white,
+                                                color: const Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                                fontWeight: FontWeight.w600,
                                               ),
                                               textAlign: TextAlign.center,
                                             ),
@@ -1603,9 +1325,11 @@ class _DashboardState extends State<Dashboard> {
                                                 fontSize: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.03,
+                                                    0.025,
                                                 fontFamily: 'Ruda',
-                                                color: Colors.white,
+                                                color: const Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                                fontWeight: FontWeight.w600,
                                               ),
                                               textAlign: TextAlign.center,
                                             ),
@@ -1622,8 +1346,8 @@ class _DashboardState extends State<Dashboard> {
                                                 0.025,
                                         fontFamily: 'Ruda',
                                         color: const Color.fromARGB(
-                                            255, 38, 20, 84),
-                                        fontWeight: FontWeight.w600,
+                                            255, 255, 255, 255),
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ],
@@ -1632,15 +1356,15 @@ class _DashboardState extends State<Dashboard> {
                                   children: [
                                     Container(
                                       width: MediaQuery.of(context).size.width *
-                                          0.15,
+                                          0.12,
                                       height:
                                           MediaQuery.of(context).size.width *
-                                              0.15,
+                                              0.12,
                                       //padding: const EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
                                         color: const Color.fromARGB(
-                                            255, 38, 20, 84),
+                                            255, 255, 255, 255),
                                       ),
                                       child: Center(
                                         child: Column(
@@ -1653,9 +1377,11 @@ class _DashboardState extends State<Dashboard> {
                                                 fontSize: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.04,
+                                                    0.035,
                                                 fontFamily: 'Ruda',
-                                                color: Colors.white,
+                                                color: const Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                                fontWeight: FontWeight.w600,
                                               ),
                                               textAlign: TextAlign.center,
                                             ),
@@ -1666,9 +1392,11 @@ class _DashboardState extends State<Dashboard> {
                                                 fontSize: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.03,
+                                                    0.025,
                                                 fontFamily: 'Ruda',
-                                                color: Colors.white,
+                                                color: const Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                                fontWeight: FontWeight.w600,
                                               ),
                                               textAlign: TextAlign.center,
                                             ),
@@ -1685,8 +1413,8 @@ class _DashboardState extends State<Dashboard> {
                                                 0.025,
                                         fontFamily: 'Ruda',
                                         color: const Color.fromARGB(
-                                            255, 38, 20, 84),
-                                        fontWeight: FontWeight.w600,
+                                            255, 255, 255, 255),
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ],
@@ -1695,15 +1423,15 @@ class _DashboardState extends State<Dashboard> {
                                   children: [
                                     Container(
                                       width: MediaQuery.of(context).size.width *
-                                          0.15,
+                                          0.12,
                                       height:
                                           MediaQuery.of(context).size.width *
-                                              0.15,
+                                              0.12,
                                       //padding: const EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
                                         color: const Color.fromARGB(
-                                            255, 38, 20, 84),
+                                            255, 255, 255, 255),
                                       ),
                                       child: Center(
                                         child: Column(
@@ -1716,9 +1444,11 @@ class _DashboardState extends State<Dashboard> {
                                                 fontSize: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.035,
+                                                    0.03,
                                                 fontFamily: 'Ruda',
-                                                color: Colors.white,
+                                                color: const Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                                fontWeight: FontWeight.w600,
                                               ),
                                               textAlign: TextAlign.center,
                                             ),
@@ -1732,7 +1462,8 @@ class _DashboardState extends State<Dashboard> {
                                                       .height *
                                                   0.007,
                                               child: const Divider(
-                                                color: Colors.white,
+                                                color: Color.fromARGB(
+                                                    255, 38, 20, 84),
                                                 thickness: 1,
                                               ),
                                             ),
@@ -1743,9 +1474,11 @@ class _DashboardState extends State<Dashboard> {
                                                 fontSize: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.035,
+                                                    0.03,
                                                 fontFamily: 'Ruda',
-                                                color: Colors.white,
+                                                color: const Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                                fontWeight: FontWeight.w600,
                                               ),
                                               textAlign: TextAlign.center,
                                             ),
@@ -1762,8 +1495,8 @@ class _DashboardState extends State<Dashboard> {
                                                 0.025,
                                         fontFamily: 'Ruda',
                                         color: const Color.fromARGB(
-                                            255, 38, 20, 84),
-                                        fontWeight: FontWeight.w600,
+                                            255, 255, 255, 255),
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ],
@@ -1771,15 +1504,13 @@ class _DashboardState extends State<Dashboard> {
                               ],
                             ),
                           );
-                        },
+                        }).toList(),
                       ),
-                      // Add more widgets here if needed
-                    ],
-                  );
-                }
-              },
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
-          */
           ],
         ),
       ),
