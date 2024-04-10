@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -177,17 +178,75 @@ class _DashboardState extends State<Dashboard> {
   bool today = true;
   bool monthly = false;
   bool yearly = false;
+  bool b = true;
+  bool g = false;
+  bool c = false;
   Map<String, dynamic> latestEntry = {};
   List<Map> entries = [];
+  List<Map> dayentries = [];
+  List<Map> monthentries = [];
+  List<Map> yearentries = [];
+  List<Map> averageInsulinDosagePerDay = [];
+  List<Map> averageInsulinDosagePerMonth = [];
+  void calculateAverageInsulinDosage() {
+    var groupedEntries = groupBy(monthentries, (entry) {
+      return DateTime.parse(entry['date']).day;
+    });
+
+    groupedEntries.forEach((day, entries) {
+      double averageInsulinDosage = entries
+              .map((e) => double.parse(e['insulinDosage'].toString()))
+              .reduce((a, b) => a + b) /
+          entries.length;
+      averageInsulinDosagePerDay.add({
+        'day': day,
+        'averageInsulinDosage': averageInsulinDosage,
+      });
+    });
+  }
+
+  void calculateAverageMonthly() {
+    var groupedEntries = groupBy(yearentries, (entry) {
+      return DateTime.parse(entry['date']).month;
+    });
+
+    groupedEntries.forEach((month, entries) {
+      double averageInsulinDosage = entries
+              .map((e) => double.parse(e['insulinDosage'].toString()))
+              .reduce((a, b) => a + b) /
+          entries.length;
+      averageInsulinDosagePerMonth.add({
+        'month': month,
+        'averageInsulinDosage': averageInsulinDosage,
+      });
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     loadLatestEntry();
+    db.getEntries(1).then((result) {
+      setState(() {
+        dayentries = result;
+      });
+    });
     db.getEntries(2).then((result) {
       setState(() {
         entries = result;
       });
+    });
+    db.getEntries(3).then((result) {
+      setState(() {
+        monthentries = result;
+      });
+      calculateAverageInsulinDosage();
+    });
+    db.getEntries(4).then((result) {
+      setState(() {
+        yearentries = result;
+      });
+      calculateAverageMonthly();
     });
   }
 
@@ -363,29 +422,68 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ),
             ),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.circle,
-                  size: 13,
-                  color: Color.fromARGB(255, 38, 20, 84),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      b = true;
+                      g = false;
+                      c = false;
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        b ? Icons.circle : Icons.circle_outlined,
+                        size: 13,
+                        color: const Color.fromARGB(255, 38, 20, 84),
+                      ),
+                      const Text('Bolus'),
+                    ],
+                  ),
                 ),
-                Text('Bolus'),
-                SizedBox(width: 15),
-                Icon(
-                  Icons.circle,
-                  size: 13,
-                  color: Color.fromARGB(255, 132, 135, 195),
+                const SizedBox(width: 15),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      b = false;
+                      g = true;
+                      c = false;
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        g ? Icons.circle : Icons.circle_outlined,
+                        size: 13,
+                        color: Color.fromARGB(255, 132, 135, 195),
+                      ),
+                      Text('Glucose Levels'),
+                    ],
+                  ),
                 ),
-                Text('Glucose Levels'),
-                SizedBox(width: 15),
-                Icon(
-                  Icons.circle,
-                  size: 13,
-                  color: Color.fromARGB(255, 22, 161, 170),
+                const SizedBox(width: 15),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      b = false;
+                      g = false;
+                      c = true;
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        c ? Icons.circle : Icons.circle_outlined,
+                        size: 13,
+                        color: Color.fromARGB(255, 22, 161, 170),
+                      ),
+                      Text('Carbs'),
+                    ],
+                  ),
                 ),
-                Text('Carbs'),
               ],
             ),
             const Padding(
@@ -1678,36 +1776,93 @@ class _DashboardState extends State<Dashboard> {
       color: Color.fromARGB(255, 178, 178, 178),
     );
     String text;
-    switch (value.toInt()) {
-      case 1:
-        text = '1';
-        break;
-      case 2:
-        text = '2';
-        break;
-      case 3:
-        text = '3';
-        break;
-      case 4:
-        text = '4';
-        break;
-      case 5:
-        text = '5';
-        break;
-      case 6:
-        text = '6';
-        break;
-      case 7:
-        text = '7';
-        break;
-      case 8:
-        text = '8';
-        break;
-      case 9:
-        text = '9';
-        break;
-      default:
-        return Container();
+    if (b) {
+      switch (value.toInt()) {
+        case 10:
+          text = '10';
+          break;
+        case 20:
+          text = '20';
+          break;
+        case 30:
+          text = '30';
+          break;
+        case 40:
+          text = '40';
+          break;
+        case 50:
+          text = '50';
+          break;
+        case 60:
+          text = '60';
+          break;
+        case 70:
+          text = '70';
+          break;
+        case 80:
+          text = '80';
+          break;
+        case 90:
+          text = '90';
+          break;
+        default:
+          return Container();
+      }
+    } else if (g) {
+      switch (value.toInt()) {
+        case 100:
+          text = '100';
+          break;
+        case 200:
+          text = '200';
+          break;
+        case 300:
+          text = '300';
+          break;
+        case 400:
+          text = '400';
+          break;
+        case 500:
+          text = '500';
+          break;
+        case 600:
+          text = '600';
+          break;
+        case 700:
+          text = '700';
+          break;
+
+        default:
+          return Container();
+      }
+    } else {
+      switch (value.toInt()) {
+        case 50:
+          text = '50';
+          break;
+
+        case 100:
+          text = '100';
+          break;
+
+        case 150:
+          text = '150';
+          break;
+
+        case 200:
+          text = '200';
+          break;
+
+        case 250:
+          text = '250';
+          break;
+
+        case 300:
+          text = '300';
+          break;
+        default:
+          return Container();
+      }
     }
 
     return Text(text, style: style, textAlign: TextAlign.left);
@@ -1715,11 +1870,21 @@ class _DashboardState extends State<Dashboard> {
 
   LineChartData mainData() {
     return LineChartData(
+      clipData: const FlClipData(
+        bottom: true, // Clip the bottom side
+        top: true, // Clip the top side
+        left: true, // Clip the left side
+        right: true, // Clip the right side
+      ),
       gridData: FlGridData(
         show: true,
         drawVerticalLine: true,
         horizontalInterval: 1,
-        verticalInterval: 1,
+        verticalInterval: b
+            ? 1
+            : g
+                ? 10
+                : 5,
         getDrawingHorizontalLine: (value) {
           //hori grids color
           return const FlLine(
@@ -1732,7 +1897,7 @@ class _DashboardState extends State<Dashboard> {
           //ver grids color
           return const FlLine(
             color: Color.fromARGB(103, 162, 162, 162),
-            strokeWidth: 1,
+            strokeWidth: 0.5,
             dashArray: [2, 11],
           );
         },
@@ -1756,9 +1921,13 @@ class _DashboardState extends State<Dashboard> {
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            interval: 1,
+            interval: b
+                ? 10
+                : g
+                    ? 100
+                    : 25,
             getTitlesWidget: leftTitleWidgets,
-            reservedSize: 17,
+            reservedSize: 25,
           ),
         ),
       ),
@@ -1775,18 +1944,38 @@ class _DashboardState extends State<Dashboard> {
               ? 31
               : 12,
       minY: 0,
-      maxY: 9,
+      maxY: b
+          ? 90
+          : g
+              ? 700
+              : 300,
       lineBarsData: [
         LineChartBarData(
-          spots: const [
-            //FlSpot(0, 4),
-            //FlSpot(2.6, 2),
-            //FlSpot(4.9, 5),
-            //FlSpot(6.8, 3.1),
-            FlSpot(8, 4),
-            //FlSpot(9.5, 3),
-            //FlSpot(11, 4),
-          ],
+          spots: (today
+                  ? dayentries.map((entry) {
+                      return FlSpot(
+                        DateTime.parse(entry['date']).hour +
+                            DateTime.parse(entry['date']).minute /
+                                60.0, // Convert date to double
+                        double.parse(entry['insulinDosage'].toString()),
+                      );
+                    })
+                  : monthly
+                      ? averageInsulinDosagePerDay.map((entry) {
+                          return FlSpot(
+                            entry['day'].toDouble(),
+                            double.parse(
+                                entry['averageInsulinDosage'].toString()),
+                          );
+                        })
+                      : averageInsulinDosagePerMonth.map((entry) {
+                          return FlSpot(
+                            entry['month'].toDouble(),
+                            double.parse(
+                                entry['averageInsulinDosage'].toString()),
+                          );
+                        }))
+              .toList(),
           isCurved: true,
           color: const Color.fromARGB(255, 38, 20, 84),
           barWidth: 3,
@@ -1800,11 +1989,14 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
         LineChartBarData(
-          spots: const [
-            FlSpot(0, 2),
-            FlSpot(1, 1),
-            FlSpot(2, 4),
-          ],
+          spots: dayentries.map((entry) {
+            return FlSpot(
+              DateTime.parse(entry['date']).hour +
+                  DateTime.parse(entry['date']).minute /
+                      60.0, // Convert date to double
+              double.parse(entry['glucoseLevel'].toString()),
+            );
+          }).toList(),
           isCurved: true,
           color: const Color.fromARGB(255, 132, 135, 195),
           barWidth: 3,
@@ -1818,11 +2010,14 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
         LineChartBarData(
-          spots: const [
-            FlSpot(0, 3),
-            FlSpot(1, 2),
-            FlSpot(2, 1),
-          ],
+          spots: dayentries.map((entry) {
+            return FlSpot(
+              DateTime.parse(entry['date']).hour +
+                  DateTime.parse(entry['date']).minute /
+                      60.0, // Convert date to double
+              double.parse(entry['totalCarbs'].toString()),
+            );
+          }).toList(),
           isCurved: true,
           color: const Color.fromARGB(255, 22, 161, 170),
           barWidth: 3,
