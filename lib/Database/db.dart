@@ -485,6 +485,7 @@ class DBHelper {
       'insulinDosage': response['insulinDosage'],
       'totalCarbs': totalCarbs,
       'date': response['entryDate'],
+      'unit': response['unit'],
       'target': target
     };
     return result;
@@ -512,6 +513,32 @@ class DBHelper {
 
     return response[0]['carbohydrates'];
   }
+
+  deleteEntryById(int entryId) async{
+    await deleteHasMealById(entryId);
+
+      Database? mydb = await db;
+    int response = await mydb!.rawDelete('''
+    DELETE FROM Entry WHERE entryId= $entryId;
+''');
+    logger.info("deleteing entry of id $entryId");
+    return response;
+  }
+
+  deleteHasMealById(int entryId) async{
+     Database? mydb = await db;
+    int response = await mydb!.rawDelete('''
+    DELETE FROM hasMeal WHERE entryId =$entryId;
+''');
+    if(response >0){
+      logger.info("deleteing hasMeals of entry $entryId");
+      return true;
+    }else{
+      return false;
+    }
+      
+  }
+  
   ////////////////////////////////////////////////
   /////////////// Create & Edit Meals /////////////
   /////////////////////////////////////////////////
