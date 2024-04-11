@@ -281,12 +281,14 @@ class DBHelper {
     }
   }
 
-  generateHasMeals(int idEntry, List<Map> meals) async {
+   generateHasMeals(int idEntry, List<Map> meals) async {
     bool hasmeal = false;
-    meals.forEach((element) async {
+
+   await Future.wait(meals.map((element) async {
       int response = await createMealForEntry(
           idEntry, element['id'], element['quantity'], element['unit']);
-      logger.info("hasMeal has been created successfully.");
+      
+      logger.info("hasMeal of ${element['id']} has been created successfully.");
 
       if (response > 0) {
         await updateFrequency(element['id']);
@@ -295,7 +297,7 @@ class DBHelper {
         logger.info("has meal didnt work");
         hasmeal = false;
       }
-    });
+    }));
     return hasmeal;
   }
 
@@ -307,20 +309,25 @@ class DBHelper {
     Database? mydb = await db;
     int idEntry = await generateNewEntry(glucose, insulin, date, unit);
 
-    if (await generateHasMeals(idEntry, meals)) {
+    bool generate = await generateHasMeals(idEntry, List<Map>.from(meals));
+    if(generate){
+
       logger.info("Created entry with id $idEntry");
+      return true;
     }
+    
     return idEntry;
   }
 
   //create hasMeal for each entry
   createMealForEntry(int entryId, int mealId, double qtty, int unit) async {
+    logger.info("entered cretae meal for entry");
     Database? mydb = await db;
     int response = await mydb!.rawInsert('''
   INSERT INTO "hasMeal"(entryId,mealId,quantity,unit)
   VALUES($entryId,$mealId,$qtty,$unit);
   ''');
-
+    
     if (response > 0)
       logger.info("meal was add to entry $entryId");
     else {
@@ -475,6 +482,7 @@ class DBHelper {
   organizeEntries(Map response, List<Map> hasMeals) async {
     int target = 0;
     double totalCarbs = await getCarbsHasMeal(hasMeals);
+    print('total carbs: $totalCarbs');
 
     double currentGlucose = response['glucoseLevel'];
     if (currentGlucose >= 80 && currentGlucose <= 120) {

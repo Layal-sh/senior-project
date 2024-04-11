@@ -2787,13 +2787,13 @@ class _AddInputState extends State<AddInput> {
                                           ),
                                           TextButton(
                                             child: const Text('Yes'),
-                                            onPressed: () {
+                                            onPressed: () async{
                                               double glucoseLevel =
                                                   double.parse(
                                                       _GlucoseController.text);
                                               DBHelper dbHelper =
                                                   DBHelper.instance;
-                                              dbHelper.createEntry(
+                                              await dbHelper.createEntry(
                                                   glucoseLevel,
                                                   bolusCalculation.value,
                                                   date,
@@ -2803,6 +2803,7 @@ class _AddInputState extends State<AddInput> {
                                               print('Total Carbs:');
                                               print(calculateTotalCarbs(
                                                   getChosenMeals()));
+                                                  
                                               Navigator.of(context).pop();
                                               setState(() {
                                                 widget.changeTab(0);
