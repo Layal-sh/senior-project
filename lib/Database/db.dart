@@ -31,25 +31,15 @@ class DBHelper {
     String DbPath = await getDatabasesPath();
     String path = join(DbPath, 'SugarSense.db');
     Database database = await openDatabase(path,
-        onCreate: _onCreate, version: 31, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 32, onUpgrade: _onUpgrade);
     return database;
   }
 
   _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < newVersion) {
-      await db.execute('''DROP TABLE IF EXISTS "Favorites";''');
-      print("Dropped Favorites table");
-      await db.execute('''DROP TABLE IF EXISTS "Articles";''');
-      print("Dropped Articles table");
       await db.execute('''
-      CREATE TABLE "Articles"(
-        url TEXT NOT NULL PRIMARY KEY,
-        title TEXT NOT NULL,
-        imageUrl TEXT NULL,
-        date TEXT NULL
-      );
+      ALTER TABLE Entry ADD COLUMN unit INTEGER NULL;
       ''');
-      print("Created Articles table");
     }
   }
 
@@ -279,11 +269,11 @@ class DBHelper {
   /////////////// Create Entrires with its Meals /////////////
   ////////////////////////////////////////////////////////////
 
-  generateNewEntry(double glucose, int insulin, String date) async {
+  generateNewEntry(double glucose, int insulin, String date, int unit) async {
     Database? mydb = await db;
     int entryId = await mydb!.rawInsert('''
-  INSERT INTO Entry (glucoseLevel, insulinDosage, entryDate)
-  VALUES($glucose,$insulin,'$date');
+  INSERT INTO Entry (glucoseLevel, insulinDosage, entryDate, unit)
+  VALUES($glucose,$insulin,'$date',$unit);
   ''');
     if (entryId > 0) {
       var latestEntry = await getLatestEntryId(1);
@@ -311,10 +301,13 @@ class DBHelper {
     return hasmeal;
   }
 
+  //0 mmol/L
+  //1 mg/dL
   //create an entry for the insulin dosage
-  createEntry(double glucose, int insulin, String date, List<Map> meals) async {
+  createEntry(double glucose, int insulin, String date, List<Map> meals,
+      int unit) async {
     Database? mydb = await db;
-    int idEntry = await generateNewEntry(glucose, insulin, date);
+    int idEntry = await generateNewEntry(glucose, insulin, date, unit);
 
     if (await generateHasMeals(idEntry, meals)) {
       logger.info("Created entry with id $idEntry");
@@ -440,6 +433,12 @@ class DBHelper {
   getLatestEntry() async {
     Database? mydb = await db;
     List<Map> response = await getLatestEntryId(1);
+
+    if (response.isEmpty) {
+      print('No entries found');
+      return <String, dynamic>{}; // Return an empty map instead of null
+    }
+
     List<Map> hasMeals = await getMealsFromEntryID(response[0]['entryId']);
     return organizeEntries(response[0], hasMeals);
   }
@@ -496,6 +495,7 @@ class DBHelper {
       'insulinDosage': response['insulinDosage'],
       'totalCarbs': totalCarbs,
       'date': response['entryDate'],
+      'unit': response['unit'],
       'target': target
     };
     return result;
@@ -523,6 +523,43 @@ class DBHelper {
 
     return response[0]['carbohydrates'];
   }
+
+  deleteEntryById(int entryId) async {
+    await deleteHasMealById(entryId);
+
+    Database? mydb = await db;
+    int response = await mydb!.rawDelete('''
+    DELETE FROM Entry WHERE entryId= $entryId;
+''');
+    logger.info("deleteing entry of id $entryId");
+    return response;
+  }
+
+  deleteHasMealById(int entryId) async {
+    Database? mydb = await db;
+    int response = await mydb!.rawDelete('''
+    DELETE FROM hasMeal WHERE entryId =$entryId;
+''');
+    if (response > 0) {
+      logger.info("deleteing hasMeals of entry $entryId");
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  deleteAllEntries() async {
+    Database? mydb = await db;
+    int response = await mydb!.rawDelete('''
+    DELETE FROM hasMeal;
+''');
+    logger.info("delete evrything in hasMeals");
+    int response2 = await mydb.rawDelete('''
+    DELETE FROM Entry;
+''');
+    logger.info("delete evrything in entries");
+  }
+
   ////////////////////////////////////////////////
   /////////////// Create & Edit Meals /////////////
   /////////////////////////////////////////////////
@@ -751,9 +788,10 @@ class DBHelper {
 
   checkArticle(String link) async {
     Database? mydb = await db;
-    List<Map> response = await mydb!.rawQuery('''
-    SELECT * FROM Articles WHERE url = "$link";
-    ''');
+    List<Map> response = await mydb!.rawQuery(
+      'SELECT * FROM Articles WHERE url = ?',
+      [link],
+    );
     return response;
   }
 

@@ -393,7 +393,7 @@ def getUserById(username):##used in /getPatientDetails and in /regPatient##
 ###########################################
 ##############################################################
 
-apiKey = 'd9cb4bee70915b0f8ad912e10388ab16f02a2f0b7e84724806d40e5700461781'
+apiKey = '0abfbff3f1efcf35311a048b948c01aed8b7f17f552a4b882aa3c8544f9410dc'
 def get_results(search):
     global results
     results = search.get_dict()
