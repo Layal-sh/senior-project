@@ -397,7 +397,7 @@ apiKey = '0abfbff3f1efcf35311a048b948c01aed8b7f17f552a4b882aa3c8544f9410dc'
 def get_results(search):
     global results
     results = search.get_dict()
-
+    
 @app.get("/News/{query}")
 async def get_news(query: str):
     print("We got here")
