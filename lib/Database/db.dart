@@ -698,6 +698,8 @@ class DBHelper {
 
   createMeal(String mealName, String picture, List<Map> childMeals,
       List<String> categories, double carbohydrates) async {
+      print("enterd create meal");
+      print(childMeals);
     double totalCarbs = carbohydrates;
 
     if (picture == null || picture == "") {
@@ -717,7 +719,7 @@ class DBHelper {
     if (newMealId != -1) {
       if (childMeals.isNotEmpty) {
         childMeals.forEach((element) {
-          createMealComposition(newMealId, element['mealID'],
+          createMealComposition(newMealId, element['id'],
               element['unit'] ?? 7, element['quantity']);
         });
       }
