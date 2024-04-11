@@ -61,7 +61,7 @@ class _CreateMealState extends State<CreateMeal> {
   List<String> selectedCategories = [];
   bool showTotalCarbs = false;
   void addMeal() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {});
     });
     setState(() {
@@ -74,7 +74,7 @@ class _CreateMealState extends State<CreateMeal> {
     super.initState();
     loadMeals();
     TotalCCarbs();
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (mounted) {
         // Check if the widget is still in the tree
         setState(() {});
@@ -217,7 +217,7 @@ class _CreateMealState extends State<CreateMeal> {
                 onTap: _pickImage,
                 child: Stack(
                   children: [
-                    Container(
+                    SizedBox(
                       width: 175,
                       height: 175,
                       child: ClipRRect(
@@ -230,7 +230,7 @@ class _CreateMealState extends State<CreateMeal> {
                                 fit: BoxFit.cover,
                               )
                             : Container(
-                                color: Color.fromARGB(255, 211, 211, 211),
+                                color: const Color.fromARGB(255, 211, 211, 211),
                                 child: Icon(
                                   Icons.camera_alt,
                                   size: 50,

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/widgets.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/meals.dart';
@@ -2340,11 +2342,12 @@ class _ArticlesState extends State<Articles> {
                         scrollDirection: Axis.horizontal,
                         itemCount: filteredArticles.length,
                         itemBuilder: (context, index) {
-                          String? imageUrl = filteredArticles[index]['thumbnail'];
+                          String? imageUrl =
+                              filteredArticles[index]['thumbnail'];
                           String title = filteredArticles[index]['title'];
                           String url = filteredArticles[index]['link'];
                           String? date = filteredArticles[index]['date'];
-        
+
                           return Padding(
                             padding: const EdgeInsets.only(left: 0.0),
                             child: SizedBox(
@@ -2431,7 +2434,8 @@ class _ArticlesState extends State<Articles> {
                                                       fontFamily: 'InriaSerif',
                                                       color: Color.fromARGB(
                                                           255, 38, 20, 84),
-                                                      fontWeight: FontWeight.w600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                     ),
                                                   ),
                                                 ),
@@ -2462,8 +2466,11 @@ class _ArticlesState extends State<Articles> {
                                                       logger.info(response);
                                                     } else {
                                                       response = await dbHelper
-                                                          .addFavorite(url, title,
-                                                              imageUrl, date);
+                                                          .addFavorite(
+                                                              url,
+                                                              title,
+                                                              imageUrl,
+                                                              date);
                                                     }
                                                     logger.info(response);
                                                     setState(
@@ -2510,10 +2517,8 @@ class _ArticlesState extends State<Articles> {
                     padding: const EdgeInsets.only(left: 5.0),
                     child: SizedBox(
                       child: ListView.builder(
-                        shrinkWrap:
-                              true, 
-                          physics:
-                              const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: articles
                             .where((article) =>
                                 !filteredArticles.contains(article))
@@ -2524,7 +2529,7 @@ class _ArticlesState extends State<Articles> {
                           String title = articles[index]['title'];
                           String url = articles[index]['link'];
                           String? date = articles[index]['date'];
-            
+
                           return SizedBox(
                             height: imageUrl != null
                                 ? MediaQuery.of(context).size.height * 0.13
@@ -2797,7 +2802,7 @@ class _AddInputState extends State<AddInput> {
                                           ),
                                           TextButton(
                                             child: const Text('Yes'),
-                                            onPressed: () async{
+                                            onPressed: () async {
                                               double glucoseLevel =
                                                   double.parse(
                                                       _GlucoseController.text);
@@ -2814,7 +2819,7 @@ class _AddInputState extends State<AddInput> {
                                               print('Total Carbs:');
                                               print(calculateTotalCarbs(
                                                   getChosenMeals()));
-                                                  
+
                                               Navigator.of(context).pop();
                                               setState(() {
                                                 widget.changeTab(0);
@@ -3339,6 +3344,16 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  XFile? _selectedImage;
+  void _pickImage() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = (await _picker.pickImage(source: ImageSource.gallery));
+
+    setState(() {
+      _selectedImage = image;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -3368,9 +3383,74 @@ class _ProfileState extends State<Profile> {
         ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
-      body: const SingleChildScrollView(
-        child: Center(
-          child: Text('Profile!'), // Replace with your desired text
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 8.0,
+            left: 20,
+            right: 20,
+          ),
+          child: Column(
+            children: [
+              Center(
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: Stack(
+                    children: [
+                      SizedBox(
+                        width: 175,
+                        height: 175,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(50),
+                          child: _selectedImage != null
+                              ? Image.file(
+                                  File(_selectedImage!.path),
+                                  width: 200,
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                )
+                              : Container(
+                                  color:
+                                      const Color.fromARGB(255, 211, 211, 211),
+                                  child: Icon(
+                                    Icons.camera_alt,
+                                    size: 50,
+                                    color: Colors.grey[800],
+                                  ),
+                                ),
+                        ),
+                      ),
+                      Positioned(
+                        right: 0,
+                        bottom: 7,
+                        child: InkWell(
+                          onTap: _pickImage,
+                          child: Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: const BoxDecoration(
+                              color: Color.fromARGB(255, 38, 20, 84),
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15),
+                                topRight: Radius.circular(15),
+                                bottomLeft: Radius.circular(7),
+                                bottomRight: Radius.circular(15),
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.edit,
+                              size: 20,
+                              color: Color.fromARGB(255, 255, 255, 255),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

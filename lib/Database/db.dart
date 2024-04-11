@@ -40,6 +40,19 @@ class DBHelper {
       await db.execute('''
       ALTER TABLE Entry ADD COLUMN unit INTEGER NULL;
       ''');
+      await db.execute('''DROP TABLE IF EXISTS "Favorites";''');
+      print("Dropped Favorites table");
+      await db.execute('''DROP TABLE IF EXISTS "Articles";''');
+      print("Dropped Articles table");
+      await db.execute('''
+      CREATE TABLE "Articles"(
+        url TEXT NOT NULL PRIMARY KEY,
+        title TEXT NOT NULL,
+        imageUrl TEXT NULL,
+        date TEXT NULL
+      );
+      ''');
+      print("Created Articles table");
     }
   }
 
@@ -283,13 +296,13 @@ class DBHelper {
     }
   }
 
-   generateHasMeals(int idEntry, List<Map> meals) async {
+  generateHasMeals(int idEntry, List<Map> meals) async {
     bool hasmeal = false;
 
-   await Future.wait(meals.map((element) async {
+    await Future.wait(meals.map((element) async {
       int response = await createMealForEntry(
           idEntry, element['id'], element['quantity'], element['unit']);
-      
+
       logger.info("hasMeal of ${element['id']} has been created successfully.");
 
       if (response > 0) {
@@ -312,12 +325,11 @@ class DBHelper {
     int idEntry = await generateNewEntry(glucose, insulin, date, unit);
 
     bool generate = await generateHasMeals(idEntry, List<Map>.from(meals));
-    if(generate){
-
+    if (generate) {
       logger.info("Created entry with id $idEntry");
       return true;
     }
-    
+
     return idEntry;
   }
 
@@ -329,7 +341,7 @@ class DBHelper {
   INSERT INTO "hasMeal"(entryId,mealId,quantity,unit)
   VALUES($entryId,$mealId,$qtty,$unit);
   ''');
-    
+
     if (response > 0)
       logger.info("meal was add to entry $entryId");
     else {
@@ -717,8 +729,8 @@ class DBHelper {
     if (newMealId != -1) {
       if (childMeals.isNotEmpty) {
         childMeals.forEach((element) {
-          createMealComposition(newMealId, element['id'],
-              element['unit'] ?? 7, element['quantity']);
+          createMealComposition(newMealId, element['id'], element['unit'] ?? 7,
+              element['quantity']);
         });
       }
       logger.info("Meal has been edited successfully with id $newMealId.");
