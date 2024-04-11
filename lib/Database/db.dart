@@ -267,7 +267,7 @@ class DBHelper {
   /////////////// Create Entrires with its Meals /////////////
   ////////////////////////////////////////////////////////////
 
-  generateNewEntry(double glucose, int insulin, String date,int unit) async {
+  generateNewEntry(double glucose, int insulin, String date, int unit) async {
     Database? mydb = await db;
     int entryId = await mydb!.rawInsert('''
   INSERT INTO Entry (glucoseLevel, insulinDosage, entryDate, unit)
@@ -298,12 +298,14 @@ class DBHelper {
     });
     return hasmeal;
   }
+
   //0 mmol/L
   //1 mg/dL
   //create an entry for the insulin dosage
-  createEntry(double glucose, int insulin, String date, List<Map> meals,int unit) async {
+  createEntry(double glucose, int insulin, String date, List<Map> meals,
+      int unit) async {
     Database? mydb = await db;
-    int idEntry = await generateNewEntry(glucose, insulin, date,unit);
+    int idEntry = await generateNewEntry(glucose, insulin, date, unit);
 
     if (await generateHasMeals(idEntry, meals)) {
       logger.info("Created entry with id $idEntry");
@@ -429,6 +431,12 @@ class DBHelper {
   getLatestEntry() async {
     Database? mydb = await db;
     List<Map> response = await getLatestEntryId(1);
+
+    if (response.isEmpty) {
+      print('No entries found');
+      return <String, dynamic>{}; // Return an empty map instead of null
+    }
+
     List<Map> hasMeals = await getMealsFromEntryID(response[0]['entryId']);
     return organizeEntries(response[0], hasMeals);
   }
@@ -514,10 +522,10 @@ class DBHelper {
     return response[0]['carbohydrates'];
   }
 
-  deleteEntryById(int entryId) async{
+  deleteEntryById(int entryId) async {
     await deleteHasMealById(entryId);
 
-      Database? mydb = await db;
+    Database? mydb = await db;
     int response = await mydb!.rawDelete('''
     DELETE FROM Entry WHERE entryId= $entryId;
 ''');
@@ -525,21 +533,20 @@ class DBHelper {
     return response;
   }
 
-  deleteHasMealById(int entryId) async{
-     Database? mydb = await db;
+  deleteHasMealById(int entryId) async {
+    Database? mydb = await db;
     int response = await mydb!.rawDelete('''
     DELETE FROM hasMeal WHERE entryId =$entryId;
 ''');
-    if(response >0){
+    if (response > 0) {
       logger.info("deleteing hasMeals of entry $entryId");
       return true;
-    }else{
+    } else {
       return false;
     }
-      
   }
 
-  deleteAllEntries() async{
+  deleteAllEntries() async {
     Database? mydb = await db;
     int response = await mydb!.rawDelete('''
     DELETE FROM hasMeal;
@@ -550,7 +557,7 @@ class DBHelper {
 ''');
     logger.info("delete evrything in entries");
   }
-  
+
   ////////////////////////////////////////////////
   /////////////// Create & Edit Meals /////////////
   /////////////////////////////////////////////////
@@ -779,9 +786,10 @@ class DBHelper {
 
   checkArticle(String link) async {
     Database? mydb = await db;
-    List<Map> response = await mydb!.rawQuery('''
-    SELECT * FROM Articles WHERE url = "$link";
-    ''');
+    List<Map> response = await mydb!.rawQuery(
+      'SELECT * FROM Articles WHERE url = ?',
+      [link],
+    );
     return response;
   }
 
