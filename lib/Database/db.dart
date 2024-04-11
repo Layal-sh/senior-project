@@ -807,7 +807,7 @@ class DBHelper {
   /////////////////////////////////////////////
 
   checkArticle(String link) async {
-     Database? mydb = await db;
+    Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
     SELECT * FROM Articles WHERE url = "$link";
     ''');

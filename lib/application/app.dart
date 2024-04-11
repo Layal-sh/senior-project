@@ -3386,65 +3386,459 @@ class _ProfileState extends State<Profile> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(
-            top: 8.0,
+            top: 20.0,
             left: 20,
             right: 20,
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
-                child: GestureDetector(
-                  onTap: _pickImage,
-                  child: Stack(
-                    children: [
-                      SizedBox(
-                        width: 175,
-                        height: 175,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: _selectedImage != null
-                              ? Image.file(
-                                  File(_selectedImage!.path),
-                                  width: 200,
-                                  height: 200,
-                                  fit: BoxFit.cover,
-                                )
-                              : Container(
-                                  color:
-                                      const Color.fromARGB(255, 211, 211, 211),
-                                  child: Icon(
-                                    Icons.camera_alt,
-                                    size: 50,
-                                    color: Colors.grey[800],
-                                  ),
-                                ),
-                        ),
-                      ),
-                      Positioned(
-                        right: 0,
-                        bottom: 7,
-                        child: InkWell(
-                          onTap: _pickImage,
-                          child: Container(
-                            padding: const EdgeInsets.all(5),
-                            decoration: const BoxDecoration(
-                              color: Color.fromARGB(255, 38, 20, 84),
-                              shape: BoxShape.rectangle,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(15),
-                                topRight: Radius.circular(15),
-                                bottomLeft: Radius.circular(7),
-                                bottomRight: Radius.circular(15),
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.edit,
-                              size: 20,
-                              color: Color.fromARGB(255, 255, 255, 255),
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: _pickImage,
+                      child: Stack(
+                        children: [
+                          SizedBox(
+                            width: 175,
+                            height: 175,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(50),
+                              child: _selectedImage != null
+                                  ? Image.file(
+                                      File(_selectedImage!.path),
+                                      width: 200,
+                                      height: 200,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Container(
+                                      color: const Color.fromARGB(
+                                          255, 211, 211, 211),
+                                      child: Icon(
+                                        Icons.camera_alt,
+                                        size: 50,
+                                        color: Colors.grey[800],
+                                      ),
+                                    ),
                             ),
                           ),
-                        ),
+                          Positioned(
+                            right: 0,
+                            bottom: 7,
+                            child: InkWell(
+                              onTap: _pickImage,
+                              child: Container(
+                                padding: const EdgeInsets.all(5),
+                                decoration: const BoxDecoration(
+                                  color: Color.fromARGB(255, 38, 20, 84),
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(15),
+                                    topRight: Radius.circular(15),
+                                    bottomLeft: Radius.circular(7),
+                                    bottomRight: Radius.circular(15),
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.edit,
+                                  size: 20,
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      username_,
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.05,
+                        color: const Color.fromARGB(255, 28, 42, 58),
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    phoneNumber_.isNotEmpty
+                        ? Text(
+                            phoneNumber_,
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.045,
+                              color: const Color.fromARGB(255, 84, 95, 107),
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          )
+                        : Container(),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              GestureDetector(
+                onTap: () {
+                  // Handle your tap event here...
+                },
+                child: Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Color.fromARGB(
+                            255, 209, 209, 209), // Specify your color here
+                        width: 1.2, // Specify your border width here
+                      ),
+                    ),
+                  ),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.width * 0.15,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize:
+                        MainAxisSize.min, // This will make the Row compact
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.manage_accounts_outlined,
+                            size: MediaQuery.of(context).size.width * 0.09,
+                            color: const Color.fromARGB(255, 28, 42, 58),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ), // This is the left icon
+                          Text(
+                            'Edit Profile',
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.05,
+                              color: const Color.fromARGB(255, 84, 95, 107),
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ), // This is the text
+                      Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: MediaQuery.of(context).size.width * 0.04,
+                        color: const Color.fromARGB(255, 84, 95, 107),
+                      ), // This is the right icon
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              GestureDetector(
+                onTap: () {
+                  // Handle your tap event here...
+                },
+                child: Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Color.fromARGB(
+                            255, 209, 209, 209), // Specify your color here
+                        width: 1.2, // Specify your border width here
+                      ),
+                    ),
+                  ),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.width * 0.15,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize:
+                        MainAxisSize.min, // This will make the Row compact
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.bookmark_outline_rounded,
+                            size: MediaQuery.of(context).size.width * 0.09,
+                            color: const Color.fromARGB(255, 28, 42, 58),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ), // This is the left icon
+                          Text(
+                            'Favorites',
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.05,
+                              color: const Color.fromARGB(255, 84, 95, 107),
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ), // This is the text
+                      Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: MediaQuery.of(context).size.width * 0.04,
+                        color: const Color.fromARGB(255, 84, 95, 107),
+                      ), // This is the right icon
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              GestureDetector(
+                onTap: () {
+                  // Handle your tap event here...
+                },
+                child: Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Color.fromARGB(
+                            255, 209, 209, 209), // Specify your color here
+                        width: 1.2, // Specify your border width here
+                      ),
+                    ),
+                  ),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.width * 0.15,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize:
+                        MainAxisSize.min, // This will make the Row compact
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.token_outlined,
+                            size: MediaQuery.of(context).size.width * 0.09,
+                            color: const Color.fromARGB(255, 28, 42, 58),
+                          ),
+
+                          const SizedBox(
+                            width: 10,
+                          ), // This is the left icon
+                          Text(
+                            'Subscriptions',
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.05,
+                              color: const Color.fromARGB(255, 84, 95, 107),
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ), // This is the text
+                      Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: MediaQuery.of(context).size.width * 0.04,
+                        color: const Color.fromARGB(255, 84, 95, 107),
+                      ), // This is the right icon
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              GestureDetector(
+                onTap: () {
+                  // Handle your tap event here...
+                },
+                child: Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Color.fromARGB(
+                            255, 209, 209, 209), // Specify your color here
+                        width: 1.2, // Specify your border width here
+                      ),
+                    ),
+                  ),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.width * 0.15,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize:
+                        MainAxisSize.min, // This will make the Row compact
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.policy_outlined,
+                            size: MediaQuery.of(context).size.width * 0.09,
+                            color: const Color.fromARGB(255, 28, 42, 58),
+                          ),
+
+                          const SizedBox(
+                            width: 10,
+                          ), // This is the left icon
+                          Text(
+                            'Terms & Conditions',
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.05,
+                              color: const Color.fromARGB(255, 84, 95, 107),
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ), // This is the text
+                      // This is the right icon
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              GestureDetector(
+                onTap: () {
+                  // Handle your tap event here...
+                },
+                child: Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Color.fromARGB(
+                            255, 209, 209, 209), // Specify your color here
+                        width: 1.2, // Specify your border width here
+                      ),
+                    ),
+                  ),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.width * 0.15,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize:
+                        MainAxisSize.min, // This will make the Row compact
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.book_outlined,
+                            size: MediaQuery.of(context).size.width * 0.09,
+                            color: const Color.fromARGB(255, 28, 42, 58),
+                          ),
+
+                          const SizedBox(
+                            width: 10,
+                          ), // This is the left icon
+                          Text(
+                            'User Manual',
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.05,
+                              color: const Color.fromARGB(255, 84, 95, 107),
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ), // This is the text
+                      // This is the right icon
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              GestureDetector(
+                onTap: () {
+                  // Handle your tap event here...
+                },
+                child: Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Color.fromARGB(
+                            255, 209, 209, 209), // Specify your color here
+                        width: 1.2, // Specify your border width here
+                      ),
+                    ),
+                  ),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.width * 0.15,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize:
+                        MainAxisSize.min, // This will make the Row compact
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.help_outline,
+                            size: MediaQuery.of(context).size.width * 0.09,
+                            color: const Color.fromARGB(255, 28, 42, 58),
+                          ),
+
+                          const SizedBox(
+                            width: 10,
+                          ), // This is the left icon
+                          Text(
+                            'Help and Support',
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.05,
+                              color: const Color.fromARGB(255, 84, 95, 107),
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ), // This is the text
+                      // This is the right icon
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              GestureDetector(
+                onTap: () {
+                  // Handle your tap event here...
+                },
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.width * 0.15,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize:
+                        MainAxisSize.min, // This will make the Row compact
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.logout_rounded,
+                            size: MediaQuery.of(context).size.width * 0.09,
+                            color: const Color.fromARGB(255, 28, 42, 58),
+                          ),
+
+                          const SizedBox(
+                            width: 10,
+                          ), // This is the left icon
+                          Text(
+                            'Log Out',
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.05,
+                              color: const Color.fromARGB(255, 84, 95, 107),
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ), // This is the text
+                      // This is the right icon
                     ],
                   ),
                 ),
