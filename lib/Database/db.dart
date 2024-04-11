@@ -787,7 +787,7 @@ class DBHelper {
   checkArticle(String link) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery(
-      'SELECT * FROM Articles WHERE url = ?',
+      'SELECT * FROM Articles WHERE link = ?',
       [link],
     );
     return response;
@@ -800,7 +800,7 @@ class DBHelper {
       return -1;
     } else {
       int response = await mydb!.rawInsert('''
-    INSERT INTO Articles(url, title, imageUrl, date)
+    INSERT INTO Articles(link, title, imageUrl, date)
     VALUES("$link", "$title", "$imageUrl", "$date");
     ''');
       return response;
