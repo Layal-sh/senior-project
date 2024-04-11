@@ -88,9 +88,11 @@ class DBHelper {
   ''');
     await db.execute('''
   CREATE TABLE "Articles"(
-    articleId INTEGER IDENTITY(1,1) NOT NULL PRIMARY KEY,
-    link TEXT NOT NULL
-  );
+        url TEXT NOT NULL PRIMARY KEY,
+        title TEXT NOT NULL,
+        imageUrl TEXT NULL,
+        date TEXT NULL
+      );
   ''');
     await db.execute('''
   CREATE TABLE "Favorites"(
