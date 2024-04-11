@@ -698,8 +698,6 @@ class DBHelper {
 
   createMeal(String mealName, String picture, List<Map> childMeals,
       List<String> categories, double carbohydrates) async {
-      print("enterd create meal");
-      print(childMeals);
     double totalCarbs = carbohydrates;
 
     if (picture == null || picture == "") {
