@@ -817,7 +817,9 @@ class _DashboardState extends State<Dashboard> {
                                                       child: Text(
                                                         overflow: TextOverflow
                                                             .ellipsis,
-                                                        'mmol/L',
+                                                        latestEntry['unit'] == 0
+                                                            ? "mmol/L"
+                                                            : "mg/dL",
                                                         style: TextStyle(
                                                           fontFamily:
                                                               'Ruda-SemiBold',
@@ -1132,7 +1134,9 @@ class _DashboardState extends State<Dashboard> {
                                               textAlign: TextAlign.center,
                                             ),
                                             Text(
-                                              'mmol/L',
+                                              latestEntry['unit'] == 0
+                                                  ? "mmol/L"
+                                                  : "mg/dL",
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
                                                 fontSize: MediaQuery.of(context)
@@ -1483,7 +1487,9 @@ class _DashboardState extends State<Dashboard> {
                                               textAlign: TextAlign.center,
                                             ),
                                             Text(
-                                              'mmol/L',
+                                              latestEntry['unit'] == 0
+                                                  ? "mmol/L"
+                                                  : "mg/dL",
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
                                                 fontSize: MediaQuery.of(context)
@@ -2797,7 +2803,8 @@ class _AddInputState extends State<AddInput> {
                                                   glucoseLevel,
                                                   bolusCalculation.value,
                                                   date,
-                                                  chosenMeals,glucoseUnit_);
+                                                  chosenMeals,
+                                                  glucoseUnit_);
                                               print('Chosen Meals:');
                                               print(chosenMeals);
                                               print('Total Carbs:');
