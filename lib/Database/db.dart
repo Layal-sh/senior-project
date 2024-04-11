@@ -88,9 +88,11 @@ class DBHelper {
   ''');
     await db.execute('''
   CREATE TABLE "Articles"(
-    articleId INTEGER IDENTITY(1,1) NOT NULL PRIMARY KEY,
-    link TEXT NOT NULL
-  );
+        url TEXT NOT NULL PRIMARY KEY,
+        title TEXT NOT NULL,
+        imageUrl TEXT NULL,
+        date TEXT NULL
+      );
   ''');
     await db.execute('''
   CREATE TABLE "Favorites"(
@@ -795,7 +797,7 @@ class DBHelper {
   checkArticle(String link) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery(
-      'SELECT * FROM Articles WHERE url = ?',
+      'SELECT * FROM Articles WHERE link = ?',
       [link],
     );
     return response;
@@ -808,7 +810,7 @@ class DBHelper {
       return -1;
     } else {
       int response = await mydb!.rawInsert('''
-    INSERT INTO Articles(url, title, imageUrl, date)
+    INSERT INTO Articles(link, title, imageUrl, date)
     VALUES("$link", "$title", "$imageUrl", "$date");
     ''');
       return response;
