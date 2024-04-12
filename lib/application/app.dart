@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -3401,10 +3402,14 @@ class _ProfileState extends State<Profile> {
                       child: Stack(
                         children: [
                           SizedBox(
-                            width: 175,
-                            height: 175,
+                            width: min(MediaQuery.of(context).size.width,
+                                    MediaQuery.of(context).size.height) *
+                                0.45,
+                            height: min(MediaQuery.of(context).size.width,
+                                    MediaQuery.of(context).size.height) *
+                                0.45,
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(50),
+                              borderRadius: BorderRadius.circular(100),
                               child: _selectedImage != null
                                   ? Image.file(
                                       File(_selectedImage!.path),
@@ -3414,18 +3419,30 @@ class _ProfileState extends State<Profile> {
                                     )
                                   : Container(
                                       color: const Color.fromARGB(
-                                          255, 211, 211, 211),
-                                      child: Icon(
-                                        Icons.camera_alt,
-                                        size: 50,
-                                        color: Colors.grey[800],
+                                          255, 45, 170, 178),
+                                      child: Center(
+                                        child: Text(
+                                          //textAlign: TextAlign.center,
+                                          firstName_[0].toUpperCase(),
+                                          style: TextStyle(
+                                            fontSize: min(
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width,
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .height) *
+                                                0.2,
+                                            color: Colors.white,
+                                          ),
+                                        ),
                                       ),
                                     ),
                             ),
                           ),
-                          Positioned(
+                          /*Positioned(
                             right: 0,
-                            bottom: 7,
+                            bottom: 20,
                             child: InkWell(
                               onTap: _pickImage,
                               child: Container(
@@ -3448,6 +3465,7 @@ class _ProfileState extends State<Profile> {
                               ),
                             ),
                           ),
+                        */
                         ],
                       ),
                     ),
@@ -3515,8 +3533,9 @@ class _ProfileState extends State<Profile> {
                           Text(
                             'Edit Profile',
                             style: TextStyle(
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.05,
+                              fontSize: min(MediaQuery.of(context).size.width,
+                                      MediaQuery.of(context).size.height) *
+                                  0.05,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -3570,8 +3589,9 @@ class _ProfileState extends State<Profile> {
                           Text(
                             'Favorites',
                             style: TextStyle(
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.05,
+                              fontSize: min(MediaQuery.of(context).size.width,
+                                      MediaQuery.of(context).size.height) *
+                                  0.05,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -3626,8 +3646,9 @@ class _ProfileState extends State<Profile> {
                           Text(
                             'Subscriptions',
                             style: TextStyle(
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.05,
+                              fontSize: min(MediaQuery.of(context).size.width,
+                                      MediaQuery.of(context).size.height) *
+                                  0.05,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -3682,8 +3703,9 @@ class _ProfileState extends State<Profile> {
                           Text(
                             'Terms & Conditions',
                             style: TextStyle(
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.05,
+                              fontSize: min(MediaQuery.of(context).size.width,
+                                      MediaQuery.of(context).size.height) *
+                                  0.05,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -3734,8 +3756,9 @@ class _ProfileState extends State<Profile> {
                           Text(
                             'User Manual',
                             style: TextStyle(
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.05,
+                              fontSize: min(MediaQuery.of(context).size.width,
+                                      MediaQuery.of(context).size.height) *
+                                  0.05,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -3786,8 +3809,9 @@ class _ProfileState extends State<Profile> {
                           Text(
                             'Help and Support',
                             style: TextStyle(
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.05,
+                              fontSize: min(MediaQuery.of(context).size.width,
+                                      MediaQuery.of(context).size.height) *
+                                  0.05,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -3829,8 +3853,9 @@ class _ProfileState extends State<Profile> {
                           Text(
                             'Log Out',
                             style: TextStyle(
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.05,
+                              fontSize: min(MediaQuery.of(context).size.width,
+                                      MediaQuery.of(context).size.height) *
+                                  0.05,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
