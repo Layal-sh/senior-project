@@ -405,7 +405,7 @@ class _DashboardState extends State<Dashboard> {
                 children: [
                   SizedBox(
                     //width: 60,
-                    height: MediaQuery.of(context).size.height * 0.03,
+                    height: MediaQuery.of(context).size.height * 0.05,
                     child: TextButton(
                       onPressed: () {
                         setState(() {
@@ -428,7 +428,7 @@ class _DashboardState extends State<Dashboard> {
                   ),
                   SizedBox(
                     //width: 60,
-                    height: MediaQuery.of(context).size.height * 0.03,
+                    height: MediaQuery.of(context).size.height * 0.05,
                     child: TextButton(
                       onPressed: () {
                         setState(() {
@@ -452,7 +452,7 @@ class _DashboardState extends State<Dashboard> {
                   ),
                   SizedBox(
                     //width: 60,
-                    height: MediaQuery.of(context).size.height * 0.03,
+                    height: MediaQuery.of(context).size.height * 0.05,
                     child: TextButton(
                       onPressed: () {
                         setState(() {
@@ -2188,59 +2188,6 @@ class Articles extends StatefulWidget {
 }
 
 class _ArticlesState extends State<Articles> {
-  /*List articles = [];
-  List<bool>? starred;
-
-  @override
-  void initState() {
-    super.initState();
-    articles = [];
-    starred = [];
-    fetchArticles();
-  }
-
-  void fetchArticles() async {
-    List<String> searches = [
-      'diabetes type 1',
-      'diabetes lifestyle',
-      'diabetes article',
-      'diabetes insulin'
-    ];
-
-    for (String s in searches) {
-      logger.info("getting $s");
-      final response =
-          await http.get(Uri.parse('http://$localhost:8000/News/$s'));
-      logger.info("got $s");
-      if (response.statusCode == 200) {
-        List<dynamic> responseData = jsonDecode(response.body);
-        DBHelper dbHelper = DBHelper.instance;
-        for (var article in responseData) {
-          List<Map> result = await dbHelper.checkArticle(article['link']);
-          starred!.add(result.isNotEmpty);
-        }
-        responseData.sort((a, b) {
-          if (a['date'] != null && b['date'] != null) {
-            try {
-              DateFormat format = DateFormat("MMM dd, yyyy");
-              DateTime dateA = format.parse(a['date']);
-              DateTime dateB = format.parse(b['date']);
-              return dateB.compareTo(dateA);
-            } catch (e) {
-              return 0;
-            }
-          }
-          return 0;
-        });
-        if (mounted) {
-          setState(() {
-            articles.addAll(responseData);
-          });
-        }
-      }
-    }
-  }
-*/
   @override
   void initState() {
     super.initState();
@@ -3305,48 +3252,18 @@ class Profile extends StatefulWidget {
   const Profile({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ProfileState createState() => _ProfileState();
-  /*@override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Row(
-          children: [
-            Text(
-              'Sugar',
-              style: TextStyle(
-                color: Color.fromARGB(255, 255, 249, 254),
-                fontSize: 21,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            Text(
-              'Sense',
-              style: TextStyle(
-                color: Color.fromARGB(255, 255, 249, 254),
-                fontSize: 21,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: const Color.fromARGB(255, 38, 20, 84),
-      ),
-      body: const SingleChildScrollView(
-        child: Center(
-          child: Text('Profile!'), // Replace with your desired text
-        ),
-      ),
-    );
-  }*/
 }
 
 class _ProfileState extends State<Profile> {
   XFile? _selectedImage;
-  void _pickImage() async {
+  bool acc = false;
+  final TextEditingController _userController = TextEditingController();
+  final TextEditingController _controllerEmail = TextEditingController();
+  final TextEditingController _pnController = TextEditingController();
+
+  void _pickImage(StateSetter setState) async {
     final ImagePicker _picker = ImagePicker();
     final XFile? image = (await _picker.pickImage(source: ImageSource.gallery));
 
@@ -3397,77 +3314,74 @@ class _ProfileState extends State<Profile> {
               Center(
                 child: Column(
                   children: [
-                    GestureDetector(
-                      onTap: _pickImage,
-                      child: Stack(
-                        children: [
-                          SizedBox(
-                            width: min(MediaQuery.of(context).size.width,
-                                    MediaQuery.of(context).size.height) *
-                                0.45,
-                            height: min(MediaQuery.of(context).size.width,
-                                    MediaQuery.of(context).size.height) *
-                                0.45,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(100),
-                              child: _selectedImage != null
-                                  ? Image.file(
-                                      File(_selectedImage!.path),
-                                      width: 200,
-                                      height: 200,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Container(
-                                      color: const Color.fromARGB(
-                                          255, 45, 170, 178),
-                                      child: Center(
-                                        child: Text(
-                                          //textAlign: TextAlign.center,
-                                          firstName_[0].toUpperCase(),
-                                          style: TextStyle(
-                                            fontSize: min(
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .width,
-                                                    MediaQuery.of(context)
-                                                        .size
-                                                        .height) *
-                                                0.2,
-                                            color: Colors.white,
-                                          ),
+                    Stack(
+                      children: [
+                        SizedBox(
+                          width: min(MediaQuery.of(context).size.width,
+                                  MediaQuery.of(context).size.height) *
+                              0.5,
+                          height: min(MediaQuery.of(context).size.width,
+                                  MediaQuery.of(context).size.height) *
+                              0.5,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
+                            child: (_selectedImage != null && acc == true)
+                                ? Image.file(
+                                    File(_selectedImage!.path),
+                                    width: 200,
+                                    height: 200,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Container(
+                                    color:
+                                        const Color.fromARGB(255, 45, 170, 178),
+                                    child: Center(
+                                      child: Text(
+                                        //textAlign: TextAlign.center,
+                                        firstName_[0].toUpperCase(),
+                                        style: TextStyle(
+                                          fontSize: min(
+                                                  MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  MediaQuery.of(context)
+                                                      .size
+                                                      .height) *
+                                              0.2,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ),
-                            ),
-                          ),
-                          /*Positioned(
-                            right: 0,
-                            bottom: 20,
-                            child: InkWell(
-                              onTap: _pickImage,
-                              child: Container(
-                                padding: const EdgeInsets.all(5),
-                                decoration: const BoxDecoration(
-                                  color: Color.fromARGB(255, 38, 20, 84),
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(15),
-                                    topRight: Radius.circular(15),
-                                    bottomLeft: Radius.circular(7),
-                                    bottomRight: Radius.circular(15),
                                   ),
+                          ),
+                        ),
+                        /*Positioned(
+                          right: 0,
+                          bottom: 20,
+                          child: InkWell(
+                            onTap: _pickImage,
+                            child: Container(
+                              padding: const EdgeInsets.all(5),
+                              decoration: const BoxDecoration(
+                                color: Color.fromARGB(255, 38, 20, 84),
+                                shape: BoxShape.rectangle,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(15),
+                                  topRight: Radius.circular(15),
+                                  bottomLeft: Radius.circular(7),
+                                  bottomRight: Radius.circular(15),
                                 ),
-                                child: const Icon(
-                                  Icons.edit,
-                                  size: 20,
-                                  color: Color.fromARGB(255, 255, 255, 255),
-                                ),
+                              ),
+                              child: const Icon(
+                                Icons.edit,
+                                size: 20,
+                                color: Color.fromARGB(255, 255, 255, 255),
                               ),
                             ),
                           ),
-                        */
-                        ],
-                      ),
+                        ),
+                      */
+                      ],
                     ),
                     const SizedBox(
                       height: 10,
@@ -3500,8 +3414,506 @@ class _ProfileState extends State<Profile> {
                 height: 5,
               ),
               GestureDetector(
-                onTap: () {
-                  // Handle your tap event here...
+                onTap: () async {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    useRootNavigator: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) {
+                      return StatefulBuilder(builder:
+                          (BuildContext context, StateSetter setState) {
+                        return Container(
+                          height: MediaQuery.of(context).size.height,
+                          decoration: const BoxDecoration(
+                            color: Color.fromARGB(255, 255, 249,
+                                254), // Set the desired color here
+                            borderRadius: BorderRadius
+                                .zero, // This removes the round edges
+                          ),
+                          child: Column(
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.08,
+                                color: const Color.fromARGB(255, 38, 20, 84),
+                                child: Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 25.0,
+                                    ),
+                                    child: Text(
+                                      'Edit Profile',
+                                      style: TextStyle(
+                                        fontSize: min(
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .height) *
+                                            0.05,
+                                        color: Colors.white,
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SingleChildScrollView(
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    top: MediaQuery.of(context).size.height *
+                                        0.025,
+                                    left: 20,
+                                    right: 20,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Center(
+                                        child: Column(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () => _pickImage(setState),
+                                              child: Stack(
+                                                children: [
+                                                  SizedBox(
+                                                    width: min(
+                                                            MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width,
+                                                            MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height) *
+                                                        0.5,
+                                                    height: min(
+                                                            MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width,
+                                                            MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height) *
+                                                        0.5,
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              100),
+                                                      child: _selectedImage !=
+                                                              null
+                                                          ? Image.file(
+                                                              File(
+                                                                  _selectedImage!
+                                                                      .path),
+                                                              width: 200,
+                                                              height: 200,
+                                                              fit: BoxFit.cover,
+                                                            )
+                                                          : Container(
+                                                              color: const Color
+                                                                  .fromARGB(255,
+                                                                  45, 170, 178),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  //textAlign: TextAlign.center,
+                                                                  firstName_[0]
+                                                                      .toUpperCase(),
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize: min(
+                                                                            MediaQuery.of(context).size.width,
+                                                                            MediaQuery.of(context).size.height) *
+                                                                        0.2,
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                    right: 0,
+                                                    bottom: 20,
+                                                    child: InkWell(
+                                                      onTap: () =>
+                                                          _pickImage(setState),
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(5),
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          color: Color.fromARGB(
+                                                              255, 38, 20, 84),
+                                                          shape: BoxShape
+                                                              .rectangle,
+                                                          borderRadius:
+                                                              BorderRadius.only(
+                                                            topLeft:
+                                                                Radius.circular(
+                                                                    15),
+                                                            topRight:
+                                                                Radius.circular(
+                                                                    15),
+                                                            bottomLeft:
+                                                                Radius.circular(
+                                                                    7),
+                                                            bottomRight:
+                                                                Radius.circular(
+                                                                    15),
+                                                          ),
+                                                        ),
+                                                        child: const Icon(
+                                                          Icons.edit,
+                                                          size: 20,
+                                                          color: Color.fromARGB(
+                                                              255,
+                                                              255,
+                                                              255,
+                                                              255),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.02,
+                                      ),
+                                      Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.07,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: const Color.fromARGB(
+                                                255, 38, 20, 84),
+                                          ),
+                                          borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(15),
+                                            bottomLeft: Radius.circular(15),
+                                            topRight: Radius.circular(15),
+                                            bottomRight: Radius.circular(15),
+                                          ),
+                                        ),
+                                        child: TextFormField(
+                                          controller: _userController,
+                                          keyboardType:
+                                              TextInputType.emailAddress,
+                                          style: const TextStyle(
+                                            color:
+                                                Color.fromARGB(255, 38, 20, 84),
+                                            fontSize: 15,
+                                            fontFamily: 'Inter',
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          decoration: InputDecoration(
+                                            //labelText: 'UserName',
+                                            hintText: username_,
+                                            labelStyle: const TextStyle(
+                                              color: Color.fromARGB(
+                                                  189, 38, 20, 84),
+                                              fontSize: 15,
+                                              fontFamily: 'Inter',
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            prefixIcon: const Icon(
+                                              Icons.person_2_outlined,
+                                              color: Color.fromARGB(
+                                                  255, 38, 20, 84),
+                                            ),
+                                            border: InputBorder.none,
+                                          ),
+                                          //onEditingComplete: () => _focusNodePassword.requestFocus(),
+                                          //validator: (String? value) {
+                                          //  if (value == null || value.isEmpty) {
+                                          //    return 'Please enter your email';
+                                          //  } else if (!_boxAccounts.containsKey(value)) {
+                                          //    return 'Email not found';
+                                          //  }
+                                          //  return null;
+                                          //},
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 25,
+                                      ),
+                                      Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.07,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: const Color.fromARGB(
+                                                255, 38, 20, 84),
+                                          ),
+                                          borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(15),
+                                            bottomLeft: Radius.circular(15),
+                                            topRight: Radius.circular(15),
+                                            bottomRight: Radius.circular(15),
+                                          ),
+                                        ),
+                                        child: TextFormField(
+                                          controller: _controllerEmail,
+                                          keyboardType:
+                                              TextInputType.emailAddress,
+                                          style: const TextStyle(
+                                            color:
+                                                Color.fromARGB(255, 38, 20, 84),
+                                            fontSize: 15,
+                                            fontFamily: 'Inter',
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          decoration: InputDecoration(
+                                            hintText: email_,
+                                            labelStyle: const TextStyle(
+                                              color: Color.fromARGB(
+                                                  189, 38, 20, 84),
+                                              fontSize: 15,
+                                              fontFamily: 'Poppins',
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            prefixIcon: const Icon(
+                                              Icons.email_outlined,
+                                              color: Color.fromARGB(
+                                                  255, 38, 20, 84),
+                                            ),
+                                            border: InputBorder.none,
+                                          ),
+                                          validator: (String? value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return "Please enter email.";
+                                            } else if (!(value.contains('@') &&
+                                                value.contains('.'))) {
+                                              return "Invalid email";
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 25,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.07,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: const Color.fromARGB(
+                                                      255, 38, 20, 84),
+                                                ),
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                  topLeft: Radius.circular(15),
+                                                  bottomLeft:
+                                                      Radius.circular(15),
+                                                ),
+                                              ),
+                                              child: TextFormField(
+                                                controller: _pnController,
+                                                keyboardType:
+                                                    TextInputType.phone,
+                                                style: const TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 38, 20, 84),
+                                                  fontSize: 15,
+                                                  fontFamily: 'Inter',
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                                decoration: InputDecoration(
+                                                  hintText: phoneNumber_,
+                                                  labelStyle: const TextStyle(
+                                                    color: Color.fromARGB(
+                                                        189, 38, 20, 84),
+                                                    fontSize: 15,
+                                                    fontFamily: 'Poppins',
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                  prefixIcon: const Icon(
+                                                    Icons.phone_android,
+                                                    color: Color.fromARGB(
+                                                        255, 38, 20, 84),
+                                                  ),
+                                                  border: InputBorder.none,
+                                                ),
+                                                validator: (String? value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return "Please enter email.";
+                                                  } else if (!(value
+                                                          .contains('@') &&
+                                                      value.contains('.'))) {
+                                                    return "Invalid email";
+                                                  }
+                                                  return null;
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.07,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: const Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                              ),
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                topRight: Radius.circular(15),
+                                                bottomRight:
+                                                    Radius.circular(15),
+                                              ),
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Row(
+                                                children: [
+                                                  const Text('+961'),
+                                                  const SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  SizedBox(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.07,
+                                                    child: Image.asset(
+                                                      'assets/lebanon.png',
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            "Change Password",
+                                            style: TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 116, 116, 116),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.06,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(
+                                                  10), // Change this value as needed
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            'Accept',
+                                            style: TextStyle(
+                                              color: Color.fromARGB(
+                                                255,
+                                                255,
+                                                249,
+                                                254,
+                                              ),
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              acc = true;
+                                            });
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.06,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            //primary: Color.fromARGB(255, 255, 255, 255), // background color
+                                            side: const BorderSide(
+                                              color: Color.fromARGB(
+                                                  255, 38, 20, 84),
+                                              width: 1,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(
+                                                  10), // Change this value as needed
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            'Cancel',
+                                            style: TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 38, 20, 84),
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      });
+                    },
+                  );
                 },
                 child: Container(
                   decoration: const BoxDecoration(
@@ -3524,7 +3936,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           Icon(
                             Icons.manage_accounts_outlined,
-                            size: MediaQuery.of(context).size.width * 0.09,
+                            size: MediaQuery.of(context).size.width * 0.085,
                             color: const Color.fromARGB(255, 28, 42, 58),
                           ),
                           const SizedBox(
@@ -3535,7 +3947,7 @@ class _ProfileState extends State<Profile> {
                             style: TextStyle(
                               fontSize: min(MediaQuery.of(context).size.width,
                                       MediaQuery.of(context).size.height) *
-                                  0.05,
+                                  0.045,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -3556,8 +3968,112 @@ class _ProfileState extends State<Profile> {
                 height: 5,
               ),
               GestureDetector(
-                onTap: () {
-                  // Handle your tap event here...
+                onTap: () async {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    useRootNavigator: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) {
+                      return StatefulBuilder(builder:
+                          (BuildContext context, StateSetter setState) {
+                        return Scaffold(
+                          body: Container(
+                            height: MediaQuery.of(context).size.height,
+                            decoration: const BoxDecoration(
+                              color: Color.fromARGB(255, 255, 249,
+                                  254), // Set the desired color here
+                              borderRadius: BorderRadius
+                                  .zero, // This removes the round edges
+                            ),
+                            child: Column(
+                              children: [
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.08,
+                                  color: const Color.fromARGB(255, 38, 20, 84),
+                                  child: Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: 25.0,
+                                      ),
+                                      child: Text(
+                                        'Favorites',
+                                        style: TextStyle(
+                                          fontSize: min(
+                                                  MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  MediaQuery.of(context)
+                                                      .size
+                                                      .height) *
+                                              0.05,
+                                          color: Colors.white,
+                                          fontFamily: 'Inter',
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SingleChildScrollView(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                      top: MediaQuery.of(context).size.height *
+                                          0.025,
+                                      left: 20,
+                                      right: 20,
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        const SizedBox(
+                                          height: 15,
+                                        ),
+                                        SizedBox(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.06,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              //primary: Color.fromARGB(255, 255, 255, 255), // background color
+                                              side: const BorderSide(
+                                                color: Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                                width: 1,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(
+                                                    10), // Change this value as needed
+                                              ),
+                                            ),
+                                            child: const Text(
+                                              'Cancel',
+                                              style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      });
+                    },
+                  );
                 },
                 child: Container(
                   decoration: const BoxDecoration(
@@ -3580,7 +4096,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           Icon(
                             Icons.bookmark_outline_rounded,
-                            size: MediaQuery.of(context).size.width * 0.09,
+                            size: MediaQuery.of(context).size.width * 0.085,
                             color: const Color.fromARGB(255, 28, 42, 58),
                           ),
                           const SizedBox(
@@ -3591,7 +4107,7 @@ class _ProfileState extends State<Profile> {
                             style: TextStyle(
                               fontSize: min(MediaQuery.of(context).size.width,
                                       MediaQuery.of(context).size.height) *
-                                  0.05,
+                                  0.045,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -3636,7 +4152,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           Icon(
                             Icons.token_outlined,
-                            size: MediaQuery.of(context).size.width * 0.09,
+                            size: MediaQuery.of(context).size.width * 0.085,
                             color: const Color.fromARGB(255, 28, 42, 58),
                           ),
 
@@ -3648,7 +4164,7 @@ class _ProfileState extends State<Profile> {
                             style: TextStyle(
                               fontSize: min(MediaQuery.of(context).size.width,
                                       MediaQuery.of(context).size.height) *
-                                  0.05,
+                                  0.045,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -3693,7 +4209,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           Icon(
                             Icons.policy_outlined,
-                            size: MediaQuery.of(context).size.width * 0.09,
+                            size: MediaQuery.of(context).size.width * 0.085,
                             color: const Color.fromARGB(255, 28, 42, 58),
                           ),
 
@@ -3705,7 +4221,7 @@ class _ProfileState extends State<Profile> {
                             style: TextStyle(
                               fontSize: min(MediaQuery.of(context).size.width,
                                       MediaQuery.of(context).size.height) *
-                                  0.05,
+                                  0.045,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -3746,7 +4262,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           Icon(
                             Icons.book_outlined,
-                            size: MediaQuery.of(context).size.width * 0.09,
+                            size: MediaQuery.of(context).size.width * 0.085,
                             color: const Color.fromARGB(255, 28, 42, 58),
                           ),
 
@@ -3758,7 +4274,7 @@ class _ProfileState extends State<Profile> {
                             style: TextStyle(
                               fontSize: min(MediaQuery.of(context).size.width,
                                       MediaQuery.of(context).size.height) *
-                                  0.05,
+                                  0.045,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -3799,7 +4315,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           Icon(
                             Icons.help_outline,
-                            size: MediaQuery.of(context).size.width * 0.09,
+                            size: MediaQuery.of(context).size.width * 0.085,
                             color: const Color.fromARGB(255, 28, 42, 58),
                           ),
 
@@ -3811,7 +4327,7 @@ class _ProfileState extends State<Profile> {
                             style: TextStyle(
                               fontSize: min(MediaQuery.of(context).size.width,
                                       MediaQuery.of(context).size.height) *
-                                  0.05,
+                                  0.045,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -3843,19 +4359,18 @@ class _ProfileState extends State<Profile> {
                         children: [
                           Icon(
                             Icons.logout_rounded,
-                            size: MediaQuery.of(context).size.width * 0.09,
+                            size: MediaQuery.of(context).size.width * 0.085,
                             color: const Color.fromARGB(255, 28, 42, 58),
                           ),
-
                           const SizedBox(
                             width: 10,
-                          ), // This is the left icon
+                          ),
                           Text(
                             'Log Out',
                             style: TextStyle(
                               fontSize: min(MediaQuery.of(context).size.width,
                                       MediaQuery.of(context).size.height) *
-                                  0.05,
+                                  0.045,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
