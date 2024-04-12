@@ -3888,7 +3888,7 @@ class _SettingsState extends State<Settings> {
     return Row(
       children: [
         Expanded(
-          flex: 3,
+          flex: 2,
           child: Text(
             title,
             style: const TextStyle(
@@ -4004,6 +4004,64 @@ class _SettingsState extends State<Settings> {
     );
   }
 
+  Widget carbRatioInputDialog(
+      String title, double initialCarbs, double initialInsulin) {
+    TextEditingController carbsController =
+        TextEditingController(text: initialCarbs.toStringAsFixed(2));
+    TextEditingController insulinController =
+        TextEditingController(text: initialInsulin.toStringAsFixed(2));
+
+    return AlertDialog(
+      title: Text(title),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          TextField(
+            controller: carbsController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+            ],
+            decoration: InputDecoration(
+              labelText: carbUnit_ == 0 ? 'Carbs' : 'Exchanges',
+            ),
+          ),
+          TextField(
+            controller: insulinController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+            ],
+            decoration: const InputDecoration(
+              labelText: 'Insulin units',
+            ),
+          ),
+        ],
+      ),
+      actions: <Widget>[
+        TextButton(
+          style: TextButton.styleFrom(
+              foregroundColor: const Color.fromARGB(255, 22, 161, 170)),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(
+              foregroundColor: const Color.fromARGB(255, 22, 161, 170)),
+          onPressed: () {
+            Navigator.of(context).pop({
+              'carbs': double.parse(carbsController.text),
+              'insulin': double.parse(insulinController.text),
+            });
+          },
+          child: const Text('OK'),
+        ),
+      ],
+    );
+  }
+
   Widget numberInputDialog(String title, double initialValue) {
     TextEditingController controller =
         TextEditingController(text: initialValue.toStringAsFixed(2));
@@ -4019,9 +4077,7 @@ class _SettingsState extends State<Settings> {
       actions: <Widget>[
         TextButton(
           style: TextButton.styleFrom(
-              foregroundColor: const Color.fromARGB(
-                  255, 22, 161, 170) // Change this to your desired color
-              ),
+              foregroundColor: const Color.fromARGB(255, 22, 161, 170)),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -4029,9 +4085,7 @@ class _SettingsState extends State<Settings> {
         ),
         TextButton(
           style: TextButton.styleFrom(
-              foregroundColor: const Color.fromARGB(
-                  255, 22, 161, 170) // Change this to your desired color
-              ),
+              foregroundColor: const Color.fromARGB(255, 22, 161, 170)),
           onPressed: () {
             Navigator.of(context).pop(double.parse(controller.text));
           },
@@ -4130,15 +4184,27 @@ class _SettingsState extends State<Settings> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                settingItem('Carb Ratio:', carbRatio_.toString(), () async {
-                  double? newCarbRatio = await showDialog<double>(
+                settingItem('Carb Ratio:',
+                    "${carbUnit_ == 0 ? (carbs_).toString() : (carbs_ / 15).toString()}/$insulin_",
+                    () async {
+                  Map<String, double>? newCarbRatio =
+                      await showDialog<Map<String, double>>(
                     context: context,
-                    builder: (context) =>
-                        numberInputDialog('Enter new carb ratio', carbRatio_),
+                    builder: (context) => carbRatioInputDialog(
+                        'Enter new carb ratio',
+                        carbUnit_ == 0 ? carbs_ : carbs_ / 15,
+                        insulin_),
                   );
                   if (newCarbRatio != null) {
                     setState(() {
-                      carbRatio_ = newCarbRatio;
+                      carbs_ = carbUnit_ == 0
+                          ? newCarbRatio['carbs']!
+                          : newCarbRatio['carbs']! * 15;
+                      insulin_ = newCarbRatio['insulin']!;
+                      carbRatio_ = insulin_ /
+                          (carbUnit_ == 0
+                              ? carbs_ / 15
+                              : newCarbRatio['carbs']!);
                       saveValues();
                     });
                   }
