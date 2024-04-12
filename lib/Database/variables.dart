@@ -27,6 +27,8 @@ Future<void> saveValues() async {
   await prefs.setDouble('carbRatio', carbRatio_);
   await prefs.setDouble('carbRatio2', carbRatio_2);
   await prefs.setDouble('carbRatio3', carbRatio_3);
+  await prefs.setDouble('carbs', carbs_);
+  await prefs.setDouble('insulin', insulin_);
   await prefs.setString('username', username_);
   await prefs.setString('privacy', privacy_);
 }
@@ -57,6 +59,8 @@ Future<void> loadPreferences() async {
   privacy_ = prefs.getString('privacy') ?? "111";
   glucoseUnit_ = prefs.getInt('glucoseUnit') ?? 0;
   carbUnit_ = prefs.getInt('carbUnit') ?? 0;
+  carbs_ = prefs.getDouble('carbs_') ?? 0;
+  insulin_ = prefs.getDouble('insulin_') ?? 0;
 }
 
 //0 mmol/L
@@ -78,3 +82,5 @@ int pid_ = 0;
 String privacy_ = "111";
 int glucoseUnit_ = 0;
 int carbUnit_ = 0;
+double carbs_ = 0;
+double insulin_ = 0;
