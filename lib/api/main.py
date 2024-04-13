@@ -57,7 +57,7 @@ cursor = cnxn.cursor()
 HOST = "smtp.gmail.com"
 PORT = 465
 FROM_EMAIL = "sugarsenseteam@gmail.com"
-email = "alisinno16@gmail.com"
+globalEmail = ""
 maxTime = ""
 generatedCode = ""
 maxTime = ""
@@ -136,22 +136,27 @@ def checkCode(code):
         return "Code is correct"
     else:
         print("CODE IS NU UHHH")
-
-def UpdatePassword(email, password):
+@app.get("/updatePassword/{password}")
+def UpdatePassword(password):
+    global globalEmail
+    print(globalEmail)
     hashed_password = hashlib.md5(password.encode()).hexdigest()
-    response = cursor.execute("UPDATE Users SET userPassword = ? WHERE email = ?", (hashed_password, email))
-    if response is None:
-        return False
-    return True
+    response = cursor.execute("UPDATE Users SET userPassword = ? WHERE CAST(email AS NVARCHAR(MAX)) = ?", (hashed_password, globalEmail))
+    cnxn.commit()
+    return {"message": "Password updated successfully"}
+        
 
 @app.get("/forgotPassword/{email}")
 def forgot_password(email: str):
     global maxTime
+    global globalEmail
     global generatedCode
+    globalEmail = email
     maxTime = datetime.datetime.now() + datetime.timedelta(minutes=10)
-    user = cursor.execute("SELECT * FROM Users WHERE email = ?", (email,)).fetchone()
+    user = cursor.execute("SELECT * FROM Users WHERE CAST(email AS NVARCHAR(MAX)) = ?", (email,)).fetchone()
     if(user is None):
-        return {"error": "Email not found"}
+        print("Email not found")
+        raise HTTPException(status_code=401, detail="Email not found")
     else:
         generateCode()
         message = ("""From: From the SugarSense team <sugarsenseteam@gmail.com>
@@ -162,18 +167,22 @@ To reset your password, please enter the following code: {}
 This code will expire in 10 minutes.
 If you did not request a password reset, please ignore this email.
 From the SugarSense team""").format(email, generatedCode)
-    sendEmail(FROM_EMAIL, email, AppPassword, message)
+    sendEmail(FROM_EMAIL, globalEmail, AppPassword, message)
+    return 1
 
 
 @app.get("/checkCode/{code}")
 def checkCode(code):
+    global generatedCode
     global maxTime
     currentTime = datetime.datetime.now()
     if currentTime > maxTime:
-        return "Code has expired"
+        raise HTTPException(status_code=402, detail="Code has expired")
     if code == generatedCode:
         generatedCode = ""
         return "Code is correct"
+    else:
+        raise HTTPException(status_code=401, detail="Code is incorrect")
 
 
 

@@ -1,9 +1,14 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sugar_sense/login/signup/login.dart';
+import 'package:sugar_sense/login/signup/signup.dart';
+import 'package:sugar_sense/main.dart';
+import 'package:http/http.dart' as http;
 
 class ForgetPass extends StatefulWidget {
   const ForgetPass({super.key});
@@ -140,10 +145,35 @@ class _ForgetPassState extends State<ForgetPass> {
                     ),
                   ),
                   onPressed: () async {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => EmailCode(_controllerEmail.text)));
+                    String email = _controllerEmail.text;
+                    if (email == "" ||
+                        !email.contains('@') ||
+                        !email.contains('.')) {
+                      //show error message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Invalid Email'),
+                        ),
+                      );
+                    } else {
+                      //call the forgetPass route in the api
+                      final response = await http.get(Uri.parse(
+                          'http://$localhost:8000/forgotPassword/$email'));
+                      if (response.statusCode == 200) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) =>
+                                    EmailCode(_controllerEmail.text)));
+                      } else {
+                        //show error message
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Email Not Found'),
+                          ),
+                        );
+                      }
+                    }
                   },
                   child: Text(
                     'Next',
@@ -247,7 +277,7 @@ class _EmailCodeState extends State<EmailCode> {
                 height: 10,
               ),
               Text(
-                'Please Check your email for a varification code',
+                'Please Check your email for a verification code',
                 //textAlign: TextAlign.center,
                 style: TextStyle(
                   color: const Color.fromARGB(255, 0, 0, 0),
@@ -335,10 +365,40 @@ class _EmailCodeState extends State<EmailCode> {
                     ),
                   ),
                   onPressed: () async {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => PassCode(widget.email)));
+                    String code = "";
+                    for (int i = 0; i < 6; i++) {
+                      String currentLetter = econtrollers[i].text;
+                      if (currentLetter == "") {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please enter the code'),
+                          ),
+                        );
+                        return;
+                      } else {
+                        code += econtrollers[i].text;
+                      }
+                    }
+                    final response = await http.get(
+                        Uri.parse('http://$localhost:8000/checkCode/$code'));
+                    if (response.statusCode == 200) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => PassCode(widget.email)));
+                    } else if (response.statusCode == 402) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Code Expired'),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Invalid Code'),
+                        ),
+                      );
+                    }
                   },
                   child: Text(
                     'Verify',
@@ -533,8 +593,52 @@ class _PassCodeState extends State<PassCode> {
                       ),
                     ),
                     onPressed: () async {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => const Login()));
+                      String password = _NewPassController.text;
+                      String confirmPassword = _ConfirmPassController.text;
+                      if (password != "" && confirmPassword != "") {
+                        if (isValidPassword(password)) {
+                          if (password == confirmPassword) {
+                            final response = await http.get(Uri.parse(
+                                'http://$localhost:8000/updatePassword/$password'));
+                            if (response.statusCode == 200) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const Login()));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Password Reset Successfully'),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Error Resetting Password'),
+                                ),
+                              );
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Passwords do not match'),
+                              ),
+                            );
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  'Password must be at least 8 characters and contains at least one number'),
+                            ),
+                          );
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Both fields are required'),
+                          ),
+                        );
+                      }
                     },
                     child: Text(
                       'Confirm',
