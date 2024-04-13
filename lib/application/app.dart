@@ -3031,10 +3031,10 @@ class _AddInputState extends State<AddInput> {
                               const SizedBox(
                                 width: 10,
                               ),
-                              const Icon(
+                              /*const Icon(
                                 Icons.link_off,
                                 color: Color.fromARGB(255, 38, 20, 84),
-                              ),
+                              ),*/
                             ],
                           ),
                           /*IconButton(
@@ -3288,7 +3288,14 @@ class _ProfileState extends State<Profile> {
     _userController = TextEditingController(text: username_);
     _controllerEmail = TextEditingController(text: email_);
     _pnController = TextEditingController(text: phoneNumber_);
+    if (profilePicture_ != '') {
+      _selectedImage = XFile(profilePicture_);
+    }
     favorites();
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {});
+    });
   }
 
   @override
@@ -3333,48 +3340,41 @@ class _ProfileState extends State<Profile> {
               Center(
                 child: Column(
                   children: [
-                    Stack(
-                      children: [
-                        SizedBox(
-                          width: min(MediaQuery.of(context).size.width,
-                                  MediaQuery.of(context).size.height) *
-                              0.5,
-                          height: min(MediaQuery.of(context).size.width,
-                                  MediaQuery.of(context).size.height) *
-                              0.5,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(100),
-                            child: (profilePicture_ != '' && acc == true)
-                                ? Image.file(
-                                    File(profilePicture_),
-                                    width: 200,
-                                    height: 200,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Container(
-                                    color:
-                                        const Color.fromARGB(255, 45, 170, 178),
-                                    child: Center(
-                                      child: Text(
-                                        //textAlign: TextAlign.center,
-                                        firstName_[0].toUpperCase(),
-                                        style: TextStyle(
-                                          fontSize: min(
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .height) *
-                                              0.2,
-                                          color: Colors.white,
-                                        ),
-                                      ),
+                    SizedBox(
+                      width: min(MediaQuery.of(context).size.width,
+                              MediaQuery.of(context).size.height) *
+                          0.5,
+                      height: min(MediaQuery.of(context).size.width,
+                              MediaQuery.of(context).size.height) *
+                          0.5,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: (profilePicture_ != '')
+                            ? Image.file(
+                                File(profilePicture_),
+                                width: 200,
+                                height: 200,
+                                fit: BoxFit.cover,
+                              )
+                            : Container(
+                                color: const Color.fromARGB(255, 45, 170, 178),
+                                child: Center(
+                                  child: Text(
+                                    //textAlign: TextAlign.center,
+                                    firstName_[0].toUpperCase(),
+                                    style: TextStyle(
+                                      fontSize: min(
+                                              MediaQuery.of(context).size.width,
+                                              MediaQuery.of(context)
+                                                  .size
+                                                  .height) *
+                                          0.2,
+                                      color: Colors.white,
                                     ),
                                   ),
-                          ),
-                        ),
-                      ],
+                                ),
+                              ),
+                      ),
                     ),
                     const SizedBox(
                       height: 10,
@@ -3528,6 +3528,23 @@ class _ProfileState extends State<Profile> {
                                                                 ),
                                                               ),
                                                             ),
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                    left: 0,
+                                                    top: 20,
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          _selectedImage = null;
+                                                        });
+                                                      },
+                                                      child: const Icon(
+                                                        Icons.remove_circle,
+                                                        size: 40,
+                                                        color: Color.fromARGB(
+                                                            255, 38, 20, 84),
+                                                      ),
                                                     ),
                                                   ),
                                                   Positioned(
@@ -3860,6 +3877,28 @@ class _ProfileState extends State<Profile> {
                                               if (_selectedImage != null) {
                                                 profilePicture_ =
                                                     _selectedImage!.path;
+
+                                                saveP();
+                                              } else {
+                                                profilePicture_ = '';
+                                                saveP();
+                                              }
+                                              if (_userController
+                                                  .text.isNotEmpty) {
+                                                username_ =
+                                                    _userController.text;
+                                                saveU();
+                                              }
+                                              if (_controllerEmail
+                                                  .text.isNotEmpty) {
+                                                email_ = _controllerEmail.text;
+                                                saveE();
+                                              }
+                                              if (_pnController
+                                                  .text.isNotEmpty) {
+                                                phoneNumber_ =
+                                                    _pnController.text;
+                                                saveN();
                                               }
                                             });
                                             Navigator.of(context).pop();
@@ -3896,7 +3935,13 @@ class _ProfileState extends State<Profile> {
                                               fontSize: 20,
                                             ),
                                           ),
-                                          onPressed: () {
+                                          onPressed: () async {
+                                            setState(() {
+                                              if (profilePicture_ != '') {
+                                                _selectedImage =
+                                                    XFile(profilePicture_);
+                                              }
+                                            });
                                             Navigator.of(context).pop();
                                           },
                                         ),

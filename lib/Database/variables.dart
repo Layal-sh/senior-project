@@ -40,6 +40,36 @@ Future<void> saveUnits() async {
   await prefs.setInt('carbUnit', carbUnit_);
 }
 
+Future<void> saveProfile() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('profilePicture', profilePicture_);
+  await prefs.setString('username', username_);
+  await prefs.setString('email', email_);
+  await prefs.setString('phoneNumber', phoneNumber_);
+}
+
+Future<void> saveP() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('profilePicture', profilePicture_);
+}
+
+Future<void> saveU() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('username', username_);
+}
+
+Future<void> saveE() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  await prefs.setString('email', email_);
+}
+
+Future<void> saveN() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  await prefs.setString('phoneNumber', phoneNumber_);
+}
+
 Future<void> loadPreferences() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
