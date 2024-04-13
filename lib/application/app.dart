@@ -17,6 +17,7 @@ import 'package:sugar_sense/AI/ai_functions.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:sugar_sense/login/signup/signup.dart';
 import 'package:sugar_sense/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -3623,8 +3624,7 @@ class _ProfileState extends State<Profile> {
                                         ),
                                         child: TextFormField(
                                           controller: _userController,
-                                          keyboardType:
-                                              TextInputType.emailAddress,
+                                          keyboardType: TextInputType.name,
                                           style: const TextStyle(
                                             color:
                                                 Color.fromARGB(255, 38, 20, 84),
@@ -3707,12 +3707,8 @@ class _ProfileState extends State<Profile> {
                                             border: InputBorder.none,
                                           ),
                                           validator: (String? value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return "Please enter email.";
-                                            } else if (!(value.contains('@') &&
-                                                value.contains('.'))) {
-                                              return "Invalid email";
+                                            if (!isValidEmail(value!)) {
+                                              return "Invalid email.";
                                             }
                                             return null;
                                           },
@@ -3768,17 +3764,6 @@ class _ProfileState extends State<Profile> {
                                                   ),
                                                   border: InputBorder.none,
                                                 ),
-                                                validator: (String? value) {
-                                                  if (value == null ||
-                                                      value.isEmpty) {
-                                                    return "Please enter email.";
-                                                  } else if (!(value
-                                                          .contains('@') &&
-                                                      value.contains('.'))) {
-                                                    return "Invalid email";
-                                                  }
-                                                  return null;
-                                                },
                                               ),
                                             ),
                                           ),
@@ -3874,34 +3859,65 @@ class _ProfileState extends State<Profile> {
                                           onPressed: () {
                                             setState(() {
                                               acc = true;
-                                              if (_selectedImage != null) {
-                                                profilePicture_ =
-                                                    _selectedImage!.path;
+                                              if (isValidEmail(
+                                                  _controllerEmail.text)) {
+                                                if (_selectedImage != null) {
+                                                  profilePicture_ =
+                                                      _selectedImage!.path;
 
-                                                saveP();
+                                                  saveP();
+                                                } else {
+                                                  profilePicture_ = '';
+                                                  saveP();
+                                                }
+                                                if (_userController
+                                                    .text.isNotEmpty) {
+                                                  username_ =
+                                                      _userController.text;
+                                                  saveU();
+                                                }
+                                                if (_controllerEmail
+                                                    .text.isNotEmpty) {
+                                                  email_ =
+                                                      _controllerEmail.text;
+                                                  saveE();
+                                                }
+                                                if (_pnController
+                                                    .text.isNotEmpty) {
+                                                  phoneNumber_ =
+                                                      _pnController.text;
+                                                  saveN();
+                                                }
+                                                Navigator.of(context).pop();
                                               } else {
-                                                profilePicture_ = '';
-                                                saveP();
-                                              }
-                                              if (_userController
-                                                  .text.isNotEmpty) {
-                                                username_ =
-                                                    _userController.text;
-                                                saveU();
-                                              }
-                                              if (_controllerEmail
-                                                  .text.isNotEmpty) {
-                                                email_ = _controllerEmail.text;
-                                                saveE();
-                                              }
-                                              if (_pnController
-                                                  .text.isNotEmpty) {
-                                                phoneNumber_ =
-                                                    _pnController.text;
-                                                saveN();
+                                                _controllerEmail.value =
+                                                    TextEditingValue(
+                                                        text: email_);
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: const Text(
+                                                          'Invalid Email'),
+                                                      content: const Text(
+                                                          'Please enter a valid email'),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          child: const Text(
+                                                              'Close'),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
                                               }
                                             });
-                                            Navigator.of(context).pop();
                                           },
                                         ),
                                       ),

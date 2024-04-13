@@ -31,7 +31,7 @@ class DBHelper {
     String DbPath = await getDatabasesPath();
     String path = join(DbPath, 'SugarSense.db');
     Database database = await openDatabase(path,
-        onCreate: _onCreate, version: 32, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 33, onUpgrade: _onUpgrade);
     return database;
   }
 
