@@ -29,7 +29,6 @@ class _MembershipState extends State<Membership> {
               ? IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () => {
-                        //selectedCategory = null,
                         Navigator.of(context).pop(),
                       })
               : Container(),
@@ -330,7 +329,7 @@ class _MembershipState extends State<Membership> {
                       ),
                     ),
                     onPressed: () async {
-                      if (selectedPlanIndex == -1) {
+                      if (selectedPlanIndex == -1 && widget.index == 0) {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -349,14 +348,60 @@ class _MembershipState extends State<Membership> {
                           },
                         );
                       } else {
-                        //SAVE SHARED PREFRENCES FOR SELECTED PLAN
-                        selectedPlan_ = selectedPlanIndex;
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ThankYou(),
-                          ),
-                        );
+                        if (widget.index == 0) {
+                          selectedPlan_ = selectedPlanIndex;
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ThankYou(),
+                            ),
+                          );
+                        } else {
+                          if (selectedPlan_ == selectedPlanIndex) {
+                            if (selectedPlanIndex == 1) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text(
+                                        'You can no longer upgrade your membership'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: const Text('OK'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text(
+                                        'This Plan is already active'),
+                                    //content: const Text('Please select a plan.'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: const Text('OK'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          } else {
+                            selectedPlan_ = selectedPlanIndex;
+                            Navigator.of(context).pop();
+                          }
+                        }
                       }
                     },
                     child: const Text(

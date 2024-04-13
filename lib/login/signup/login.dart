@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/application/app.dart';
+import 'package:sugar_sense/login/signup/forgetPass/porgetpass.dart';
 import 'package:sugar_sense/main.dart';
 import 'package:sugar_sense/values/app_regex.dart';
 import 'signup.dart';
@@ -324,13 +325,21 @@ class _LoginState extends State<Login> {
                         ),
                         Container(
                           alignment: Alignment.centerRight,
-                          child: const Text(
-                            'Forget Password?',
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 22, 161, 170),
-                              fontSize: 15,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w900,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => ForgetPass()));
+                            },
+                            child: const Text(
+                              'Forget Password?',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 22, 161, 170),
+                                fontSize: 15,
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w900,
+                              ),
                             ),
                           ),
                         ),

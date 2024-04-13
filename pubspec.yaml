@@ -80,6 +80,7 @@ flutter:
     - assets/badge2.png
     - assets/security-safe.png
     - assets/lebanon.png
+    - assets/lock.png
     - assets/AddDish.png
     - assets/no-pictures.png
     - assets/afandi.jpg
@@ -307,6 +308,9 @@ flutter:
     - family: Ruda-SemiBold
       fonts:
         - asset: fonts/Ruda-SemiBold.ttf
+    - family: Ruda-Bold
+      fonts:
+        - asset: fonts/Ruda-Bold.ttf
     - family: Rubik
       fonts:
         - asset: fonts/Rubik-Regular.ttf

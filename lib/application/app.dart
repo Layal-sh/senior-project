@@ -3260,9 +3260,9 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   XFile? _selectedImage;
   bool acc = false;
-  final TextEditingController _userController = TextEditingController();
-  final TextEditingController _controllerEmail = TextEditingController();
-  final TextEditingController _pnController = TextEditingController();
+  late final TextEditingController _userController;
+  late final TextEditingController _controllerEmail;
+  late final TextEditingController _pnController;
 
   void _pickImage(StateSetter setState) async {
     final ImagePicker _picker = ImagePicker();
@@ -3285,6 +3285,9 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
+    _userController = TextEditingController(text: username_);
+    _controllerEmail = TextEditingController(text: email_);
+    _pnController = TextEditingController(text: phoneNumber_);
     favorites();
   }
 
@@ -3341,9 +3344,9 @@ class _ProfileState extends State<Profile> {
                               0.5,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(100),
-                            child: (_selectedImage != null && acc == true)
+                            child: (profilePicture_ != '' && acc == true)
                                 ? Image.file(
-                                    File(_selectedImage!.path),
+                                    File(profilePicture_),
                                     width: 200,
                                     height: 200,
                                     fit: BoxFit.cover,
@@ -3371,32 +3374,6 @@ class _ProfileState extends State<Profile> {
                                   ),
                           ),
                         ),
-                        /*Positioned(
-                          right: 0,
-                          bottom: 20,
-                          child: InkWell(
-                            onTap: _pickImage,
-                            child: Container(
-                              padding: const EdgeInsets.all(5),
-                              decoration: const BoxDecoration(
-                                color: Color.fromARGB(255, 38, 20, 84),
-                                shape: BoxShape.rectangle,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(15),
-                                  topRight: Radius.circular(15),
-                                  bottomLeft: Radius.circular(7),
-                                  bottomRight: Radius.circular(15),
-                                ),
-                              ),
-                              child: const Icon(
-                                Icons.edit,
-                                size: 20,
-                                color: Color.fromARGB(255, 255, 255, 255),
-                              ),
-                            ),
-                          ),
-                        ),
-                      */
                       ],
                     ),
                     const SizedBox(
@@ -3880,6 +3857,10 @@ class _ProfileState extends State<Profile> {
                                           onPressed: () {
                                             setState(() {
                                               acc = true;
+                                              if (_selectedImage != null) {
+                                                profilePicture_ =
+                                                    _selectedImage!.path;
+                                              }
                                             });
                                             Navigator.of(context).pop();
                                           },
