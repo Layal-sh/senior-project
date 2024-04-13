@@ -325,6 +325,8 @@ class _MembershipState extends State<Membership> {
                           },
                         );
                       } else {
+                        //SAVE SHARED PREFRENCES FOR SELECTED PLAN
+                        selectedPlan_ = selectedPlanIndex;
                         Navigator.push(
                           context,
                           MaterialPageRoute(
