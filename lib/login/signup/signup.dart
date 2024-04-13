@@ -918,6 +918,7 @@ class _SignUpState extends State<SignUp> {
                                               builder: (context) => Membership(
                                                 username:
                                                     _controllerUsername.text,
+                                                index: 0,
                                               ),
                                             ),
                                           );

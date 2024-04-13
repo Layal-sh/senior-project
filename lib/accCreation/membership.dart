@@ -1,18 +1,21 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/accCreation/thanks.dart';
 
 class Membership extends StatefulWidget {
   final String username;
-  const Membership({super.key, required this.username});
+  final int index;
+  const Membership({super.key, required this.username, required this.index});
 
   @override
   State<Membership> createState() => _MembershipState();
 }
 
-class _MembershipState extends State<Membership> {
-  int selectedPlanIndex = -1;
+int selectedPlanIndex = -1;
 
+class _MembershipState extends State<Membership> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -22,6 +25,27 @@ class _MembershipState extends State<Membership> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          leading: widget.index == 1
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => {
+                        //selectedCategory = null,
+                        Navigator.of(context).pop(),
+                      })
+              : Container(),
+          title: widget.index == 1
+              ? Text(
+                  'Profile',
+                  style: TextStyle(
+                    fontSize: min(MediaQuery.of(context).size.width,
+                            MediaQuery.of(context).size.height) *
+                        0.035,
+                    color: Colors.white,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w400,
+                  ),
+                )
+              : Container(),
           backgroundColor: const Color.fromARGB(255, 38, 20, 84),
           //centerTitle: true,
           iconTheme: const IconThemeData(

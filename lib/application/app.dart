@@ -11,6 +11,7 @@ import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
+import 'package:sugar_sense/accCreation/membership.dart';
 import 'package:sugar_sense/application/meals.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 import 'package:intl/intl.dart';
@@ -3272,6 +3273,21 @@ class _ProfileState extends State<Profile> {
     });
   }
 
+  List fav = [];
+  void favorites() {
+    for (int i = 0; i < articles.length; i++) {
+      if (starred![i]) {
+        fav.add(articles[i]);
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    favorites();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -3991,30 +4007,111 @@ class _ProfileState extends State<Profile> {
                                 Container(
                                   width: MediaQuery.of(context).size.width,
                                   height:
-                                      MediaQuery.of(context).size.height * 0.08,
+                                      MediaQuery.of(context).size.height * 0.09,
                                   color: const Color.fromARGB(255, 38, 20, 84),
-                                  child: Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 25.0,
-                                      ),
-                                      child: Text(
-                                        'Favorites',
-                                        style: TextStyle(
-                                          fontSize: min(
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .height) *
-                                              0.05,
-                                          color: Colors.white,
-                                          fontFamily: 'Inter',
-                                          fontWeight: FontWeight.w400,
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 25.0,
+                                        ),
+                                        child: SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.4,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.04,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              shadowColor: Colors.transparent,
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              foregroundColor:
+                                                  Colors.transparent,
+                                              surfaceTintColor:
+                                                  Colors.transparent,
+                                              // background color
+                                              side: const BorderSide(
+                                                color: Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                                width: 1,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(
+                                                    10), // Change this value as needed
+                                              ),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.arrow_back_ios_rounded,
+                                                  color: const Color.fromARGB(
+                                                      255, 255, 249, 254),
+                                                  size: min(
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .height) *
+                                                      0.035,
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(
+                                                  'Profile',
+                                                  style: TextStyle(
+                                                    fontSize: min(
+                                                            MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width,
+                                                            MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height) *
+                                                        0.035,
+                                                    color: Colors.white,
+                                                    fontFamily: 'Inter',
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
                                         ),
                                       ),
-                                    ),
+                                      Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 25.0,
+                                          ),
+                                          child: Text(
+                                            'Favorites',
+                                            style: TextStyle(
+                                              fontSize: min(
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width,
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .height) *
+                                                  0.05,
+                                              color: Colors.white,
+                                              fontFamily: 'Inter',
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 SingleChildScrollView(
@@ -4027,42 +4124,223 @@ class _ProfileState extends State<Profile> {
                                     ),
                                     child: Column(
                                       children: [
-                                        const SizedBox(
-                                          height: 15,
-                                        ),
-                                        SizedBox(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.06,
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              //primary: Color.fromARGB(255, 255, 255, 255), // background color
-                                              side: const BorderSide(
-                                                color: Color.fromARGB(
-                                                    255, 38, 20, 84),
-                                                width: 1,
+                                        (fav.isEmpty || starred == null)
+                                            ? Center(
+                                                child: Column(
+                                                  children: [
+                                                    SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.4,
+                                                    ),
+                                                    const Text(
+                                                      'You have no saved articles',
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            : Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 5.0),
+                                                child: SizedBox(
+                                                  child: ListView.builder(
+                                                    shrinkWrap: true,
+                                                    physics:
+                                                        const NeverScrollableScrollPhysics(),
+                                                    itemCount: fav.length,
+                                                    itemBuilder:
+                                                        (context, index) {
+                                                      String? imageUrl =
+                                                          articles[index]
+                                                              ['thumbnail'];
+                                                      String title =
+                                                          articles[index]
+                                                              ['title'];
+                                                      String url =
+                                                          articles[index]
+                                                              ['link'];
+                                                      String? date =
+                                                          articles[index]
+                                                              ['date'];
+
+                                                      return SizedBox(
+                                                        height: imageUrl != null
+                                                            ? MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .height *
+                                                                0.13
+                                                            : null,
+                                                        child: InkWell(
+                                                          onTap: () =>
+                                                              launch(url),
+                                                          child: Card(
+                                                            color: Colors
+                                                                .transparent,
+                                                            shadowColor: Colors
+                                                                .transparent,
+                                                            surfaceTintColor:
+                                                                Colors
+                                                                    .transparent,
+                                                            clipBehavior:
+                                                                Clip.antiAlias,
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                //bottom: 5.0,
+                                                                left: 10,
+                                                                right: 10,
+                                                              ),
+                                                              child: Row(
+                                                                children: [
+                                                                  imageUrl !=
+                                                                          null
+                                                                      ? ClipRRect(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(10.0),
+                                                                          child:
+                                                                              Image.network(
+                                                                            imageUrl,
+                                                                            width:
+                                                                                MediaQuery.of(context).size.width * 0.25,
+                                                                            height:
+                                                                                120, // Adjust the height as needed
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                          ),
+                                                                        )
+                                                                      : Container(),
+                                                                  const SizedBox(
+                                                                      width:
+                                                                          10), // Add some spacing
+                                                                  Expanded(
+                                                                    child:
+                                                                        Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        Text(
+                                                                          title,
+                                                                          maxLines:
+                                                                              3,
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis,
+                                                                          style:
+                                                                              const TextStyle(
+                                                                            fontSize:
+                                                                                16,
+                                                                            fontFamily:
+                                                                                'InriaSerif',
+                                                                            color: Color.fromARGB(
+                                                                                255,
+                                                                                38,
+                                                                                20,
+                                                                                84),
+                                                                            fontWeight:
+                                                                                FontWeight.w600,
+                                                                          ),
+                                                                        ),
+                                                                        if (date !=
+                                                                            null)
+                                                                          SizedBox(
+                                                                            child:
+                                                                                Row(
+                                                                              children: [
+                                                                                const Icon(
+                                                                                  Icons.access_time,
+                                                                                  size: 17,
+                                                                                  color: Color.fromARGB(255, 106, 106, 106),
+                                                                                ),
+                                                                                const SizedBox(
+                                                                                  width: 7,
+                                                                                ),
+                                                                                Text(
+                                                                                  date,
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                  style: const TextStyle(
+                                                                                    color: Color.fromARGB(255, 106, 106, 106),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  IconButton(
+                                                                    icon: Icon(
+                                                                      starred![
+                                                                              index]
+                                                                          ? Icons
+                                                                              .bookmark
+                                                                          : Icons
+                                                                              .bookmark_border,
+                                                                      color: starred![
+                                                                              index]
+                                                                          ? const Color
+                                                                              .fromARGB(
+                                                                              255,
+                                                                              49,
+                                                                              205,
+                                                                              215)
+                                                                          : const Color
+                                                                              .fromARGB(
+                                                                              255,
+                                                                              49,
+                                                                              205,
+                                                                              215),
+                                                                      size: 25,
+                                                                    ),
+                                                                    onPressed:
+                                                                        () async {
+                                                                      logger.info(
+                                                                          "clicked");
+                                                                      DBHelper
+                                                                          dbHelper =
+                                                                          DBHelper
+                                                                              .instance;
+                                                                      var response;
+                                                                      if (starred![
+                                                                          index]) {
+                                                                        response =
+                                                                            await dbHelper.deleteFavorite(url);
+                                                                        logger.info(
+                                                                            response);
+                                                                      } else {
+                                                                        response = await dbHelper.addFavorite(
+                                                                            url,
+                                                                            title,
+                                                                            imageUrl,
+                                                                            date);
+                                                                      }
+                                                                      logger.info(
+                                                                          response);
+                                                                      setState(
+                                                                        () {
+                                                                          starred![index] =
+                                                                              !starred![index];
+                                                                          if (!starred![
+                                                                              index]) {
+                                                                            fav.removeAt(index);
+                                                                          }
+                                                                        },
+                                                                      );
+                                                                    },
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
                                               ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(
-                                                    10), // Change this value as needed
-                                              ),
-                                            ),
-                                            child: const Text(
-                                              'Cancel',
-                                              style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 38, 20, 84),
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                        ),
                                       ],
                                     ),
                                   ),
@@ -4128,8 +4406,16 @@ class _ProfileState extends State<Profile> {
                 height: 5,
               ),
               GestureDetector(
-                onTap: () {
-                  // Handle your tap event here...
+                onTap: () async {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Membership(
+                        username: username_,
+                        index: 1,
+                      ),
+                    ),
+                  );
                 },
                 child: Container(
                   decoration: const BoxDecoration(
@@ -4186,7 +4472,186 @@ class _ProfileState extends State<Profile> {
               ),
               GestureDetector(
                 onTap: () {
-                  // Handle your tap event here...
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    useRootNavigator: true,
+                    builder: (context) {
+                      return SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.9,
+                        child: Stack(
+                          //mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                          children: [
+                            ShaderMask(
+                              shaderCallback: (Rect bounds) {
+                                return const LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: <Color>[
+                                    Colors.transparent,
+                                    Colors.white
+                                  ],
+                                  stops: <double>[0.75, 0.85],
+                                ).createShader(bounds);
+                              },
+                              blendMode: BlendMode.dstOut,
+                              child: SingleChildScrollView(
+                                child: Container(
+                                  padding: const EdgeInsets.only(
+                                    left: 30,
+                                    right: 30,
+                                    top: 20,
+                                    bottom: 10,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'AGREEMENT',
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          color: Color.fromARGB(
+                                              255, 173, 173, 173),
+                                          fontWeight: FontWeight.normal,
+                                          fontFamily: 'Inter',
+                                        ),
+                                      ),
+                                      const Text(
+                                        'Terms of Service',
+                                        style: TextStyle(
+                                          fontSize: 32.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20.0),
+                                      const Text(
+                                        '1. OUR SERVICES',
+                                        style: TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const Text(
+                                        'The information provided when using the Services is not intended for distribution to or use by any person or entity in any jurisdiction or country where such distribution or use would be contrary to law or regulation or which would subject us to any registration requirement within such jurisdiction or country. Accordingly, those persons who choose to access the Services from other locations do so on their own initiative and are solely responsible for compliance with local laws, if and to the extent local laws are applicable.',
+                                        style: TextStyle(fontSize: 18.0),
+                                      ),
+                                      const SizedBox(height: 10.0),
+                                      const Text(
+                                        '2. Use License',
+                                        style: TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const Text(
+                                        'Subject to your compliance with these Legal Terms, including the "PROHIBITED ACTIVITIES" section below, we grant you a non-exclusive, non-transferable, revocable license to: access the Services; and download or print a copy of any portion of the Content to which you have properly gained access. solely for your personal, non-commercial use or internal business purpose. Except as set out in this section or elsewhere in our Legal Terms, no part of the Services and no Content or Marks may be copied, reproduced, aggregated, ',
+                                        style: TextStyle(fontSize: 18.0),
+                                      ),
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.15,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 20,
+                                  right: 20,
+                                  bottom: 40,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    /*SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.4,
+                                      child: ElevatedButton(
+                                        style: ButtonStyle(
+                                          shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                              side: const BorderSide(
+                                                color: Color.fromARGB(
+                                                  255,
+                                                  49,
+                                                  205,
+                                                  215,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          'Close',
+                                          style: TextStyle(
+                                            color: Color.fromARGB(
+                                              255,
+                                              49,
+                                              205,
+                                              215,
+                                            ),
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ),
+                                    */
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.5,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: const Color.fromARGB(
+                                            255,
+                                            49,
+                                            205,
+                                            215,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                10), // Change this value as needed
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          'Close',
+                                          style: TextStyle(
+                                            color: Color.fromARGB(
+                                              255,
+                                              255,
+                                              249,
+                                              254,
+                                            ),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
                 },
                 child: Container(
                   decoration: const BoxDecoration(
