@@ -32,6 +32,8 @@ Timer? _timer;
 var selectedIndex = 0;
 List articles = [];
 List<bool>? starred;
+late List filteredArticles;
+late List restArticles;
 
 class _AppState extends State<App> {
   void fetchArticles() async {
@@ -76,6 +78,31 @@ class _AppState extends State<App> {
     }
   }
 
+  void filtered() {
+    filteredArticles =
+        articles.where((article) => article['thumbnail'] != null).toList();
+    filteredArticles.sort((a, b) {
+      if (a['date'] != null && b['date'] != null) {
+        try {
+          DateFormat format = DateFormat("MMM dd, yyyy");
+          DateTime dateA = format.parse(a['date']);
+          DateTime dateB = format.parse(b['date']);
+          return dateB.compareTo(dateA);
+        } catch (e) {
+          return 0;
+        }
+      }
+      return 0;
+    });
+    filteredArticles = filteredArticles.take(5).toList();
+    restArticles = articles
+        .where((article) => !filteredArticles.any(
+            (filteredArticle) => filteredArticle['title'] == article['title']))
+        .toList();
+    finalList = [...filteredArticles, ...restArticles];
+    print(restArticles);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -84,6 +111,7 @@ class _AppState extends State<App> {
 
     starred = [];
     fetchArticles();
+    filtered();
   }
 
   @override
@@ -2144,6 +2172,7 @@ class _DashboardState extends State<Dashboard> {
 
 // class Settings extends StatelessWidget {
 //   //const Settings({Key? key}) : super(key: key);
+late List finalList;
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -2198,23 +2227,6 @@ class _ArticlesState extends State<Articles> {
   bool _isPressed = false;
   @override
   Widget build(BuildContext context) {
-    List filteredArticles =
-        articles.where((article) => article['thumbnail'] != null).toList();
-    filteredArticles.sort((a, b) {
-      if (a['date'] != null && b['date'] != null) {
-        try {
-          DateFormat format = DateFormat("MMM dd, yyyy");
-          DateTime dateA = format.parse(a['date']);
-          DateTime dateB = format.parse(b['date']);
-          return dateB.compareTo(dateA);
-        } catch (e) {
-          return 0;
-        }
-      }
-      return 0;
-    });
-    filteredArticles = filteredArticles.take(5).toList();
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -2469,16 +2481,12 @@ class _ArticlesState extends State<Articles> {
                       child: ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: articles
-                            .where((article) =>
-                                !filteredArticles.contains(article))
-                            .toList()
-                            .length,
+                        itemCount: restArticles.length,
                         itemBuilder: (context, index) {
-                          String? imageUrl = articles[index]['thumbnail'];
-                          String title = articles[index]['title'];
-                          String url = articles[index]['link'];
-                          String? date = articles[index]['date'];
+                          String? imageUrl = restArticles[index]['thumbnail'];
+                          String title = restArticles[index]['title'];
+                          String url = restArticles[index]['link'];
+                          String? date = restArticles[index]['date'];
 
                           return SizedBox(
                             height: imageUrl != null
@@ -2564,12 +2572,10 @@ class _ArticlesState extends State<Articles> {
                                       ),
                                       IconButton(
                                         icon: Icon(
-                                          starred![index +
-                                                  filteredArticles.length]
+                                          starred![5 + index]
                                               ? Icons.bookmark
                                               : Icons.bookmark_border,
-                                          color: starred![index +
-                                                  filteredArticles.length]
+                                          color: starred![5 + index]
                                               ? const Color.fromARGB(
                                                   255, 49, 205, 215)
                                               : const Color.fromARGB(
@@ -2580,8 +2586,7 @@ class _ArticlesState extends State<Articles> {
                                           logger.info("clicked");
                                           DBHelper dbHelper = DBHelper.instance;
                                           var response;
-                                          if (starred![index +
-                                              filteredArticles.length]) {
+                                          if (starred![5 + index]) {
                                             response = await dbHelper
                                                 .deleteFavorite(url);
                                             logger.info(response);
@@ -2593,10 +2598,8 @@ class _ArticlesState extends State<Articles> {
                                           logger.info(response);
                                           setState(
                                             () {
-                                              starred![index +
-                                                      filteredArticles.length] =
-                                                  !starred![index +
-                                                      filteredArticles.length];
+                                              starred![5 + index] =
+                                                  !starred![5 + index];
                                             },
                                           );
                                         },
@@ -3278,7 +3281,7 @@ class _ProfileState extends State<Profile> {
   void favorites() {
     for (int i = 0; i < articles.length; i++) {
       if (starred![i]) {
-        fav.add(articles[i]);
+        fav.add(finalList[i]);
       }
     }
   }
