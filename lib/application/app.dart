@@ -112,7 +112,9 @@ class _AppState extends State<App> {
     super.initState();
     TotalCarbs();
     selectedIndex = 0;
-
+    filteredArticles = [];
+    restArticles = [];
+    finalList = [];
     starred = [];
     fetchArticles();
   }
@@ -3269,7 +3271,7 @@ class _ProfileState extends State<Profile> {
   late final TextEditingController _userController;
   late final TextEditingController _controllerEmail;
   late final TextEditingController _pnController;
-
+  List<bool>? fav;
   void _pickImage(StateSetter setState) async {
     final ImagePicker _picker = ImagePicker();
     final XFile? image = (await _picker.pickImage(source: ImageSource.gallery));
@@ -3277,6 +3279,19 @@ class _ProfileState extends State<Profile> {
     setState(() {
       _selectedImage = image;
     });
+  }
+
+  Future<void> resizeFavList() async {
+    List<Map> articles = await db.selectAllArticle();
+    int length = articles.length;
+
+    if (fav!.length > length) {
+      fav?.length = length;
+    } else {
+      while (fav!.length < length) {
+        fav?.add(true);
+      }
+    }
   }
 
   @override
@@ -3294,6 +3309,7 @@ class _ProfileState extends State<Profile> {
         setState(() {});
       });
     }
+    resizeFavList();
   }
 
   @override
@@ -4164,8 +4180,7 @@ class _ProfileState extends State<Profile> {
                                     child: Column(
                                       children: [
                                         FutureBuilder<List<Map>>(
-                                          future: db
-                                              .selectAllArticle(), // your function to get all articles
+                                          future: db.selectAllArticle(),
                                           builder: (BuildContext context,
                                               AsyncSnapshot<List<Map>>
                                                   snapshot) {
