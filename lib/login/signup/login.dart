@@ -55,6 +55,7 @@ class _LoginState extends State<Login> {
   bool _isLoading = false;
 
   Future<void> _signIn(String email, String password) async {
+    logger.info("signing in");
     setState(() {
       _isLoading = true;
     });

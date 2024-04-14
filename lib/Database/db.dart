@@ -37,9 +37,11 @@ class DBHelper {
 
   _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < newVersion) {
-      await db.execute('''
-      ALTER TABLE Entry ADD COLUMN unit INTEGER NULL;
-      ''');
+      var tableInfo = await db.rawQuery('PRAGMA table_info(Entry)');
+      var columnExists = tableInfo.any((column) => column['name'] == 'unit');
+      if (!columnExists) {
+        await db.execute('ALTER TABLE Entry ADD COLUMN unit INTEGER NULL');
+      }
       await db.execute('''DROP TABLE IF EXISTS "Favorites";''');
       print("Dropped Favorites table");
       await db.execute('''DROP TABLE IF EXISTS "Articles";''');
