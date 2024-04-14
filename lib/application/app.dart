@@ -3,11 +3,9 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
@@ -79,7 +77,8 @@ class _AppState extends State<App> {
       }
     }
     filtered();
-    print(articles);
+    //print(articles);
+    logger.info(articles);
   }
 
   void filtered() {
@@ -104,7 +103,8 @@ class _AppState extends State<App> {
             (filteredArticle) => filteredArticle['title'] == article['title']))
         .toList();
     finalList = [...filteredArticles, ...restArticles];
-    print(restArticles);
+    //print(restArticles);
+    logger.info(restArticles);
   }
 
   @override
@@ -562,9 +562,9 @@ class _DashboardState extends State<Dashboard> {
                       Icon(
                         g ? Icons.circle : Icons.circle_outlined,
                         size: 13,
-                        color: Color.fromARGB(255, 132, 135, 195),
+                        color: const Color.fromARGB(255, 132, 135, 195),
                       ),
-                      Text('Glucose Levels'),
+                      const Text('Glucose Levels'),
                     ],
                   ),
                 ),
@@ -582,9 +582,9 @@ class _DashboardState extends State<Dashboard> {
                       Icon(
                         c ? Icons.circle : Icons.circle_outlined,
                         size: 13,
-                        color: Color.fromARGB(255, 22, 161, 170),
+                        color: const Color.fromARGB(255, 22, 161, 170),
                       ),
-                      Text('Carbs'),
+                      const Text('Carbs'),
                     ],
                   ),
                 ),
@@ -855,7 +855,7 @@ class _DashboardState extends State<Dashboard> {
                                                       child: Text(
                                                         overflow: TextOverflow
                                                             .ellipsis,
-                                                        latestEntry['unit'] == 0
+                                                        glucoseUnit_ == 0
                                                             ? "mmol/L"
                                                             : "mg/dL",
                                                         style: TextStyle(
@@ -1502,8 +1502,8 @@ class _DashboardState extends State<Dashboard> {
                                       //padding: const EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
-                                        color:
-                                            Color.fromARGB(255, 255, 255, 255),
+                                        color: const Color.fromARGB(
+                                            255, 255, 255, 255),
                                       ),
                                       child: Center(
                                         child: Column(
@@ -2653,7 +2653,8 @@ class _AddInputState extends State<AddInput> {
     if (_GlucoseController.text.isNotEmpty && showTotalCarbs == true) {
       glucoseLevel = double.parse(_GlucoseController.text);
 
-      int bolusCalculationResult = calculateDosage(totalCarbs, glucoseLevel);
+      int bolusCalculationResult = calculateDosage(
+          totalCarbs, glucoseLevel, double.parse(carbRatioSelected!));
       bolusCalculation.value = bolusCalculationResult + 0;
       DBHelper dbHelper = DBHelper.instance;
       DateTime now = DateTime.now();
@@ -2771,10 +2772,16 @@ class _AddInputState extends State<AddInput> {
                                                   date,
                                                   chosenMeals,
                                                   glucoseUnit_);
-                                              print('Chosen Meals:');
-                                              print(chosenMeals);
-                                              print('Total Carbs:');
-                                              print(calculateTotalCarbs(
+                                              // print('Chosen Meals:');
+                                              // print(chosenMeals);
+                                              // print('Total Carbs:');
+                                              // print(calculateTotalCarbs(
+                                              //     getChosenMeals()));
+
+                                              logger.info('Chosen Meals:');
+                                              logger.info(chosenMeals);
+                                              logger.info('Total Carbs:');
+                                              logger.info(calculateTotalCarbs(
                                                   getChosenMeals()));
 
                                               Navigator.of(context).pop();
@@ -5117,43 +5124,39 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  Widget settingItem(String title, String value, VoidCallback onTap) {
+  Widget settingItem(String title, String value, VoidCallback onTap,
+      {VoidCallback? onDelete}) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded(
-          flex: 2,
-          child: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              color: Color.fromARGB(255, 38, 20, 84),
-              fontWeight: FontWeight.bold,
-            ),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 18,
+            color: Color.fromARGB(255, 38, 20, 84),
+            fontWeight: FontWeight.bold,
           ),
         ),
-        Expanded(
-          flex: 1,
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                  textAlign: TextAlign.right, // Align text to the right
-                ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 18,
               ),
-              Align(
-                alignment: Alignment.centerRight, // Align icon to the right
-                child: IconButton(
-                  icon: const Icon(Icons.edit,
-                      color: Color.fromARGB(255, 22, 161, 170)),
-                  onPressed: onTap,
-                ),
+            ),
+            if (onDelete != null)
+              IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: onDelete,
               ),
-            ],
-          ),
+            IconButton(
+              icon: const Icon(Icons.edit,
+                  color: Color.fromARGB(255, 22, 161, 170)),
+              onPressed: onTap,
+            ),
+          ],
         ),
       ],
     );
@@ -5328,6 +5331,75 @@ class _SettingsState extends State<Settings> {
     );
   }
 
+  List<Widget> carbRatioSettings() {
+    List<Function> carbRatios = [
+      (value) => carbRatio_ = value,
+      (value) => carbRatio_2 = value,
+      (value) => carbRatio_3 = value,
+    ];
+    List<Function> carbs = [
+      (value) => value != null ? carbs_ = value : carbs_,
+      (value) => value != null ? carbs_2 = value : carbs_2,
+      (value) => value != null ? carbs_3 = value : carbs_3,
+    ];
+    List<Function> insulins = [
+      (value) => value != null ? insulin_ = value : insulin_,
+      (value) => value != null ? insulin_2 = value : insulin_2,
+      (value) => value != null ? insulin_3 = value : insulin_3,
+    ];
+
+    List<Widget> settings = [];
+
+    for (int i = 0; i < numOfRatios_; i++) {
+      settings.add(
+        settingItem(
+          'Carb Ratio ${i + 1}:',
+          "${carbUnit_ == 0 ? (carbs[i](null)).toString() : (carbs[i](null) / 15).toString()}/${insulins[i](null)}",
+          () async {
+            Map<String, double>? newCarbRatio =
+                await showDialog<Map<String, double>>(
+              context: context,
+              builder: (context) => carbRatioInputDialog(
+                'Enter new carb ratio',
+                carbUnit_ == 0 ? carbs[i](null) : carbs[i](null) / 15,
+                insulins[i](null),
+              ),
+            );
+            if (newCarbRatio != null) {
+              setState(() {
+                carbs[i](carbUnit_ == 0
+                    ? newCarbRatio['carbs']!
+                    : newCarbRatio['carbs']! * 15);
+                insulins[i](newCarbRatio['insulin']!);
+                carbRatios[i](insulins[i](null) /
+                    (carbUnit_ == 0
+                        ? carbs[i](null) / 15
+                        : newCarbRatio['carbs']!));
+                saveValues();
+              });
+            }
+          },
+          onDelete: i == numOfRatios_ - 1 && numOfRatios_ > 1
+              ? () => setState(() => numOfRatios_--)
+              : null,
+        ),
+      );
+      settings.add(const SizedBox(height: 20));
+    }
+
+    if (numOfRatios_ < 3) {
+      settings.add(
+        ElevatedButton.icon(
+          onPressed: () => setState(() => numOfRatios_++),
+          icon: const Icon(Icons.add),
+          label: const Text('Add Carb Ratio'),
+        ),
+      );
+    }
+
+    return settings;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -5417,32 +5489,32 @@ class _SettingsState extends State<Settings> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                settingItem('Carb Ratio:',
-                    "${carbUnit_ == 0 ? (carbs_).toString() : (carbs_ / 15).toString()}/$insulin_",
-                    () async {
-                  Map<String, double>? newCarbRatio =
-                      await showDialog<Map<String, double>>(
-                    context: context,
-                    builder: (context) => carbRatioInputDialog(
-                        'Enter new carb ratio',
-                        carbUnit_ == 0 ? carbs_ : carbs_ / 15,
-                        insulin_),
-                  );
-                  if (newCarbRatio != null) {
-                    setState(() {
-                      carbs_ = carbUnit_ == 0
-                          ? newCarbRatio['carbs']!
-                          : newCarbRatio['carbs']! * 15;
-                      insulin_ = newCarbRatio['insulin']!;
-                      carbRatio_ = insulin_ /
-                          (carbUnit_ == 0
-                              ? carbs_ / 15
-                              : newCarbRatio['carbs']!);
-                      saveValues();
-                    });
-                  }
-                }),
-                const SizedBox(height: 20),
+                // settingItem('Carb Ratio:',
+                //     "${carbUnit_ == 0 ? (carbs_).toString() : (carbs_ / 15).toString()}/$insulin_",
+                //     () async {
+                //   Map<String, double>? newCarbRatio =
+                //       await showDialog<Map<String, double>>(
+                //     context: context,
+                //     builder: (context) => carbRatioInputDialog(
+                //         'Enter new carb ratio',
+                //         carbUnit_ == 0 ? carbs_ : carbs_ / 15,
+                //         insulin_),
+                //   );
+                //   if (newCarbRatio != null) {
+                //     setState(() {
+                //       carbs_ = carbUnit_ == 0
+                //           ? newCarbRatio['carbs']!
+                //           : newCarbRatio['carbs']! * 15;
+                //       insulin_ = newCarbRatio['insulin']!;
+                //       carbRatio_ = insulin_ /
+                //           (carbUnit_ == 0
+                //               ? carbs_ / 15
+                //               : newCarbRatio['carbs']!);
+                //       saveValues();
+                //     });
+                //   }
+                // }),
+
                 settingItem(
                     'Target Glucose:',
                     (glucoseUnit_ == 1
@@ -5492,6 +5564,8 @@ class _SettingsState extends State<Settings> {
                     });
                   }
                 }),
+                const SizedBox(height: 20),
+                ...carbRatioSettings(),
               ],
             ),
           ),

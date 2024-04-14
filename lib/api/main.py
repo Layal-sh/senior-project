@@ -12,6 +12,7 @@ import requests
 from serpapi import GoogleSearch
 import time
 import threading
+import platform
 ###########################################
 ##########|API functionality|##############
 ###########################################
@@ -42,8 +43,11 @@ server = 'sugarsense.database.windows.net'
 database = 'sugarsensedb'
 username = 'sugaradmin'
 password = 'SUG@Rs!!7891'
-driver= '{ODBC Driver 17 for SQL Server}'
-#driver= '{ODBC Driver 18 for SQL Server}'
+
+if platform.system() == "Windows":
+    driver = '{ODBC Driver 17 for SQL Server}'
+else:
+    driver= '{ODBC Driver 18 for SQL Server}'
 
 connection_string = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password};'
 cnxn = pyodbc.connect(connection_string)
