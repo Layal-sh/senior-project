@@ -40,9 +40,9 @@ class _AppState extends State<App> {
   void fetchArticles() async {
     List<String> searches = [
       'diabetes type 1',
-      'diabetes lifestyle',
-      'diabetes article',
-      'diabetes insulin'
+      //'diabetes lifestyle',
+      //'diabetes article',
+      //'diabetes insulin'
     ];
 
     for (String s in searches) {
@@ -70,6 +70,7 @@ class _AppState extends State<App> {
           }
           return 0;
         });
+
         if (mounted) {
           setState(() {
             articles.addAll(responseData);
@@ -77,6 +78,8 @@ class _AppState extends State<App> {
         }
       }
     }
+    filtered();
+    print(articles);
   }
 
   void filtered() {
@@ -112,7 +115,6 @@ class _AppState extends State<App> {
 
     starred = [];
     fetchArticles();
-    filtered();
   }
 
   @override

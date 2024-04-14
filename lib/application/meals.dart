@@ -374,44 +374,20 @@ class _MealsState extends State<Meals> {
                                 right: 15,
                               ),
                               itemCount: meals.length,
-                              itemBuilder: (ctx, i) => Stack(
-                                clipBehavior: Clip.none,
-                                children: [
-                                  MealBox(
-                                    meal: Meal(
-                                      name: meals[i]['mealName'],
-                                      // ignore: prefer_interpolation_to_compose_strings
-                                      imageUrl: 'assets/' +
-                                          (meals[i]['mealPicture'] ??
-                                              'AddDish.png'),
-                                      id: meals[i]['mealId'],
-                                      carbohydrates: meals[i]['carbohydrates'],
-                                      unit: meals[i]['unit'],
-                                      quantity: 1,
-                                      ingredients: [],
-                                    ),
-                                    ind: widget.Index,
-                                  ),
-                                  if (selectedCategory == 'my meals')
-                                    Positioned(
-                                      top: -15,
-                                      left: -15,
-                                      child: IconButton(
-                                        icon: Icon(
-                                          Icons.delete,
-                                          size: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.09,
-                                          color: const Color.fromARGB(
-                                              255, 12, 140, 149),
-                                        ),
-                                        onPressed: () {
-                                          // Add your delete functionality here
-                                        },
-                                      ),
-                                    ),
-                                ],
+                              itemBuilder: (ctx, i) => MealBox(
+                                meal: Meal(
+                                  name: meals[i]['mealName'],
+                                  // ignore: prefer_interpolation_to_compose_strings
+                                  imageUrl: 'assets/' +
+                                      (meals[i]['mealPicture'] ??
+                                          'AddDish.png'),
+                                  id: meals[i]['mealId'],
+                                  carbohydrates: meals[i]['carbohydrates'],
+                                  unit: meals[i]['unit'],
+                                  quantity: 1,
+                                  ingredients: [],
+                                ),
+                                ind: widget.Index,
                               ),
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(

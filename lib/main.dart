@@ -18,8 +18,7 @@ bool isNotMobile = false;
 String localhost = "";
 
 Future<void> main() async {
-  Logger.root.level =
-      Level.ALL; // Set this level to control which log messages are shown
+  Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {
     print('${record.level.name}: ${record.time}: ${record.message}');
   });
