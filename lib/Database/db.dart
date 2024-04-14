@@ -31,7 +31,7 @@ class DBHelper {
     String DbPath = await getDatabasesPath();
     String path = join(DbPath, 'SugarSense.db');
     Database database = await openDatabase(path,
-        onCreate: _onCreate, version: 33, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 34, onUpgrade: _onUpgrade);
     return database;
   }
 
@@ -839,7 +839,7 @@ class DBHelper {
   }
 
 //get all articles from the database
-  selectAllArticle() async {
+  Future<List<Map>> selectAllArticle() async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
     SELECT * FROM Articles ;
