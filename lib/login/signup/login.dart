@@ -62,7 +62,7 @@ class _LoginState extends State<Login> {
 
     logger.info("syncing meals from the server to the local database");
     DBHelper dbHelper = DBHelper.instance;
-    dbHelper.dropAllArticles();
+    //dbHelper.dropAllArticles();
     //print(await dbHelper.selectAllArticle());
     // await dbHelper.deleteMealComposition();
     await dbHelper.syncMeals();
