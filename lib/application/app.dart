@@ -34,6 +34,7 @@ List articles = [];
 List<bool>? starred;
 late List filteredArticles;
 late List restArticles;
+late List finalList;
 
 class _AppState extends State<App> {
   void fetchArticles() async {
@@ -2172,7 +2173,6 @@ class _DashboardState extends State<Dashboard> {
 
 // class Settings extends StatelessWidget {
 //   //const Settings({Key? key}) : super(key: key);
-late List finalList;
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -3277,15 +3277,6 @@ class _ProfileState extends State<Profile> {
     });
   }
 
-  List fav = [];
-  void favorites() {
-    for (int i = 0; i < articles.length; i++) {
-      if (starred![i]) {
-        fav.add(finalList[i]);
-      }
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -3295,11 +3286,12 @@ class _ProfileState extends State<Profile> {
     if (profilePicture_ != '') {
       _selectedImage = XFile(profilePicture_);
     }
-    favorites();
-
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {});
-    });
+    //favorites();
+    if (mounted) {
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        setState(() {});
+      });
+    }
   }
 
   @override
@@ -4169,7 +4161,205 @@ class _ProfileState extends State<Profile> {
                                     ),
                                     child: Column(
                                       children: [
-                                        (fav.isEmpty || starred == null)
+                                        FutureBuilder<List<Map>>(
+                                          future: db
+                                              .selectAllArticle(), // your function to get all articles
+                                          builder: (BuildContext context,
+                                              AsyncSnapshot<List<Map>>
+                                                  snapshot) {
+                                            if (snapshot.hasData) {
+                                              return ListView.builder(
+                                                shrinkWrap: true,
+                                                physics:
+                                                    const NeverScrollableScrollPhysics(),
+                                                itemCount:
+                                                    snapshot.data!.length,
+                                                itemBuilder:
+                                                    (BuildContext context,
+                                                        int index) {
+                                                  Map article =
+                                                      snapshot.data![index];
+                                                  return Row(
+                                                    children: [
+                                                      article['thumbnail'] !=
+                                                              null
+                                                          ? ClipRRect(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10.0),
+                                                              child:
+                                                                  Image.network(
+                                                                article[
+                                                                    'thumbnail'],
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.25,
+                                                                height:
+                                                                    120, // Adjust the height as needed
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ),
+                                                            )
+                                                          : Container(),
+                                                      const SizedBox(
+                                                          width:
+                                                              10), // Add some spacing
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              article['title'],
+                                                              maxLines: 3,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 16,
+                                                                fontFamily:
+                                                                    'InriaSerif',
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                        255,
+                                                                        38,
+                                                                        20,
+                                                                        84),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                            ),
+                                                            if (article[
+                                                                    'date'] !=
+                                                                null)
+                                                              SizedBox(
+                                                                child: Row(
+                                                                  children: [
+                                                                    const Icon(
+                                                                      Icons
+                                                                          .access_time,
+                                                                      size: 17,
+                                                                      color: Color.fromARGB(
+                                                                          255,
+                                                                          106,
+                                                                          106,
+                                                                          106),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      width: 7,
+                                                                    ),
+                                                                    Text(
+                                                                      article[
+                                                                          'date'],
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      style:
+                                                                          const TextStyle(
+                                                                        color: Color.fromARGB(
+                                                                            255,
+                                                                            106,
+                                                                            106,
+                                                                            106),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      IconButton(
+                                                        icon: Icon(
+                                                          starred![index]
+                                                              ? Icons.bookmark
+                                                              : Icons
+                                                                  .bookmark_border,
+                                                          color: starred![index]
+                                                              ? const Color
+                                                                  .fromARGB(255,
+                                                                  49, 205, 215)
+                                                              : const Color
+                                                                  .fromARGB(255,
+                                                                  49, 205, 215),
+                                                          size: 25,
+                                                        ),
+                                                        onPressed: () async {
+                                                          logger
+                                                              .info("clicked");
+                                                          DBHelper dbHelper =
+                                                              DBHelper.instance;
+                                                          var response;
+                                                          if (starred![index]) {
+                                                            response = await dbHelper
+                                                                .deleteFavorite(
+                                                                    article[
+                                                                        'link']);
+                                                            logger
+                                                                .info(response);
+                                                          } else {
+                                                            response = await dbHelper
+                                                                .addFavorite(
+                                                                    article[
+                                                                        'link'],
+                                                                    article[
+                                                                        'title'],
+                                                                    article[
+                                                                        'thumbnail'],
+                                                                    article[
+                                                                        'date']);
+                                                          }
+                                                          logger.info(response);
+                                                          setState(
+                                                            () {
+                                                              starred![index] =
+                                                                  !starred![
+                                                                      index];
+                                                              /*if (!starred![
+                                                                  index]) {
+                                                                fav.removeAt(
+                                                                    index);
+                                                              }*/
+                                                            },
+                                                          );
+                                                        },
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            } else if (snapshot.hasError) {
+                                              return Text(
+                                                  'Error: ${snapshot.error}');
+                                            } else if (!snapshot.hasData) {
+                                              return Center(
+                                                child: Column(
+                                                  children: [
+                                                    SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.4,
+                                                    ),
+                                                    const Text(
+                                                      'You have no saved articles',
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            } else {
+                                              return CircularProgressIndicator();
+                                            }
+                                          },
+                                        ),
+                                        /*(fav.isEmpty || starred == null)
                                             ? Center(
                                                 child: Column(
                                                   children: [
@@ -4198,16 +4388,16 @@ class _ProfileState extends State<Profile> {
                                                     itemBuilder:
                                                         (context, index) {
                                                       String? imageUrl =
-                                                          articles[index]
+                                                          finalList[index]
                                                               ['thumbnail'];
                                                       String title =
-                                                          articles[index]
+                                                          finalList[index]
                                                               ['title'];
                                                       String url =
-                                                          articles[index]
+                                                          finalList[index]
                                                               ['link'];
                                                       String? date =
-                                                          articles[index]
+                                                          finalList[index]
                                                               ['date'];
 
                                                       return SizedBox(
@@ -4386,6 +4576,7 @@ class _ProfileState extends State<Profile> {
                                                   ),
                                                 ),
                                               ),
+                                     */
                                       ],
                                     ),
                                   ),

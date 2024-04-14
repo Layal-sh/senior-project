@@ -837,7 +837,7 @@ class DBHelper {
   }
 
 //get all articles from the database
-  selectAllArticle() async {
+  Future<List<Map>> selectAllArticle() async {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
     SELECT * FROM Articles ;
