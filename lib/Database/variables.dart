@@ -22,7 +22,7 @@ Future<void> savePreferences() async {
 
 Future<void> saveValues() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-
+  await prefs.setInt('numOfRatios', numOfRatios_);
   await prefs.setInt('targetBloodSugar', targetBloodSugar_);
   await prefs.setInt('insulinSensitivity', insulinSensitivity_);
   await prefs.setDouble('carbRatio', carbRatio_);
@@ -30,6 +30,10 @@ Future<void> saveValues() async {
   await prefs.setDouble('carbRatio3', carbRatio_3);
   await prefs.setDouble('carbs', carbs_);
   await prefs.setDouble('insulin', insulin_);
+  await prefs.setDouble('carbs2', carbs_2);
+  await prefs.setDouble('insulin2', insulin_2);
+  await prefs.setDouble('carbs3', carbs_3);
+  await prefs.setDouble('insulin3', insulin_3);
   await prefs.setString('username', username_);
   await prefs.setString('privacy', privacy_);
 }
@@ -90,9 +94,14 @@ Future<void> loadPreferences() async {
   privacy_ = prefs.getString('privacy') ?? "111";
   glucoseUnit_ = prefs.getInt('glucoseUnit') ?? 0;
   carbUnit_ = prefs.getInt('carbUnit') ?? 0;
-  carbs_ = prefs.getDouble('carbs_') ?? 0;
-  insulin_ = prefs.getDouble('insulin_') ?? 0;
+  carbs_ = prefs.getDouble('carbs') ?? 0;
+  insulin_ = prefs.getDouble('insulin') ?? 0;
+  carbs_2 = prefs.getDouble('carbs_') ?? 0;
+  insulin_3 = prefs.getDouble('insulin2') ?? 0;
+  carbs_3 = prefs.getDouble('carbs3') ?? 0;
+  insulin_3 = prefs.getDouble('insulin3') ?? 0;
   selectedPlan_ = prefs.getInt('selectedPlan_') ?? -1;
+  numOfRatios_ = prefs.getInt('numOfRatios') ?? 1;
 }
 
 //0 mmol/L
@@ -116,4 +125,9 @@ int glucoseUnit_ = 0;
 int carbUnit_ = 0;
 double carbs_ = 0;
 double insulin_ = 0;
+double carbs_2 = 0;
+double insulin_2 = 0;
+double carbs_3 = 0;
+double insulin_3 = 0;
 int selectedPlan_ = -1;
+int numOfRatios_ = 1;
