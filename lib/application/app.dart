@@ -3115,7 +3115,7 @@ class _AddInputState extends State<AddInput> {
                                       ),
                                     if (showTotalCarbs)
                                       Text(
-                                        '$totalCarbs',
+                                        '${carbUnit_ == 0 ? totalCarbs : totalCarbs ~/ 15}',
                                         style: const TextStyle(
                                           fontSize: 20,
                                           color: Color.fromARGB(255, 0, 0, 0),
@@ -3128,9 +3128,9 @@ class _AddInputState extends State<AddInput> {
                               const SizedBox(
                                 width: 0,
                               ),
-                              const Text(
-                                "grams",
-                                style: TextStyle(
+                              Text(
+                                carbUnit_ == 0 ? "grams" : "exchanges",
+                                style: const TextStyle(
                                     fontSize: 18,
                                     color: Color.fromARGB(255, 0, 0, 0),
                                     fontWeight: FontWeight.w300),
@@ -5391,7 +5391,13 @@ class _SettingsState extends State<Settings> {
             }
           },
           onDelete: i == numOfRatios_ - 1 && numOfRatios_ > 1
-              ? () => setState(() => numOfRatios_--)
+              ? () => setState(() {
+                    carbs[i](0.0);
+                    insulins[i](0.0);
+                    carbRatios[i](0.0);
+                    numOfRatios_--;
+                    saveValues();
+                  })
               : null,
         ),
       );
@@ -5409,6 +5415,21 @@ class _SettingsState extends State<Settings> {
     }
 
     return settings;
+  }
+
+  Widget settingsTitle(String text) {
+    return Container(
+      color: Colors.grey[200], // adjust the shade of gray as needed
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+          color: Color.fromARGB(255, 38, 20, 84),
+        ),
+      ),
+    );
   }
 
   @override
@@ -5442,6 +5463,8 @@ class _SettingsState extends State<Settings> {
       ),
       body: ListView(
         children: <Widget>[
+          settingsTitle("Units:"),
+          //const Divider(color: Colors.grey, height: 2.0),
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -5469,6 +5492,7 @@ class _SettingsState extends State<Settings> {
               ],
             ),
           ),
+          //const Divider(color: Colors.grey, height: 20.0),
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -5495,6 +5519,8 @@ class _SettingsState extends State<Settings> {
               ],
             ),
           ),
+          const SizedBox(height: 20),
+          settingsTitle("Values:"),
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
