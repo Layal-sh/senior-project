@@ -227,6 +227,8 @@ class _UserInfoState extends State<UserInfo> {
                                         onTap: () {
                                           setState(() {
                                             unit1 = 0;
+                                            carbUnit_ = 0;
+                                            saveUnits();
                                           });
                                         },
                                         child: Container(
@@ -270,6 +272,8 @@ class _UserInfoState extends State<UserInfo> {
                                         onTap: () {
                                           setState(() {
                                             unit1 = 1;
+                                            carbUnit_ = 1;
+                                            saveUnits();
                                           });
                                         },
                                         child: Container(
@@ -775,6 +779,8 @@ class _UserInfoState extends State<UserInfo> {
                                           setState(() {
                                             unit2 = 0;
                                             unit3 = 0;
+                                            glucoseUnit_ = 0;
+                                            saveUnits();
                                           });
                                         },
                                         child: Container(
@@ -819,6 +825,8 @@ class _UserInfoState extends State<UserInfo> {
                                           setState(() {
                                             unit2 = 1;
                                             unit3 = 1;
+                                            glucoseUnit_ = 1;
+                                            saveUnits();
                                           });
                                         },
                                         child: Container(
@@ -916,6 +924,8 @@ class _UserInfoState extends State<UserInfo> {
                                         onTap: () {
                                           setState(() {
                                             unit3 = 0;
+                                            glucoseUnit_ = 0;
+                                            saveUnits();
                                           });
                                         },
                                         child: Container(
@@ -959,6 +969,8 @@ class _UserInfoState extends State<UserInfo> {
                                         onTap: () {
                                           setState(() {
                                             unit3 = 1;
+                                            glucoseUnit_ = 1;
+                                            saveUnits();
                                           });
                                         },
                                         child: Container(

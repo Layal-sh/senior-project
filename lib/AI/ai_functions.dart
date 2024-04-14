@@ -4,10 +4,11 @@ import 'package:path/path.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/Database/db.dart';
 
-int calculateDosage(double totalCarbs, double bloodSugar) {
+int calculateDosage(double totalCarbs, double bloodSugar, double carbRatio) {
   double ans = 0;
+  if (glucoseUnit_ == 0) bloodSugar = bloodSugar * 18.0156;
   ans += (bloodSugar - targetBloodSugar_) / insulinSensitivity_;
-  ans += ((totalCarbs / 15) * carbRatio_);
+  ans += ((totalCarbs / 15) * carbRatio);
   return ans.round();
 }
 
@@ -19,7 +20,7 @@ double calculateTotalCarbs(List<Map> meals) {
   return ans;
 }
 
-void updatePrevMeals(double bloodSugar) async {
+void updatePrevMeals(double bloodSugar, carbRatio) async {
   DBHelper dbHelper = DBHelper.instance;
   int prevEntryId = await (dbHelper.getLatestEntryId(1)[0]['entryId']);
   List<Map> hasMeals = await dbHelper.getMealsFromEntryID(prevEntryId);
@@ -52,7 +53,7 @@ void updatePrevMeals(double bloodSugar) async {
       meals.add(meal);
     }
     double unaccountedCarbs =
-        ((bloodSugarDiff / insulinSensitivity_) / carbRatio_) * 15;
+        ((bloodSugarDiff / insulinSensitivity_) / carbRatio) * 15;
     unaccountedCarbs /= 2;
     for (Map meal in meals) {
       double ratio = meal["blame"] / totalBlame;

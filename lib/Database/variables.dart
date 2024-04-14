@@ -81,7 +81,7 @@ Future<void> loadPreferences() async {
   pid_ = prefs.getInt('pid_') ?? 0;
   insulinSensitivity_ = prefs.getInt('insulinSensitivity') ?? 20;
   carbRatio_ = prefs.getDouble('carbRatio') ?? 3;
-  carbRatio_2 = prefs.getDouble('carbRatio2') ?? 4;
+  carbRatio_2 = prefs.getDouble('carbRatio2') ?? 0;
   carbRatio_3 = prefs.getDouble('carbRatio3') ?? 0;
   username_ = prefs.getString('username') ?? "";
   firstName_ = prefs.getString('firstName') ?? "";
@@ -94,12 +94,12 @@ Future<void> loadPreferences() async {
   privacy_ = prefs.getString('privacy') ?? "111";
   glucoseUnit_ = prefs.getInt('glucoseUnit') ?? 0;
   carbUnit_ = prefs.getInt('carbUnit') ?? 0;
-  carbs_ = prefs.getDouble('carbs') ?? 0;
-  insulin_ = prefs.getDouble('insulin') ?? 0;
-  carbs_2 = prefs.getDouble('carbs_') ?? 0;
-  insulin_3 = prefs.getDouble('insulin2') ?? 0;
-  carbs_3 = prefs.getDouble('carbs3') ?? 0;
-  insulin_3 = prefs.getDouble('insulin3') ?? 0;
+  carbs_ = prefs.getDouble('carbs') ?? 15;
+  insulin_ = prefs.getDouble('insulin') ?? carbRatio_;
+  carbs_2 = prefs.getDouble('carbs2') ?? 15;
+  insulin_3 = prefs.getDouble('insulin2') ?? carbRatio_2;
+  carbs_3 = prefs.getDouble('carbs3') ?? 15;
+  insulin_3 = prefs.getDouble('insulin3') ?? carbRatio_3;
   selectedPlan_ = prefs.getInt('selectedPlan_') ?? -1;
   numOfRatios_ = prefs.getInt('numOfRatios') ?? 1;
 }

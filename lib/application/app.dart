@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 
@@ -853,7 +854,7 @@ class _DashboardState extends State<Dashboard> {
                                                       child: Text(
                                                         overflow: TextOverflow
                                                             .ellipsis,
-                                                        latestEntry['unit'] == 0
+                                                        glucoseUnit_ == 0
                                                             ? "mmol/L"
                                                             : "mg/dL",
                                                         style: TextStyle(
@@ -2651,7 +2652,8 @@ class _AddInputState extends State<AddInput> {
     if (_GlucoseController.text.isNotEmpty && showTotalCarbs == true) {
       glucoseLevel = double.parse(_GlucoseController.text);
 
-      int bolusCalculationResult = calculateDosage(totalCarbs, glucoseLevel);
+      int bolusCalculationResult = calculateDosage(
+          totalCarbs, glucoseLevel, double.parse(carbRatioSelected!));
       bolusCalculation.value = bolusCalculationResult + 0;
       DBHelper dbHelper = DBHelper.instance;
       DateTime now = DateTime.now();
