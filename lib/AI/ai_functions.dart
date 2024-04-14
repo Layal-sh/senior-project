@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:path/path.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/Database/db.dart';
 

@@ -1,14 +1,11 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
@@ -80,7 +77,8 @@ class _AppState extends State<App> {
       }
     }
     filtered();
-    print(articles);
+    //print(articles);
+    logger.info(articles);
   }
 
   void filtered() {
@@ -105,7 +103,8 @@ class _AppState extends State<App> {
             (filteredArticle) => filteredArticle['title'] == article['title']))
         .toList();
     finalList = [...filteredArticles, ...restArticles];
-    print(restArticles);
+    //print(restArticles);
+    logger.info(restArticles);
   }
 
   @override
@@ -561,9 +560,9 @@ class _DashboardState extends State<Dashboard> {
                       Icon(
                         g ? Icons.circle : Icons.circle_outlined,
                         size: 13,
-                        color: Color.fromARGB(255, 132, 135, 195),
+                        color: const Color.fromARGB(255, 132, 135, 195),
                       ),
-                      Text('Glucose Levels'),
+                      const Text('Glucose Levels'),
                     ],
                   ),
                 ),
@@ -581,9 +580,9 @@ class _DashboardState extends State<Dashboard> {
                       Icon(
                         c ? Icons.circle : Icons.circle_outlined,
                         size: 13,
-                        color: Color.fromARGB(255, 22, 161, 170),
+                        color: const Color.fromARGB(255, 22, 161, 170),
                       ),
-                      Text('Carbs'),
+                      const Text('Carbs'),
                     ],
                   ),
                 ),
@@ -1501,8 +1500,8 @@ class _DashboardState extends State<Dashboard> {
                                       //padding: const EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
-                                        color:
-                                            Color.fromARGB(255, 255, 255, 255),
+                                        color: const Color.fromARGB(
+                                            255, 255, 255, 255),
                                       ),
                                       child: Center(
                                         child: Column(
@@ -2771,10 +2770,16 @@ class _AddInputState extends State<AddInput> {
                                                   date,
                                                   chosenMeals,
                                                   glucoseUnit_);
-                                              print('Chosen Meals:');
-                                              print(chosenMeals);
-                                              print('Total Carbs:');
-                                              print(calculateTotalCarbs(
+                                              // print('Chosen Meals:');
+                                              // print(chosenMeals);
+                                              // print('Total Carbs:');
+                                              // print(calculateTotalCarbs(
+                                              //     getChosenMeals()));
+
+                                              logger.info('Chosen Meals:');
+                                              logger.info(chosenMeals);
+                                              logger.info('Total Carbs:');
+                                              logger.info(calculateTotalCarbs(
                                                   getChosenMeals()));
 
                                               Navigator.of(context).pop();
