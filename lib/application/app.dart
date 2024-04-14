@@ -3115,7 +3115,7 @@ class _AddInputState extends State<AddInput> {
                                       ),
                                     if (showTotalCarbs)
                                       Text(
-                                        '$totalCarbs',
+                                        '${carbUnit_ == 0 ? totalCarbs : totalCarbs ~/ 15}',
                                         style: const TextStyle(
                                           fontSize: 20,
                                           color: Color.fromARGB(255, 0, 0, 0),
@@ -3128,9 +3128,9 @@ class _AddInputState extends State<AddInput> {
                               const SizedBox(
                                 width: 0,
                               ),
-                              const Text(
-                                "grams",
-                                style: TextStyle(
+                              Text(
+                                carbUnit_ == 0 ? "grams" : "exchanges",
+                                style: const TextStyle(
                                     fontSize: 18,
                                     color: Color.fromARGB(255, 0, 0, 0),
                                     fontWeight: FontWeight.w300),
