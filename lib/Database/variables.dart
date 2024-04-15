@@ -38,6 +38,11 @@ Future<void> saveValues() async {
   await prefs.setString('privacy', privacy_);
 }
 
+Future<void> savePrivacy() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('privacy', privacy_);
+}
+
 Future<void> saveUnits() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setInt('glucoseUnit', glucoseUnit_);
