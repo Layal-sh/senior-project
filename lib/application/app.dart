@@ -361,6 +361,10 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  void refreshData() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     Map<String, List<Map>> entriesByDate = {};
@@ -1039,23 +1043,27 @@ class _DashboardState extends State<Dashboard> {
               builder:
                   (BuildContext context, AsyncSnapshot<List<Map>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else if (snapshot.data!.isEmpty) {
                   return Container();
                 } else {
                   var reversedData = snapshot.data!.reversed.toList();
+
                   return Column(
                     children: [
                       ListView.builder(
                         shrinkWrap:
                             true, // This tells the ListView to size itself to its children's height
                         physics:
-                            NeverScrollableScrollPhysics(), // This disables scrolling inside the ListView
+                            const NeverScrollableScrollPhysics(), // This disables scrolling inside the ListView
                         itemCount: reversedData.length,
                         itemBuilder: (context, index) {
                           Map entry = reversedData[index];
+                          DateTime entryDate = DateTime.parse(entry['date']);
+                          DateTime twoHoursAgo =
+                              DateTime.now().subtract(const Duration(hours: 2));
                           return Padding(
                             padding: const EdgeInsets.only(
                               top: 8.0,
@@ -1345,6 +1353,18 @@ class _DashboardState extends State<Dashboard> {
                                     ),
                                   ],
                                 ),
+                                if (entryDate.isAfter(twoHoursAgo))
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Color.fromARGB(255, 25, 167, 177),
+                                    ),
+                                    onPressed: () async {
+                                      await db
+                                          .deleteEntryById(entry['entryId']);
+                                      refreshData();
+                                    },
+                                  ),
                               ],
                             ),
                           );
@@ -4287,7 +4307,7 @@ class _ProfileState extends State<Profile> {
                                                                     ),
                                                                     if (articlee[
                                                                             'date'] !=
-                                                                        null)
+                                                                        'null')
                                                                       SizedBox(
                                                                         child:
                                                                             Row(
