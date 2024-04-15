@@ -3149,7 +3149,7 @@ class _AddInputState extends State<AddInput> {
                                 width: 0,
                               ),
                               Text(
-                                carbUnit_ == 0 ? "grams" : "exchanges",
+                                carbUnit_ == 0 ? "carbs" : "exchanges",
                                 style: const TextStyle(
                                     fontSize: 18,
                                     color: Color.fromARGB(255, 0, 0, 0),
