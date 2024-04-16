@@ -1,4 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'package:sugar_sense/main.dart';
 
 Future<void> savePreferences() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -36,11 +38,8 @@ Future<void> saveValues() async {
   await prefs.setDouble('insulin3', insulin_3);
   await prefs.setString('username', username_);
   await prefs.setString('privacy', privacy_);
-}
-
-Future<void> savePrivacy() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString('privacy', privacy_);
+  isSynced_ = await syncValues();
+  await prefs.setBool('isSynced', isSynced_);
 }
 
 Future<void> saveUnits() async {
@@ -82,6 +81,7 @@ Future<void> saveN() async {
 Future<void> loadPreferences() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
+  isSynced_ = prefs.getBool('isSynced') ?? true;
   targetBloodSugar_ = prefs.getInt('targetBloodSugar') ?? 100;
   pid_ = prefs.getInt('pid_') ?? 0;
   insulinSensitivity_ = prefs.getInt('insulinSensitivity') ?? 20;
@@ -136,3 +136,33 @@ double carbs_3 = 0;
 double insulin_3 = 0;
 int selectedPlan_ = -1;
 int numOfRatios_ = 1;
+bool isSynced_ = true;
+
+Future<bool> syncValues() async {
+  var result = await http.get(Uri.parse(
+      'http://$localhost:8000/changeTargetGlucose/$targetBloodSugar_/$pid_'));
+  if (result.statusCode == 200) {
+    logger.warning("error at changeTargetGlucose");
+    return false;
+  }
+  result = await http.get(Uri.parse(
+      'http://$localhost:8000/changeInsulinSensitivity/$insulinSensitivity_/$pid_'));
+  if (result.statusCode == 200) {
+    logger.warning("error at changeInsulinSensitivity");
+    return false;
+  }
+  result = await http.get(Uri.parse(
+      'http://$localhost:8000/changeCarbRatios/$carbRatio_/$carbRatio_2/$carbRatio_3/$pid_'));
+  if (result.statusCode == 200) {
+    logger.warning("error at changeCarbRatios");
+    return false;
+  }
+  result = await http
+      .get(Uri.parse('http://$localhost:8000/changePrivacy/$privacy_/$pid_'));
+  if (result.statusCode == 200) {
+    logger.warning("error at changePrivacy");
+    return false;
+  }
+
+  return true;
+}

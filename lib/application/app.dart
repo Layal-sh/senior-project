@@ -5305,8 +5305,7 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  Widget settingItem(String title, String value, VoidCallback onTap,
-      {VoidCallback? onDelete}) {
+  Widget settingItem(String title, String value, VoidCallback onTap) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -5571,7 +5570,7 @@ class _SettingsState extends State<Settings> {
                 carbUnit_ == 0 ? carbs[i](null) : carbs[i](null) / 15,
                 insulins[i](null),
                 i == numOfRatios_ - 1 && numOfRatios_ > 1
-                    ? () {
+                    ? () async {
                         carbs[i](0.0);
                         insulins[i](0.0);
                         carbRatios[i](0.0);
@@ -5595,15 +5594,6 @@ class _SettingsState extends State<Settings> {
               });
             }
           },
-          onDelete: i == numOfRatios_ - 1 && numOfRatios_ > 1
-              ? () => setState(() {
-                    carbs[i](0.0);
-                    insulins[i](0.0);
-                    carbRatios[i](0.0);
-                    numOfRatios_--;
-                    saveValues();
-                  })
-              : null,
         ),
       );
       settings.add(const SizedBox(height: 20));

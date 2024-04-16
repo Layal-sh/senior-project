@@ -34,6 +34,8 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await loadPreferences();
+  if (!isSynced_) saveValues();
+
   runApp(MyApp());
 }
 
