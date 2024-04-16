@@ -5177,11 +5177,6 @@ class _SettingsState extends State<Settings> {
                 fontSize: 18,
               ),
             ),
-            if (onDelete != null)
-              IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: onDelete,
-              ),
             IconButton(
               icon: const Icon(Icons.edit,
                   color: Color.fromARGB(255, 22, 161, 170)),
@@ -5271,12 +5266,51 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  Widget carbRatioInputDialog(
-      String title, double initialCarbs, double initialInsulin) {
+  Widget carbRatioInputDialog(String title, double initialCarbs,
+      double initialInsulin, VoidCallback? onDelete) {
     TextEditingController carbsController =
         TextEditingController(text: initialCarbs.toStringAsFixed(2));
     TextEditingController insulinController =
         TextEditingController(text: initialInsulin.toStringAsFixed(2));
+
+    List<Widget> actions = [
+      TextButton(
+        style: TextButton.styleFrom(
+            foregroundColor: const Color.fromARGB(255, 22, 161, 170)),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        child: const Text('Cancel'),
+      ),
+      TextButton(
+        style: TextButton.styleFrom(
+            foregroundColor: const Color.fromARGB(255, 22, 161, 170)),
+        onPressed: () {
+          Navigator.of(context).pop({
+            'carbs': double.parse(carbsController.text),
+            'insulin': double.parse(insulinController.text),
+          });
+        },
+        child: const Text('OK'),
+      ),
+    ];
+
+    if (onDelete != null) {
+      actions.insert(
+        0,
+        TextButton(
+          style: TextButton.styleFrom(
+              foregroundColor: const Color.fromARGB(255, 255, 53, 53)),
+          onPressed: () {
+            setState(() {
+              onDelete();
+            });
+            Navigator.of(context).pop();
+          },
+          child: const Text('Delete'),
+        ),
+      );
+    }
 
     return AlertDialog(
       title: Text(
@@ -5311,27 +5345,7 @@ class _SettingsState extends State<Settings> {
           ),
         ],
       ),
-      actions: <Widget>[
-        TextButton(
-          style: TextButton.styleFrom(
-              foregroundColor: const Color.fromARGB(255, 22, 161, 170)),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: const Text('Cancel'),
-        ),
-        TextButton(
-          style: TextButton.styleFrom(
-              foregroundColor: const Color.fromARGB(255, 22, 161, 170)),
-          onPressed: () {
-            Navigator.of(context).pop({
-              'carbs': double.parse(carbsController.text),
-              'insulin': double.parse(insulinController.text),
-            });
-          },
-          child: const Text('OK'),
-        ),
-      ],
+      actions: actions,
     );
   }
 
@@ -5406,6 +5420,15 @@ class _SettingsState extends State<Settings> {
                 'Enter new carb ratio',
                 carbUnit_ == 0 ? carbs[i](null) : carbs[i](null) / 15,
                 insulins[i](null),
+                i == numOfRatios_ - 1 && numOfRatios_ > 1
+                    ? () {
+                        carbs[i](0.0);
+                        insulins[i](0.0);
+                        carbRatios[i](0.0);
+                        numOfRatios_--;
+                        saveValues();
+                      }
+                    : null,
               ),
             );
             if (newCarbRatio != null) {
