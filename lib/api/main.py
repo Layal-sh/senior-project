@@ -424,6 +424,63 @@ def changePhone(phoneNumber,id):
     else:
         raise HTTPException(status_code=401, detail="phone number already exists")
 
+@app.get("/changePhoto/{photo}/{id}")
+def changePhoto(photo,id):
+    row = cursor.execute("UPDATE Users SET profilePhoto = ? where patientID  = ?",(photo,id))
+    cursor.commit()
+    if row is not None:
+        return True
+    else:
+         return False
+
+@app.get("/changeTargetGlucose/{targetGlucose}/{id}")
+def changeTargetGlucose(targetGlucose, id):
+    row = cursor.execute("UPDATE Patients SET targetBloodGlucose = ? where patientID  = ?",(targetGlucose,id))
+    cursor.commit()
+    if row is not None:
+        return True
+    else:
+        raise HTTPException(status_code=500, detail="couldn't change target glucose level")
+        
+@app.get("/changeInsulinSensitivity/{insulinSensitivity}/{id}")
+def changeInsulinSensitivity(insulinSensitivity, id):
+    row = cursor.execute("UPDATE Patients SET insulinSensivity = ? where patientID  = ?",(insulinSensitivity,id))
+    cursor.commit()
+    if row is not None:
+        return True
+    else:
+        raise HTTPException(status_code=500, detail="couldn't change insuling sensitivity")
+
+@app.get("/changeCarbRatios/{carbRatio1}/{carbRatio2}/{carbRatio3}/{id}")
+def changeCarbRatios(carbRatio1, carbRatio2, carbRatio3, id):
+    row = cursor.execute("""
+        UPDATE Patients 
+        SET carbRatio = ?, carbRatio2 = ?, carbRatio3 = ? 
+        WHERE patientID = ?
+    """, (carbRatio1, carbRatio2, carbRatio3, id))
+    cursor.commit()
+    if row is not None:
+        return True
+    else:
+        raise HTTPException(status_code=500, detail="couldn't change carb ratios")
+
+@app.get("/changePrivacy/{privacy}/{id}")
+def changePrivacy(privacy, id):
+    row = cursor.execute("UPDATE Patients SET privacy = ? where patientID  = ?",(privacy,id))
+    cursor.commit()
+    if row is not None:
+        return True
+    else:
+        raise HTTPException(status_code=500, detail="couldn't change privacy")
+
+@app.get("/changeDoctor/{doctorCode}/{id}")
+def changeDoctor(doctorCode, id):
+    row = cursor.execute("UPDATE Patients SET doctorCode = ? where patientID  = ?",(doctorCode,id))
+    cursor.commit()
+    if row is not None:
+        return True
+    else:
+        raise HTTPException(status_code=500, detail="couldn't change doctor")
 
 def checkEmail(email):##used in /register and in checkEmail##
     row = cursor.execute("SELECT userID FROM Users WHERE CAST(email AS VARCHAR(255)) = ?",(email,)).fetchone()
