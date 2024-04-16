@@ -387,12 +387,58 @@ def checkUsername(username):##used in /register and in checkUsername##
     else:
         return False
     
+@app.get("/changeUsername/{username}/{id}")
+def changeUsername(username,id):
+    if checkUsername(username):
+        row = cursor.execute("UPDATE Users SET userName = ? where userID  = ?",(username,id))
+        cursor.commit()
+        print(getUserById(username))
+        if row is not None:
+            return True
+        else:
+            raise HTTPException(status_code=500, detail="couldn't change username")
+    else:
+        raise HTTPException(status_code=401, detail="Username already exists")
+
+@app.get("/changeEmail/{email}/{id}")
+def changeEmail(email,id):
+    if checkEmail(email):
+        row = cursor.execute("UPDATE Users SET email = ? where userID  = ?",(email,id))
+        cursor.commit()
+        if row is not None:
+            return True
+        else:
+            return False
+    else:
+        raise HTTPException(status_code=401, detail="email already exists")
+    
+@app.get("/changePhone/{phoneNumber}/{id}")
+def changePhone(phoneNumber,id):
+    if checkPhoneNumber(phoneNumber):
+        row = cursor.execute("UPDATE Users SET phoneNumber = ? where userID  = ?",(phoneNumber,id))
+        cursor.commit()
+        if row is not None:
+            return True
+        else:
+            return False
+    else:
+        raise HTTPException(status_code=401, detail="phone number already exists")
+
+
 def checkEmail(email):##used in /register and in checkEmail##
     row = cursor.execute("SELECT userID FROM Users WHERE CAST(email AS VARCHAR(255)) = ?",(email,)).fetchone()
     if(row is None):
         return True
     else:
         return False
+    
+def checkPhoneNumber(phoneNumber):
+    row = cursor.execute("SELECT userID FROM Users WHERE CAST(phoneNumber AS VARCHAR(255)) = ?",(phoneNumber,)).fetchone()
+    if(row is None):
+        return True
+    else:
+        return False
+
 def getUserById(username):##used in /getPatientDetails and in /regPatient##
     row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(username,)).fetchone()
     if row is not None:
