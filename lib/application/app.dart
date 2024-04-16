@@ -361,6 +361,10 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  void refreshData() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     Map<String, List<Map>> entriesByDate = {};
@@ -1039,23 +1043,27 @@ class _DashboardState extends State<Dashboard> {
               builder:
                   (BuildContext context, AsyncSnapshot<List<Map>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else if (snapshot.data!.isEmpty) {
                   return Container();
                 } else {
                   var reversedData = snapshot.data!.reversed.toList();
+
                   return Column(
                     children: [
                       ListView.builder(
                         shrinkWrap:
                             true, // This tells the ListView to size itself to its children's height
                         physics:
-                            NeverScrollableScrollPhysics(), // This disables scrolling inside the ListView
+                            const NeverScrollableScrollPhysics(), // This disables scrolling inside the ListView
                         itemCount: reversedData.length,
                         itemBuilder: (context, index) {
                           Map entry = reversedData[index];
+                          DateTime entryDate = DateTime.parse(entry['date']);
+                          DateTime twoHoursAgo =
+                              DateTime.now().subtract(const Duration(hours: 2));
                           return Padding(
                             padding: const EdgeInsets.only(
                               top: 8.0,
@@ -1345,6 +1353,18 @@ class _DashboardState extends State<Dashboard> {
                                     ),
                                   ],
                                 ),
+                                if (entryDate.isAfter(twoHoursAgo))
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Color.fromARGB(255, 25, 167, 177),
+                                    ),
+                                    onPressed: () async {
+                                      await db
+                                          .deleteEntryById(entry['entryId']);
+                                      refreshData();
+                                    },
+                                  ),
                               ],
                             ),
                           );
@@ -4287,7 +4307,7 @@ class _ProfileState extends State<Profile> {
                                                                     ),
                                                                     if (articlee[
                                                                             'date'] !=
-                                                                        null)
+                                                                        'null')
                                                                       SizedBox(
                                                                         child:
                                                                             Row(
@@ -5259,7 +5279,13 @@ class _SettingsState extends State<Settings> {
         TextEditingController(text: initialInsulin.toStringAsFixed(2));
 
     return AlertDialog(
-      title: Text(title),
+      title: Text(
+        title,
+        style: const TextStyle(
+          color: Color.fromARGB(255, 0, 0, 0),
+          fontWeight: FontWeight.w600,
+        ),
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -5313,7 +5339,13 @@ class _SettingsState extends State<Settings> {
     TextEditingController controller =
         TextEditingController(text: initialValue.toStringAsFixed(2));
     return AlertDialog(
-      title: Text(title),
+      title: Text(
+        title,
+        style: const TextStyle(
+          color: Color.fromARGB(255, 0, 0, 0),
+          fontWeight: FontWeight.w600,
+        ),
+      ),
       content: TextField(
         controller: controller,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -5432,6 +5464,30 @@ class _SettingsState extends State<Settings> {
     );
   }
 
+  Widget privacyCheckbox(int index, String title) {
+    return CheckboxListTile(
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 18,
+          color: Color.fromARGB(255, 38, 20, 84),
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      value: privacy_[index] == '1',
+      onChanged: (bool? value) {
+        if (value != null) {
+          setState(() {
+            privacy_ = privacy_.substring(0, index) +
+                (value ? '1' : '0') +
+                privacy_.substring(index + 1);
+          });
+        }
+      },
+      activeColor: const Color.fromARGB(255, 22, 161, 170),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -5526,32 +5582,6 @@ class _SettingsState extends State<Settings> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                // settingItem('Carb Ratio:',
-                //     "${carbUnit_ == 0 ? (carbs_).toString() : (carbs_ / 15).toString()}/$insulin_",
-                //     () async {
-                //   Map<String, double>? newCarbRatio =
-                //       await showDialog<Map<String, double>>(
-                //     context: context,
-                //     builder: (context) => carbRatioInputDialog(
-                //         'Enter new carb ratio',
-                //         carbUnit_ == 0 ? carbs_ : carbs_ / 15,
-                //         insulin_),
-                //   );
-                //   if (newCarbRatio != null) {
-                //     setState(() {
-                //       carbs_ = carbUnit_ == 0
-                //           ? newCarbRatio['carbs']!
-                //           : newCarbRatio['carbs']! * 15;
-                //       insulin_ = newCarbRatio['insulin']!;
-                //       carbRatio_ = insulin_ /
-                //           (carbUnit_ == 0
-                //               ? carbs_ / 15
-                //               : newCarbRatio['carbs']!);
-                //       saveValues();
-                //     });
-                //   }
-                // }),
-
                 settingItem(
                     'Target Glucose:',
                     (glucoseUnit_ == 1
@@ -5606,6 +5636,67 @@ class _SettingsState extends State<Settings> {
               ],
             ),
           ),
+          const SizedBox(height: 20),
+          Container(
+            color: Colors.grey[200],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                settingsTitle("Privacy:"),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 20.0),
+                      child: IconButton(
+                        icon: const Icon(Icons.info_outline,
+                            //color: Color.fromARGB(255, 22, 161, 170)
+                            color: Color.fromARGB(255, 38, 20, 84)),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text(
+                                  'Privacy Settings',
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                content: const Text(
+                                  'Choose what your doctor will have access to.',
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 22, 161, 170),
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: const Color.fromARGB(
+                                          255, 22, 161, 170),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          privacyCheckbox(0, 'Glucose levels'),
+          privacyCheckbox(1, 'Insulin intake'),
+          privacyCheckbox(2, 'Meals'),
         ],
       ),
     );
