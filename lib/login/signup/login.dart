@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sugar_sense/Database/db.dart';
+import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/app.dart';
 import 'package:sugar_sense/login/signup/forgetPass/forgetpass.dart';
 import 'package:sugar_sense/main.dart';
@@ -96,8 +97,8 @@ class _LoginState extends State<Login> {
       await prefs.setString('firstName', userDetails['firstName']);
       await prefs.setString('lastName', userDetails['lastName']);
       await prefs.setString('email', userDetails['email']);
-      await prefs.setInt('id', userDetails['userID']);
-
+      pid_ = userDetails['userID'];
+      print(pid_);
       final responsePatient = await http
           .post(
             Uri.parse('http://$localhost:8000/getPatientDetails'), //$localhost

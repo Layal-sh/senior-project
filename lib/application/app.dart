@@ -34,6 +34,88 @@ late List filteredArticles;
 late List restArticles;
 late List finalList;
 
+isValidPhoneNumber(String phone) {
+  final RegExp regex = RegExp(r'^\d{8}$');
+  return regex.hasMatch(phone);
+}
+
+int id = pid_;
+
+// in the update functions
+/*
+if evrything correct or user didn't change anything functions return 1
+if email/username/phone already exists functions return 0
+if email/phone is invalid functions return 2
+if a a random error(won't happen bc we made sure of it) occured it returns -1
+*/
+userNameUpdate(String username) async {
+  if (username != username_) {
+    try {
+      final name = await http.get(
+          Uri.parse('http://$localhost:8000/changeUsername/$username/$id'));
+      if (name.statusCode == 200) {
+        username_ = username;
+        return 1;
+      } else if (name.statusCode == 401) {
+        //display snackbar thingy with username already exists
+        return 0;
+      } else {
+        //display snackbar thingy random error occured
+        return -1;
+      }
+    } catch (e) {
+      print('Network request failed: $e');
+      return -1;
+    }
+  } else {
+    return 1;
+  }
+}
+
+emailUpdate(String email) async {
+  if (!isValidEmail(email)) {
+    return 2;
+  }
+  if (email != email_) {
+    final name = await http
+        .get(Uri.parse('http://$localhost:8000/changeEmail/$email/$id'));
+    if (name.statusCode == 200) {
+      email_ = email;
+      return 1;
+    } else if (name.statusCode == 401) {
+      //display snackbar thingy with username already exists
+      return 0;
+    } else {
+      //display snackbar thingy random error occured
+      return -1;
+    }
+  } else {
+    return 1;
+  }
+}
+
+phoneUpdate(String phone) async {
+  if (phone != phoneNumber_) {
+    if (!isValidPhoneNumber(phone)) {
+      return 2;
+    }
+    final name = await http
+        .get(Uri.parse('http://$localhost:8000/changePhone/$phone/$id'));
+    if (name.statusCode == 200) {
+      phoneNumber_ = phone;
+      return 1;
+    } else if (name.statusCode == 401) {
+      //display snackbar thingy with username already exists
+      return 0;
+    } else {
+      //display snackbar thingy random error occured
+      return -1;
+    }
+  } else {
+    return 1;
+  }
+}
+
 class _AppState extends State<App> {
   void fetchArticles() async {
     List<String> searches = [
@@ -3897,68 +3979,136 @@ class _ProfileState extends State<Profile> {
                                               fontSize: 20,
                                             ),
                                           ),
-                                          onPressed: () {
-                                            setState(() {
-                                              acc = true;
-                                              if (isValidEmail(
-                                                  _controllerEmail.text)) {
-                                                if (_selectedImage != null) {
-                                                  profilePicture_ =
-                                                      _selectedImage!.path;
+                                          onPressed: () async {
+                                            String username =
+                                                _userController.text;
+                                            String email =
+                                                _controllerEmail.text;
+                                            String phoneNumber =
+                                                _pnController.text;
+                                            int name =
+                                                await userNameUpdate(username);
+                                            int mail = await emailUpdate(email);
+                                            int phone =
+                                                await phoneUpdate(phoneNumber);
 
-                                                  saveP();
-                                                } else {
-                                                  profilePicture_ = '';
-                                                  saveP();
-                                                }
-                                                if (_userController
-                                                    .text.isNotEmpty) {
-                                                  username_ =
-                                                      _userController.text;
-                                                  saveU();
-                                                }
-                                                if (_controllerEmail
-                                                    .text.isNotEmpty) {
-                                                  email_ =
-                                                      _controllerEmail.text;
-                                                  saveE();
-                                                }
-                                                if (_pnController
-                                                    .text.isNotEmpty) {
-                                                  phoneNumber_ =
-                                                      _pnController.text;
-                                                  saveN();
-                                                }
-                                                Navigator.of(context).pop();
-                                              } else {
-                                                _controllerEmail.value =
-                                                    TextEditingValue(
-                                                        text: email_);
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title: const Text(
-                                                          'Invalid Email'),
-                                                      content: const Text(
-                                                          'Please enter a valid email'),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          child: const Text(
-                                                              'Close'),
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
+                                            print("batata");
+                                            logger.info(
+                                                "name: $name mail: $mail phone:$phone");
+
+                                            if (name == 1 &&
+                                                mail == 1 &&
+                                                phone == 1) {
+                                              Navigator.of(context).pop();
+                                            } else {
+                                              if (name == 0) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                      content: Text(
+                                                          'Username already exists')),
                                                 );
                                               }
-                                            });
+                                              if (mail == 0) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                      content: Text(
+                                                          'Email already exists')),
+                                                );
+                                              }
+                                              if (phone == 0) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                      content: Text(
+                                                          'Phone number already exists')),
+                                                );
+                                              }
+                                              if (mail == 2) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                      content: Text(
+                                                          'Invalid email')),
+                                                );
+                                              }
+                                              if (phone == 2) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                      content: Text(
+                                                          'Invalid phone number')),
+                                                );
+                                              }
+                                              if (phone == -1 ||
+                                                  mail == -1 ||
+                                                  name == -1) {
+                                                print(
+                                                    'Errorrr OCCCUURREEDDDDD');
+                                              }
+                                            }
+                                            //   setState(() {
+                                            //     acc = true;
+                                            //     if (isValidEmail(
+                                            //         _controllerEmail.text)) {
+                                            //       if (_selectedImage != null) {
+                                            //         profilePicture_ =
+                                            //             _selectedImage!.path;
+
+                                            //         saveP();
+                                            //       } else {
+                                            //         profilePicture_ = '';
+                                            //         saveP();
+                                            //       }
+                                            //       if (_userController
+                                            //           .text.isNotEmpty) {
+                                            //         username_ =
+                                            //             _userController.text;
+                                            //         saveU();
+                                            //       }
+                                            //       if (_controllerEmail
+                                            //           .text.isNotEmpty) {
+                                            //         email_ =
+                                            //             _controllerEmail.text;
+                                            //         saveE();
+                                            //       }
+                                            //       if (_pnController
+                                            //           .text.isNotEmpty) {
+                                            //         phoneNumber_ =
+                                            //             _pnController.text;
+                                            //         saveN();
+                                            //       }
+                                            //       Navigator.of(context).pop();
+                                            //     } else {
+                                            //       _controllerEmail.value =
+                                            //           TextEditingValue(
+                                            //               text: email_);
+                                            //       showDialog(
+                                            //         context: context,
+                                            //         builder:
+                                            //             (BuildContext context) {
+                                            //           return AlertDialog(
+                                            //             title: const Text(
+                                            //                 'Invalid Email'),
+                                            //             content: const Text(
+                                            //                 'Please enter a valid email'),
+                                            //             actions: <Widget>[
+                                            //               TextButton(
+                                            //                 child: const Text(
+                                            //                     'Close'),
+                                            //                 onPressed: () {
+                                            //                   Navigator.of(
+                                            //                           context)
+                                            //                       .pop();
+                                            //                 },
+                                            //               ),
+                                            //             ],
+                                            //           );
+                                            //         },
+                                            //       );
+                                            //     }
+                                            //   });
                                           },
                                         ),
                                       ),
@@ -4410,7 +4560,7 @@ class _ProfileState extends State<Profile> {
                                                 ),
                                               );
                                             } else {
-                                              return CircularProgressIndicator();
+                                              return const CircularProgressIndicator();
                                             }
                                           },
                                         ),
