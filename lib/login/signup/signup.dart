@@ -564,16 +564,18 @@ class _SignUpState extends State<SignUp> {
                                   final checkEmail = await http.get(Uri.parse(
                                       'http://$localhost:8000/checkEmail/$email'));
                                   final body2 = jsonDecode(checkEmail.body);
-
+                                  int docCode = 0;
                                   print(body);
                                   if (doctorId.isEmpty) {
                                     doctorCode_ = "NULL";
                                   } else {
                                     doctorCode_ = doctorId;
+                                    final checkDoctor = await http.get(Uri.parse(
+                                        'http://$localhost:8000/checkDoc/$doctorCode_'));
+                                    if (checkDoctor.statusCode == 401) {
+                                      docCode = 1;
+                                    }
                                   }
-                                  final checkDoctor = await http.get(Uri.parse(
-                                      'http://$localhost:8000/checkDoc/$doctorCode_'));
-                                  final body3 = jsonDecode(checkDoctor.body);
 
                                   if (username.isEmpty ||
                                       email.isEmpty ||
@@ -603,15 +605,12 @@ class _SignUpState extends State<SignUp> {
                                           content:
                                               Text('Email already exists')),
                                     );
-                                  } else if (body3 == null) {
-                                    if (body3 == null) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                            content: Text(
-                                                'The doctor ID was not found')),
-                                      );
-                                    }
+                                  } else if (docCode == 1) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'The doctor ID was not found')),
+                                    );
                                   } else if (password != confirmPassword) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(

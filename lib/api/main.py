@@ -231,7 +231,7 @@ async def checkDoc(user_id: str):
     cursor.execute("Select * from Doctors WHERE CAST(doctorCode AS NVARCHAR(MAX)) = ?", (user_id,))
     row = cursor.fetchone()
     if row is None:
-        return None
+        raise HTTPException(status_code=401, detail="Doctor not found")
     else:
         return {description[0]: column for description, column in zip(cursor.description, row)}
     
