@@ -153,30 +153,34 @@ Future<bool> isConnectedToWifi() async {
 }
 
 Future<bool> syncValues() async {
-  var result = await http.get(Uri.parse(
-      'http://$localhost:8000/changeTargetGlucose/$targetBloodSugar_/$pid_'));
-  if (result.statusCode == 200) {
-    logger.warning("error at changeTargetGlucose");
+  try {
+    var result = await http.get(Uri.parse(
+        'http://$localhost:8000/changeTargetGlucose/$targetBloodSugar_/$pid_'));
+    if (result.statusCode != 200) {
+      logger.warning("error at changeTargetGlucose");
+      return false;
+    }
+    result = await http.get(Uri.parse(
+        'http://$localhost:8000/changeInsulinSensitivity/$insulinSensitivity_/$pid_'));
+    if (result.statusCode != 200) {
+      logger.warning("error at changeInsulinSensitivity");
+      return false;
+    }
+    result = await http.get(Uri.parse(
+        'http://$localhost:8000/changeCarbRatios/$carbRatio_/$carbRatio_2/$carbRatio_3/$pid_'));
+    if (result.statusCode != 200) {
+      logger.warning("error at changeCarbRatios");
+      return false;
+    }
+    result = await http
+        .get(Uri.parse('http://$localhost:8000/changePrivacy/$privacy_/$pid_'));
+    if (result.statusCode != 200) {
+      logger.warning("error at changePrivacy");
+      return false;
+    }
+  } catch (e) {
+    logger.warning("error making HTTP request: $e");
     return false;
   }
-  result = await http.get(Uri.parse(
-      'http://$localhost:8000/changeInsulinSensitivity/$insulinSensitivity_/$pid_'));
-  if (result.statusCode == 200) {
-    logger.warning("error at changeInsulinSensitivity");
-    return false;
-  }
-  result = await http.get(Uri.parse(
-      'http://$localhost:8000/changeCarbRatios/$carbRatio_/$carbRatio_2/$carbRatio_3/$pid_'));
-  if (result.statusCode == 200) {
-    logger.warning("error at changeCarbRatios");
-    return false;
-  }
-  result = await http
-      .get(Uri.parse('http://$localhost:8000/changePrivacy/$privacy_/$pid_'));
-  if (result.statusCode == 200) {
-    logger.warning("error at changePrivacy");
-    return false;
-  }
-
   return true;
 }
