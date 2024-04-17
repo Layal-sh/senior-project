@@ -307,7 +307,7 @@ async def getPatientDetails(user: User):
 ##############################################################
 @app.post("/authenticate")
 async def authenticate(user: User):
-    try:
+    try: 
         # Query the database for the user
         cursor.execute("SELECT userPassword FROM Users WHERE CAST(userName AS NVARCHAR(MAX)) = ?", (user.username,))
         rowUsername = cursor.fetchone()
@@ -340,7 +340,6 @@ async def authenticate(user: User):
 @app.post("/register")
 async def registerfunction(user: NewUser):
     try:
-        print('entered register')
         
         if not checkUsername(user.username):
             raise HTTPException(status_code=401, detail="Username already exists")
@@ -380,6 +379,14 @@ async def registerfunction(user: NewPatient):
 ######|Functions Used In Routes|###########
 ###########################################
 ##############################################################
+
+def isConnectedToWifi():
+    try:
+        requests.get("http://www.google.com", timeout=3)
+        return True
+    except requests.ConnectionError:
+        return False
+
 def checkUsername(username):##used in /register and in checkUsername##
     row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(username,)).fetchone()
     if(row is None):
@@ -509,7 +516,11 @@ def getUserById(username):##used in /getPatientDetails and in /regPatient##
 ###########################################
 ##############################################################
 
-apiKey = '0abfbff3f1efcf35311a048b948c01aed8b7f17f552a4b882aa3c8544f9410dc'
+#0abfbff3f1efcf35311a048b948c01aed8b7f17f552a4b882aa3c8544f9410dc
+#eb03e6986533c14f2abb8e891cd2438a7f519c1e05935951a61141e23f9fd3b0
+
+
+apiKey = 'eb03e6986533c14f2abb8e891cd2438a7f519c1e05935951a61141e23f9fd3b0'
 def get_results(search):
     global results
     results = search.get_dict()

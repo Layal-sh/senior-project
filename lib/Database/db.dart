@@ -17,7 +17,7 @@ class DBHelper {
   static final DBHelper instance = DBHelper._privateConstructor();
 
   static Database? _db;
-
+  String path = "";
   Future<Database?> get db async {
     if (_db == null) {
       _db = await initialDb();
@@ -29,9 +29,10 @@ class DBHelper {
 
   initialDb() async {
     String DbPath = await getDatabasesPath();
-    String path = join(DbPath, 'SugarSense.db');
+    path = join(DbPath, 'SugarSense.db');
     Database database = await openDatabase(path,
         onCreate: _onCreate, version: 34, onUpgrade: _onUpgrade);
+    logger.info("Local Database has been initialized.");
     return database;
   }
 
@@ -149,6 +150,11 @@ class DBHelper {
     Database? mydb = await db;
     int response = await mydb!.rawDelete(sql);
     return response;
+  }
+
+  Future<void> dropDatabase() async {
+    await deleteDatabase(path);
+    logger.info("Database has been dropped");
   }
 
 //////////////////////////////////////////////////////////////

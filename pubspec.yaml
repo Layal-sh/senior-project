@@ -46,7 +46,7 @@ dependencies:
   intl: ^0.19.0
   path_provider: ^2.0.8
   fl_chart: ^0.67.0
-  
+  connectivity_plus: ^6.0.2
 
 dev_dependencies:
   flutter_test:
@@ -279,7 +279,7 @@ flutter:
     - assets/bread.png
     - assets/insulin.png
     - assets/blood.png
-    
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
@@ -327,7 +327,6 @@ flutter:
       fonts:
         - asset: fonts/InriaSerif-Bold.ttf
         - weight: 800
-        
-        
+
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

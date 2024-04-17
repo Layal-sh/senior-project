@@ -66,9 +66,9 @@ class _LoginState extends State<Login> {
     //dbHelper.dropAllArticles();
     //print(await dbHelper.selectAllArticle());
     // await dbHelper.deleteMealComposition();
-    await dbHelper.syncMeals();
+    //await dbHelper.syncMeals();
     //logger.info("synced meals successfully");
-    await dbHelper.syncMealComposition();
+    //await dbHelper.syncMealComposition();
     // logger.info("synced meal compositions successfully");
     // logger.info("saving values to shared preferences");
 
@@ -358,6 +358,8 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           onPressed: () async {
+                            bool connectedToWifi = await isConnectedToWifi();
+                            print(connectedToWifi);
                             logger.info('he did in fact frfr click da button');
                             String email = _emailController.text;
                             String password = _passwordController.text;
@@ -367,6 +369,13 @@ class _LoginState extends State<Login> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => const App()),
+                              );
+                            } else if (connectedToWifi == false) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Please connect to the internet to sign in'),
+                                ),
                               );
                             } else {
                               try {

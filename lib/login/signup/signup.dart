@@ -547,8 +547,11 @@ class _SignUpState extends State<SignUp> {
                                   ),
                                 ),
                                 onPressed: () async {
+                                  bool connectedToWifi =
+                                      await isConnectedToWifi();
                                   DBHelper dbHelper = DBHelper.instance;
-                                  dbHelper.initialDb();
+                                  await dbHelper.dropDatabase();
+                                  await dbHelper.initialDb();
                                   String fname = _controllerFirstname.text;
                                   String lname = _controllerLastname.text;
                                   String username = _controllerUsername.text;
@@ -557,626 +560,662 @@ class _SignUpState extends State<SignUp> {
                                   String confirmPassword =
                                       _controllerConFirmPassword.text;
                                   String doctorId = _controllerDoctorID.text;
-                                  final checkName = await http.get(Uri.parse(
-                                      'http://$localhost:8000/checkUsername/$username'));
-                                  final body = jsonDecode(checkName.body);
-
-                                  final checkEmail = await http.get(Uri.parse(
-                                      'http://$localhost:8000/checkEmail/$email'));
-                                  final body2 = jsonDecode(checkEmail.body);
-                                  int docCode = 0;
-                                  print(body);
-                                  if (doctorId.isEmpty) {
-                                    doctorCode_ = "NULL";
-                                  } else {
-                                    doctorCode_ = doctorId;
-                                    final checkDoctor = await http.get(Uri.parse(
-                                        'http://$localhost:8000/checkDoc/$doctorCode_'));
-                                    if (checkDoctor.statusCode == 401) {
-                                      docCode = 1;
-                                    }
-                                  }
-
-                                  if (username.isEmpty ||
-                                      email.isEmpty ||
-                                      password.isEmpty ||
-                                      confirmPassword.isEmpty) {
+                                  if (connectedToWifi == false) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(
-                                            'All fields with * must be filled'),
+                                            'Please connect to the internet to sign in'),
                                       ),
                                     );
-                                  } else if (body != null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content:
-                                              Text('Username already exists')),
-                                    );
-                                  } else if (!isValidEmail(email)) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content:
-                                              Text('The email is not valid')),
-                                    );
-                                  } else if (body2 != null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content:
-                                              Text('Email already exists')),
-                                    );
-                                  } else if (docCode == 1) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text(
-                                              'The doctor ID was not found')),
-                                    );
-                                  } else if (password != confirmPassword) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text(
-                                              'The passwords do not match')),
-                                    );
-                                  } else if (!isValidPassword(password)) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text(
-                                              'Password must contains 8 characters including 1 number and 1 letter')),
-                                    );
                                   } else {
-                                    try {
-                                      // //server authentication
-                                      // final response = await http
-                                      //     .post(
-                                      //       Uri.parse(
-                                      //           'http://$localhost:8000/register'),
-                                      //       headers: <String, String>{
-                                      //         'Content-Type':
-                                      //             'application/json; charset=UTF-8',
-                                      //       },
-                                      //       body: jsonEncode(<String, String>{
-                                      //         'firstName': fname,
-                                      //         'lastName': lname,
-                                      //         'username': username,
-                                      //         'email': email,
-                                      //         'password': password,
-                                      //         'confirmPassword':
-                                      //             confirmPassword,
-                                      //       }),
-                                      //     )
-                                      //     .timeout(const Duration(seconds: 10));
-                                      //  if (response.statusCode == 200) {
-                                      //await dbHelper.syncMeals();
-                                      //List<Map> m=dbHelper.selectAllMeals();
-                                      //m.forEach(print);
+                                    final checkName = await http.get(Uri.parse(
+                                        'http://$localhost:8000/checkUsername/$username'));
+                                    print('Response body: ${checkName.body}');
+                                    final body = jsonDecode(checkName.body);
 
-                                      bool accept = await showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        useRootNavigator: true,
-                                        builder: (context) {
-                                          return SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.9,
-                                            child: Stack(
-                                              //mainAxisAlignment:MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                ShaderMask(
-                                                  shaderCallback:
-                                                      (Rect bounds) {
-                                                    return const LinearGradient(
-                                                      begin:
-                                                          Alignment.topCenter,
-                                                      end: Alignment
-                                                          .bottomCenter,
-                                                      colors: <Color>[
-                                                        Colors.transparent,
-                                                        Colors.white
-                                                      ],
-                                                      stops: <double>[
-                                                        0.75,
-                                                        0.85
-                                                      ],
-                                                    ).createShader(bounds);
-                                                  },
-                                                  blendMode: BlendMode.dstOut,
-                                                  child: SingleChildScrollView(
-                                                    child: Container(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                        left: 30,
-                                                        right: 30,
-                                                        top: 20,
-                                                        bottom: 10,
-                                                      ),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          const Text(
-                                                            'AGREEMENT',
-                                                            style: TextStyle(
-                                                              fontSize: 16.0,
-                                                              color: Color
-                                                                  .fromARGB(
-                                                                      255,
-                                                                      173,
-                                                                      173,
-                                                                      173),
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                              fontFamily:
-                                                                  'Inter',
-                                                            ),
-                                                          ),
-                                                          const Text(
-                                                            'Terms of Service',
-                                                            style: TextStyle(
-                                                              fontSize: 32.0,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                              height: 20.0),
-                                                          const Text(
-                                                            '1. OUR SERVICES',
-                                                            style: TextStyle(
-                                                              fontSize: 18.0,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                          const Text(
-                                                            'The information provided when using the Services is not intended for distribution to or use by any person or entity in any jurisdiction or country where such distribution or use would be contrary to law or regulation or which would subject us to any registration requirement within such jurisdiction or country. Accordingly, those persons who choose to access the Services from other locations do so on their own initiative and are solely responsible for compliance with local laws, if and to the extent local laws are applicable.',
-                                                            style: TextStyle(
-                                                                fontSize: 18.0),
-                                                          ),
-                                                          const SizedBox(
-                                                              height: 10.0),
-                                                          const Text(
-                                                            '2. Use License',
-                                                            style: TextStyle(
-                                                              fontSize: 18.0,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                          const Text(
-                                                            'Subject to your compliance with these Legal Terms, including the "PROHIBITED ACTIVITIES" section below, we grant you a non-exclusive, non-transferable, revocable license to: access the Services; and download or print a copy of any portion of the Content to which you have properly gained access. solely for your personal, non-commercial use or internal business purpose. Except as set out in this section or elsewhere in our Legal Terms, no part of the Services and no Content or Marks may be copied, reproduced, aggregated, ',
-                                                            style: TextStyle(
-                                                                fontSize: 18.0),
-                                                          ),
-                                                          SizedBox(
-                                                            height: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .height *
-                                                                0.15,
-                                                          ),
+                                    final checkEmail = await http.get(Uri.parse(
+                                        'http://$localhost:8000/checkEmail/$email'));
+                                    final body2 = jsonDecode(checkEmail.body);
+                                    int docCode = 0;
+                                    print(body);
+                                    if (doctorId.isEmpty) {
+                                      doctorCode_ = "NULL";
+                                    } else {
+                                      doctorCode_ = doctorId;
+                                      final checkDoctor = await http.get(Uri.parse(
+                                          'http://$localhost:8000/checkDoc/$doctorCode_'));
+                                      if (checkDoctor.statusCode == 401) {
+                                        docCode = 1;
+                                      }
+                                    }
+
+                                    if (username.isEmpty ||
+                                        email.isEmpty ||
+                                        password.isEmpty ||
+                                        confirmPassword.isEmpty) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'All fields with * must be filled'),
+                                        ),
+                                      );
+                                    } else if (body != null) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                'Username already exists')),
+                                      );
+                                    } else if (!isValidEmail(email)) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content:
+                                                Text('The email is not valid')),
+                                      );
+                                    } else if (body2 != null) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content:
+                                                Text('Email already exists')),
+                                      );
+                                    } else if (docCode == 1) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                'The doctor ID was not found')),
+                                      );
+                                    } else if (password != confirmPassword) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                'The passwords do not match')),
+                                      );
+                                    } else if (!isValidPassword(password)) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                'Password must contains 8 characters including 1 number and 1 letter')),
+                                      );
+                                    } else {
+                                      try {
+                                        // //server authentication
+                                        // final response = await http
+                                        //     .post(
+                                        //       Uri.parse(
+                                        //           'http://$localhost:8000/register'),
+                                        //       headers: <String, String>{
+                                        //         'Content-Type':
+                                        //             'application/json; charset=UTF-8',
+                                        //       },
+                                        //       body: jsonEncode(<String, String>{
+                                        //         'firstName': fname,
+                                        //         'lastName': lname,
+                                        //         'username': username,
+                                        //         'email': email,
+                                        //         'password': password,
+                                        //         'confirmPassword':
+                                        //             confirmPassword,
+                                        //       }),
+                                        //     )
+                                        //     .timeout(const Duration(seconds: 10));
+                                        //  if (response.statusCode == 200) {
+                                        //await dbHelper.syncMeals();
+                                        //List<Map> m=dbHelper.selectAllMeals();
+                                        //m.forEach(print);
+
+                                        bool accept =
+                                            await showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          useRootNavigator: true,
+                                          builder: (context) {
+                                            return SizedBox(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.9,
+                                              child: Stack(
+                                                //mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  ShaderMask(
+                                                    shaderCallback:
+                                                        (Rect bounds) {
+                                                      return const LinearGradient(
+                                                        begin:
+                                                            Alignment.topCenter,
+                                                        end: Alignment
+                                                            .bottomCenter,
+                                                        colors: <Color>[
+                                                          Colors.transparent,
+                                                          Colors.white
                                                         ],
+                                                        stops: <double>[
+                                                          0.75,
+                                                          0.85
+                                                        ],
+                                                      ).createShader(bounds);
+                                                    },
+                                                    blendMode: BlendMode.dstOut,
+                                                    child:
+                                                        SingleChildScrollView(
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                          left: 30,
+                                                          right: 30,
+                                                          top: 20,
+                                                          bottom: 10,
+                                                        ),
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            const Text(
+                                                              'AGREEMENT',
+                                                              style: TextStyle(
+                                                                fontSize: 16.0,
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                        255,
+                                                                        173,
+                                                                        173,
+                                                                        173),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                                fontFamily:
+                                                                    'Inter',
+                                                              ),
+                                                            ),
+                                                            const Text(
+                                                              'Terms of Service',
+                                                              style: TextStyle(
+                                                                fontSize: 32.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                                height: 20.0),
+                                                            const Text(
+                                                              '1. OUR SERVICES',
+                                                              style: TextStyle(
+                                                                fontSize: 18.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            const Text(
+                                                              'The information provided when using the Services is not intended for distribution to or use by any person or entity in any jurisdiction or country where such distribution or use would be contrary to law or regulation or which would subject us to any registration requirement within such jurisdiction or country. Accordingly, those persons who choose to access the Services from other locations do so on their own initiative and are solely responsible for compliance with local laws, if and to the extent local laws are applicable.',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      18.0),
+                                                            ),
+                                                            const SizedBox(
+                                                                height: 10.0),
+                                                            const Text(
+                                                              '2. Use License',
+                                                              style: TextStyle(
+                                                                fontSize: 18.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            const Text(
+                                                              'Subject to your compliance with these Legal Terms, including the "PROHIBITED ACTIVITIES" section below, we grant you a non-exclusive, non-transferable, revocable license to: access the Services; and download or print a copy of any portion of the Content to which you have properly gained access. solely for your personal, non-commercial use or internal business purpose. Except as set out in this section or elsewhere in our Legal Terms, no part of the Services and no Content or Marks may be copied, reproduced, aggregated, ',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      18.0),
+                                                            ),
+                                                            SizedBox(
+                                                              height: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height *
+                                                                  0.15,
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                                Positioned(
-                                                  left: 0,
-                                                  right: 0,
-                                                  bottom: 0,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      left: 20,
-                                                      right: 20,
-                                                      bottom: 40,
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceAround,
-                                                      children: [
-                                                        SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.4,
-                                                          child: ElevatedButton(
-                                                            style: ButtonStyle(
-                                                              shape: MaterialStateProperty
-                                                                  .all<
-                                                                      RoundedRectangleBorder>(
-                                                                RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              10.0),
-                                                                  side:
-                                                                      const BorderSide(
-                                                                    color: Color
-                                                                        .fromARGB(
-                                                                      255,
-                                                                      49,
-                                                                      205,
-                                                                      215,
+                                                  Positioned(
+                                                    left: 0,
+                                                    right: 0,
+                                                    bottom: 0,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                        left: 20,
+                                                        right: 20,
+                                                        bottom: 40,
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceAround,
+                                                        children: [
+                                                          SizedBox(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.4,
+                                                            child:
+                                                                ElevatedButton(
+                                                              style:
+                                                                  ButtonStyle(
+                                                                shape: MaterialStateProperty
+                                                                    .all<
+                                                                        RoundedRectangleBorder>(
+                                                                  RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10.0),
+                                                                    side:
+                                                                        const BorderSide(
+                                                                      color: Color
+                                                                          .fromARGB(
+                                                                        255,
+                                                                        49,
+                                                                        205,
+                                                                        215,
+                                                                      ),
                                                                     ),
                                                                   ),
                                                                 ),
                                                               ),
+                                                              child: const Text(
+                                                                'Decline',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                    255,
+                                                                    49,
+                                                                    205,
+                                                                    215,
+                                                                  ),
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                ),
+                                                              ),
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(false);
+                                                              },
                                                             ),
-                                                            child: const Text(
-                                                              'Decline',
-                                                              style: TextStyle(
-                                                                color: Color
-                                                                    .fromARGB(
+                                                          ),
+                                                          SizedBox(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.4,
+                                                            child:
+                                                                ElevatedButton(
+                                                              style:
+                                                                  ElevatedButton
+                                                                      .styleFrom(
+                                                                backgroundColor:
+                                                                    const Color
+                                                                        .fromARGB(
                                                                   255,
                                                                   49,
                                                                   205,
                                                                   215,
                                                                 ),
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
-                                                              ),
-                                                            ),
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop(false);
-                                                            },
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.4,
-                                                          child: ElevatedButton(
-                                                            style:
-                                                                ElevatedButton
-                                                                    .styleFrom(
-                                                              backgroundColor:
-                                                                  const Color
-                                                                      .fromARGB(
-                                                                255,
-                                                                49,
-                                                                205,
-                                                                215,
-                                                              ),
-                                                              shape:
-                                                                  RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10), // Change this value as needed
-                                                              ),
-                                                            ),
-                                                            child: const Text(
-                                                              'Accept',
-                                                              style: TextStyle(
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                  255,
-                                                                  255,
-                                                                  249,
-                                                                  254,
+                                                                shape:
+                                                                    RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10), // Change this value as needed
                                                                 ),
                                                               ),
+                                                              child: const Text(
+                                                                'Accept',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                    255,
+                                                                    255,
+                                                                    249,
+                                                                    254,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(true);
+                                                              },
                                                             ),
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop(true);
-                                                            },
                                                           ),
-                                                        ),
-                                                      ],
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      );
-                                      if (accept == true) {
-                                        //server authentication
-                                        final response = await http
-                                            .post(
-                                              Uri.parse(
-                                                  'http://$localhost:8000/register'),
-                                              headers: <String, String>{
-                                                'Content-Type':
-                                                    'application/json; charset=UTF-8',
-                                              },
-                                              body: jsonEncode(<String, String>{
-                                                'firstName': fname,
-                                                'lastName': lname,
-                                                'username': username,
-                                                'email': email,
-                                                'password': password,
-                                                'confirmPassword':
-                                                    confirmPassword,
-                                              }),
-                                            )
-                                            .timeout(
-                                                const Duration(seconds: 10));
-                                        if (response.statusCode == 200) {
-                                          username_ = _controllerUsername.text;
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => Membership(
-                                                username:
-                                                    _controllerUsername.text,
-                                                index: 0,
+                                                ],
                                               ),
-                                            ),
-                                          );
-                                        } else {
-                                          // ignore: avoid_print
-                                          print(response.body);
-                                          var responseBody =
-                                              jsonDecode(response.body);
-                                          var errorMessage =
-                                              responseBody['detail'] ??
-                                                  'Unknown error';
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                                content: Text('$errorMessage')),
-                                          );
-                                        }
-                                      } //if accept==true
-                                    } catch (e) {
-                                      // ignore: avoid_print
-                                      print('Error: $e');
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                            content: Text(
-                                                'The server did not respond')),
-                                      );
+                                            );
+                                          },
+                                        );
+                                        if (accept == true) {
+                                          await dbHelper.syncMeals();
+                                          logger.info(
+                                              "synced meals successfully");
+                                          await dbHelper.syncMealComposition();
+                                          logger.info(
+                                              "synced meal compositions successfully");
+                                          //server authentication
+                                          final response = await http
+                                              .post(
+                                                Uri.parse(
+                                                    'http://$localhost:8000/register'),
+                                                headers: <String, String>{
+                                                  'Content-Type':
+                                                      'application/json; charset=UTF-8',
+                                                },
+                                                body:
+                                                    jsonEncode(<String, String>{
+                                                  'firstName': fname,
+                                                  'lastName': lname,
+                                                  'username': username,
+                                                  'email': email,
+                                                  'password': password,
+                                                  'confirmPassword':
+                                                      confirmPassword,
+                                                }),
+                                              )
+                                              .timeout(
+                                                  const Duration(seconds: 10));
+                                          if (response.statusCode == 200) {
+                                            username_ =
+                                                _controllerUsername.text;
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Membership(
+                                                  username:
+                                                      _controllerUsername.text,
+                                                  index: 0,
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            // ignore: avoid_print
+                                            print(response.body);
+                                            var responseBody =
+                                                jsonDecode(response.body);
+                                            var errorMessage =
+                                                responseBody['detail'] ??
+                                                    'Unknown error';
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                  content:
+                                                      Text('$errorMessage')),
+                                            );
+                                          }
+                                        } //if accept==true
+                                      } catch (e) {
+                                        // ignore: avoid_print
+                                        print('Error: $e');
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  'The server did not respond')),
+                                        );
+                                      }
                                     }
+                                    // bool accept = await showModalBottomSheet(
+                                    //   context: context,
+                                    //   isScrollControlled: true,
+                                    //   useRootNavigator: true,
+                                    //   builder: (context) {
+                                    //     return SizedBox(
+                                    //       height:
+                                    //           MediaQuery.of(context).size.height *
+                                    //               0.9,
+                                    //       child: Stack(
+                                    //         //mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                    //         children: [
+                                    //           ShaderMask(
+                                    //             shaderCallback: (Rect bounds) {
+                                    //               return const LinearGradient(
+                                    //                 begin: Alignment.topCenter,
+                                    //                 end: Alignment.bottomCenter,
+                                    //                 colors: <Color>[
+                                    //                   Colors.transparent,
+                                    //                   Colors.white
+                                    //                 ],
+                                    //                 stops: <double>[0.75, 0.85],
+                                    //               ).createShader(bounds);
+                                    //             },
+                                    //             blendMode: BlendMode.dstOut,
+                                    //             child: SingleChildScrollView(
+                                    //               child: Container(
+                                    //                 padding:
+                                    //                     const EdgeInsets.only(
+                                    //                   left: 30,
+                                    //                   right: 30,
+                                    //                   top: 20,
+                                    //                   bottom: 10,
+                                    //                 ),
+                                    //                 child: Column(
+                                    //                   crossAxisAlignment:
+                                    //                       CrossAxisAlignment
+                                    //                           .start,
+                                    //                   children: [
+                                    //                     const Text(
+                                    //                       'AGREEMENT',
+                                    //                       style: TextStyle(
+                                    //                         fontSize: 16.0,
+                                    //                         color: Color.fromARGB(
+                                    //                             255,
+                                    //                             173,
+                                    //                             173,
+                                    //                             173),
+                                    //                         fontWeight:
+                                    //                             FontWeight.normal,
+                                    //                         fontFamily: 'Inter',
+                                    //                       ),
+                                    //                     ),
+                                    //                     const Text(
+                                    //                       'Terms of Service',
+                                    //                       style: TextStyle(
+                                    //                         fontSize: 32.0,
+                                    //                         fontWeight:
+                                    //                             FontWeight.bold,
+                                    //                       ),
+                                    //                     ),
+                                    //                     const SizedBox(
+                                    //                         height: 20.0),
+                                    //                     const Text(
+                                    //                       '1. OUR SERVICES',
+                                    //                       style: TextStyle(
+                                    //                         fontSize: 18.0,
+                                    //                         fontWeight:
+                                    //                             FontWeight.bold,
+                                    //                       ),
+                                    //                     ),
+                                    //                     const Text(
+                                    //                       'The information provided when using the Services is not intended for distribution to or use by any person or entity in any jurisdiction or country where such distribution or use would be contrary to law or regulation or which would subject us to any registration requirement within such jurisdiction or country. Accordingly, those persons who choose to access the Services from other locations do so on their own initiative and are solely responsible for compliance with local laws, if and to the extent local laws are applicable.',
+                                    //                       style: TextStyle(
+                                    //                           fontSize: 18.0),
+                                    //                     ),
+                                    //                     const SizedBox(
+                                    //                         height: 10.0),
+                                    //                     const Text(
+                                    //                       '2. Use License',
+                                    //                       style: TextStyle(
+                                    //                         fontSize: 18.0,
+                                    //                         fontWeight:
+                                    //                             FontWeight.bold,
+                                    //                       ),
+                                    //                     ),
+                                    //                     const Text(
+                                    //                       'Subject to your compliance with these Legal Terms, including the "PROHIBITED ACTIVITIES" section below, we grant you a non-exclusive, non-transferable, revocable license to: access the Services; and download or print a copy of any portion of the Content to which you have properly gained access. solely for your personal, non-commercial use or internal business purpose. Except as set out in this section or elsewhere in our Legal Terms, no part of the Services and no Content or Marks may be copied, reproduced, aggregated, ',
+                                    //                       style: TextStyle(
+                                    //                           fontSize: 18.0),
+                                    //                     ),
+                                    //                     SizedBox(
+                                    //                       height: MediaQuery.of(
+                                    //                                   context)
+                                    //                               .size
+                                    //                               .height *
+                                    //                           0.15,
+                                    //                     ),
+                                    //                   ],
+                                    //                 ),
+                                    //               ),
+                                    //             ),
+                                    //           ),
+                                    //           Positioned(
+                                    //             left: 0,
+                                    //             right: 0,
+                                    //             bottom: 0,
+                                    //             child: Padding(
+                                    //               padding: const EdgeInsets.only(
+                                    //                 left: 20,
+                                    //                 right: 20,
+                                    //                 bottom: 40,
+                                    //               ),
+                                    //               child: Row(
+                                    //                 mainAxisAlignment:
+                                    //                     MainAxisAlignment
+                                    //                         .spaceAround,
+                                    //                 children: [
+                                    //                   SizedBox(
+                                    //                     width:
+                                    //                         MediaQuery.of(context)
+                                    //                                 .size
+                                    //                                 .width *
+                                    //                             0.4,
+                                    //                     child: ElevatedButton(
+                                    //                       style: ButtonStyle(
+                                    //                         shape: MaterialStateProperty
+                                    //                             .all<
+                                    //                                 RoundedRectangleBorder>(
+                                    //                           RoundedRectangleBorder(
+                                    //                             borderRadius:
+                                    //                                 BorderRadius
+                                    //                                     .circular(
+                                    //                                         10.0),
+                                    //                             side:
+                                    //                                 const BorderSide(
+                                    //                               color: Color
+                                    //                                   .fromARGB(
+                                    //                                 255,
+                                    //                                 49,
+                                    //                                 205,
+                                    //                                 215,
+                                    //                               ),
+                                    //                             ),
+                                    //                           ),
+                                    //                         ),
+                                    //                       ),
+                                    //                       child: const Text(
+                                    //                         'Decline',
+                                    //                         style: TextStyle(
+                                    //                           color:
+                                    //                               Color.fromARGB(
+                                    //                             255,
+                                    //                             49,
+                                    //                             205,
+                                    //                             215,
+                                    //                           ),
+                                    //                           fontWeight:
+                                    //                               FontWeight.w700,
+                                    //                         ),
+                                    //                       ),
+                                    //                       onPressed: () {
+                                    //                         Navigator.of(context)
+                                    //                             .pop(false);
+                                    //                       },
+                                    //                     ),
+                                    //                   ),
+                                    //                   SizedBox(
+                                    //                     width:
+                                    //                         MediaQuery.of(context)
+                                    //                                 .size
+                                    //                                 .width *
+                                    //                             0.4,
+                                    //                     child: ElevatedButton(
+                                    //                       style: ElevatedButton
+                                    //                           .styleFrom(
+                                    //                         backgroundColor:
+                                    //                             const Color
+                                    //                                 .fromARGB(
+                                    //                           255,
+                                    //                           49,
+                                    //                           205,
+                                    //                           215,
+                                    //                         ),
+                                    //                         shape:
+                                    //                             RoundedRectangleBorder(
+                                    //                           borderRadius:
+                                    //                               BorderRadius
+                                    //                                   .circular(
+                                    //                                       10), // Change this value as needed
+                                    //                         ),
+                                    //                       ),
+                                    //                       child: const Text(
+                                    //                         'Accept',
+                                    //                         style: TextStyle(
+                                    //                           color:
+                                    //                               Color.fromARGB(
+                                    //                             255,
+                                    //                             255,
+                                    //                             249,
+                                    //                             254,
+                                    //                           ),
+                                    //                         ),
+                                    //                       ),
+                                    //                       onPressed: () {
+                                    //                         Navigator.of(context)
+                                    //                             .pop(true);
+                                    //                       },
+                                    //                     ),
+                                    //                   ),
+                                    //                 ],
+                                    //               ),
+                                    //             ),
+                                    //           ),
+                                    //         ],
+                                    //       ),
+                                    //     );
+                                    //   },
+                                    // );
+                                    // if (accept == true) {
+                                    //   username_ = _controllerUsername.text;
+                                    //   Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //       builder: (context) => Membership(
+                                    //         username: _controllerUsername.text,
+                                    //       ),
+                                    //     ),
+                                    //   );
+                                    // }
                                   }
-                                  // bool accept = await showModalBottomSheet(
-                                  //   context: context,
-                                  //   isScrollControlled: true,
-                                  //   useRootNavigator: true,
-                                  //   builder: (context) {
-                                  //     return SizedBox(
-                                  //       height:
-                                  //           MediaQuery.of(context).size.height *
-                                  //               0.9,
-                                  //       child: Stack(
-                                  //         //mainAxisAlignment:MainAxisAlignment.spaceBetween,
-                                  //         children: [
-                                  //           ShaderMask(
-                                  //             shaderCallback: (Rect bounds) {
-                                  //               return const LinearGradient(
-                                  //                 begin: Alignment.topCenter,
-                                  //                 end: Alignment.bottomCenter,
-                                  //                 colors: <Color>[
-                                  //                   Colors.transparent,
-                                  //                   Colors.white
-                                  //                 ],
-                                  //                 stops: <double>[0.75, 0.85],
-                                  //               ).createShader(bounds);
-                                  //             },
-                                  //             blendMode: BlendMode.dstOut,
-                                  //             child: SingleChildScrollView(
-                                  //               child: Container(
-                                  //                 padding:
-                                  //                     const EdgeInsets.only(
-                                  //                   left: 30,
-                                  //                   right: 30,
-                                  //                   top: 20,
-                                  //                   bottom: 10,
-                                  //                 ),
-                                  //                 child: Column(
-                                  //                   crossAxisAlignment:
-                                  //                       CrossAxisAlignment
-                                  //                           .start,
-                                  //                   children: [
-                                  //                     const Text(
-                                  //                       'AGREEMENT',
-                                  //                       style: TextStyle(
-                                  //                         fontSize: 16.0,
-                                  //                         color: Color.fromARGB(
-                                  //                             255,
-                                  //                             173,
-                                  //                             173,
-                                  //                             173),
-                                  //                         fontWeight:
-                                  //                             FontWeight.normal,
-                                  //                         fontFamily: 'Inter',
-                                  //                       ),
-                                  //                     ),
-                                  //                     const Text(
-                                  //                       'Terms of Service',
-                                  //                       style: TextStyle(
-                                  //                         fontSize: 32.0,
-                                  //                         fontWeight:
-                                  //                             FontWeight.bold,
-                                  //                       ),
-                                  //                     ),
-                                  //                     const SizedBox(
-                                  //                         height: 20.0),
-                                  //                     const Text(
-                                  //                       '1. OUR SERVICES',
-                                  //                       style: TextStyle(
-                                  //                         fontSize: 18.0,
-                                  //                         fontWeight:
-                                  //                             FontWeight.bold,
-                                  //                       ),
-                                  //                     ),
-                                  //                     const Text(
-                                  //                       'The information provided when using the Services is not intended for distribution to or use by any person or entity in any jurisdiction or country where such distribution or use would be contrary to law or regulation or which would subject us to any registration requirement within such jurisdiction or country. Accordingly, those persons who choose to access the Services from other locations do so on their own initiative and are solely responsible for compliance with local laws, if and to the extent local laws are applicable.',
-                                  //                       style: TextStyle(
-                                  //                           fontSize: 18.0),
-                                  //                     ),
-                                  //                     const SizedBox(
-                                  //                         height: 10.0),
-                                  //                     const Text(
-                                  //                       '2. Use License',
-                                  //                       style: TextStyle(
-                                  //                         fontSize: 18.0,
-                                  //                         fontWeight:
-                                  //                             FontWeight.bold,
-                                  //                       ),
-                                  //                     ),
-                                  //                     const Text(
-                                  //                       'Subject to your compliance with these Legal Terms, including the "PROHIBITED ACTIVITIES" section below, we grant you a non-exclusive, non-transferable, revocable license to: access the Services; and download or print a copy of any portion of the Content to which you have properly gained access. solely for your personal, non-commercial use or internal business purpose. Except as set out in this section or elsewhere in our Legal Terms, no part of the Services and no Content or Marks may be copied, reproduced, aggregated, ',
-                                  //                       style: TextStyle(
-                                  //                           fontSize: 18.0),
-                                  //                     ),
-                                  //                     SizedBox(
-                                  //                       height: MediaQuery.of(
-                                  //                                   context)
-                                  //                               .size
-                                  //                               .height *
-                                  //                           0.15,
-                                  //                     ),
-                                  //                   ],
-                                  //                 ),
-                                  //               ),
-                                  //             ),
-                                  //           ),
-                                  //           Positioned(
-                                  //             left: 0,
-                                  //             right: 0,
-                                  //             bottom: 0,
-                                  //             child: Padding(
-                                  //               padding: const EdgeInsets.only(
-                                  //                 left: 20,
-                                  //                 right: 20,
-                                  //                 bottom: 40,
-                                  //               ),
-                                  //               child: Row(
-                                  //                 mainAxisAlignment:
-                                  //                     MainAxisAlignment
-                                  //                         .spaceAround,
-                                  //                 children: [
-                                  //                   SizedBox(
-                                  //                     width:
-                                  //                         MediaQuery.of(context)
-                                  //                                 .size
-                                  //                                 .width *
-                                  //                             0.4,
-                                  //                     child: ElevatedButton(
-                                  //                       style: ButtonStyle(
-                                  //                         shape: MaterialStateProperty
-                                  //                             .all<
-                                  //                                 RoundedRectangleBorder>(
-                                  //                           RoundedRectangleBorder(
-                                  //                             borderRadius:
-                                  //                                 BorderRadius
-                                  //                                     .circular(
-                                  //                                         10.0),
-                                  //                             side:
-                                  //                                 const BorderSide(
-                                  //                               color: Color
-                                  //                                   .fromARGB(
-                                  //                                 255,
-                                  //                                 49,
-                                  //                                 205,
-                                  //                                 215,
-                                  //                               ),
-                                  //                             ),
-                                  //                           ),
-                                  //                         ),
-                                  //                       ),
-                                  //                       child: const Text(
-                                  //                         'Decline',
-                                  //                         style: TextStyle(
-                                  //                           color:
-                                  //                               Color.fromARGB(
-                                  //                             255,
-                                  //                             49,
-                                  //                             205,
-                                  //                             215,
-                                  //                           ),
-                                  //                           fontWeight:
-                                  //                               FontWeight.w700,
-                                  //                         ),
-                                  //                       ),
-                                  //                       onPressed: () {
-                                  //                         Navigator.of(context)
-                                  //                             .pop(false);
-                                  //                       },
-                                  //                     ),
-                                  //                   ),
-                                  //                   SizedBox(
-                                  //                     width:
-                                  //                         MediaQuery.of(context)
-                                  //                                 .size
-                                  //                                 .width *
-                                  //                             0.4,
-                                  //                     child: ElevatedButton(
-                                  //                       style: ElevatedButton
-                                  //                           .styleFrom(
-                                  //                         backgroundColor:
-                                  //                             const Color
-                                  //                                 .fromARGB(
-                                  //                           255,
-                                  //                           49,
-                                  //                           205,
-                                  //                           215,
-                                  //                         ),
-                                  //                         shape:
-                                  //                             RoundedRectangleBorder(
-                                  //                           borderRadius:
-                                  //                               BorderRadius
-                                  //                                   .circular(
-                                  //                                       10), // Change this value as needed
-                                  //                         ),
-                                  //                       ),
-                                  //                       child: const Text(
-                                  //                         'Accept',
-                                  //                         style: TextStyle(
-                                  //                           color:
-                                  //                               Color.fromARGB(
-                                  //                             255,
-                                  //                             255,
-                                  //                             249,
-                                  //                             254,
-                                  //                           ),
-                                  //                         ),
-                                  //                       ),
-                                  //                       onPressed: () {
-                                  //                         Navigator.of(context)
-                                  //                             .pop(true);
-                                  //                       },
-                                  //                     ),
-                                  //                   ),
-                                  //                 ],
-                                  //               ),
-                                  //             ),
-                                  //           ),
-                                  //         ],
-                                  //       ),
-                                  //     );
-                                  //   },
-                                  // );
-                                  // if (accept == true) {
-                                  //   username_ = _controllerUsername.text;
-                                  //   Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //       builder: (context) => Membership(
-                                  //         username: _controllerUsername.text,
-                                  //       ),
-                                  //     ),
-                                  //   );
-                                  // }
                                 },
                                 child: const Text(
                                   "Sign Up",

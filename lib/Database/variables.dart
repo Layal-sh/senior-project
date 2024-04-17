@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:sugar_sense/main.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 Future<void> savePreferences() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -137,6 +138,19 @@ double insulin_3 = 0;
 int selectedPlan_ = -1;
 int numOfRatios_ = 1;
 bool isSynced_ = true;
+
+Future<bool> isConnectedToWifi() async {
+  try {
+    final response = await http.get(Uri.parse('http://www.google.com'));
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (_) {
+    return false;
+  }
+}
 
 Future<bool> syncValues() async {
   var result = await http.get(Uri.parse(
