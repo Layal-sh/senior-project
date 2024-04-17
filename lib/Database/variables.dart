@@ -1,7 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:sugar_sense/main.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 
 Future<void> savePreferences() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
