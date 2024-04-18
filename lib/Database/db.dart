@@ -31,7 +31,7 @@ class DBHelper {
     String DbPath = await getDatabasesPath();
     path = join(DbPath, 'SugarSense.db');
     Database database = await openDatabase(path,
-        onCreate: _onCreate, version: 34, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 35, onUpgrade: _onUpgrade);
     logger.info("Local Database has been initialized.");
     return database;
   }
