@@ -17,6 +17,8 @@ class ForgetPass extends StatefulWidget {
   State<ForgetPass> createState() => _ForgetPassState();
 }
 
+String email = "";
+
 class _ForgetPassState extends State<ForgetPass> {
   final TextEditingController _controllerEmail = TextEditingController();
 
@@ -145,7 +147,7 @@ class _ForgetPassState extends State<ForgetPass> {
                     ),
                   ),
                   onPressed: () async {
-                    String email = _controllerEmail.text;
+                    email = _controllerEmail.text;
                     if (email == "" ||
                         !email.contains('@') ||
                         !email.contains('.')) {
@@ -334,7 +336,9 @@ class _EmailCodeState extends State<EmailCode> {
                         ),
                       )
                     : TextButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          final response = await http.get(Uri.parse(
+                              'http://$localhost:8000/forgotPassword/$email'));
                           setState(() {
                             _duration = const Duration(seconds: 30);
                             startTimer();

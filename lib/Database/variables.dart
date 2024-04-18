@@ -137,6 +137,25 @@ double insulin_3 = 0;
 int selectedPlan_ = -1;
 int numOfRatios_ = 1;
 bool isSynced_ = true;
+String nextLoginTime_ = "";
+
+setLoginTime() {
+  DateTime now = DateTime.now();
+  nextLoginTime_ = now.add(Duration(days: 30)).toString();
+}
+
+checkLoginTime() {
+  DateTime now = DateTime.now();
+  if (nextLoginTime_ == "") {
+    return false;
+  }
+  DateTime nextLoginTime = DateTime.parse(nextLoginTime_);
+  if (now.isAfter(nextLoginTime)) {
+    return false;
+  }
+  return true;
+//if it returns false then it forces him to go to the login, if it's true then it takes him to the dashboard immediately.
+}
 
 Future<bool> isConnectedToWifi() async {
   try {
