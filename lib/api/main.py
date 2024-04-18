@@ -69,6 +69,12 @@ AppPassword = "onux jcdl joir mvld"
 ##############################################################
 
 ###########################################
+############|Random Variables|#############
+###########################################
+##############################################################
+timeAfterMonth = ""
+
+###########################################
 ############|Pydantic Models|##############
 ###########################################
 ##############################################################
@@ -380,19 +386,10 @@ async def registerfunction(user: NewPatient):
 ###########################################
 ##############################################################
 
-def isConnectedToWifi():
-    try:
-        requests.get("http://www.google.com", timeout=3)
-        return True
-    except requests.ConnectionError:
-        return False
-
-def checkUsername(username):##used in /register and in checkUsername##
-    row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(username,)).fetchone()
-    if(row is None):
-        return True
-    else:
-        return False
+###########################################
+##########|Change User Info|###############
+###########################################   
+##############################################################
     
 @app.get("/changeUsername/{username}/{id}")
 def changeUsername(username,id):
@@ -488,6 +485,21 @@ def changeDoctor(doctorCode, id):
         return True
     else:
         raise HTTPException(status_code=500, detail="couldn't change doctor")
+##############################################################
+
+def isConnectedToWifi():
+    try:
+        requests.get("http://www.google.com", timeout=3)
+        return True
+    except requests.ConnectionError:
+        return False
+
+def checkUsername(username):##used in /register and in checkUsername##
+    row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(username,)).fetchone()
+    if(row is None):
+        return True
+    else:
+        return False
 
 def checkEmail(email):##used in /register and in checkEmail##
     row = cursor.execute("SELECT userID FROM Users WHERE CAST(email AS VARCHAR(255)) = ?",(email,)).fetchone()

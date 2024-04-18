@@ -37,26 +37,26 @@ class DBHelper {
   }
 
   _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < newVersion) {
-      var tableInfo = await db.rawQuery('PRAGMA table_info(Entry)');
-      var columnExists = tableInfo.any((column) => column['name'] == 'unit');
-      if (!columnExists) {
-        await db.execute('ALTER TABLE Entry ADD COLUMN unit INTEGER NULL');
-      }
-      await db.execute('''DROP TABLE IF EXISTS "Favorites";''');
-      print("Dropped Favorites table");
-      await db.execute('''DROP TABLE IF EXISTS "Articles";''');
-      print("Dropped Articles table");
-      await db.execute('''
-      CREATE TABLE "Articles"(
-        url TEXT NOT NULL PRIMARY KEY,
-        title TEXT NOT NULL,
-        imageUrl TEXT NULL,
-        date TEXT NULL
-      );
-      ''');
-      print("Created Articles table");
-    }
+    // if (oldVersion < newVersion) {
+    //   var tableInfo = await db.rawQuery('PRAGMA table_info(Entry)');
+    //   var columnExists = tableInfo.any((column) => column['name'] == 'unit');
+    //   if (!columnExists) {
+    //     await db.execute('ALTER TABLE Entry ADD COLUMN unit INTEGER NULL');
+    //   }
+    //   await db.execute('''DROP TABLE IF EXISTS "Favorites";''');
+    //   print("Dropped Favorites table");
+    //   await db.execute('''DROP TABLE IF EXISTS "Articles";''');
+    //   print("Dropped Articles table");
+    //   await db.execute('''
+    //   CREATE TABLE "Articles"(
+    //     url TEXT NOT NULL PRIMARY KEY,
+    //     title TEXT NOT NULL,
+    //     imageUrl TEXT NULL,
+    //     date TEXT NULL
+    //   );
+    //   ''');
+    //   print("Created Articles table");
+    // }
   }
 
   _onCreate(Database db, int version) async {
@@ -65,7 +65,8 @@ class DBHelper {
     entryId INTEGER PRIMARY KEY AUTOINCREMENT,
     glucoseLevel REAL NOT NULL,
     insulinDosage INTEGER NULL,
-    entryDate TEXT NOT NULL
+    entryDate TEXT NOT NULL,
+    unit INTEGER NULL
   );
   ''');
     await db.execute('''
@@ -103,21 +104,13 @@ class DBHelper {
   );
   ''');
     await db.execute('''
-  CREATE TABLE "Articles"(
+      CREATE TABLE "Articles"(
         url TEXT NOT NULL PRIMARY KEY,
         title TEXT NOT NULL,
         imageUrl TEXT NULL,
         date TEXT NULL
       );
-  ''');
-    await db.execute('''
-  CREATE TABLE "Favorites"(
-    patientId INTEGER NOT NULL,
-    articleId INTEGER NOT NULL,
-    FOREIGN KEY(articleId) REFERENCES Articles(articleId),
-    PRIMARY KEY(patientId,articleId)
-  );
-  ''');
+      ''');
     logger.info("Local Database has been created");
   }
 
