@@ -1037,7 +1037,6 @@ class _MealBoxState extends State<MealBox> {
                         AsyncSnapshot<ByteData> snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         if (snapshot.hasError) {
-                          //print('No');
                           return ClipRRect(
                             borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(5),

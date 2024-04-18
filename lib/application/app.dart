@@ -3390,6 +3390,7 @@ class _ProfileState extends State<Profile> {
     });
   }
 
+  final _formKey = GlobalKey<FormState>();
   Future<void> resizeFavList() async {
     List<Map> articles = await db.selectAllArticle();
     int length = articles.length;
@@ -3587,263 +3588,349 @@ class _ProfileState extends State<Profile> {
                                     left: 20,
                                     right: 20,
                                   ),
-                                  child: Column(
-                                    children: [
-                                      Center(
-                                        child: Column(
-                                          children: [
-                                            GestureDetector(
-                                              onTap: () => _pickImage(setState),
-                                              child: Stack(
-                                                children: [
-                                                  SizedBox(
-                                                    width: min(
-                                                            MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width,
-                                                            MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height) *
-                                                        0.5,
-                                                    height: min(
-                                                            MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width,
-                                                            MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height) *
-                                                        0.5,
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              100),
-                                                      child: _selectedImage !=
-                                                              null
-                                                          ? Image.file(
-                                                              File(
-                                                                  _selectedImage!
-                                                                      .path),
-                                                              width: 200,
-                                                              height: 200,
-                                                              fit: BoxFit.cover,
-                                                            )
-                                                          : Container(
-                                                              color: const Color
-                                                                  .fromARGB(255,
-                                                                  45, 170, 178),
-                                                              child: Center(
-                                                                child: Text(
-                                                                  //textAlign: TextAlign.center,
-                                                                  firstName_[0]
-                                                                      .toUpperCase(),
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize: min(
-                                                                            MediaQuery.of(context).size.width,
-                                                                            MediaQuery.of(context).size.height) *
-                                                                        0.2,
-                                                                    color: Colors
-                                                                        .white,
+                                  child: Form(
+                                    key: _formKey,
+                                    child: Column(
+                                      children: [
+                                        Center(
+                                          child: Column(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () =>
+                                                    _pickImage(setState),
+                                                child: Stack(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: min(
+                                                              MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width,
+                                                              MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .height) *
+                                                          0.5,
+                                                      height: min(
+                                                              MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width,
+                                                              MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .height) *
+                                                          0.5,
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(100),
+                                                        child:
+                                                            _selectedImage !=
+                                                                    null
+                                                                ? Image.file(
+                                                                    File(_selectedImage!
+                                                                        .path),
+                                                                    width: 200,
+                                                                    height: 200,
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                  )
+                                                                : Container(
+                                                                    color: const Color
+                                                                        .fromARGB(
+                                                                        255,
+                                                                        45,
+                                                                        170,
+                                                                        178),
+                                                                    child:
+                                                                        Center(
+                                                                      child:
+                                                                          Text(
+                                                                        //textAlign: TextAlign.center,
+                                                                        firstName_[0]
+                                                                            .toUpperCase(),
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              min(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height) * 0.2,
+                                                                          color:
+                                                                              Colors.white,
+                                                                        ),
+                                                                      ),
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                    ),
-                                                  ),
-                                                  Positioned(
-                                                    left: 0,
-                                                    top: 20,
-                                                    child: InkWell(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          _selectedImage = null;
-                                                        });
-                                                      },
-                                                      child: const Icon(
-                                                        Icons.remove_circle,
-                                                        size: 40,
-                                                        color: Color.fromARGB(
-                                                            255, 38, 20, 84),
                                                       ),
                                                     ),
-                                                  ),
-                                                  Positioned(
-                                                    right: 0,
-                                                    bottom: 20,
-                                                    child: InkWell(
-                                                      onTap: () =>
-                                                          _pickImage(setState),
-                                                      child: Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(5),
-                                                        decoration:
-                                                            const BoxDecoration(
+                                                    Positioned(
+                                                      left: 0,
+                                                      top: 20,
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            _selectedImage =
+                                                                null;
+                                                          });
+                                                        },
+                                                        child: const Icon(
+                                                          Icons.remove_circle,
+                                                          size: 40,
                                                           color: Color.fromARGB(
                                                               255, 38, 20, 84),
-                                                          shape: BoxShape
-                                                              .rectangle,
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    15),
-                                                            topRight:
-                                                                Radius.circular(
-                                                                    15),
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    7),
-                                                            bottomRight:
-                                                                Radius.circular(
-                                                                    15),
-                                                          ),
-                                                        ),
-                                                        child: const Icon(
-                                                          Icons.edit,
-                                                          size: 20,
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              255,
-                                                              255,
-                                                              255),
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
+                                                    Positioned(
+                                                      right: 0,
+                                                      bottom: 20,
+                                                      child: InkWell(
+                                                        onTap: () => _pickImage(
+                                                            setState),
+                                                        child: Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(5),
+                                                          decoration:
+                                                              const BoxDecoration(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    38,
+                                                                    20,
+                                                                    84),
+                                                            shape: BoxShape
+                                                                .rectangle,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              topLeft: Radius
+                                                                  .circular(15),
+                                                              topRight: Radius
+                                                                  .circular(15),
+                                                              bottomLeft: Radius
+                                                                  .circular(7),
+                                                              bottomRight:
+                                                                  Radius
+                                                                      .circular(
+                                                                          15),
+                                                            ),
+                                                          ),
+                                                          child: const Icon(
+                                                            Icons.edit,
+                                                            size: 20,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    255,
+                                                                    255,
+                                                                    255),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.02,
-                                      ),
-                                      Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.07,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: const Color.fromARGB(
-                                                255, 38, 20, 84),
-                                          ),
-                                          borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(15),
-                                            bottomLeft: Radius.circular(15),
-                                            topRight: Radius.circular(15),
-                                            bottomRight: Radius.circular(15),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        child: TextFormField(
-                                          controller: _userController,
-                                          keyboardType: TextInputType.name,
-                                          style: const TextStyle(
-                                            color:
-                                                Color.fromARGB(255, 38, 20, 84),
-                                            fontSize: 15,
-                                            fontFamily: 'Inter',
-                                            fontWeight: FontWeight.w600,
+                                        SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.02,
+                                        ),
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.07,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: const Color.fromARGB(
+                                                  255, 38, 20, 84),
+                                            ),
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                              topLeft: Radius.circular(15),
+                                              bottomLeft: Radius.circular(15),
+                                              topRight: Radius.circular(15),
+                                              bottomRight: Radius.circular(15),
+                                            ),
                                           ),
-                                          decoration: InputDecoration(
-                                            //labelText: 'UserName',
-                                            hintText: username_,
-                                            labelStyle: const TextStyle(
+                                          child: TextFormField(
+                                            controller: _userController,
+                                            keyboardType: TextInputType.name,
+                                            style: const TextStyle(
                                               color: Color.fromARGB(
-                                                  189, 38, 20, 84),
+                                                  255, 38, 20, 84),
                                               fontSize: 15,
                                               fontFamily: 'Inter',
                                               fontWeight: FontWeight.w600,
                                             ),
-                                            prefixIcon: const Icon(
-                                              Icons.person_2_outlined,
-                                              color: Color.fromARGB(
+                                            decoration: InputDecoration(
+                                              //labelText: 'UserName',
+                                              hintText: username_,
+                                              labelStyle: const TextStyle(
+                                                color: Color.fromARGB(
+                                                    189, 38, 20, 84),
+                                                fontSize: 15,
+                                                fontFamily: 'Inter',
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                              prefixIcon: const Icon(
+                                                Icons.person_2_outlined,
+                                                color: Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                              ),
+                                              border: InputBorder.none,
+                                            ),
+                                            validator: (value) {
+                                              if (userNameUpdate(value!) == 0) {
+                                                return 'Username already exists';
+                                              }
+                                              return null;
+                                            },
+                                            //onEditingComplete: () => _focusNodePassword.requestFocus(),
+                                            //validator: (String? value) {
+                                            //  if (value == null || value.isEmpty) {
+                                            //    return 'Please enter your email';
+                                            //  } else if (!_boxAccounts.containsKey(value)) {
+                                            //    return 'Email not found';
+                                            //  }
+                                            //  return null;
+                                            //},
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 25,
+                                        ),
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.07,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: const Color.fromARGB(
                                                   255, 38, 20, 84),
                                             ),
-                                            border: InputBorder.none,
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                              topLeft: Radius.circular(15),
+                                              bottomLeft: Radius.circular(15),
+                                              topRight: Radius.circular(15),
+                                              bottomRight: Radius.circular(15),
+                                            ),
                                           ),
-                                          //onEditingComplete: () => _focusNodePassword.requestFocus(),
-                                          //validator: (String? value) {
-                                          //  if (value == null || value.isEmpty) {
-                                          //    return 'Please enter your email';
-                                          //  } else if (!_boxAccounts.containsKey(value)) {
-                                          //    return 'Email not found';
-                                          //  }
-                                          //  return null;
-                                          //},
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 25,
-                                      ),
-                                      Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.07,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: const Color.fromARGB(
-                                                255, 38, 20, 84),
-                                          ),
-                                          borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(15),
-                                            bottomLeft: Radius.circular(15),
-                                            topRight: Radius.circular(15),
-                                            bottomRight: Radius.circular(15),
-                                          ),
-                                        ),
-                                        child: TextFormField(
-                                          controller: _controllerEmail,
-                                          keyboardType:
-                                              TextInputType.emailAddress,
-                                          style: const TextStyle(
-                                            color:
-                                                Color.fromARGB(255, 38, 20, 84),
-                                            fontSize: 15,
-                                            fontFamily: 'Inter',
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                          decoration: InputDecoration(
-                                            hintText: email_,
-                                            labelStyle: const TextStyle(
+                                          child: TextFormField(
+                                            controller: _controllerEmail,
+                                            keyboardType:
+                                                TextInputType.emailAddress,
+                                            style: const TextStyle(
                                               color: Color.fromARGB(
-                                                  189, 38, 20, 84),
+                                                  255, 38, 20, 84),
                                               fontSize: 15,
-                                              fontFamily: 'Poppins',
+                                              fontFamily: 'Inter',
                                               fontWeight: FontWeight.w600,
                                             ),
-                                            prefixIcon: const Icon(
-                                              Icons.email_outlined,
-                                              color: Color.fromARGB(
-                                                  255, 38, 20, 84),
+                                            decoration: InputDecoration(
+                                              hintText: email_,
+                                              labelStyle: const TextStyle(
+                                                color: Color.fromARGB(
+                                                    189, 38, 20, 84),
+                                                fontSize: 15,
+                                                fontFamily: 'Poppins',
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                              prefixIcon: const Icon(
+                                                Icons.email_outlined,
+                                                color: Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                              ),
+                                              border: InputBorder.none,
                                             ),
-                                            border: InputBorder.none,
+                                            validator: (String? value) {
+                                              if (emailUpdate(value!) == 2) {
+                                                return "Invalid email";
+                                              } else if (emailUpdate(value) ==
+                                                  0) {
+                                                return "Email already exists";
+                                              }
+                                              return null;
+                                            },
                                           ),
-                                          validator: (String? value) {
-                                            if (!isValidEmail(value!)) {
-                                              return "Invalid email.";
-                                            }
-                                            return null;
-                                          },
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        height: 25,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Container(
+                                        const SizedBox(
+                                          height: 25,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.07,
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                    color: const Color.fromARGB(
+                                                        255, 38, 20, 84),
+                                                  ),
+                                                  borderRadius:
+                                                      const BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(15),
+                                                    bottomLeft:
+                                                        Radius.circular(15),
+                                                  ),
+                                                ),
+                                                child: TextFormField(
+                                                  controller: _pnController,
+                                                  keyboardType:
+                                                      TextInputType.phone,
+                                                  style: const TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255, 38, 20, 84),
+                                                    fontSize: 15,
+                                                    fontFamily: 'Inter',
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                  decoration: InputDecoration(
+                                                    hintText: phoneNumber_,
+                                                    labelStyle: const TextStyle(
+                                                      color: Color.fromARGB(
+                                                          189, 38, 20, 84),
+                                                      fontSize: 15,
+                                                      fontFamily: 'Poppins',
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                    prefixIcon: const Icon(
+                                                      Icons.phone_android,
+                                                      color: Color.fromARGB(
+                                                          255, 38, 20, 84),
+                                                    ),
+                                                    border: InputBorder.none,
+                                                  ),
+                                                  validator: (String? value) {
+                                                    if (phoneUpdate(value!) ==
+                                                        2) {
+                                                      return "Invalid phone number";
+                                                    } else if (phoneUpdate(
+                                                            value) ==
+                                                        0) {
+                                                      return "Phone number already exists";
+                                                    }
+                                                    return null;
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
                                               height: MediaQuery.of(context)
                                                       .size
                                                       .height *
@@ -3855,305 +3942,298 @@ class _ProfileState extends State<Profile> {
                                                 ),
                                                 borderRadius:
                                                     const BorderRadius.only(
-                                                  topLeft: Radius.circular(15),
-                                                  bottomLeft:
+                                                  topRight: Radius.circular(15),
+                                                  bottomRight:
                                                       Radius.circular(15),
                                                 ),
                                               ),
-                                              child: TextFormField(
-                                                controller: _pnController,
-                                                keyboardType:
-                                                    TextInputType.phone,
-                                                style: const TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 38, 20, 84),
-                                                  fontSize: 15,
-                                                  fontFamily: 'Inter',
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                                decoration: InputDecoration(
-                                                  hintText: phoneNumber_,
-                                                  labelStyle: const TextStyle(
-                                                    color: Color.fromARGB(
-                                                        189, 38, 20, 84),
-                                                    fontSize: 15,
-                                                    fontFamily: 'Poppins',
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                  prefixIcon: const Icon(
-                                                    Icons.phone_android,
-                                                    color: Color.fromARGB(
-                                                        255, 38, 20, 84),
-                                                  ),
-                                                  border: InputBorder.none,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.07,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: const Color.fromARGB(
-                                                    255, 38, 20, 84),
-                                              ),
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                topRight: Radius.circular(15),
-                                                bottomRight:
-                                                    Radius.circular(15),
-                                              ),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Row(
-                                                children: [
-                                                  const Text('+961'),
-                                                  const SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.07,
-                                                    child: Image.asset(
-                                                      'assets/lebanon.png',
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Row(
+                                                  children: [
+                                                    const Text('+961'),
+                                                    const SizedBox(
+                                                      width: 5,
                                                     ),
-                                                  ),
-                                                ],
+                                                    SizedBox(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.07,
+                                                      child: Image.asset(
+                                                        'assets/lebanon.png',
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            "Change Password",
-                                            style: TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 116, 116, 116),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              "Change Password",
+                                              style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 116, 116, 116),
+                                              ),
                                             ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        SizedBox(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.06,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color.fromARGB(
+                                                      255, 38, 20, 84),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(
+                                                    10), // Change this value as needed
+                                              ),
+                                            ),
+                                            child: const Text(
+                                              'Accept',
+                                              style: TextStyle(
+                                                color: Color.fromARGB(
+                                                  255,
+                                                  255,
+                                                  249,
+                                                  254,
+                                                ),
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                            onPressed: () async {
+                                              /*String username =
+                                                  _userController.text;
+                                              String email =
+                                                  _controllerEmail.text;
+                                              String phoneNumber =
+                                                  _pnController.text;
+                                              int name = await userNameUpdate(
+                                                  username);
+                                              int mail =
+                                                  await emailUpdate(email);
+                                              int phone = await phoneUpdate(
+                                                  phoneNumber);
+
+                                              print("batata");
+                                              logger.info(
+                                                  "name: $name mail: $mail phone:$phone");
+
+                                              if (name == 1 &&
+                                                  mail == 1 &&
+                                                  phone == 1) {
+                                                Navigator.of(context).pop();
+                                              } else {
+                                                if (name == 0) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                        content: Text(
+                                                            'Username already exists')),
+                                                  );
+                                                }
+                                                if (mail == 0) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                        content: Text(
+                                                            'Email already exists')),
+                                                  );
+                                                }
+                                                if (phone == 0) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                        content: Text(
+                                                            'Phone number already exists')),
+                                                  );
+                                                }
+                                                if (mail == 2) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                        content: Text(
+                                                            'Invalid email')),
+                                                  );
+                                                }
+                                                if (phone == 2) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                        content: Text(
+                                                            'Invalid phone number')),
+                                                  );
+                                                }
+                                                if (phone == -1 ||
+                                                    mail == -1 ||
+                                                    name == -1) {
+                                                  print(
+                                                      'Errorrr OCCCUURREEDDDDD');
+                                                }
+                                              }*/
+                                              if (_formKey.currentState!
+                                                  .validate()) {
+                                                setState(() {
+                                                  acc = true;
+
+                                                  if (_selectedImage != null) {
+                                                    profilePicture_ =
+                                                        _selectedImage!.path;
+
+                                                    saveP();
+                                                  } else {
+                                                    profilePicture_ = '';
+                                                    saveP();
+                                                  }
+                                                  if (_userController
+                                                      .text.isNotEmpty) {
+                                                    username_ =
+                                                        _userController.text;
+                                                    saveU();
+                                                  }
+                                                  if (_controllerEmail
+                                                      .text.isNotEmpty) {
+                                                    email_ =
+                                                        _controllerEmail.text;
+                                                    saveE();
+                                                  }
+                                                  if (_pnController
+                                                      .text.isNotEmpty) {
+                                                    phoneNumber_ =
+                                                        _pnController.text;
+                                                    saveN();
+                                                  }
+
+                                                  Navigator.of(context).pop();
+                                                });
+                                              }
+                                              //   setState(() {
+                                              //     acc = true;
+                                              //     if (isValidEmail(
+                                              //         _controllerEmail.text)) {
+                                              //       if (_selectedImage != null) {
+                                              //         profilePicture_ =
+                                              //             _selectedImage!.path;
+
+                                              //         saveP();
+                                              //       } else {
+                                              //         profilePicture_ = '';
+                                              //         saveP();
+                                              //       }
+                                              //       if (_userController
+                                              //           .text.isNotEmpty) {
+                                              //         username_ =
+                                              //             _userController.text;
+                                              //         saveU();
+                                              //       }
+                                              //       if (_controllerEmail
+                                              //           .text.isNotEmpty) {
+                                              //         email_ =
+                                              //             _controllerEmail.text;
+                                              //         saveE();
+                                              //       }
+                                              //       if (_pnController
+                                              //           .text.isNotEmpty) {
+                                              //         phoneNumber_ =
+                                              //             _pnController.text;
+                                              //         saveN();
+                                              //       }
+                                              //       Navigator.of(context).pop();
+                                              //     } else {
+                                              //       _controllerEmail.value =
+                                              //           TextEditingValue(
+                                              //               text: email_);
+                                              //       showDialog(
+                                              //         context: context,
+                                              //         builder:
+                                              //             (BuildContext context) {
+                                              //           return AlertDialog(
+                                              //             title: const Text(
+                                              //                 'Invalid Email'),
+                                              //             content: const Text(
+                                              //                 'Please enter a valid email'),
+                                              //             actions: <Widget>[
+                                              //               TextButton(
+                                              //                 child: const Text(
+                                              //                     'Close'),
+                                              //                 onPressed: () {
+                                              //                   Navigator.of(
+                                              //                           context)
+                                              //                       .pop();
+                                              //                 },
+                                              //               ),
+                                              //             ],
+                                              //           );
+                                              //         },
+                                              //       );
+                                              //     }
+                                              //   });
+                                            },
                                           ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.06,
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                const Color.fromARGB(
+                                        ),
+                                        const SizedBox(
+                                          height: 15,
+                                        ),
+                                        SizedBox(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.06,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              //primary: Color.fromARGB(255, 255, 255, 255), // background color
+                                              side: const BorderSide(
+                                                color: Color.fromARGB(
                                                     255, 38, 20, 84),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  10), // Change this value as needed
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            'Accept',
-                                            style: TextStyle(
-                                              color: Color.fromARGB(
-                                                255,
-                                                255,
-                                                249,
-                                                254,
+                                                width: 1,
                                               ),
-                                              fontSize: 20,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(
+                                                    10), // Change this value as needed
+                                              ),
                                             ),
-                                          ),
-                                          onPressed: () async {
-                                            String username =
-                                                _userController.text;
-                                            String email =
-                                                _controllerEmail.text;
-                                            String phoneNumber =
-                                                _pnController.text;
-                                            int name =
-                                                await userNameUpdate(username);
-                                            int mail = await emailUpdate(email);
-                                            int phone =
-                                                await phoneUpdate(phoneNumber);
-
-                                            print("batata");
-                                            logger.info(
-                                                "name: $name mail: $mail phone:$phone");
-
-                                            if (name == 1 &&
-                                                mail == 1 &&
-                                                phone == 1) {
+                                            child: const Text(
+                                              'Cancel',
+                                              style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 38, 20, 84),
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                            onPressed: () async {
+                                              setState(() {
+                                                if (profilePicture_ != '') {
+                                                  _selectedImage =
+                                                      XFile(profilePicture_);
+                                                }
+                                              });
                                               Navigator.of(context).pop();
-                                            } else {
-                                              if (name == 0) {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  const SnackBar(
-                                                      content: Text(
-                                                          'Username already exists')),
-                                                );
-                                              }
-                                              if (mail == 0) {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  const SnackBar(
-                                                      content: Text(
-                                                          'Email already exists')),
-                                                );
-                                              }
-                                              if (phone == 0) {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  const SnackBar(
-                                                      content: Text(
-                                                          'Phone number already exists')),
-                                                );
-                                              }
-                                              if (mail == 2) {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  const SnackBar(
-                                                      content: Text(
-                                                          'Invalid email')),
-                                                );
-                                              }
-                                              if (phone == 2) {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  const SnackBar(
-                                                      content: Text(
-                                                          'Invalid phone number')),
-                                                );
-                                              }
-                                              if (phone == -1 ||
-                                                  mail == -1 ||
-                                                  name == -1) {
-                                                print(
-                                                    'Errorrr OCCCUURREEDDDDD');
-                                              }
-                                            }
-                                            //   setState(() {
-                                            //     acc = true;
-                                            //     if (isValidEmail(
-                                            //         _controllerEmail.text)) {
-                                            //       if (_selectedImage != null) {
-                                            //         profilePicture_ =
-                                            //             _selectedImage!.path;
-
-                                            //         saveP();
-                                            //       } else {
-                                            //         profilePicture_ = '';
-                                            //         saveP();
-                                            //       }
-                                            //       if (_userController
-                                            //           .text.isNotEmpty) {
-                                            //         username_ =
-                                            //             _userController.text;
-                                            //         saveU();
-                                            //       }
-                                            //       if (_controllerEmail
-                                            //           .text.isNotEmpty) {
-                                            //         email_ =
-                                            //             _controllerEmail.text;
-                                            //         saveE();
-                                            //       }
-                                            //       if (_pnController
-                                            //           .text.isNotEmpty) {
-                                            //         phoneNumber_ =
-                                            //             _pnController.text;
-                                            //         saveN();
-                                            //       }
-                                            //       Navigator.of(context).pop();
-                                            //     } else {
-                                            //       _controllerEmail.value =
-                                            //           TextEditingValue(
-                                            //               text: email_);
-                                            //       showDialog(
-                                            //         context: context,
-                                            //         builder:
-                                            //             (BuildContext context) {
-                                            //           return AlertDialog(
-                                            //             title: const Text(
-                                            //                 'Invalid Email'),
-                                            //             content: const Text(
-                                            //                 'Please enter a valid email'),
-                                            //             actions: <Widget>[
-                                            //               TextButton(
-                                            //                 child: const Text(
-                                            //                     'Close'),
-                                            //                 onPressed: () {
-                                            //                   Navigator.of(
-                                            //                           context)
-                                            //                       .pop();
-                                            //                 },
-                                            //               ),
-                                            //             ],
-                                            //           );
-                                            //         },
-                                            //       );
-                                            //     }
-                                            //   });
-                                          },
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 15,
-                                      ),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.06,
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            //primary: Color.fromARGB(255, 255, 255, 255), // background color
-                                            side: const BorderSide(
-                                              color: Color.fromARGB(
-                                                  255, 38, 20, 84),
-                                              width: 1,
-                                            ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  10), // Change this value as needed
-                                            ),
+                                            },
                                           ),
-                                          child: const Text(
-                                            'Cancel',
-                                            style: TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 38, 20, 84),
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            setState(() {
-                                              if (profilePicture_ != '') {
-                                                _selectedImage =
-                                                    XFile(profilePicture_);
-                                              }
-                                            });
-                                            Navigator.of(context).pop();
-                                          },
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
