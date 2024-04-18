@@ -15,6 +15,7 @@ import 'package:sugar_sense/AI/ai_functions.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:sugar_sense/login/signup/login.dart';
 import 'package:sugar_sense/login/signup/signup.dart';
 import 'package:sugar_sense/main.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -5331,7 +5332,12 @@ class _ProfileState extends State<Profile> {
               ),
               GestureDetector(
                 onTap: () {
-                  // Handle your tap event here...
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Login(),
+                    ),
+                  );
                 },
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
@@ -5940,6 +5946,13 @@ class _SettingsState extends State<Settings> {
           privacyCheckbox(0, 'Glucose levels'),
           privacyCheckbox(1, 'Insulin intake'),
           privacyCheckbox(2, 'Meals'),
+          const SizedBox(height: 20),
+          settingsTitle("Doctor Connection"),
+          ElevatedButton.icon(
+            onPressed: () => int, // replace with your function
+            icon: const Icon(Icons.link),
+            label: const Text('Connect to Doctor'),
+          ),
         ],
       ),
     );

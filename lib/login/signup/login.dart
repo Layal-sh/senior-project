@@ -93,6 +93,11 @@ class _LoginState extends State<Login> {
       Map<String, dynamic> userDetails = jsonDecode(response.body);
       logger.info("user details: $userDetails");
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      username_ = userDetails['userName'];
+      firstName_ = userDetails['firstName'];
+      lastName_ = userDetails['lastName'];
+      email_ = userDetails['email'];
+      pid_ = userDetails['userID'];
       await prefs.setString('username', userDetails['userName']);
       await prefs.setString('firstName', userDetails['firstName']);
       await prefs.setString('lastName', userDetails['lastName']);
@@ -116,28 +121,36 @@ class _LoginState extends State<Login> {
         Map<String, dynamic> patientDetails = jsonDecode(responsePatient.body);
         logger.info("patient details: $patientDetails");
         if (patientDetails['doctorCode'] != null) {
+          doctorCode_ = patientDetails['doctorCode'];
           await prefs.setString('doctorCode_', patientDetails['doctorCode']);
         }
         if (patientDetails['phoneNumber'] != null) {
+          phoneNumber_ = patientDetails['phoneNumber'];
           await prefs.setInt('phoneNumber_', patientDetails['phoneNumber']);
         }
         if (patientDetails['profilePhoto'] != null) {
+          profilePicture_ = patientDetails['profilePhoto'];
           await prefs.setString(
               'profilePicture_', patientDetails['profilePhoto']);
         }
-
+        insulinSensitivity_ = patientDetails['insulinSensivity'].toInt();
         await prefs.setInt(
             'insulinSensitivity_', patientDetails['insulinSensivity'].toInt());
+        targetBloodSugar_ = patientDetails['targetBloodGlucose'];
         await prefs.setInt(
             'targetBloodSugar_', patientDetails['targetBloodGlucose']);
+        carbRatio_ = patientDetails['carbRatio'];
         await prefs.setDouble('carbRatio_', patientDetails['carbRatio']);
         if (patientDetails['carbRatio2'] != null) {
+          carbRatio_2 = patientDetails['carbRatio2'];
           await prefs.setDouble('carbRatio_2', patientDetails['carbRatio2']);
         }
         if (patientDetails['carbRatio3'] != null) {
+          carbRatio_3 = patientDetails['carbRatio3'];
           await prefs.setDouble('carbRatio_3', patientDetails['carbRatio3']);
         }
         if (patientDetails['privacy'] != null) {
+          privacy_ = patientDetails['privacy'];
           await prefs.setString('privacy_', patientDetails['privacy']);
         }
       }
