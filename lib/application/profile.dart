@@ -99,10 +99,10 @@ class _ProfileState extends State<Profile> {
                     SizedBox(
                       width: min(MediaQuery.of(context).size.width,
                               MediaQuery.of(context).size.height) *
-                          0.5,
+                          0.4,
                       height: min(MediaQuery.of(context).size.width,
                               MediaQuery.of(context).size.height) *
-                          0.5,
+                          0.4,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
                         child: (profilePicture_ != '')
@@ -124,7 +124,7 @@ class _ProfileState extends State<Profile> {
                                               MediaQuery.of(context)
                                                   .size
                                                   .height) *
-                                          0.2,
+                                          0.15,
                                       color: Colors.white,
                                     ),
                                   ),
@@ -138,7 +138,7 @@ class _ProfileState extends State<Profile> {
                     Text(
                       username_,
                       style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width * 0.05,
+                        fontSize: MediaQuery.of(context).size.width * 0.045,
                         color: const Color.fromARGB(255, 28, 42, 58),
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w700,
@@ -149,7 +149,7 @@ class _ProfileState extends State<Profile> {
                             phoneNumber_,
                             style: TextStyle(
                               fontSize:
-                                  MediaQuery.of(context).size.width * 0.045,
+                                  MediaQuery.of(context).size.width * 0.035,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -164,8 +164,27 @@ class _ProfileState extends State<Profile> {
               ),
               GestureDetector(
                 onTap: () async {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => const editProfile()));
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation1, animation2) =>
+                          const editProfile(),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                        var begin = const Offset(0.0, 1.0);
+                        var end = Offset.zero;
+                        var curve = Curves.ease;
+
+                        var tween = Tween(begin: begin, end: end)
+                            .chain(CurveTween(curve: curve));
+
+                        return SlideTransition(
+                          position: animation.drive(tween),
+                          child: child,
+                        );
+                      },
+                    ),
+                  );
                 },
                 child: Container(
                   decoration: const BoxDecoration(
@@ -177,7 +196,7 @@ class _ProfileState extends State<Profile> {
                     ),
                   ),
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width * 0.15,
+                  height: MediaQuery.of(context).size.width * 0.11,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     mainAxisSize: MainAxisSize.min,
@@ -186,7 +205,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           Icon(
                             Icons.manage_accounts_outlined,
-                            size: MediaQuery.of(context).size.width * 0.085,
+                            size: MediaQuery.of(context).size.width * 0.07,
                             color: const Color.fromARGB(255, 28, 42, 58),
                           ),
                           const SizedBox(
@@ -197,7 +216,7 @@ class _ProfileState extends State<Profile> {
                             style: TextStyle(
                               fontSize: min(MediaQuery.of(context).size.width,
                                       MediaQuery.of(context).size.height) *
-                                  0.045,
+                                  0.035,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -207,7 +226,7 @@ class _ProfileState extends State<Profile> {
                       ),
                       Icon(
                         Icons.arrow_forward_ios_rounded,
-                        size: MediaQuery.of(context).size.width * 0.04,
+                        size: MediaQuery.of(context).size.width * 0.03,
                         color: const Color.fromARGB(255, 84, 95, 107),
                       ),
                     ],
@@ -589,7 +608,7 @@ class _ProfileState extends State<Profile> {
                     ),
                   ),
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width * 0.15,
+                  height: MediaQuery.of(context).size.width * 0.11,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     mainAxisSize:
@@ -599,7 +618,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           Icon(
                             Icons.bookmark_outline_rounded,
-                            size: MediaQuery.of(context).size.width * 0.085,
+                            size: MediaQuery.of(context).size.width * 0.07,
                             color: const Color.fromARGB(255, 28, 42, 58),
                           ),
                           const SizedBox(
@@ -610,7 +629,7 @@ class _ProfileState extends State<Profile> {
                             style: TextStyle(
                               fontSize: min(MediaQuery.of(context).size.width,
                                       MediaQuery.of(context).size.height) *
-                                  0.045,
+                                  0.035,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -620,7 +639,7 @@ class _ProfileState extends State<Profile> {
                       ), // This is the text
                       Icon(
                         Icons.arrow_forward_ios_rounded,
-                        size: MediaQuery.of(context).size.width * 0.04,
+                        size: MediaQuery.of(context).size.width * 0.03,
                         color: const Color.fromARGB(255, 84, 95, 107),
                       ), // This is the right icon
                     ],
@@ -653,7 +672,7 @@ class _ProfileState extends State<Profile> {
                     ),
                   ),
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width * 0.15,
+                  height: MediaQuery.of(context).size.width * 0.11,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     mainAxisSize:
@@ -663,7 +682,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           Icon(
                             Icons.token_outlined,
-                            size: MediaQuery.of(context).size.width * 0.085,
+                            size: MediaQuery.of(context).size.width * 0.07,
                             color: const Color.fromARGB(255, 28, 42, 58),
                           ),
 
@@ -675,7 +694,7 @@ class _ProfileState extends State<Profile> {
                             style: TextStyle(
                               fontSize: min(MediaQuery.of(context).size.width,
                                       MediaQuery.of(context).size.height) *
-                                  0.045,
+                                  0.035,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -685,7 +704,7 @@ class _ProfileState extends State<Profile> {
                       ), // This is the text
                       Icon(
                         Icons.arrow_forward_ios_rounded,
-                        size: MediaQuery.of(context).size.width * 0.04,
+                        size: MediaQuery.of(context).size.width * 0.03,
                         color: const Color.fromARGB(255, 84, 95, 107),
                       ), // This is the right icon
                     ],
@@ -850,7 +869,7 @@ class _ProfileState extends State<Profile> {
                     ),
                   ),
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width * 0.15,
+                  height: MediaQuery.of(context).size.width * 0.11,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     mainAxisSize:
@@ -860,7 +879,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           Icon(
                             Icons.policy_outlined,
-                            size: MediaQuery.of(context).size.width * 0.085,
+                            size: MediaQuery.of(context).size.width * 0.07,
                             color: const Color.fromARGB(255, 28, 42, 58),
                           ),
 
@@ -872,7 +891,7 @@ class _ProfileState extends State<Profile> {
                             style: TextStyle(
                               fontSize: min(MediaQuery.of(context).size.width,
                                       MediaQuery.of(context).size.height) *
-                                  0.045,
+                                  0.035,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -903,7 +922,7 @@ class _ProfileState extends State<Profile> {
                     ),
                   ),
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width * 0.15,
+                  height: MediaQuery.of(context).size.width * 0.11,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     mainAxisSize:
@@ -913,7 +932,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           Icon(
                             Icons.book_outlined,
-                            size: MediaQuery.of(context).size.width * 0.085,
+                            size: MediaQuery.of(context).size.width * 0.07,
                             color: const Color.fromARGB(255, 28, 42, 58),
                           ),
 
@@ -925,7 +944,7 @@ class _ProfileState extends State<Profile> {
                             style: TextStyle(
                               fontSize: min(MediaQuery.of(context).size.width,
                                       MediaQuery.of(context).size.height) *
-                                  0.045,
+                                  0.035,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -956,7 +975,7 @@ class _ProfileState extends State<Profile> {
                     ),
                   ),
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width * 0.15,
+                  height: MediaQuery.of(context).size.width * 0.11,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     mainAxisSize:
@@ -966,7 +985,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           Icon(
                             Icons.help_outline,
-                            size: MediaQuery.of(context).size.width * 0.085,
+                            size: MediaQuery.of(context).size.width * 0.07,
                             color: const Color.fromARGB(255, 28, 42, 58),
                           ),
 
@@ -978,7 +997,7 @@ class _ProfileState extends State<Profile> {
                             style: TextStyle(
                               fontSize: min(MediaQuery.of(context).size.width,
                                       MediaQuery.of(context).size.height) *
-                                  0.045,
+                                  0.035,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
@@ -1005,7 +1024,7 @@ class _ProfileState extends State<Profile> {
                 },
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width * 0.15,
+                  height: MediaQuery.of(context).size.width * 0.11,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     mainAxisSize:
@@ -1015,7 +1034,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           Icon(
                             Icons.logout_rounded,
-                            size: MediaQuery.of(context).size.width * 0.085,
+                            size: MediaQuery.of(context).size.width * 0.07,
                             color: const Color.fromARGB(255, 28, 42, 58),
                           ),
                           const SizedBox(
@@ -1026,7 +1045,7 @@ class _ProfileState extends State<Profile> {
                             style: TextStyle(
                               fontSize: min(MediaQuery.of(context).size.width,
                                       MediaQuery.of(context).size.height) *
-                                  0.045,
+                                  0.035,
                               color: const Color.fromARGB(255, 84, 95, 107),
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
