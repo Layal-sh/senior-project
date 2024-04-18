@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 import 'package:sugar_sense/Database/db.dart';
-import 'package:sugar_sense/application/meals.dart';
+import 'package:sugar_sense/application/meals/meals.dart';
 
 class EditMeal extends StatefulWidget {
   final Meal meal;
