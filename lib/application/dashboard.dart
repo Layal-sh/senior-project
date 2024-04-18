@@ -24,7 +24,7 @@ class _DashboardState extends State<Dashboard> {
   bool c = false;
   Map<String, dynamic> latestEntry = {};
   List<Map> entries = [];
-  List<Map> dayentries = [];
+  List<Map> dayentries = []; //why not working?????
   List<Map> monthentries = [];
   List<Map> yearentries = [];
   List<Map> averageInsulinDosagePerDay = [];
