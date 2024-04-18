@@ -8,7 +8,7 @@ import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/accCreation/membership.dart';
 import 'package:sugar_sense/application/app.dart';
-import 'package:sugar_sense/application/meals.dart';
+import 'package:sugar_sense/application/meals/meals.dart';
 import 'package:sugar_sense/login/signup/login.dart';
 import 'package:sugar_sense/main.dart';
 import 'package:url_launcher/url_launcher.dart';

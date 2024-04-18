@@ -8,8 +8,8 @@ import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/app.dart';
 import 'package:sugar_sense/login/signup/login.dart';
 import 'package:sugar_sense/login/signup/signup.dart';
-import 'package:sugar_sense/application/splash.dart';
-import 'package:sugar_sense/application/startpage.dart';
+import 'package:sugar_sense/login/signup/splash.dart';
+import 'package:sugar_sense/login/signup/startpage.dart';
 import 'package:logging/logging.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 

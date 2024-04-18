@@ -3,7 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sugar_sense/Database/variables.dart';
-import 'package:sugar_sense/application/meals.dart';
+import 'package:sugar_sense/application/meals/meals.dart';
 
 class Dashboard extends StatefulWidget {
   final Function changeTab;

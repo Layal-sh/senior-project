@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:sugar_sense/Database/db.dart';
-import 'package:sugar_sense/application/editMeal.dart';
-import 'package:sugar_sense/application/meals.dart';
+import 'package:sugar_sense/application/meals/editMeal.dart';
+import 'package:sugar_sense/application/meals/meals.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 import 'package:sugar_sense/main.dart';
 
