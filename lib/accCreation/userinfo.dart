@@ -40,7 +40,7 @@ class _UserInfoState extends State<UserInfo> {
   List<TextEditingController> unitController =
       List.generate(3, (index) => TextEditingController());
   List<int> core = List.generate(3, (index) => 1);
-  List<int> units = List.generate(3, (index) => 0);
+  List<int> units = List.generate(3, (index) => 1);
 
   List<Widget> forms = [];
   //int core = 0;

@@ -157,7 +157,8 @@ class _AddInputState extends State<AddInput> {
                                                   bolusCalculation.value,
                                                   date,
                                                   chosenMeals,
-                                                  glucoseUnit_);
+                                                  glucoseUnit_,
+                                                  totalCarbs);
                                               // print('Chosen Meals:');
                                               // print(chosenMeals);
                                               // print('Total Carbs:');

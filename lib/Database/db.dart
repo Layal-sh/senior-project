@@ -31,7 +31,7 @@ class DBHelper {
     String DbPath = await getDatabasesPath();
     path = join(DbPath, 'SugarSense.db');
     Database database = await openDatabase(path,
-        onCreate: _onCreate, version: 35, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 37, onUpgrade: _onUpgrade);
     logger.info("Local Database has been initialized.");
     return database;
   }
@@ -66,7 +66,10 @@ class DBHelper {
     glucoseLevel REAL NOT NULL,
     insulinDosage INTEGER NULL,
     entryDate TEXT NOT NULL,
-    unit INTEGER NULL
+    unit INTEGER NULL,
+    totalCarbs REAL NOT NULL,
+    hasMeals TEXT NOT NULL,
+    sync INTEGER NOT NULL DEFAULT 0
   );
   ''');
     await db.execute('''
@@ -92,17 +95,17 @@ class DBHelper {
     FOREIGN KEY(childMealId) REFERENCES Meals(mealId)
   );
   ''');
-    await db.execute('''
-  CREATE TABLE "hasMeal"(
-    entryId INTEGER NOT NULL,
-    mealId INTEGER NOT NULL,
-    quantity REAL NOT NULL,
-    unit INTEGER NOT NULL,
-    FOREIGN KEY(entryId) REFERENCES Entry(entryId),
-    FOREIGN KEY(mealId) REFERENCES Meals(mealId),
-    PRIMARY KEY(entryId,mealId)
-  );
-  ''');
+    //   await db.execute('''
+    // CREATE TABLE "hasMeal"(
+    //   entryId INTEGER NOT NULL,
+    //   mealId INTEGER NOT NULL,
+    //   quantity REAL NOT NULL,
+    //   unit INTEGER NOT NULL,
+    //   FOREIGN KEY(entryId) REFERENCES Entry(entryId),
+    //   FOREIGN KEY(mealId) REFERENCES Meals(mealId),
+    //   PRIMARY KEY(entryId,mealId)
+    // );
+    // ''');
     await db.execute('''
       CREATE TABLE "Articles"(
         url TEXT NOT NULL PRIMARY KEY,
@@ -283,11 +286,12 @@ class DBHelper {
   /////////////// Create Entrires with its Meals /////////////
   ////////////////////////////////////////////////////////////
 
-  generateNewEntry(double glucose, int insulin, String date, int unit) async {
+  generateNewEntry(double glucose, int insulin, String date, int unit,
+      double totalCarbs, String hasMeals) async {
     Database? mydb = await db;
     int entryId = await mydb!.rawInsert('''
-  INSERT INTO Entry (glucoseLevel, insulinDosage, entryDate, unit)
-  VALUES($glucose,$insulin,'$date',$unit);
+  INSERT INTO Entry (glucoseLevel, insulinDosage, entryDate, unit,totalCarbs,hasMeals)
+  VALUES($glucose,$insulin,'$date',$unit,$totalCarbs,'$hasMeals');
   ''');
     if (entryId > 0) {
       var latestEntry = await getLatestEntryId(1);
@@ -297,67 +301,69 @@ class DBHelper {
     }
   }
 
-  generateHasMeals(int idEntry, List<Map> meals) async {
-    bool hasmeal = false;
+  // generateHasMeals(int idEntry, List<Map> meals) async {
+  //   bool hasmeal = false
 
-    await Future.wait(meals.map((element) async {
-      int response = await createMealForEntry(
-          idEntry, element['id'], element['quantity'], element['unit']);
+  //   await Future.wait(meals.map((element) async {
+  //     int response = await createMealForEntry(
+  //         idEntry, element['id'], element['quantity'], element['unit']);
 
-      logger.info("hasMeal of ${element['id']} has been created successfully.");
+  //     logger.info("hasMeal of ${element['id']} has been created successfully.");
 
-      if (response > 0) {
-        await updateFrequency(element['id']);
-        hasmeal = true;
-      } else {
-        logger.info("has meal didnt work");
-        hasmeal = false;
-      }
-    }));
-    return hasmeal;
-  }
+  //     if (response > 0) {
+  //       await updateFrequency(element['id']);
+  //       hasmeal = true;
+  //     } else {
+  //       logger.info("has meal didnt work");
+  //       hasmeal = false;
+  //     }
+  //   }));
+  //   return hasmeal;
+  // }
 
   //0 mmol/L
   //1 mg/dL
   //create an entry for the insulin dosage
   createEntry(double glucose, int insulin, String date, List<Map> meals,
-      int unit) async {
-    Database? mydb = await db;
-    int idEntry = await generateNewEntry(glucose, insulin, date, unit);
+      int unit, double totalCarbs) async {
+    String hasMeals = meals
+        .map((meal) =>
+            '${meal['name']} (Quantity: ${meal['quantity']}, Carbs: ${meal['carbohydrates']})')
+        .join(', ');
 
-    bool generate = await generateHasMeals(idEntry, List<Map>.from(meals));
-    if (generate) {
+    Database? mydb = await db;
+    int idEntry = await generateNewEntry(
+        glucose, insulin, date, unit, totalCarbs, hasMeals);
+
+    if (idEntry != -1) {
       logger.info("Created entry with id $idEntry");
-      return true;
+      for (var meal in meals) {
+        await updateFrequency(meal['id']);
+      }
     }
+    // bool generate = await generateHasMeals(idEntry, List<Map>.from(meals));
+    // if (generate) {
+    //
+    //   return true;
+    // }
 
     return idEntry;
   }
 
   //create hasMeal for each entry
-  createMealForEntry(int entryId, int mealId, double qtty, int unit) async {
-    logger.info("entered cretae meal for entry");
-    Database? mydb = await db;
-    int response = await mydb!.rawInsert('''
-  INSERT INTO "hasMeal"(entryId,mealId,quantity,unit)
-  VALUES($entryId,$mealId,$qtty,$unit);
-  ''');
-
-    if (response > 0)
-      logger.info("meal was add to entry $entryId");
-    else {
-      logger.info("meal couldn't be added add to entry $entryId");
-    }
-    return response;
-  }
-
-  // updateFrequency(int mealId) async {
+  // createMealForEntry(int entryId, int mealId, double qtty, int unit) async {
+  //   logger.info("entered cretae meal for entry");
   //   Database? mydb = await db;
-  //   int response = await mydb!.rawUpdate('''
-  //   UPDATE Meals SET frequency = frequency + 1;
-  //   WHERE mealId = $mealId
-  //   ''');
-  //   logger.info("Frequency for meal $mealId has been updated successfully.");
+  //   int response = await mydb!.rawInsert('''
+  // INSERT INTO "hasMeal"(entryId,mealId,quantity,unit)
+  // VALUES($entryId,$mealId,$qtty,$unit);
+  // ''');
+
+  //   if (response > 0)
+  //     logger.info("meal was add to entry $entryId");
+  //   else {
+  //     logger.info("meal couldn't be added add to entry $entryId");
+  //   }
   //   return response;
   // }
 
@@ -453,14 +459,15 @@ class DBHelper {
   getLatestEntry() async {
     Database? mydb = await db;
     List<Map> response = await getLatestEntryId(1);
-
+    print(response);
     if (response.isEmpty) {
       print('No entries found');
       return <String, dynamic>{}; // Return an empty map instead of null
     }
+    // List<Map> hasMeals = await getMealsFromEntryID(response[0]['entryId']);
+    // return organizeEntries(response[0], hasMeals);
 
-    List<Map> hasMeals = await getMealsFromEntryID(response[0]['entryId']);
-    return organizeEntries(response[0], hasMeals);
+    return response[0];
   }
 
   /*layaaaallllllll wee didd itt:
@@ -485,55 +492,56 @@ class DBHelper {
       response = await getEntriesYearly();
     }
 
-    List<Map> allMeals = [];
-    for (var entry in response) {
-      List<Map> entryMeals = await getMealsFromEntryID(entry['entryId']);
-      Map organized = await organizeEntries(entry, entryMeals);
-      allMeals.add(organized);
-    }
-    return allMeals;
+    // List<Map> allMeals = [];
+    // for (var entry in response) {
+    //   List<Map> entryMeals = await getMealsFromEntryID(entry['entryId']);
+    //   Map organized = await organizeEntries(entry, entryMeals);
+    //   allMeals.add(organized);
+    // }
+    // return allMeals;
+    return response;
   }
 
-  organizeEntries(Map response, List<Map> hasMeals) async {
-    int target = 0;
-    double totalCarbs = await getCarbsHasMeal(hasMeals);
-    print('total carbs: $totalCarbs');
+  // organizeEntries(Map response, List<Map> hasMeals) async {
+  //   int target = 0;
+  //   double totalCarbs = await getCarbsHasMeal(hasMeals);
+  //   print('total carbs: $totalCarbs');
 
-    double currentGlucose = response['glucoseLevel'];
-    if (currentGlucose >= 80 && currentGlucose <= 120) {
-      target = 0;
-    } else if (currentGlucose < 80) {
-      //hypoglycemia
-      target = 1;
-    } else {
-      //hyperglycemia
-      target = 2;
-    }
+  //   double currentGlucose = response['glucoseLevel'];
+  //   if (currentGlucose >= 80 && currentGlucose <= 120) {
+  //     target = 0;
+  //   } else if (currentGlucose < 80) {
+  //     //hypoglycemia
+  //     target = 1;
+  //   } else {
+  //     //hyperglycemia
+  //     target = 2;
+  //   }
 
-    Map<String, dynamic> result = {
-      'entryId': response['entryId'],
-      'glucoseLevel': currentGlucose,
-      'insulinDosage': response['insulinDosage'],
-      'totalCarbs': totalCarbs,
-      'date': response['entryDate'],
-      'unit': response['unit'],
-      'target': target
-    };
-    return result;
-  }
+  //   Map<String, dynamic> result = {
+  //     'entryId': response['entryId'],
+  //     'glucoseLevel': currentGlucose,
+  //     'insulinDosage': response['insulinDosage'],
+  //     'totalCarbs': totalCarbs,
+  //     'date': response['entryDate'],
+  //     'unit': response['unit'],
+  //     'target': target
+  //   };
+  //   return result;
+  // }
 
-  getCarbsHasMeal(List<Map> hasMeals) async {
-    double totalCarbs = 0;
+  // getCarbsHasMeal(List<Map> hasMeals) async {
+  //   double totalCarbs = 0;
 
-    for (var meal in hasMeals) {
-      var mealId = meal['mealId'];
-      var mealCarbs = await getCarbsByMealId(mealId);
-      double qty = meal['quantity'];
-      totalCarbs += (mealCarbs * qty);
-    }
+  //   for (var meal in hasMeals) {
+  //     var mealId = meal['mealId'];
+  //     var mealCarbs = await getCarbsByMealId(mealId);
+  //     double qty = meal['quantity'];
+  //     totalCarbs += (mealCarbs * qty);
+  //   }
 
-    return totalCarbs;
-  }
+  //   return totalCarbs;
+  // }
 
   getCarbsByMealId(int mealId) async {
     Database? mydb = await db;
@@ -546,7 +554,7 @@ class DBHelper {
   }
 
   deleteEntryById(int entryId) async {
-    await deleteHasMealById(entryId);
+    // await deleteHasMealById(entryId);
 
     Database? mydb = await db;
     int response = await mydb!.rawDelete('''
@@ -556,30 +564,30 @@ class DBHelper {
     return response;
   }
 
-  deleteHasMealById(int entryId) async {
-    Database? mydb = await db;
-    int response = await mydb!.rawDelete('''
-    DELETE FROM hasMeal WHERE entryId =$entryId;
-''');
-    if (response > 0) {
-      logger.info("deleteing hasMeals of entry $entryId");
-      return true;
-    } else {
-      return false;
-    }
-  }
+//   deleteHasMealById(int entryId) async {
+//     Database? mydb = await db;
+//     int response = await mydb!.rawDelete('''
+//     DELETE FROM hasMeal WHERE entryId =$entryId;
+// ''');
+//     if (response > 0) {
+//       logger.info("deleteing hasMeals of entry $entryId");
+//       return true;
+//     } else {
+//       return false;
+//     }
+//   }
 
-  deleteAllEntries() async {
-    Database? mydb = await db;
-    int response = await mydb!.rawDelete('''
-    DELETE FROM hasMeal;
-''');
-    logger.info("delete evrything in hasMeals");
-    int response2 = await mydb.rawDelete('''
-    DELETE FROM Entry;
-''');
-    logger.info("delete evrything in entries");
-  }
+//   deleteAllEntries() async {
+//     Database? mydb = await db;
+//     int response = await mydb!.rawDelete('''
+//     DELETE FROM hasMeal;
+// ''');
+//     logger.info("delete evrything in hasMeals");
+//     int response2 = await mydb.rawDelete('''
+//     DELETE FROM Entry;
+// ''');
+//     logger.info("delete evrything in entries");
+//   }
 
   ////////////////////////////////////////////////
   /////////////// Create & Edit Meals /////////////

@@ -49,7 +49,25 @@ class _MealsState extends State<Meals> {
     selectedCategory = null;
     setState(() {});
   }
+  //also layal the pastries categories should be displayed as 'bread & pastries'
+  //because el pastries include bread stuff kamen
+  // List<String> categories = [
+  //   'myMeals',
+  //   'All',
+  //   'Breakfast',
+  //   'Lunch',
+  //   'Dinner',
+  //   'Drinks',
+  //   'Sweet & snacks',
+  //   'Pastries',
+  //   'Dairy products',
+  //   'Fruits',
+  //   'Lebanese dishes',
+  //   'Arabic desserts',
+  //   'Grains, pasta & rice'
+  // ];
 
+  
   List<String> categories = [
     'myMeals',
     'All',
@@ -57,13 +75,13 @@ class _MealsState extends State<Meals> {
     'Lunch',
     'Dinner',
     'Drinks',
-    'Sweet & snacks',
+    'snacks',
     'Pastries',
-    'Dairy products',
+    'Dairy',
     'Fruits',
-    'Lebanese dishes',
-    'Arabic desserts',
-    'Grains, pasta & rice'
+    'Lebanese',
+    'Arabic',
+    'rice'
   ];
   @override
   Widget build(BuildContext context) {

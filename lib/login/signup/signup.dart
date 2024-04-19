@@ -551,7 +551,7 @@ class _SignUpState extends State<SignUp> {
                                       await isConnectedToWifi();
                                   DBHelper dbHelper = DBHelper.instance;
                                   await dbHelper.dropDatabase();
-                                  await dbHelper.initialDb();
+
                                   String fname = _controllerFirstname.text;
                                   String lname = _controllerLastname.text;
                                   String username = _controllerUsername.text;
@@ -939,6 +939,7 @@ class _SignUpState extends State<SignUp> {
                                               .timeout(
                                                   const Duration(seconds: 10));
                                           if (response.statusCode == 200) {
+                                            await dbHelper.initialDb();
                                             username_ =
                                                 _controllerUsername.text;
                                             Navigator.push(

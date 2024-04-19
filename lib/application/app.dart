@@ -156,7 +156,7 @@ class _AppState extends State<App> {
     }
     filtered();
     //print(articles);
-    logger.info(articles);
+    //logger.info(articles);
   }
 
   void filtered() {

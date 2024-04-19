@@ -72,9 +72,6 @@ class _LoginState extends State<Login> {
     // logger.info("synced meal compositions successfully");
     // logger.info("saving values to shared preferences");
 
-    //print(await dbHelper.deleteAllEntries());
-    print("///////////////////////////////////////////");
-    print(await dbHelper.getEntries(2));
     final response = await http
         .post(
           Uri.parse('http://$localhost:8000/getUserDetails'), //$localhost
@@ -373,6 +370,14 @@ class _LoginState extends State<Login> {
                           onPressed: () async {
                             bool connectedToWifi = await isConnectedToWifi();
                             print(connectedToWifi);
+
+                              int ide=5;
+                              String code='dr10';
+                            final docInfo = await http.get(
+                                Uri.parse('http://$localhost:8000/getDoctorInfo/$code'));
+                              
+                              print('doctor infooo:');
+                              print(docInfo.body);
                             logger.info('he did in fact frfr click da button');
                             String email = _emailController.text;
                             String password = _passwordController.text;
@@ -410,8 +415,6 @@ class _LoginState extends State<Login> {
 
                                 if (response.statusCode == 200) {
                                   setLoginTime();
-                                  print(nextLoginTime_);
-                                  print(checkLoginTime());
                                   _isLoading ? null : _signIn(email, password);
                                 } else {
                                   //incorrect username or password handling
