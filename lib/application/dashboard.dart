@@ -29,7 +29,7 @@ class _DashboardState extends State<Dashboard> {
   List<Map> averageInsulinDosagePerMonth = [];
   void calculateAverageInsulinDosage() {
     var groupedEntries = groupBy(monthentries, (entry) {
-      return DateTime.parse(entry['date']).day;
+      return DateTime.parse(entry['entryDate']).day;
     });
 
     groupedEntries.forEach((day, entries) {
@@ -56,7 +56,7 @@ class _DashboardState extends State<Dashboard> {
 
   void calculateAverageMonthly() {
     var groupedEntries = groupBy(yearentries, (entry) {
-      return DateTime.parse(entry['date']).month;
+      return DateTime.parse(entry['entryDate']).month;
     });
 
     groupedEntries.forEach((month, entries) {
@@ -125,7 +125,7 @@ class _DashboardState extends State<Dashboard> {
     Map<String, List<Map>> entriesByDate = {};
     for (var entry in entries) {
       String date =
-          DateFormat('yyyy-MM-dd').format(DateTime.parse(entry['date']));
+          DateFormat('yyyy-MM-dd').format(DateTime.parse(entry['entryDate']));
       if (entriesByDate[date] == null) {
         entriesByDate[date] = [entry];
       } else {
@@ -514,7 +514,8 @@ class _DashboardState extends State<Dashboard> {
                                                 Text(
                                                   DateFormat.jm().format(
                                                       DateTime.parse(
-                                                          latestEntry['date'])),
+                                                          latestEntry[
+                                                              'entryDate'])),
                                                   style: TextStyle(
                                                     fontFamily: 'Ruda-SemiBold',
                                                     fontSize:
@@ -638,7 +639,7 @@ class _DashboardState extends State<Dashboard> {
                                                         DateFormat.jm().format(
                                                             DateTime.parse(
                                                                 latestEntry[
-                                                                    'date'])),
+                                                                    'entryDate'])),
                                                         style: TextStyle(
                                                           fontFamily:
                                                               'Ruda-SemiBold',
@@ -760,7 +761,7 @@ class _DashboardState extends State<Dashboard> {
                                                         DateFormat.jm().format(
                                                             DateTime.parse(
                                                                 latestEntry[
-                                                                    'date'])),
+                                                                    'entryDate'])),
                                                         overflow: TextOverflow
                                                             .ellipsis,
                                                         style: TextStyle(
@@ -816,7 +817,8 @@ class _DashboardState extends State<Dashboard> {
                         itemCount: reversedData.length,
                         itemBuilder: (context, index) {
                           Map entry = reversedData[index];
-                          DateTime entryDate = DateTime.parse(entry['date']);
+                          DateTime entryDate =
+                              DateTime.parse(entry['entryDate']);
                           DateTime twoHoursAgo =
                               DateTime.now().subtract(const Duration(hours: 2));
                           return Padding(
@@ -830,8 +832,8 @@ class _DashboardState extends State<Dashboard> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  DateFormat.jm()
-                                      .format(DateTime.parse(entry['date'])),
+                                  DateFormat.jm().format(
+                                      DateTime.parse(entry['entryDate'])),
                                   style: TextStyle(
                                     fontSize:
                                         MediaQuery.of(context).size.width *
@@ -1188,8 +1190,8 @@ class _DashboardState extends State<Dashboard> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  DateFormat.jm()
-                                      .format(DateTime.parse(entry['date'])),
+                                  DateFormat.jm().format(
+                                      DateTime.parse(entry['entryDate'])),
                                   style: TextStyle(
                                     fontSize:
                                         MediaQuery.of(context).size.width *
@@ -1839,8 +1841,8 @@ class _DashboardState extends State<Dashboard> {
           spots: (today
                   ? dayentries.map((entry) {
                       return FlSpot(
-                        DateTime.parse(entry['date']).hour +
-                            DateTime.parse(entry['date']).minute /
+                        DateTime.parse(entry['entryDate']).hour +
+                            DateTime.parse(entry['entryDate']).minute /
                                 60.0, // Convert date to double
                         double.parse(entry['insulinDosage'].toString()),
                       );
@@ -1877,8 +1879,8 @@ class _DashboardState extends State<Dashboard> {
           spots: (today
                   ? dayentries.map((entry) {
                       return FlSpot(
-                        DateTime.parse(entry['date']).hour +
-                            DateTime.parse(entry['date']).minute /
+                        DateTime.parse(entry['entryDate']).hour +
+                            DateTime.parse(entry['entryDate']).minute /
                                 60.0, // Convert date to double
                         double.parse(entry['glucoseLevel'].toString()),
                       );
@@ -1913,8 +1915,8 @@ class _DashboardState extends State<Dashboard> {
           spots: (today
                   ? dayentries.map((entry) {
                       return FlSpot(
-                        DateTime.parse(entry['date']).hour +
-                            DateTime.parse(entry['date']).minute /
+                        DateTime.parse(entry['entryDate']).hour +
+                            DateTime.parse(entry['entryDate']).minute /
                                 60.0, // Convert date to double
                         double.parse(entry['totalCarbs'].toString()),
                       );
