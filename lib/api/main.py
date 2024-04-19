@@ -485,6 +485,19 @@ def changeDoctor(doctorCode, id):
         return True
     else:
         raise HTTPException(status_code=500, detail="couldn't change doctor")
+
+@app.get("/getDoctorInfo/{doctorCode}/{id}")
+async def getDocInfo(doctorCode,id):
+    try:
+        row = cursor.execute("SELECT * FROM Users, Doctors WHERE userID = ? AND CAST(doctorCode AS NVARCHAR(MAX)) = ?",(id,doctorCode)).fetchone()
+        if row is not None:
+            print(row)
+            return {description[0]: column for description, column in zip(cursor.description, row)}
+        else:
+            return None
+    except Exception as e:
+        print("Exception occurred: {e}")
+        raise
 ##############################################################
 
 def isConnectedToWifi():
