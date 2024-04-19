@@ -568,7 +568,7 @@ class _SettingsState extends State<Settings> {
           const SizedBox(height: 20),
           settingsTitle("Doctor Connection"),
           ElevatedButton.icon(
-            onPressed: () => int, // replace with your function
+            onPressed: () => int,
             icon: const Icon(Icons.link),
             label: const Text('Connect to Doctor'),
           ),
