@@ -548,8 +548,8 @@ class _UserInfoState extends State<UserInfo> {
                                                     onPressed: () {
                                                       setState(() {
                                                         clicked--;
-                                                        core[1] = 0;
-                                                        units[1] = 1;
+                                                        core[1] = 1;
+                                                        units[1] = 0;
                                                         add = true;
                                                         isVisible[0] = false;
                                                       });
@@ -684,8 +684,8 @@ class _UserInfoState extends State<UserInfo> {
                                                     onPressed: () {
                                                       setState(() {
                                                         clicked--;
-                                                        core[2] = 0;
-                                                        units[2] = 1;
+                                                        core[2] = 1;
+                                                        units[2] = 0;
                                                         add = true;
                                                         isVisible[1] = false;
                                                       });
@@ -1060,8 +1060,9 @@ class _UserInfoState extends State<UserInfo> {
                           ),
                         if (index == 3)
                           SizedBox(
-                            height: 300,
+                            height: 150,
                             child: ListView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
                               itemCount: options.length,
                               itemBuilder: (context, index) {
                                 return Column(
@@ -1312,9 +1313,9 @@ class _UserInfoState extends State<UserInfo> {
     double carbRatio3 = (carbRatios[2] as num).toDouble();
 
     if (unit1 == 0) {
-      carbRatio1 *= 15;
-      carbRatio2 *= 15;
-      carbRatio3 *= 15;
+      carbRatio1 /= 15;
+      carbRatio2 /= 15;
+      carbRatio3 /= 15;
     }
     if (unit2 == 0) insulinSensitivity *= 18.018;
     if (unit3 == 0) targetGlucosed *= 18.018;

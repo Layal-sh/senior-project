@@ -49,25 +49,25 @@ class _MealsState extends State<Meals> {
     selectedCategory = null;
     setState(() {});
   }
+
   //also layal the pastries categories should be displayed as 'bread & pastries'
   //because el pastries include bread stuff kamen
-  // List<String> categories = [
-  //   'myMeals',
-  //   'All',
-  //   'Breakfast',
-  //   'Lunch',
-  //   'Dinner',
-  //   'Drinks',
-  //   'Sweet & snacks',
-  //   'Pastries',
-  //   'Dairy products',
-  //   'Fruits',
-  //   'Lebanese dishes',
-  //   'Arabic desserts',
-  //   'Grains, pasta & rice'
-  // ];
+  List<String> categoriesDisplay = [
+    'myMeals',
+    'All',
+    'Breakfast',
+    'Lunch',
+    'Dinner',
+    'Drinks',
+    'Sweet & snacks',
+    'Pastries',
+    'Dairy products',
+    'Fruits',
+    'Lebanese dishes',
+    'Arabic desserts',
+    'Grains, pasta & rice'
+  ];
 
-  
   List<String> categories = [
     'myMeals',
     'All',
@@ -210,7 +210,7 @@ class _MealsState extends State<Meals> {
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 10,
                       ),
-                      itemCount: categories.length,
+                      itemCount: categoriesDisplay.length,
                       itemBuilder: (ctx, i) => ElevatedButton(
                         style: ButtonStyle(
                           backgroundColor:
@@ -218,7 +218,7 @@ class _MealsState extends State<Meals> {
                             (Set<MaterialState> states) {
                               // If this category is the selected one, use a different color
                               if (selectedCategory ==
-                                  categories[i].toLowerCase()) {
+                                  categoriesDisplay[i].toLowerCase()) {
                                 return const Color.fromARGB(255, 67, 223, 234);
                               }
                               return const Color.fromARGB(255, 249, 249, 255);
@@ -237,10 +237,11 @@ class _MealsState extends State<Meals> {
                         onPressed: () {
                           setState(() {
                             if (selectedCategory ==
-                                categories[i].toLowerCase()) {
+                                categoriesDisplay[i].toLowerCase()) {
                               selectedCategory = null; // Unselect the category
                             } else {
-                              selectedCategory = categories[i].toLowerCase();
+                              selectedCategory =
+                                  categoriesDisplay[i].toLowerCase();
                             }
                           });
                         },
@@ -253,9 +254,9 @@ class _MealsState extends State<Meals> {
                                 child: Opacity(
                                   opacity: 0.7,
                                   child: Image.asset(
-                                    categories[i] == 'myMeals'
+                                    categoriesDisplay[i] == 'myMeals'
                                         ? 'assets/My Meals.png'
-                                        : 'assets/${categories[i]}.png',
+                                        : 'assets/${categoriesDisplay[i]}.png',
                                   ),
                                 ),
                               ),
@@ -265,12 +266,12 @@ class _MealsState extends State<Meals> {
                                 width: MediaQuery.of(context).size.width * 0.3,
                                 child: Text(
                                   textAlign: TextAlign.center,
-                                  categories[i] == "myMeals"
+                                  categoriesDisplay[i] == "myMeals"
                                       ? "My Meals"
-                                      : categories[i],
+                                      : categoriesDisplay[i],
                                   style: TextStyle(
                                     color: selectedCategory ==
-                                            categories[i].toLowerCase()
+                                            categoriesDisplay[i].toLowerCase()
                                         ? const Color.fromARGB(
                                             255, 255, 255, 255)
                                         : const Color.fromARGB(
@@ -281,7 +282,7 @@ class _MealsState extends State<Meals> {
                                     fontFamily: 'Ruda',
                                     letterSpacing: -0.75,
                                     fontWeight: selectedCategory ==
-                                            categories[i].toLowerCase()
+                                            categoriesDisplay[i].toLowerCase()
                                         ? FontWeight.w600
                                         : FontWeight.w300,
                                   ),
@@ -304,7 +305,7 @@ class _MealsState extends State<Meals> {
                     child: ListView(
                       scrollDirection:
                           Axis.horizontal, // Make it scroll horizontally
-                      children: categories
+                      children: categoriesDisplay
                           .map((category) => Padding(
                                 padding: const EdgeInsets.only(
                                   top: 8.0,
@@ -439,8 +440,8 @@ class _MealsState extends State<Meals> {
                         future: _filter.text.isNotEmpty
                             ? db.searchMeal(_filter.text)
                             : selectedCategory != 'all'
-                                ? db.searchMeal(
-                                    _formatCategory(selectedCategory!))
+                                ? db.searchMeal(categories[categoriesDisplay
+                                    .indexOf(selectedCategory!)])
                                 : _mealsFuture,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
@@ -514,8 +515,7 @@ class _MealsState extends State<Meals> {
                             FutureBuilder<List<List<Map>>>(
                               future: Future.wait([
                                 db.displayMostFrequentMeals(5),
-                                db.searchMeal(
-                                    _formatCategory(selectedCategory!))
+                                db.searchMeal(selectedCategory!)
                               ]),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
