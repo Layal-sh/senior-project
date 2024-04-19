@@ -409,6 +409,9 @@ class _LoginState extends State<Login> {
                                     .timeout(const Duration(seconds: 10));
 
                                 if (response.statusCode == 200) {
+                                  setLoginTime();
+                                  print(nextLoginTime_);
+                                  print(checkLoginTime());
                                   _isLoading ? null : _signIn(email, password);
                                 } else {
                                   //incorrect username or password handling

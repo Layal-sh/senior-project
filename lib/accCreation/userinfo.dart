@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:sugar_sense/Database/db.dart';
 import 'dart:math';
 
 import 'package:sugar_sense/Database/variables.dart';
@@ -1343,6 +1344,11 @@ class _UserInfoState extends State<UserInfo> {
           }),
         )
         .timeout(const Duration(seconds: 10));
+    DBHelper dbHelper = DBHelper.instance;
+    await dbHelper.syncMeals();
+    logger.info("synced meals successfully");
+    await dbHelper.syncMealComposition();
+    logger.info("synced meal compositions successfully");
     return response;
   }
 }

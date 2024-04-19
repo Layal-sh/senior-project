@@ -3,9 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sugar_sense/Database/db.dart';
-import 'package:sugar_sense/application/create.dart';
-import 'package:sugar_sense/application/editMeal.dart';
-import 'package:sugar_sense/application/mealDetails.dart';
+import 'package:sugar_sense/application/meals/create.dart';
+import 'package:sugar_sense/application/meals/editMeal.dart';
+import 'package:sugar_sense/application/meals/mealDetails.dart';
 import 'package:sugar_sense/main.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 
@@ -1037,7 +1037,6 @@ class _MealBoxState extends State<MealBox> {
                         AsyncSnapshot<ByteData> snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         if (snapshot.hasError) {
-                          //print('No');
                           return ClipRRect(
                             borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(5),

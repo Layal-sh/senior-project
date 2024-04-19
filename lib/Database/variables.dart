@@ -61,23 +61,6 @@ Future<void> saveP() async {
   await prefs.setString('profilePicture', profilePicture_);
 }
 
-Future<void> saveU() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString('username', username_);
-}
-
-Future<void> saveE() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  await prefs.setString('email', email_);
-}
-
-Future<void> saveN() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  await prefs.setString('phoneNumber', phoneNumber_);
-}
-
 Future<void> loadPreferences() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -137,6 +120,25 @@ double insulin_3 = 0;
 int selectedPlan_ = -1;
 int numOfRatios_ = 1;
 bool isSynced_ = true;
+String nextLoginTime_ = "";
+
+setLoginTime() {
+  DateTime now = DateTime.now();
+  nextLoginTime_ = now.add(Duration(days: 30)).toString();
+}
+
+checkLoginTime() {
+  DateTime now = DateTime.now();
+  if (nextLoginTime_ == "") {
+    return false;
+  }
+  DateTime nextLoginTime = DateTime.parse(nextLoginTime_);
+  if (now.isAfter(nextLoginTime)) {
+    return false;
+  }
+  return true;
+//if it returns false then it forces him to go to the login, if it's true then it takes him to the dashboard immediately.
+}
 
 Future<bool> isConnectedToWifi() async {
   try {

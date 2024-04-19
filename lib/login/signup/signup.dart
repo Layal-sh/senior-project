@@ -916,12 +916,6 @@ class _SignUpState extends State<SignUp> {
                                           },
                                         );
                                         if (accept == true) {
-                                          await dbHelper.syncMeals();
-                                          logger.info(
-                                              "synced meals successfully");
-                                          await dbHelper.syncMealComposition();
-                                          logger.info(
-                                              "synced meal compositions successfully");
                                           //server authentication
                                           final response = await http
                                               .post(
