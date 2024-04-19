@@ -486,10 +486,10 @@ def changeDoctor(doctorCode, id):
     else:
         raise HTTPException(status_code=500, detail="couldn't change doctor")
 
-@app.get("/getDoctorInfo/{doctorCode}/{id}")
-async def getDocInfo(doctorCode,id):
+@app.get("/getDoctorInfo/{doctorCode}")
+async def getDocInfo(doctorCode):
     try:
-        row = cursor.execute("SELECT * FROM Users, Doctors WHERE userID = ? AND CAST(doctorCode AS NVARCHAR(MAX)) = ?",(id,doctorCode)).fetchone()
+        row = cursor.execute("SELECT * FROM Users, Doctors WHERE userID = doctorID AND CAST(doctorCode AS NVARCHAR(MAX)) = ?",(doctorCode)).fetchone()
         if row is not None:
             print(row)
             return {description[0]: column for description, column in zip(cursor.description, row)}

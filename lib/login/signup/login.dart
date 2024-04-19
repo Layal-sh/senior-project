@@ -374,8 +374,10 @@ class _LoginState extends State<Login> {
                               int ide=5;
                               String code='dr10';
                             final docInfo = await http.get(
-                                Uri.parse('http://$localhost:8000/getDoctorInfo/$code/$ide'));
+                                Uri.parse('http://$localhost:8000/getDoctorInfo/$code'));
                               
+                              print('doctor infooo:');
+                              print(docInfo.body);
                             logger.info('he did in fact frfr click da button');
                             String email = _emailController.text;
                             String password = _passwordController.text;
