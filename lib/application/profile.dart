@@ -1500,9 +1500,9 @@ class _editProfileState extends State<editProfile> {
                               ),
                             ),
                             validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a phone number';
-                              }
+                              // if (value == null || value.isEmpty) {
+                              //   return 'Please enter a phone number';
+                              // }
 
                               return phoneNumberErrorMessage;
                             },
@@ -1560,7 +1560,7 @@ class _editProfileState extends State<editProfile> {
                         ? Column(
                             children: [
                               TextFormField(
-                                controller: _controllerVeryPass,
+                                controller: _controllerPass,
                                 keyboardType: TextInputType.visiblePassword,
                                 style: const TextStyle(
                                   color: Color.fromARGB(255, 38, 20, 84),
