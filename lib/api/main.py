@@ -338,7 +338,7 @@ async def authenticate(user: User):
         if(pid is None):
             raise HTTPException(status_code=401, detail="This user is not a patient");
         else:
-            return {"message": "Authenticated successfully"}
+            return {"message": "Authenticated successfully", "ID": uid}
     except HTTPException as e:
         raise e
     except Exception as e:

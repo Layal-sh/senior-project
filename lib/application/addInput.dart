@@ -360,10 +360,13 @@ class _AddInputState extends State<AddInput> {
                                   },
                                   items: <String>[
                                     carbRatio_.toString(),
-                                    carbRatio_2.toString(),
-                                    carbRatio_3.toString()
+                                    carbRatio_2.toStringAsFixed(2),
+                                    carbRatio_3.toStringAsFixed(2)
                                   ]
-                                      .where((String value) => value != '0.0')
+                                      .where((String value) =>
+                                          value != '0.00' && value != '0')
+                                      //.toSet()
+                                      .toList()
                                       .map<DropdownMenuItem<String>>(
                                           (String value) {
                                     return DropdownMenuItem<String>(

@@ -24,6 +24,7 @@ Future<void> main() async {
   });
 
   logger.info('This is an info message');
+  logger.info("privacy: $privacy_");
 
   isNotMobile = kIsWeb || (!Platform.isAndroid && !Platform.isIOS);
   localhost = !isNotMobile ? "10.0.2.2" : "localhost";

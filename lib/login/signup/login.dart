@@ -55,7 +55,7 @@ class _LoginState extends State<Login> {
 
   bool _isLoading = false;
 
-  Future<void> _signIn(String email, String password) async {
+  Future<void> _signIn(String email, String password, int id) async {
     logger.info("signing in");
     setState(() {
       _isLoading = true;
@@ -72,38 +72,10 @@ class _LoginState extends State<Login> {
     // logger.info("synced meal compositions successfully");
     // logger.info("saving values to shared preferences");
 
-    final response = await http
-        .post(
-          Uri.parse('http://$localhost:8000/getUserDetails'), //$localhost
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-          body: jsonEncode(<String, String>{
-            'username': email,
-            'password': password,
-          }),
-        )
-        .timeout(const Duration(seconds: 10));
-
-    if (response.statusCode == 200) {
-      logger.info('Response body: ${response.body}');
-      Map<String, dynamic> userDetails = jsonDecode(response.body);
-      logger.info("user details: $userDetails");
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      username_ = userDetails['userName'];
-      firstName_ = userDetails['firstName'];
-      lastName_ = userDetails['lastName'];
-      email_ = userDetails['email'];
-      pid_ = userDetails['userID'];
-      await prefs.setString('username', userDetails['userName']);
-      await prefs.setString('firstName', userDetails['firstName']);
-      await prefs.setString('lastName', userDetails['lastName']);
-      await prefs.setString('email', userDetails['email']);
-      pid_ = userDetails['userID'];
-      print(pid_);
-      final responsePatient = await http
+    if (id != pid_) {
+      final response = await http
           .post(
-            Uri.parse('http://$localhost:8000/getPatientDetails'), //$localhost
+            Uri.parse('http://$localhost:8000/getUserDetails'), //$localhost
             headers: <String, String>{
               'Content-Type': 'application/json; charset=UTF-8',
             },
@@ -113,54 +85,88 @@ class _LoginState extends State<Login> {
             }),
           )
           .timeout(const Duration(seconds: 10));
-      if (responsePatient.statusCode == 200) {
-        logger.info('Response body: ${responsePatient.body}');
-        Map<String, dynamic> patientDetails = jsonDecode(responsePatient.body);
-        logger.info("patient details: $patientDetails");
-        if (patientDetails['doctorCode'] != null) {
-          doctorCode_ = patientDetails['doctorCode'];
-          await prefs.setString('doctorCode_', patientDetails['doctorCode']);
+
+      if (response.statusCode == 200) {
+        logger.info('Response body: ${response.body}');
+        Map<String, dynamic> userDetails = jsonDecode(response.body);
+        logger.info("user details: $userDetails");
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+        // username_ = userDetails['userName'];
+        // firstName_ = userDetails['firstName'];
+        // lastName_ = userDetails['lastName'];
+        // email_ = userDetails['email'];
+        // pid_ = userDetails['userID'];
+        await prefs.setString('username', userDetails['userName']);
+        await prefs.setString('firstName', userDetails['firstName']);
+        await prefs.setString('lastName', userDetails['lastName']);
+        await prefs.setString('email', userDetails['email']);
+        pid_ = userDetails['userID'];
+        final responsePatient = await http
+            .post(
+              Uri.parse(
+                  'http://$localhost:8000/getPatientDetails'), //$localhost
+              headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8',
+              },
+              body: jsonEncode(<String, String>{
+                'username': email,
+                'password': password,
+              }),
+            )
+            .timeout(const Duration(seconds: 10));
+        if (responsePatient.statusCode == 200) {
+          logger.info('Response body: ${responsePatient.body}');
+          Map<String, dynamic> patientDetails =
+              jsonDecode(responsePatient.body);
+          logger.info("patient details: $patientDetails");
+          if (patientDetails['doctorCode'] != null) {
+            //doctorCode_ = patientDetails['doctorCode'];
+            await prefs.setString('doctorCode_', patientDetails['doctorCode']);
+          }
+          if (patientDetails['phoneNumber'] != null) {
+            //phoneNumber_ = patientDetails['phoneNumber'];
+            await prefs.setInt('phoneNumber_', patientDetails['phoneNumber']);
+          }
+          if (patientDetails['profilePhoto'] != null) {
+            //profilePicture_ = patientDetails['profilePhoto'];
+            await prefs.setString(
+                'profilePicture_', patientDetails['profilePhoto']);
+          }
+          insulinSensitivity_ = patientDetails['insulinSensivity'].toInt();
+          await prefs.setInt('insulinSensitivity_',
+              patientDetails['insulinSensivity'].toInt());
+          //targetBloodSugar_ = patientDetails['targetBloodGlucose'];
+          await prefs.setInt(
+              'targetBloodSugar_', patientDetails['targetBloodGlucose']);
+          //carbRatio_ = patientDetails['carbRatio'];
+          await prefs.setDouble('carbRatio_', patientDetails['carbRatio']);
+          numOfRatios_ = 1;
+          prefs.setInt('numOfRatios', 1);
+          if (patientDetails['carbRatio2'] != null) {
+            carbRatio_2 = patientDetails['carbRatio2'];
+            await prefs.setDouble('carbRatio_2', patientDetails['carbRatio2']);
+            if (carbRatio_2 != 0) numOfRatios_++;
+            prefs.setInt('numOfRatios', numOfRatios_);
+          }
+          if (patientDetails['carbRatio3'] != null) {
+            carbRatio_3 = patientDetails['carbRatio3'];
+            await prefs.setDouble('carbRatio_3', patientDetails['carbRatio3']);
+            if (carbRatio_3 != 0) numOfRatios_++;
+            prefs.setInt('numOfRatios', numOfRatios_);
+          }
+          if (patientDetails['privacy'] != null) {
+            //privacy_ = patientDetails['privacy'];
+            await prefs.setString('privacy', patientDetails['privacy']);
+          }
+          loadPreferences();
+          logger.info("saved values to shared preferences successfully");
+        } else {
+          logger.warning(responsePatient.body);
         }
-        if (patientDetails['phoneNumber'] != null) {
-          phoneNumber_ = patientDetails['phoneNumber'];
-          await prefs.setInt('phoneNumber_', patientDetails['phoneNumber']);
-        }
-        if (patientDetails['profilePhoto'] != null) {
-          profilePicture_ = patientDetails['profilePhoto'];
-          await prefs.setString(
-              'profilePicture_', patientDetails['profilePhoto']);
-        }
-        insulinSensitivity_ = patientDetails['insulinSensivity'].toInt();
-        await prefs.setInt(
-            'insulinSensitivity_', patientDetails['insulinSensivity'].toInt());
-        targetBloodSugar_ = patientDetails['targetBloodGlucose'];
-        await prefs.setInt(
-            'targetBloodSugar_', patientDetails['targetBloodGlucose']);
-        carbRatio_ = patientDetails['carbRatio'];
-        await prefs.setDouble('carbRatio_', patientDetails['carbRatio']);
-        if (patientDetails['carbRatio2'] != null) {
-          await prefs.remove('carbRatio2');
-          carbRatio_2 = patientDetails['carbRatio2'];
-          await prefs.setDouble('carbRatio_2', patientDetails['carbRatio2']);
-          if (carbRatio_2 != 0) numOfRatios_++;
-          prefs.setInt('numOfRatios', numOfRatios_);
-        }
-        if (patientDetails['carbRatio3'] != null) {
-          await prefs.remove('carbRatio3');
-          carbRatio_3 = patientDetails['carbRatio3'];
-          await prefs.setDouble('carbRatio_3', patientDetails['carbRatio3']);
-          if (carbRatio_3 != 0) numOfRatios_++;
-          prefs.setInt('numOfRatios', numOfRatios_);
-        }
-        if (patientDetails['privacy'] != null) {
-          privacy_ = patientDetails['privacy'];
-          await prefs.setString('privacy_', patientDetails['privacy']);
-        }
-        logger.info("saved values to shared preferences successfully");
-      } else {
-        logger.warning(responsePatient.body);
       }
     }
+
     setState(() {
       _isLoading = false;
     });
@@ -423,7 +429,10 @@ class _LoginState extends State<Login> {
 
                                 if (response.statusCode == 200) {
                                   setLoginTime();
-                                  _isLoading ? null : _signIn(email, password);
+                                  _isLoading
+                                      ? null
+                                      : _signIn(email, password,
+                                          jsonDecode(response.body)['ID']);
                                 } else {
                                   //incorrect username or password handling
                                   //for layal you can change this if you want or remove this comment if you think its good
