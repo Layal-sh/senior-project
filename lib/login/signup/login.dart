@@ -139,19 +139,27 @@ class _LoginState extends State<Login> {
         carbRatio_ = patientDetails['carbRatio'];
         await prefs.setDouble('carbRatio_', patientDetails['carbRatio']);
         if (patientDetails['carbRatio2'] != null) {
+          await prefs.remove('carbRatio2');
           carbRatio_2 = patientDetails['carbRatio2'];
           await prefs.setDouble('carbRatio_2', patientDetails['carbRatio2']);
+          if (carbRatio_2 != 0) numOfRatios_++;
+          prefs.setInt('numOfRatios', numOfRatios_);
         }
         if (patientDetails['carbRatio3'] != null) {
+          await prefs.remove('carbRatio3');
           carbRatio_3 = patientDetails['carbRatio3'];
           await prefs.setDouble('carbRatio_3', patientDetails['carbRatio3']);
+          if (carbRatio_3 != 0) numOfRatios_++;
+          prefs.setInt('numOfRatios', numOfRatios_);
         }
         if (patientDetails['privacy'] != null) {
           privacy_ = patientDetails['privacy'];
           await prefs.setString('privacy_', patientDetails['privacy']);
         }
+        logger.info("saved values to shared preferences successfully");
+      } else {
+        logger.warning(responsePatient.body);
       }
-      logger.info("saved values to shared preferences successfully");
     }
     setState(() {
       _isLoading = false;
@@ -371,14 +379,13 @@ class _LoginState extends State<Login> {
                             bool connectedToWifi = await isConnectedToWifi();
                             print(connectedToWifi);
 
-                              int ide=5;
-                              String code='dr10';
-                            final docInfo = await http.get(
-                                Uri.parse('http://$localhost:8000/getDoctorInfo/$code'));
-                              
-                              print('doctor infooo:');
-                              print(docInfo.body);
-                              
+                            int ide = 5;
+                            String code = 'dr10';
+                            final docInfo = await http.get(Uri.parse(
+                                'http://$localhost:8000/getDoctorInfo/$code'));
+
+                            print('doctor infooo:');
+                            print(docInfo.body);
                             logger.info('he did in fact frfr click da button');
                             String email = _emailController.text;
                             String password = _passwordController.text;
