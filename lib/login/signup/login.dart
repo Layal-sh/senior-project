@@ -61,7 +61,7 @@ class _LoginState extends State<Login> {
       _isLoading = true;
     });
 
-    logger.info("syncing meals from the server to the local database");
+    //logger.info("syncing meals from the server to the local database");
     DBHelper dbHelper = DBHelper.instance;
     //dbHelper.dropAllArticles();
     //print(await dbHelper.selectAllArticle());
@@ -378,6 +378,7 @@ class _LoginState extends State<Login> {
                               
                               print('doctor infooo:');
                               print(docInfo.body);
+                              
                             logger.info('he did in fact frfr click da button');
                             String email = _emailController.text;
                             String password = _passwordController.text;
