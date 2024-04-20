@@ -24,11 +24,11 @@ class App extends StatefulWidget {
 
 Timer? _timer;
 var selectedIndex = 0;
-List articles = [];
+/*List articles = [];
 List<bool>? starred;
 late List filteredArticles;
 late List restArticles;
-late List finalList;
+late List finalList;*/
 
 isValidPhoneNumber(String phone) {
   final RegExp regex = RegExp(r'^\d{8}$');
@@ -113,7 +113,7 @@ phoneUpdate(String phone) async {
 }
 
 class _AppState extends State<App> {
-  void fetchArticles() async {
+  /*void fetchArticles() async {
     List<String> searches = [
       // 'diabetes type 1',
       // 'diabetes lifestyle',
@@ -184,17 +184,17 @@ class _AppState extends State<App> {
     //print(restArticles);
     logger.info(restArticles);
   }
-
+*/
   @override
   void initState() {
     super.initState();
     TotalCarbs();
     selectedIndex = 0;
-    filteredArticles = [];
+    /*filteredArticles = [];
     restArticles = [];
     finalList = [];
     starred = [];
-    fetchArticles();
+    fetchArticles();*/
   }
 
   @override

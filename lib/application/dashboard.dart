@@ -2,8 +2,8 @@ import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
-import 'package:sugar_sense/application/meals/meals.dart';
 
 class Dashboard extends StatefulWidget {
   final Function changeTab;
@@ -12,6 +12,8 @@ class Dashboard extends StatefulWidget {
   @override
   _DashboardState createState() => _DashboardState();
 }
+
+DBHelper db = DBHelper.instance;
 
 class _DashboardState extends State<Dashboard> {
   bool today = true;
@@ -22,7 +24,7 @@ class _DashboardState extends State<Dashboard> {
   bool c = false;
   Map<String, dynamic> latestEntry = {};
   List<Map> entries = [];
-  List<Map> dayentries = [];
+  List<Map> dayentries = []; //why not working?????
   List<Map> monthentries = [];
   List<Map> yearentries = [];
   List<Map> averageInsulinDosagePerDay = [];
@@ -116,10 +118,12 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
-  void refreshData() {
+  Future<void> refreshData() async {
+    await Future.delayed(const Duration(seconds: 10));
     setState(() {});
   }
 
+  bool ref = false;
   @override
   Widget build(BuildContext context) {
     Map<String, List<Map>> entriesByDate = {};
@@ -1119,7 +1123,11 @@ class _DashboardState extends State<Dashboard> {
                                     onPressed: () async {
                                       await db
                                           .deleteEntryById(entry['entryId']);
+
                                       refreshData();
+                                      setState(() {
+                                        ref = true;
+                                      });
                                     },
                                   ),
                               ],

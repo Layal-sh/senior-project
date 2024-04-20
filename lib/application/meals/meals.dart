@@ -49,26 +49,26 @@ class _MealsState extends State<Meals> {
     selectedCategory = null;
     setState(() {});
   }
+
   //also layal the pastries categories should be displayed as 'bread & pastries'
   //because el pastries include bread stuff kamen
-  // List<String> categories = [
-  //   'myMeals',
-  //   'All',
-  //   'Breakfast',
-  //   'Lunch',
-  //   'Dinner',
-  //   'Drinks',
-  //   'Sweet & snacks',
-  //   'Pastries',
-  //   'Dairy products',
-  //   'Fruits',
-  //   'Lebanese dishes',
-  //   'Arabic desserts',
-  //   'Grains, pasta & rice'
-  // ];
-
-  
   List<String> categories = [
+    'myMeals',
+    'All',
+    'Breakfast',
+    'Lunch',
+    'Dinner',
+    'Drinks',
+    'Sweet & snacks',
+    'Pastries',
+    'Dairy products',
+    'Fruits',
+    'Lebanese dishes',
+    'Arabic desserts',
+    'Grains, pasta & rice'
+  ];
+
+  List<String> categories2 = [
     'myMeals',
     'All',
     'Breakfast',
@@ -217,8 +217,7 @@ class _MealsState extends State<Meals> {
                               MaterialStateProperty.resolveWith<Color>(
                             (Set<MaterialState> states) {
                               // If this category is the selected one, use a different color
-                              if (selectedCategory ==
-                                  categories[i].toLowerCase()) {
+                              if (selectedCategory == categories[i]) {
                                 return const Color.fromARGB(255, 67, 223, 234);
                               }
                               return const Color.fromARGB(255, 249, 249, 255);
@@ -236,11 +235,10 @@ class _MealsState extends State<Meals> {
                         ),
                         onPressed: () {
                           setState(() {
-                            if (selectedCategory ==
-                                categories[i].toLowerCase()) {
+                            if (selectedCategory == categories[i]) {
                               selectedCategory = null; // Unselect the category
                             } else {
-                              selectedCategory = categories[i].toLowerCase();
+                              selectedCategory = categories[i];
                             }
                           });
                         },
@@ -269,8 +267,7 @@ class _MealsState extends State<Meals> {
                                       ? "My Meals"
                                       : categories[i],
                                   style: TextStyle(
-                                    color: selectedCategory ==
-                                            categories[i].toLowerCase()
+                                    color: selectedCategory == categories[i]
                                         ? const Color.fromARGB(
                                             255, 255, 255, 255)
                                         : const Color.fromARGB(
@@ -280,10 +277,10 @@ class _MealsState extends State<Meals> {
                                             0.043,
                                     fontFamily: 'Ruda',
                                     letterSpacing: -0.75,
-                                    fontWeight: selectedCategory ==
-                                            categories[i].toLowerCase()
-                                        ? FontWeight.w600
-                                        : FontWeight.w300,
+                                    fontWeight:
+                                        selectedCategory == categories[i]
+                                            ? FontWeight.w600
+                                            : FontWeight.w300,
                                   ),
                                 ),
                               ),
@@ -317,8 +314,7 @@ class _MealsState extends State<Meals> {
                                         .resolveWith<Color>(
                                       (Set<MaterialState> states) {
                                         // If this category is the selected one, use a different color
-                                        if (selectedCategory ==
-                                            category.toLowerCase()) {
+                                        if (selectedCategory == category) {
                                           return const Color.fromARGB(
                                               255, 67, 223, 234);
                                         }
@@ -329,17 +325,15 @@ class _MealsState extends State<Meals> {
                                   ),
                                   onPressed: () {
                                     setState(() {
-                                      if (selectedCategory ==
-                                          category.toLowerCase()) {
+                                      if (selectedCategory == category) {
                                         selectedCategory =
                                             null; // Unselect the category
                                       } else {
-                                        selectedCategory =
-                                            category.toLowerCase();
+                                        selectedCategory = category;
                                         if (_filter.text.isNotEmpty) {
                                           _filter.clear();
-                                          selectedCategory = category
-                                              .toLowerCase(); // Clear the filter text
+                                          selectedCategory =
+                                              category; // Clear the filter text
                                         }
                                       }
                                     });
@@ -349,16 +343,14 @@ class _MealsState extends State<Meals> {
                                         ? "My Meals"
                                         : category,
                                     style: TextStyle(
-                                      color: selectedCategory ==
-                                              category.toLowerCase()
+                                      color: selectedCategory == category
                                           ? const Color.fromARGB(
                                               255, 255, 255, 255)
                                           : const Color.fromARGB(
                                               255, 122, 122, 122),
                                       fontSize: 15,
                                       fontFamily: 'Rubik',
-                                      fontWeight: selectedCategory ==
-                                              category.toLowerCase()
+                                      fontWeight: selectedCategory == category
                                           ? FontWeight.w600
                                           : FontWeight.w300,
                                     ),
@@ -438,9 +430,9 @@ class _MealsState extends State<Meals> {
                     ? FutureBuilder<List<Map>>(
                         future: _filter.text.isNotEmpty
                             ? db.searchMeal(_filter.text)
-                            : selectedCategory != 'all'
-                                ? db.searchMeal(
-                                    _formatCategory(selectedCategory!))
+                            : selectedCategory != 'All'
+                                ? db.searchMeal(categories2[
+                                    categories.indexOf(selectedCategory!)])
                                 : _mealsFuture,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
@@ -514,8 +506,7 @@ class _MealsState extends State<Meals> {
                             FutureBuilder<List<List<Map>>>(
                               future: Future.wait([
                                 db.displayMostFrequentMeals(5),
-                                db.searchMeal(
-                                    _formatCategory(selectedCategory!))
+                                db.searchMeal(selectedCategory!)
                               ]),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==

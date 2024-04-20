@@ -87,7 +87,7 @@ class _ArticlesState extends State<Articles> {
                 ],
               ),
             ),
-            (filteredArticles.isEmpty || starred == null)
+            /*(filteredArticles.isEmpty || starred == null)
                 ? const Center(child: CircularProgressIndicator())
                 : Padding(
                     padding: const EdgeInsets.only(left: 5.0),
@@ -407,6 +407,7 @@ class _ArticlesState extends State<Articles> {
                       ),
                     ),
                   ),
+          */
           ],
         ),
       ),

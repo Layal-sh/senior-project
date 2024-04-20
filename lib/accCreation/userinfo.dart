@@ -20,6 +20,7 @@ class _UserInfoState extends State<UserInfo> {
 
   List<bool> isVisible = List.generate(2, (index) => false);
   bool add = true;
+
   int clicked = 0;
   final questions = [
     'What\'s Your Carbohydrates Ratio?',
@@ -39,8 +40,8 @@ class _UserInfoState extends State<UserInfo> {
       List.generate(3, (index) => TextEditingController());
   List<TextEditingController> unitController =
       List.generate(3, (index) => TextEditingController());
-  List<int> core = List.generate(3, (index) => 1);
-  List<int> units = List.generate(3, (index) => 0);
+  List<double> core = List.generate(3, (index) => 1.0);
+  List<double> units = List.generate(3, (index) => 1.0);
 
   List<Widget> forms = [];
   //int core = 0;
@@ -51,7 +52,7 @@ class _UserInfoState extends State<UserInfo> {
     Option(title: 'Insulin Intake'),
     Option(title: 'Meals'),
   ];
-
+  bool _isLoading = false;
   var currentPage = 0;
   int unit1 = 0;
   int unit2 = 0;
@@ -62,15 +63,15 @@ class _UserInfoState extends State<UserInfo> {
 
     for (int i = 0; i < 3; i++) {
       carbohydratesController[i].addListener(() {
-        int? intValue = int.tryParse(carbohydratesController[i].text);
-        if (intValue != null) {
-          core[i] = intValue;
+        double? doubleValue = double.tryParse(carbohydratesController[i].text);
+        if (doubleValue != null) {
+          core[i] = doubleValue;
         }
       });
       unitController[i].addListener(() {
-        int? intValue = int.tryParse(unitController[i].text);
-        if (intValue != null) {
-          units[i] = intValue;
+        double? doubleValue = double.tryParse(unitController[i].text);
+        if (doubleValue != null) {
+          units[i] = doubleValue;
         }
       });
     }
@@ -336,10 +337,11 @@ class _UserInfoState extends State<UserInfo> {
                                                 carbohydratesController[0],
                                             keyboardType: const TextInputType
                                                 .numberWithOptions(
-                                                decimal: false),
+                                                decimal: true),
                                             inputFormatters: <TextInputFormatter>[
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly,
+                                              FilteringTextInputFormatter.allow(
+                                                  RegExp(
+                                                      r'^\d+\.?\d*')), // Allow digits and decimal point
                                             ],
                                             decoration: InputDecoration(
                                               border: OutlineInputBorder(
@@ -390,10 +392,11 @@ class _UserInfoState extends State<UserInfo> {
                                             controller: unitController[0],
                                             keyboardType: const TextInputType
                                                 .numberWithOptions(
-                                                decimal: false),
+                                                decimal: true),
                                             inputFormatters: <TextInputFormatter>[
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly,
+                                              FilteringTextInputFormatter.allow(
+                                                  RegExp(
+                                                      r'^\d+\.?\d*')), // Allow digits and decimal point
                                             ],
                                             decoration: InputDecoration(
                                               border: OutlineInputBorder(
@@ -444,10 +447,11 @@ class _UserInfoState extends State<UserInfo> {
                                                       keyboardType:
                                                           const TextInputType
                                                               .numberWithOptions(
-                                                              decimal: false),
+                                                              decimal: true),
                                                       inputFormatters: <TextInputFormatter>[
                                                         FilteringTextInputFormatter
-                                                            .digitsOnly,
+                                                            .allow(RegExp(
+                                                                r'^\d+\.?\d*')), // Allow digits and decimal point
                                                       ],
                                                       decoration:
                                                           InputDecoration(
@@ -505,10 +509,11 @@ class _UserInfoState extends State<UserInfo> {
                                                       keyboardType:
                                                           const TextInputType
                                                               .numberWithOptions(
-                                                              decimal: false),
+                                                              decimal: true),
                                                       inputFormatters: <TextInputFormatter>[
                                                         FilteringTextInputFormatter
-                                                            .digitsOnly,
+                                                            .allow(RegExp(
+                                                                r'^\d+\.?\d*')), // Allow digits and decimal point
                                                       ],
                                                       decoration:
                                                           InputDecoration(
@@ -578,10 +583,11 @@ class _UserInfoState extends State<UserInfo> {
                                                       keyboardType:
                                                           const TextInputType
                                                               .numberWithOptions(
-                                                              decimal: false),
+                                                              decimal: true),
                                                       inputFormatters: <TextInputFormatter>[
                                                         FilteringTextInputFormatter
-                                                            .digitsOnly,
+                                                            .allow(RegExp(
+                                                                r'^\d+\.?\d*')), // Allow digits and decimal point
                                                       ],
                                                       decoration:
                                                           InputDecoration(
@@ -639,10 +645,11 @@ class _UserInfoState extends State<UserInfo> {
                                                       keyboardType:
                                                           const TextInputType
                                                               .numberWithOptions(
-                                                              decimal: false),
+                                                              decimal: true),
                                                       inputFormatters: <TextInputFormatter>[
                                                         FilteringTextInputFormatter
-                                                            .digitsOnly,
+                                                            .allow(RegExp(
+                                                                r'^\d+\.?\d*')), // Allow digits and decimal point
                                                       ],
                                                       decoration:
                                                           InputDecoration(
@@ -1053,8 +1060,9 @@ class _UserInfoState extends State<UserInfo> {
                           ),
                         if (index == 3)
                           SizedBox(
-                            height: 300,
+                            height: 150,
                             child: ListView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
                               itemCount: options.length,
                               itemBuilder: (context, index) {
                                 return Column(
@@ -1203,73 +1211,71 @@ class _UserInfoState extends State<UserInfo> {
                   setState(
                     () {
                       updatelastAnswers();
+                      _isLoading = true;
+                    },
+                  );
+                  //final response = await registerPatient();
+                  //if (response.statusCode == 200) {
+                  logger.info("registered patient successfully");
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        //Navigator.of(context).pop();
+                        //Navigator.of(context).pushReplacementNamed('/login');
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          height: MediaQuery.of(context).size.height * 0.6,
+                          child: AlertDialog(
+                            insetPadding: const EdgeInsets.only(
+                              left: 10,
+                              right: 10,
+                              top: 20,
+                              bottom: 20,
+                            ),
+                            backgroundColor: Colors.white,
+                            content: Column(
+                              children: [
+                                Image.asset(
+                                    'assets/completed.png'), // Replace with your image path
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                const Text(
+                                  'Congratulations!',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Inter',
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text(
+                                  'Your account is ready to use. You will be redirected to the Home Page in a few seconds...',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontFamily: 'Inter',
+                                    color: Color.fromARGB(255, 107, 114, 128),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                _isLoading ? CustomLoading() : Container(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
                     },
                   );
                   final response = await registerPatient();
-                  if (response.statusCode == 200) {
-                    logger.info("registered patient successfully");
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (BuildContext context) {
-                        Future.delayed(const Duration(seconds: 3), () {
-                          // Close the dialog
-                          Navigator.of(context).pop();
-                          // Navigate to the new page
-                          Navigator.of(context).pushReplacementNamed('/login');
-                        });
-                        return Dialog(
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.8,
-                            height: MediaQuery.of(context).size.height * 0.6,
-                            child: AlertDialog(
-                              insetPadding: const EdgeInsets.only(
-                                left: 10,
-                                right: 10,
-                                top: 20,
-                                bottom: 20,
-                              ),
-                              backgroundColor: Colors.white,
-                              content: Column(
-                                children: [
-                                  Image.asset(
-                                      'assets/completed.png'), // Replace with your image path
-                                  const SizedBox(
-                                    height: 30,
-                                  ),
-                                  const Text(
-                                    'Congratulations!',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Inter',
-                                      color: Color.fromARGB(255, 0, 0, 0),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  const Text(
-                                    'Your account is ready to use. You will be redirected to the Home Page in a few seconds...',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontFamily: 'Inter',
-                                      color: Color.fromARGB(255, 107, 114, 128),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  CustomLoading(),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }
+                  //}
                 },
                 child: const Text(
                   "Finish",
@@ -1349,6 +1355,9 @@ class _UserInfoState extends State<UserInfo> {
     logger.info("synced meals successfully");
     await dbHelper.syncMealComposition();
     logger.info("synced meal compositions successfully");
+    _isLoading = false;
+    Navigator.of(context).pop();
+    Navigator.of(context).pushReplacementNamed('/login');
     return response;
   }
 }
@@ -1361,6 +1370,8 @@ class Option {
 }
 
 class CustomLoading extends StatefulWidget {
+  const CustomLoading({super.key});
+
   @override
   _CustomLoadingState createState() => _CustomLoadingState();
 }

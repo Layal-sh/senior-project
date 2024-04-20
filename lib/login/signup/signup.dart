@@ -61,7 +61,7 @@ class _SignUpState extends State<SignUp> {
 
   //final Box _boxAccounts = Hive.box("accounts");
   bool _obscurePassword = true;
-
+  bool _obscurePassword2 = true;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -472,7 +472,7 @@ class _SignUpState extends State<SignUp> {
                               ),
                               TextFormField(
                                 controller: _controllerConFirmPassword,
-                                obscureText: _obscurePassword,
+                                obscureText: _obscurePassword2,
                                 focusNode: _focusNodeConfirmPassword,
                                 keyboardType: TextInputType.visiblePassword,
                                 style: const TextStyle(
@@ -496,12 +496,12 @@ class _SignUpState extends State<SignUp> {
                                   suffixIcon: IconButton(
                                     onPressed: () {
                                       setState(() {
-                                        _obscurePassword = !_obscurePassword;
+                                        _obscurePassword2 = !_obscurePassword2;
                                       });
                                     },
                                     color: const Color.fromARGB(
                                         255, 107, 100, 126),
-                                    icon: _obscurePassword
+                                    icon: _obscurePassword2
                                         ? const Icon(
                                             Icons.visibility_off_outlined)
                                         : const Icon(Icons.visibility_outlined),
