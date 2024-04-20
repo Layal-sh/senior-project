@@ -66,9 +66,9 @@ class _LoginState extends State<Login> {
     //dbHelper.dropAllArticles();
     //print(await dbHelper.selectAllArticle());
     // await dbHelper.deleteMealComposition();
-    //await dbHelper.syncMeals();
+    await dbHelper.syncMeals();
     //logger.info("synced meals successfully");
-    //await dbHelper.syncMealComposition();
+    await dbHelper.syncMealComposition();
     // logger.info("synced meal compositions successfully");
     // logger.info("saving values to shared preferences");
 
