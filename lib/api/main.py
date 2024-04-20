@@ -103,6 +103,17 @@ class NewPatient(BaseModel):
 class ForgetPasswordRequest(BaseModel):
     email: str
 
+class NewEntry(BaseModel):
+    patientID: int
+    entryDate: str
+    entryID: int
+    glucoseLevel: float
+    insulinDosage: int
+    totalCarbs: float
+    unit: int
+    hasMeals: str
+    
+
 ##############################################################
 
 ###########################################
@@ -587,3 +598,22 @@ async def get_news(query: str):
             return results["organic_results"]
     print("wifi do be no cap not working")
     return {"error": "Failed to get results after 3 attempts"}   
+
+###########################################
+########|SYNCING AAAAAAAAAAAAAAAA|#########
+###########################################
+
+@app.post("/addNewEntry")
+async def addNewEntry(entry: NewEntry):
+    print("entered /addNewEntry")
+    try:
+        print(entry)
+        cursor.execute("INSERT INTO Entry (patientID, entryID, entryDate, glucoseLevel , insulinDosage, totalCarbs, unit, hasMeals) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                       (entry.patientID, entry.entryID, entry.entryDate, entry.glucoseLevel, entry.insulinDosage, entry.totalCarbs, entry.unit, entry.hasMeals))
+        cnxn.commit()
+        print("inserted entry successfully")
+        return {"message": "inserted entry successfully"}
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        return {"error": str(e)}

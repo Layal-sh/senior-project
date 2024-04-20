@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sugar_sense/Database/variables.dart';
+import 'package:sugar_sense/application/meals/meals.dart';
 
 import '../main.dart';
 
@@ -115,6 +117,19 @@ class DBHelper {
       );
       ''');
     logger.info("Local Database has been created");
+  }
+
+  ////////////////////////////////////////////////////////////
+  ///////////////SYNCING AAAAAAAAAAAAAAAAAA///////////////////
+  ////////////////////////////////////////////////////////////
+  setSyncedEntry(int entryId) async {
+    Database? mydb = await db;
+    int response = await mydb!.rawUpdate('''
+    UPDATE Meals SET sync = 1 
+    WHERE entryId = $entryId
+    ''');
+    logger.info("Entry $entryId has been set synced successfuly :P");
+    return response;
   }
 
   ////////////////////////////////////////////////////////////
@@ -419,6 +434,7 @@ class DBHelper {
     Database? mydb = await db;
     List<Map> response = await mydb!.rawQuery('''
     SELECT * from Entry 
+    WHERE sync = 0
     ORDER BY entryDate
     ''');
     return response;
@@ -997,5 +1013,38 @@ class DBHelper {
       categories.add("grains, pasta & rice");
     }
     return categories;
+  }
+}
+
+syncEntries() async {
+  DBHelper dbHelper = DBHelper.instance;
+  List<Map> entries = await dbHelper.getAllEntries();
+  for (Map entry in entries) {
+    final response = await http
+        .post(
+          Uri.parse('http://$localhost:8000/addNewEntry'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, dynamic>{
+            'patientID': pid_,
+            'entryDate': entry['entryDate'],
+            'entryID': entry['entryId'],
+            'glucoseLevel': entry['glucoseLevel'],
+            'insulinDosage': entry['insulinDosage'],
+            'totalCarbs': entry['totalCarbs'],
+            'unit': entry['unit'],
+            'hasMeals': entry['hasMeals']
+          }),
+        )
+        .timeout(const Duration(seconds: 10));
+    if (response.statusCode == 200) {
+      await dbHelper.setSyncedEntry(entry['entryId']);
+      int eid = entry['entryId'];
+      logger.info("synced $eid");
+    } else {
+      String error = jsonDecode(response.body);
+      logger.warning("yen3ad 3lek $error");
+    }
   }
 }
