@@ -115,10 +115,10 @@ phoneUpdate(String phone) async {
 class _AppState extends State<App> {
   void fetchArticles() async {
     List<String> searches = [
-      'diabetes type 1',
-      'diabetes lifestyle',
-      'diabetes article',
-      'diabetes insulin'
+      // 'diabetes type 1',
+      // 'diabetes lifestyle',
+      // 'diabetes article',
+      // 'diabetes insulin'
     ];
 
     for (String s in searches) {

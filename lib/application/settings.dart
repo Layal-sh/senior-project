@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sugar_sense/Database/variables.dart';
+import 'package:sugar_sense/main.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -265,7 +266,7 @@ class _SettingsState extends State<Settings> {
       settings.add(
         settingItem(
           'Carb Ratio ${i + 1}:',
-          "${carbUnit_ == 0 ? (carbs[i](null)).toString() : (carbs[i](null) / 15).toString()}/${insulins[i](null)}",
+          "${carbUnit_ == 0 ? (carbs[i](null)).toStringAsFixed(2) : (carbs[i](null) / 15).toStringAsFixed(2)}/${insulins[i](null)}",
           () async {
             Map<String, double>? newCarbRatio =
                 await showDialog<Map<String, double>>(
@@ -333,6 +334,10 @@ class _SettingsState extends State<Settings> {
   }
 
   Widget privacyCheckbox(int index, String title) {
+    if (privacy_.length < 3) {
+      privacy_ = "000";
+      saveValues();
+    }
     return CheckboxListTile(
       title: Text(
         title,
