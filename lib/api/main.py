@@ -332,7 +332,13 @@ async def authenticate(user: User):
                 raise HTTPException(status_code=401, detail="Incorrect password")
 
         # If the email and password are correct, return a 200 OK response
-        return {"message": "Authenticated successfully"}
+        uid = getUserById(user.username);
+        cursor.execute("SELECT * FROM Patients WHERE patientID = ?", uid);
+        pid = cursor.fetchone();
+        if(pid is None):
+            raise HTTPException(status_code=401, detail="This user is not a patient");
+        else:
+            return {"message": "Authenticated successfully", "ID": uid}
     except HTTPException as e:
         raise e
     except Exception as e:
