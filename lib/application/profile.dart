@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
@@ -1081,6 +1082,8 @@ class _editProfileState extends State<editProfile> {
   late final TextEditingController _userController;
   late final TextEditingController _controllerEmail;
   late final TextEditingController _pnController;
+  late final TextEditingController _controllerPass;
+  late final TextEditingController _controllerVeryPass;
   void _pickImage(StateSetter setState) async {
     final ImagePicker _picker = ImagePicker();
     final XFile? image = (await _picker.pickImage(source: ImageSource.gallery));
@@ -1099,6 +1102,8 @@ class _editProfileState extends State<editProfile> {
     _userController = TextEditingController(text: username_);
     _controllerEmail = TextEditingController(text: email_);
     _pnController = TextEditingController(text: phoneNumber_);
+    _controllerPass = TextEditingController();
+    _controllerVeryPass = TextEditingController();
     if (profilePicture_ != '') {
       _selectedImage = XFile(profilePicture_);
     }
@@ -1111,333 +1116,452 @@ class _editProfileState extends State<editProfile> {
     });
   }
 
+  bool show = false;
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          decoration: const BoxDecoration(
-            color: Color.fromARGB(
-                255, 255, 249, 254), // Set the desired color here
-            borderRadius: BorderRadius.zero, // This removes the round edges
-          ),
-          child: Column(
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.09,
-                color: const Color.fromARGB(255, 38, 20, 84),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 20.0,
-                    ),
-                    child: Text(
-                      'Edit Profile',
-                      style: TextStyle(
-                        fontSize: min(MediaQuery.of(context).size.width,
-                                MediaQuery.of(context).size.height) *
-                            0.05,
-                        color: Colors.white,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w400,
-                      ),
+        child: Column(
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.09,
+              color: const Color.fromARGB(255, 38, 20, 84),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 20.0,
+                  ),
+                  child: Text(
+                    'Edit Profile',
+                    style: TextStyle(
+                      fontSize: min(MediaQuery.of(context).size.width,
+                              MediaQuery.of(context).size.height) *
+                          0.05,
+                      color: Colors.white,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ),
               ),
-              SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.025,
-                    left: 20,
-                    right: 20,
-                  ),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        Center(
-                          child: Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () => _pickImage(setState),
-                                child: Stack(
-                                  children: [
-                                    SizedBox(
-                                      width: min(
-                                              MediaQuery.of(context).size.width,
-                                              MediaQuery.of(context)
-                                                  .size
-                                                  .height) *
-                                          0.5,
-                                      height: min(
-                                              MediaQuery.of(context).size.width,
-                                              MediaQuery.of(context)
-                                                  .size
-                                                  .height) *
-                                          0.5,
-                                      child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        child: _selectedImage != null
-                                            ? Image.file(
-                                                File(_selectedImage!.path),
-                                                width: 200,
-                                                height: 200,
-                                                fit: BoxFit.cover,
-                                              )
-                                            : Container(
-                                                color: const Color.fromARGB(
-                                                    255, 45, 170, 178),
-                                                child: Center(
-                                                  child: Text(
-                                                    //textAlign: TextAlign.center,
-                                                    firstName_[0].toUpperCase(),
-                                                    style: TextStyle(
-                                                      fontSize: min(
-                                                              MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width,
-                                                              MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height) *
-                                                          0.2,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).size.height * 0.025,
+                left: 20,
+                right: 20,
+                bottom: 10,
+              ),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Center(
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () => _pickImage(setState),
+                            child: Stack(
+                              children: [
+                                SizedBox(
+                                  width: min(MediaQuery.of(context).size.width,
+                                          MediaQuery.of(context).size.height) *
+                                      0.5,
+                                  height: min(MediaQuery.of(context).size.width,
+                                          MediaQuery.of(context).size.height) *
+                                      0.5,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(100),
+                                    child: _selectedImage != null
+                                        ? Image.file(
+                                            File(_selectedImage!.path),
+                                            width: 200,
+                                            height: 200,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Container(
+                                            color: const Color.fromARGB(
+                                                255, 45, 170, 178),
+                                            child: Center(
+                                              child: Text(
+                                                //textAlign: TextAlign.center,
+                                                firstName_[0].toUpperCase(),
+                                                style: TextStyle(
+                                                  fontSize: min(
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .height) *
+                                                      0.2,
+                                                  color: Colors.white,
                                                 ),
                                               ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      left: 0,
-                                      top: 20,
-                                      child: InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            _selectedImage = null;
-                                          });
-                                        },
-                                        child: const Icon(
-                                          Icons.remove_circle,
-                                          size: 40,
-                                          color:
-                                              Color.fromARGB(255, 38, 20, 84),
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      right: 0,
-                                      bottom: 20,
-                                      child: InkWell(
-                                        onTap: () => _pickImage(setState),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(5),
-                                          decoration: const BoxDecoration(
-                                            color:
-                                                Color.fromARGB(255, 38, 20, 84),
-                                            shape: BoxShape.rectangle,
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(15),
-                                              topRight: Radius.circular(15),
-                                              bottomLeft: Radius.circular(7),
-                                              bottomRight: Radius.circular(15),
                                             ),
                                           ),
-                                          child: const Icon(
-                                            Icons.edit,
-                                            size: 20,
-                                            color: Color.fromARGB(
-                                                255, 255, 255, 255),
-                                          ),
+                                  ),
+                                ),
+                                Positioned(
+                                  left: 0,
+                                  top: 20,
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedImage = null;
+                                      });
+                                    },
+                                    child: const Icon(
+                                      Icons.remove_circle,
+                                      size: 40,
+                                      color: Color.fromARGB(255, 38, 20, 84),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  right: 0,
+                                  bottom: 20,
+                                  child: InkWell(
+                                    onTap: () => _pickImage(setState),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(5),
+                                      decoration: const BoxDecoration(
+                                        color: Color.fromARGB(255, 38, 20, 84),
+                                        shape: BoxShape.rectangle,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(15),
+                                          topRight: Radius.circular(15),
+                                          bottomLeft: Radius.circular(7),
+                                          bottomRight: Radius.circular(15),
                                         ),
                                       ),
+                                      child: const Icon(
+                                        Icons.edit,
+                                        size: 20,
+                                        color:
+                                            Color.fromARGB(255, 255, 255, 255),
+                                      ),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.02,
+                    ),
+                    TextFormField(
+                      controller: _userController,
+                      keyboardType: TextInputType.name,
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 38, 20, 84),
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
+                      ),
+                      decoration: InputDecoration(
+                        //labelText: 'UserName',
+                        hintText: username_,
+                        labelStyle: const TextStyle(
+                          color: Color.fromARGB(189, 38, 20, 84),
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w600,
                         ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.02,
+                        prefixIcon: const Icon(
+                          Icons.person_2_outlined,
+                          color: Color.fromARGB(255, 38, 20, 84),
                         ),
-                        TextFormField(
-                          controller: _userController,
-                          keyboardType: TextInputType.name,
-                          style: const TextStyle(
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          borderSide: BorderSide(
+                            width: 1.5,
                             color: Color.fromARGB(255, 38, 20, 84),
-                            fontSize: 15,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w600,
                           ),
-                          decoration: InputDecoration(
-                            //labelText: 'UserName',
-                            hintText: username_,
-                            labelStyle: const TextStyle(
-                              color: Color.fromARGB(189, 38, 20, 84),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            width: 1.5,
+                            color: Color.fromARGB(255, 38, 20, 84),
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        errorBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          borderSide: BorderSide(
+                            width: 1.5,
+                            color: Color.fromARGB(255, 38, 20, 84),
+                          ),
+                        ),
+                        focusedErrorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            width: 1.5,
+                            color: Color.fromARGB(255, 38, 20, 84),
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                      ),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        }
+
+                        return usernameErrorMessage;
+                      },
+                      onChanged: (String? value) async {
+                        if (value != null && value.isNotEmpty) {
+                          int result = await userNameUpdate(value);
+                          if (result == 0 || result == -1) {
+                            setState(() {
+                              usernameErrorMessage =
+                                  "* Username already exists";
+                            });
+                          } else {
+                            setState(() {
+                              usernameErrorMessage = null;
+                            });
+                          }
+                        }
+                      },
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    TextFormField(
+                      controller: _controllerEmail,
+                      keyboardType: TextInputType.emailAddress,
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 38, 20, 84),
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: email_,
+                        labelStyle: const TextStyle(
+                          color: Color.fromARGB(189, 38, 20, 84),
+                          fontSize: 15,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.email_outlined,
+                          color: Color.fromARGB(255, 38, 20, 84),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          borderSide: BorderSide(
+                            width: 1.5,
+                            color: Color.fromARGB(255, 38, 20, 84),
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            width: 1.5,
+                            color: Color.fromARGB(255, 38, 20, 84),
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        errorBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          borderSide: BorderSide(
+                            width: 1.5,
+                            color: Color.fromARGB(255, 38, 20, 84),
+                          ),
+                        ),
+                        focusedErrorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            width: 1.5,
+                            color: Color.fromARGB(255, 38, 20, 84),
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                      ),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        }
+
+                        return emailErrorMessage;
+                      },
+                      onChanged: (String? value) async {
+                        if (value != null && value.isNotEmpty) {
+                          int result = await emailUpdate(value);
+                          if (result == 2) {
+                            setState(() {
+                              emailErrorMessage = "* Invalid email";
+                            });
+                          } else if (result == 0 || result == -1) {
+                            setState(() {
+                              emailErrorMessage = "* Email already exists";
+                            });
+                          } else {
+                            setState(() {
+                              emailErrorMessage = null;
+                            });
+                          }
+                        }
+                      },
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: _pnController,
+                            keyboardType: TextInputType.phone,
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 38, 20, 84),
                               fontSize: 15,
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w600,
                             ),
-                            prefixIcon: const Icon(
-                              Icons.person_2_outlined,
-                              color: Color.fromARGB(255, 38, 20, 84),
-                            ),
-                            focusedBorder: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
-                              borderSide: BorderSide(
-                                width: 1.5,
+                            decoration: InputDecoration(
+                              hintText: phoneNumber_,
+                              labelStyle: const TextStyle(
+                                color: Color.fromARGB(189, 38, 20, 84),
+                                fontSize: 15,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w600,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.phone_android,
                                 color: Color.fromARGB(255, 38, 20, 84),
                               ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                width: 1.5,
-                                color: Color.fromARGB(255, 38, 20, 84),
+                              suffixIcon: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    height: 50, // Adjust the height as needed
+                                    width: 1.5, // This creates a 'line'
+                                    color:
+                                        const Color.fromARGB(255, 38, 20, 84),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  const Text('+961'),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.07,
+                                    child: Image.asset(
+                                      'assets/lebanon.png',
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                ],
                               ),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            errorBorder: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
-                              borderSide: BorderSide(
-                                width: 1.5,
-                                color: Color.fromARGB(255, 38, 20, 84),
+                              focusedBorder: const OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15)),
+                                borderSide: BorderSide(
+                                  width: 1.5,
+                                  color: Color.fromARGB(255, 38, 20, 84),
+                                ),
+                              ),
+                              enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  width: 1.5,
+                                  color: Color.fromARGB(255, 38, 20, 84),
+                                ),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15)),
+                              ),
+                              errorBorder: const OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15)),
+                                borderSide: BorderSide(
+                                  width: 1.5,
+                                  color: Color.fromARGB(255, 38, 20, 84),
+                                ),
+                              ),
+                              focusedErrorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  width: 1.5,
+                                  color: Color.fromARGB(255, 38, 20, 84),
+                                ),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15)),
                               ),
                             ),
-                            focusedErrorBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                width: 1.5,
-                                color: Color.fromARGB(255, 38, 20, 84),
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
-                            ),
-                          ),
-                          validator: (String? value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your email';
-                            }
-
-                            return usernameErrorMessage;
-                          },
-                          onChanged: (String? value) async {
-                            if (value != null && value.isNotEmpty) {
-                              int result = await userNameUpdate(value);
-                              if (result == 0 || result == -1) {
-                                setState(() {
-                                  usernameErrorMessage =
-                                      "* Username already exists";
-                                });
-                              } else {
-                                setState(() {
-                                  usernameErrorMessage = null;
-                                });
+                            validator: (String? value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a phone number';
                               }
-                            }
-                          },
-                        ),
-                        const SizedBox(
-                          height: 25,
-                        ),
-                        TextFormField(
-                          controller: _controllerEmail,
-                          keyboardType: TextInputType.emailAddress,
-                          style: const TextStyle(
-                            color: Color.fromARGB(255, 38, 20, 84),
-                            fontSize: 15,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w600,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: email_,
-                            labelStyle: const TextStyle(
-                              color: Color.fromARGB(189, 38, 20, 84),
-                              fontSize: 15,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                            ),
-                            prefixIcon: const Icon(
-                              Icons.email_outlined,
-                              color: Color.fromARGB(255, 38, 20, 84),
-                            ),
-                            focusedBorder: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
-                              borderSide: BorderSide(
-                                width: 1.5,
-                                color: Color.fromARGB(255, 38, 20, 84),
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                width: 1.5,
-                                color: Color.fromARGB(255, 38, 20, 84),
-                              ),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            errorBorder: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
-                              borderSide: BorderSide(
-                                width: 1.5,
-                                color: Color.fromARGB(255, 38, 20, 84),
-                              ),
-                            ),
-                            focusedErrorBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                width: 1.5,
-                                color: Color.fromARGB(255, 38, 20, 84),
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
-                            ),
-                          ),
-                          validator: (String? value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your email';
-                            }
 
-                            return emailErrorMessage;
-                          },
-                          onChanged: (String? value) async {
-                            if (value != null && value.isNotEmpty) {
-                              int result = await emailUpdate(value);
-                              if (result == 2) {
-                                setState(() {
-                                  emailErrorMessage = "* Invalid email";
-                                });
-                              } else if (result == 0 || result == -1) {
-                                setState(() {
-                                  emailErrorMessage = "* Email already exists";
-                                });
-                              } else {
-                                setState(() {
-                                  emailErrorMessage = null;
-                                });
+                              return phoneNumberErrorMessage;
+                            },
+                            onChanged: (String? value) async {
+                              if (value != null && value.isNotEmpty) {
+                                int result = await phoneUpdate(value);
+                                if (result == 2) {
+                                  setState(() {
+                                    phoneNumberErrorMessage =
+                                        "* Invalid phone number";
+                                  });
+                                } else if (result == 0 || result == -1) {
+                                  setState(() {
+                                    phoneNumberErrorMessage =
+                                        "* Phone number already exists";
+                                  });
+                                } else {
+                                  setState(() {
+                                    phoneNumberErrorMessage = null;
+                                  });
+                                }
                               }
-                            }
-                          },
+                            },
+                          ),
                         ),
-                        const SizedBox(
-                          height: 25,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextFormField(
-                                controller: _pnController,
-                                keyboardType: TextInputType.phone,
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    show == false
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    show = true;
+                                  });
+                                },
+                                child: const Text(
+                                  "Change Password",
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 116, 116, 116),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Container(),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    show == true
+                        ? Column(
+                            children: [
+                              TextFormField(
+                                controller: _controllerVeryPass,
+                                keyboardType: TextInputType.visiblePassword,
                                 style: const TextStyle(
                                   color: Color.fromARGB(255, 38, 20, 84),
                                   fontSize: 15,
@@ -1445,7 +1569,7 @@ class _editProfileState extends State<editProfile> {
                                   fontWeight: FontWeight.w600,
                                 ),
                                 decoration: InputDecoration(
-                                  hintText: phoneNumber_,
+                                  hintText: 'New password',
                                   labelStyle: const TextStyle(
                                     color: Color.fromARGB(189, 38, 20, 84),
                                     fontSize: 15,
@@ -1453,38 +1577,8 @@ class _editProfileState extends State<editProfile> {
                                     fontWeight: FontWeight.w600,
                                   ),
                                   prefixIcon: const Icon(
-                                    Icons.phone_android,
+                                    Icons.lock_outline,
                                     color: Color.fromARGB(255, 38, 20, 84),
-                                  ),
-                                  suffixIcon: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Container(
-                                        height:
-                                            50, // Adjust the height as needed
-                                        width: 1.5, // This creates a 'line'
-                                        color: const Color.fromARGB(
-                                            255, 38, 20, 84),
-                                      ),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                      const Text('+961'),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.07,
-                                        child: Image.asset(
-                                          'assets/lebanon.png',
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                    ],
                                   ),
                                   focusedBorder: const OutlineInputBorder(
                                     borderRadius:
@@ -1494,13 +1588,12 @@ class _editProfileState extends State<editProfile> {
                                       color: Color.fromARGB(255, 38, 20, 84),
                                     ),
                                   ),
-                                  enabledBorder: const OutlineInputBorder(
-                                    borderSide: BorderSide(
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
                                       width: 1.5,
                                       color: Color.fromARGB(255, 38, 20, 84),
                                     ),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(15)),
+                                    borderRadius: BorderRadius.circular(15),
                                   ),
                                   errorBorder: const OutlineInputBorder(
                                     borderRadius:
@@ -1519,223 +1612,289 @@ class _editProfileState extends State<editProfile> {
                                         BorderRadius.all(Radius.circular(15)),
                                   ),
                                 ),
-                                validator: (String? value) {
+                                /*validator: (String? value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Please enter a phone number';
+                                    return 'Please enter your email';
                                   }
 
-                                  return phoneNumberErrorMessage;
+                                  return emailErrorMessage;
                                 },
                                 onChanged: (String? value) async {
                                   if (value != null && value.isNotEmpty) {
-                                    int result = await phoneUpdate(value);
+                                    int result = await emailUpdate(value);
                                     if (result == 2) {
                                       setState(() {
-                                        phoneNumberErrorMessage =
-                                            "* Invalid phone number";
+                                        emailErrorMessage = "* Invalid email";
                                       });
                                     } else if (result == 0 || result == -1) {
                                       setState(() {
-                                        phoneNumberErrorMessage =
-                                            "* Phone number already exists";
+                                        emailErrorMessage =
+                                            "* Email already exists";
                                       });
                                     } else {
                                       setState(() {
-                                        phoneNumberErrorMessage = null;
+                                        emailErrorMessage = null;
                                       });
                                     }
                                   }
-                                },
+                                },*/
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              "Change Password",
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 116, 116, 116),
+                              const SizedBox(
+                                height: 20,
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.06,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 38, 20, 84),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    10), // Change this value as needed
-                              ),
-                            ),
-                            child: const Text(
-                              'Accept',
-                              style: TextStyle(
-                                color: Color.fromARGB(
-                                  255,
-                                  255,
-                                  249,
-                                  254,
+                              TextFormField(
+                                controller: _controllerVeryPass,
+                                keyboardType: TextInputType.visiblePassword,
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 38, 20, 84),
+                                  fontSize: 15,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w600,
                                 ),
-                                fontSize: 20,
-                              ),
-                            ),
-                            onPressed: () async {
-                              if (_formKey.currentState!.validate()) {
-                                if (await isConnectedToWifi()) {
-                                  setState(() {
-                                    if (_selectedImage != null) {
-                                      profilePicture_ = _selectedImage!.path;
+                                decoration: InputDecoration(
+                                  hintText: 'Confirm Password',
+                                  labelStyle: const TextStyle(
+                                    color: Color.fromARGB(189, 38, 20, 84),
+                                    fontSize: 15,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.lock_outline,
+                                    color: Color.fromARGB(255, 38, 20, 84),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(15)),
+                                    borderSide: BorderSide(
+                                      width: 1.5,
+                                      color: Color.fromARGB(255, 38, 20, 84),
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                      width: 1.5,
+                                      color: Color.fromARGB(255, 38, 20, 84),
+                                    ),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  errorBorder: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(15)),
+                                    borderSide: BorderSide(
+                                      width: 1.5,
+                                      color: Color.fromARGB(255, 38, 20, 84),
+                                    ),
+                                  ),
+                                  focusedErrorBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      width: 1.5,
+                                      color: Color.fromARGB(255, 38, 20, 84),
+                                    ),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(15)),
+                                  ),
+                                ),
+                                /*validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your new password';
+                                  }
 
-                                      saveP();
+                                  return passErrorMessage;
+                                },*/
+                                /*onChanged: (String? value) async {
+                                  if (value != null && value.isNotEmpty) {
+                                    int result = await emailUpdate(value);
+                                    if (result == 2) {
+                                      setState(() {
+                                        emailErrorMessage = "* Invalid email";
+                                      });
+                                    } else if (result == 0 || result == -1) {
+                                      setState(() {
+                                        emailErrorMessage =
+                                            "* Email already exists";
+                                      });
                                     } else {
-                                      profilePicture_ = '';
-                                      saveP();
+                                      setState(() {
+                                        emailErrorMessage = null;
+                                      });
                                     }
-                                    username_ = _userController.text;
-                                    email_ = _controllerEmail.text;
-                                    phoneNumber_ = _pnController.text;
-                                  });
-                                  Navigator.of(context).pop();
-                                } else {
-                                  showDialog(
-                                    // ignore: use_build_context_synchronously
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text('No Internet'),
-                                        content: const Text(
-                                            'You are not connected to the internet.'),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            child: const Text('OK'),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                }
-                              }
-                              //   setState(() {
-                              //     acc = true;
-                              //     if (isValidEmail(
-                              //         _controllerEmail.text)) {
-                              //       if (_selectedImage != null) {
-                              //         profilePicture_ =
-                              //             _selectedImage!.path;
-
-                              //         saveP();
-                              //       } else {
-                              //         profilePicture_ = '';
-                              //         saveP();
-                              //       }
-                              //       if (_userController
-                              //           .text.isNotEmpty) {
-                              //         username_ =
-                              //             _userController.text;
-                              //         saveU();
-                              //       }
-                              //       if (_controllerEmail
-                              //           .text.isNotEmpty) {
-                              //         email_ =
-                              //             _controllerEmail.text;
-                              //         saveE();
-                              //       }
-                              //       if (_pnController
-                              //           .text.isNotEmpty) {
-                              //         phoneNumber_ =
-                              //             _pnController.text;
-                              //         saveN();
-                              //       }
-                              //       Navigator.of(context).pop();
-                              //     } else {
-                              //       _controllerEmail.value =
-                              //           TextEditingValue(
-                              //               text: email_);
-                              //       showDialog(
-                              //         context: context,
-                              //         builder:
-                              //             (BuildContext context) {
-                              //           return AlertDialog(
-                              //             title: const Text(
-                              //                 'Invalid Email'),
-                              //             content: const Text(
-                              //                 'Please enter a valid email'),
-                              //             actions: <Widget>[
-                              //               TextButton(
-                              //                 child: const Text(
-                              //                     'Close'),
-                              //                 onPressed: () {
-                              //                   Navigator.of(
-                              //                           context)
-                              //                       .pop();
-                              //                 },
-                              //               ),
-                              //             ],
-                              //           );
-                              //         },
-                              //       );
-                              //     }
-                              //   });
-                            },
+                                  }
+                                },*/
+                              ),
+                            ],
+                          )
+                        : Container(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.06,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(255, 38, 20, 84),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                10), // Change this value as needed
                           ),
                         ),
-                        const SizedBox(
-                          height: 15,
+                        child: const Text(
+                          'Accept',
+                          style: TextStyle(
+                            color: Color.fromARGB(
+                              255,
+                              255,
+                              249,
+                              254,
+                            ),
+                            fontSize: 20,
+                          ),
                         ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.06,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              //primary: Color.fromARGB(255, 255, 255, 255), // background color
-                              side: const BorderSide(
-                                color: Color.fromARGB(255, 38, 20, 84),
-                                width: 1,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    10), // Change this value as needed
-                              ),
-                            ),
-                            child: const Text(
-                              'Cancel',
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 38, 20, 84),
-                                fontSize: 20,
-                              ),
-                            ),
-                            onPressed: () async {
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            if (await isConnectedToWifi()) {
                               setState(() {
-                                if (profilePicture_ != '') {
-                                  _selectedImage = XFile(profilePicture_);
+                                if (_selectedImage != null) {
+                                  profilePicture_ = _selectedImage!.path;
+
+                                  saveP();
+                                } else {
+                                  profilePicture_ = '';
+                                  saveP();
                                 }
+                                username_ = _userController.text;
+                                email_ = _controllerEmail.text;
+                                phoneNumber_ = _pnController.text;
                               });
                               Navigator.of(context).pop();
-                            },
+                            } else {
+                              showDialog(
+                                // ignore: use_build_context_synchronously
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('No Internet'),
+                                    content: const Text(
+                                        'You are not connected to the internet.'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: const Text('OK'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          }
+                          //   setState(() {
+                          //     acc = true;
+                          //     if (isValidEmail(
+                          //         _controllerEmail.text)) {
+                          //       if (_selectedImage != null) {
+                          //         profilePicture_ =
+                          //             _selectedImage!.path;
+
+                          //         saveP();
+                          //       } else {
+                          //         profilePicture_ = '';
+                          //         saveP();
+                          //       }
+                          //       if (_userController
+                          //           .text.isNotEmpty) {
+                          //         username_ =
+                          //             _userController.text;
+                          //         saveU();
+                          //       }
+                          //       if (_controllerEmail
+                          //           .text.isNotEmpty) {
+                          //         email_ =
+                          //             _controllerEmail.text;
+                          //         saveE();
+                          //       }
+                          //       if (_pnController
+                          //           .text.isNotEmpty) {
+                          //         phoneNumber_ =
+                          //             _pnController.text;
+                          //         saveN();
+                          //       }
+                          //       Navigator.of(context).pop();
+                          //     } else {
+                          //       _controllerEmail.value =
+                          //           TextEditingValue(
+                          //               text: email_);
+                          //       showDialog(
+                          //         context: context,
+                          //         builder:
+                          //             (BuildContext context) {
+                          //           return AlertDialog(
+                          //             title: const Text(
+                          //                 'Invalid Email'),
+                          //             content: const Text(
+                          //                 'Please enter a valid email'),
+                          //             actions: <Widget>[
+                          //               TextButton(
+                          //                 child: const Text(
+                          //                     'Close'),
+                          //                 onPressed: () {
+                          //                   Navigator.of(
+                          //                           context)
+                          //                       .pop();
+                          //                 },
+                          //               ),
+                          //             ],
+                          //           );
+                          //         },
+                          //       );
+                          //     }
+                          //   });
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.06,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          //primary: Color.fromARGB(255, 255, 255, 255), // background color
+                          side: const BorderSide(
+                            color: Color.fromARGB(255, 38, 20, 84),
+                            width: 1,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                10), // Change this value as needed
                           ),
                         ),
-                      ],
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 38, 20, 84),
+                            fontSize: 20,
+                          ),
+                        ),
+                        onPressed: () async {
+                          setState(() {
+                            if (profilePicture_ != '') {
+                              _selectedImage = XFile(profilePicture_);
+                            }
+                          });
+                          Navigator.of(context).pop();
+                        },
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

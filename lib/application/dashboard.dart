@@ -1121,6 +1121,7 @@ class _DashboardState extends State<Dashboard> {
                                     onPressed: () async {
                                       await db
                                           .deleteEntryById(entry['entryId']);
+
                                       refreshData();
                                     },
                                   ),
