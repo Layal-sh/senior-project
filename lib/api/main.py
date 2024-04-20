@@ -315,10 +315,11 @@ async def getPatientDetails(user: User):
 async def authenticate(user: User):
     try: 
         # Query the database for the user
-        cursor.execute("SELECT userPassword FROM Users WHERE CAST(userName AS NVARCHAR(MAX)) = ?", (user.username,))
+        cursor.execute("SELECT userPassword,userID FROM Users WHERE CAST(userName AS NVARCHAR(MAX)) = ?", (user.username,))
         rowUsername = cursor.fetchone()
-        cursor.execute("SELECT userPassword FROM Users WHERE CAST(email AS NVARCHAR(MAX)) = ?",(user.username,))
+        cursor.execute("SELECT userPassword,userID FROM Users WHERE CAST(email AS NVARCHAR(MAX)) = ?",(user.username,))
         rowEmail = cursor.fetchone()
+
 
         # If the user doesn't exist or the password is incorrect, return a 401 Unauthorized response
 
@@ -338,7 +339,8 @@ async def authenticate(user: User):
         if(pid is None):
             raise HTTPException(status_code=401, detail="This user is not a patient");
         else:
-            return {"message": "Authenticated successfully", "ID": uid}
+            return rowUsername[1] 
+            #{"message": "Authenticated successfully", "ID": uid}
     except HTTPException as e:
         raise e
     except Exception as e:
@@ -398,12 +400,14 @@ async def registerfunction(user: NewPatient):
 ##############################################################
     
 @app.get("/changeUsername/{username}/{id}")
-def changeUsername(username,id):
+async def changeUsername(username,id):
     if checkUsername(username):
-        row = cursor.execute("UPDATE Users SET userName = ? where userID  = ?",(username,id))
-        cursor.commit()
-        print(getUserById(username))
-        if row is not None:
+        print("ebetred if ")
+        print(username , id)
+        cursor.execute("UPDATE Users SET userName = ? where userID  = ?",(username,id))
+        cnxn.commit()
+
+        if cursor.rowcount > 0:
             return True
         else:
             raise HTTPException(status_code=500, detail="couldn't change username")
@@ -414,7 +418,7 @@ def changeUsername(username,id):
 def changeEmail(email,id):
     if checkEmail(email):
         row = cursor.execute("UPDATE Users SET email = ? where userID  = ?",(email,id))
-        cursor.commit()
+        cnxn.commit()
         if row is not None:
             return True
         else:
@@ -426,7 +430,7 @@ def changeEmail(email,id):
 def changePhone(phoneNumber,id):
     if checkPhoneNumber(phoneNumber):
         row = cursor.execute("UPDATE Users SET phoneNumber = ? where userID  = ?",(phoneNumber,id))
-        cursor.commit()
+        cnxn.commit()
         if row is not None:
             return True
         else:
@@ -437,7 +441,7 @@ def changePhone(phoneNumber,id):
 @app.get("/changePhoto/{photo}/{id}")
 def changePhoto(photo,id):
     row = cursor.execute("UPDATE Users SET profilePhoto = ? where patientID  = ?",(photo,id))
-    cursor.commit()
+    cnxn.commit()
     if row is not None:
         return True
     else:
@@ -446,7 +450,7 @@ def changePhoto(photo,id):
 @app.get("/changeTargetGlucose/{targetGlucose}/{id}")
 def changeTargetGlucose(targetGlucose, id):
     row = cursor.execute("UPDATE Patients SET targetBloodGlucose = ? where patientID  = ?",(targetGlucose,id))
-    cursor.commit()
+    cnxn.commit()
     if row is not None:
         return True
     else:
@@ -455,7 +459,7 @@ def changeTargetGlucose(targetGlucose, id):
 @app.get("/changeInsulinSensitivity/{insulinSensitivity}/{id}")
 def changeInsulinSensitivity(insulinSensitivity, id):
     row = cursor.execute("UPDATE Patients SET insulinSensivity = ? where patientID  = ?",(insulinSensitivity,id))
-    cursor.commit()
+    cnxn.commit()
     if row is not None:
         return True
     else:
@@ -468,7 +472,7 @@ def changeCarbRatios(carbRatio1, carbRatio2, carbRatio3, id):
         SET carbRatio = ?, carbRatio2 = ?, carbRatio3 = ? 
         WHERE patientID = ?
     """, (carbRatio1, carbRatio2, carbRatio3, id))
-    cursor.commit()
+    cnxn.commit()
     if row is not None:
         return True
     else:
@@ -477,7 +481,7 @@ def changeCarbRatios(carbRatio1, carbRatio2, carbRatio3, id):
 @app.get("/changePrivacy/{privacy}/{id}")
 def changePrivacy(privacy, id):
     row = cursor.execute("UPDATE Patients SET privacy = ? where patientID  = ?",(privacy,id))
-    cursor.commit()
+    cnxn.commit()
     if row is not None:
         return True
     else:
@@ -486,7 +490,7 @@ def changePrivacy(privacy, id):
 @app.get("/changeDoctor/{doctorCode}/{id}")
 def changeDoctor(doctorCode, id):
     row = cursor.execute("UPDATE Patients SET doctorCode = ? where patientID  = ?",(doctorCode,id))
-    cursor.commit()
+    cnxn.commit()
     if row is not None:
         return True
     else:

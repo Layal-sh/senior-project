@@ -66,7 +66,7 @@ Future<void> loadPreferences() async {
 
   isSynced_ = prefs.getBool('isSynced') ?? true;
   targetBloodSugar_ = prefs.getInt('targetBloodSugar') ?? 100;
-  pid_ = prefs.getInt('pid_') ?? 0;
+  pid_ = prefs.getInt('pid') ?? 0;
   insulinSensitivity_ = prefs.getInt('insulinSensitivity') ?? 20;
   carbRatio_ = prefs.getDouble('carbRatio') ?? 3;
   carbRatio_2 = prefs.getDouble('carbRatio2') ?? 0;

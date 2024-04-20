@@ -61,14 +61,14 @@ class _LoginState extends State<Login> {
       _isLoading = true;
     });
 
-    logger.info("syncing meals from the server to the local database");
+    //logger.info("syncing meals from the server to the local database");
     DBHelper dbHelper = DBHelper.instance;
     //dbHelper.dropAllArticles();
     //print(await dbHelper.selectAllArticle());
     // await dbHelper.deleteMealComposition();
-    await dbHelper.syncMeals();
+    //await dbHelper.syncMeals();
     //logger.info("synced meals successfully");
-    await dbHelper.syncMealComposition();
+    //await dbHelper.syncMealComposition();
     // logger.info("synced meal compositions successfully");
     // logger.info("saving values to shared preferences");
 
@@ -101,6 +101,7 @@ class _LoginState extends State<Login> {
         await prefs.setString('firstName', userDetails['firstName']);
         await prefs.setString('lastName', userDetails['lastName']);
         await prefs.setString('email', userDetails['email']);
+        await prefs.setInt('pid', userDetails['userID']);
         pid_ = userDetails['userID'];
         final responsePatient = await http
             .post(
@@ -385,14 +386,6 @@ class _LoginState extends State<Login> {
                             bool connectedToWifi = await isConnectedToWifi();
                             print(connectedToWifi);
 
-                            int ide = 5;
-                            String code = 'dr10';
-                            final docInfo = await http.get(Uri.parse(
-                                'http://$localhost:8000/getDoctorInfo/$code'));
-
-                            print('doctor infooo:');
-                            print(docInfo.body);
-                            logger.info('he did in fact frfr click da button');
                             String email = _emailController.text;
                             String password = _passwordController.text;
                             if (email == 'admin' && password == 'admin') {
@@ -426,13 +419,14 @@ class _LoginState extends State<Login> {
                                       }),
                                     )
                                     .timeout(const Duration(seconds: 10));
-
+                                print(int.parse(response.body));
                                 if (response.statusCode == 200) {
+                                  print(response.body);
                                   setLoginTime();
                                   _isLoading
                                       ? null
                                       : _signIn(email, password,
-                                          jsonDecode(response.body)['ID']);
+                                          jsonDecode(response.body));
                                 } else {
                                   //incorrect username or password handling
                                   //for layal you can change this if you want or remove this comment if you think its good

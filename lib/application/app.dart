@@ -50,7 +50,8 @@ userNameUpdate(String username) async {
       final name = await http.get(
           Uri.parse('http://$localhost:8000/changeUsername/$username/$id'));
       if (name.statusCode == 200) {
-        //username_ = username;
+        username_ = username;
+        saveProfile();
         return 1;
       } else if (name.statusCode == 401) {
         //display snackbar thingy with username already exists
@@ -76,7 +77,8 @@ emailUpdate(String email) async {
     final name = await http
         .get(Uri.parse('http://$localhost:8000/changeEmail/$email/$id'));
     if (name.statusCode == 200) {
-      //email_ = email;
+      email_ = email;
+      saveProfile();
       return 1;
     } else if (name.statusCode == 401) {
       //display snackbar thingy with username already exists
@@ -98,7 +100,7 @@ phoneUpdate(String phone) async {
     final name = await http
         .get(Uri.parse('http://$localhost:8000/changePhone/$phone/$id'));
     if (name.statusCode == 200) {
-      //phoneNumber_ = phone;
+      phoneNumber_ = phone;
       return 1;
     } else if (name.statusCode == 401) {
       //display snackbar thingy with username already exists

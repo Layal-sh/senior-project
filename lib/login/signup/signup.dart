@@ -570,14 +570,14 @@ class _SignUpState extends State<SignUp> {
                                   } else {
                                     final checkName = await http.get(Uri.parse(
                                         'http://$localhost:8000/checkUsername/$username'));
-                                    print('Response body: ${checkName.body}');
+                          
                                     final body = jsonDecode(checkName.body);
 
                                     final checkEmail = await http.get(Uri.parse(
                                         'http://$localhost:8000/checkEmail/$email'));
                                     final body2 = jsonDecode(checkEmail.body);
                                     int docCode = 0;
-                                    print(body);
+                                   
                                     if (doctorId.isEmpty) {
                                       doctorCode_ = "NULL";
                                     } else {
