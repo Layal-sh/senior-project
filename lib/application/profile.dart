@@ -1121,32 +1121,27 @@ class _editProfileState extends State<editProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Edit Profile',
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 249, 254),
+                fontSize: 21,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color.fromARGB(255, 38, 20, 84),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.09,
-              color: const Color.fromARGB(255, 38, 20, 84),
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: 20.0,
-                  ),
-                  child: Text(
-                    'Edit Profile',
-                    style: TextStyle(
-                      fontSize: min(MediaQuery.of(context).size.width,
-                              MediaQuery.of(context).size.height) *
-                          0.05,
-                      color: Colors.white,
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-              ),
-            ),
             Padding(
               padding: EdgeInsets.only(
                 top: MediaQuery.of(context).size.height * 0.025,
@@ -1616,7 +1611,7 @@ class _editProfileState extends State<editProfile> {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter your email';
                                   }
-
+            
                                   return emailErrorMessage;
                                 },
                                 onChanged: (String? value) async {
@@ -1699,7 +1694,7 @@ class _editProfileState extends State<editProfile> {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter your new password';
                                   }
-
+            
                                   return passErrorMessage;
                                 },*/
                                 /*onChanged: (String? value) async {

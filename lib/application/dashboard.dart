@@ -119,7 +119,6 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Future<void> refreshData() async {
-    await Future.delayed(const Duration(seconds: 10));
     setState(() {});
   }
 
