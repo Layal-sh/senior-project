@@ -73,7 +73,6 @@ class _LoginState extends State<Login> {
     // logger.info("saving values to shared preferences");
 
     if (id != pid_) {
-
       final response = await http
           .post(
             Uri.parse('http://$localhost:8000/getUserDetails'), //$localhost
@@ -420,7 +419,7 @@ class _LoginState extends State<Login> {
                                       }),
                                     )
                                     .timeout(const Duration(seconds: 10));
-                                 print(response.body);
+                                print(int.parse(response.body));
                                 if (response.statusCode == 200) {
                                   print(response.body);
                                   setLoginTime();
