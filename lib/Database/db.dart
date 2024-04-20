@@ -125,7 +125,7 @@ class DBHelper {
   setSyncedEntry(int entryId) async {
     Database? mydb = await db;
     int response = await mydb!.rawUpdate('''
-    UPDATE Meals SET sync = 1 
+    UPDATE Entry SET sync = 1 
     WHERE entryId = $entryId
     ''');
     logger.info("Entry $entryId has been set synced successfuly :P");
