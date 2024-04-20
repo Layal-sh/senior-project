@@ -1422,7 +1422,9 @@ class _editProfileState extends State<editProfile> {
                               fontWeight: FontWeight.w600,
                             ),
                             decoration: InputDecoration(
-                              hintText: phoneNumber_,
+                              hintText: phoneNumber_ == ""
+                                  ? 'Phone Number'
+                                  : phoneNumber_,
                               labelStyle: const TextStyle(
                                 color: Color.fromARGB(189, 38, 20, 84),
                                 fontSize: 15,
@@ -1555,7 +1557,7 @@ class _editProfileState extends State<editProfile> {
                         ? Column(
                             children: [
                               TextFormField(
-                                controller: _controllerVeryPass,
+                                controller: _controllerPass,
                                 keyboardType: TextInputType.visiblePassword,
                                 style: const TextStyle(
                                   color: Color.fromARGB(255, 38, 20, 84),
@@ -1564,7 +1566,7 @@ class _editProfileState extends State<editProfile> {
                                   fontWeight: FontWeight.w600,
                                 ),
                                 decoration: InputDecoration(
-                                  hintText: 'New password',
+                                  hintText: 'Old password',
                                   labelStyle: const TextStyle(
                                     color: Color.fromARGB(189, 38, 20, 84),
                                     fontSize: 15,
@@ -1647,7 +1649,7 @@ class _editProfileState extends State<editProfile> {
                                   fontWeight: FontWeight.w600,
                                 ),
                                 decoration: InputDecoration(
-                                  hintText: 'Confirm Password',
+                                  hintText: 'New Password',
                                   labelStyle: const TextStyle(
                                     color: Color.fromARGB(189, 38, 20, 84),
                                     fontSize: 15,

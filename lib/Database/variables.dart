@@ -77,7 +77,7 @@ Future<void> loadPreferences() async {
   email_ = prefs.getString('email') ?? "";
   signedIn_ = prefs.getBool('signedIn') ?? false;
   doctorCode_ = prefs.getString('doctorCode') ?? "";
-  phoneNumber_ = prefs.getString('phoneNumber') ?? "7686431";
+  phoneNumber_ = prefs.getString('phoneNumber') ?? "";
   profilePicture_ = prefs.getString('profilePicture') ?? "";
   privacy_ = prefs.getString('privacy') ?? "111";
   glucoseUnit_ = prefs.getInt('glucoseUnit') ?? 0;
