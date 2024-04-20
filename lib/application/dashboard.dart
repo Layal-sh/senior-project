@@ -118,10 +118,12 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
-  void refreshData() {
+  Future<void> refreshData() async {
+    await Future.delayed(const Duration(seconds: 10));
     setState(() {});
   }
 
+  bool ref = false;
   @override
   Widget build(BuildContext context) {
     Map<String, List<Map>> entriesByDate = {};
@@ -1123,6 +1125,9 @@ class _DashboardState extends State<Dashboard> {
                                           .deleteEntryById(entry['entryId']);
 
                                       refreshData();
+                                      setState(() {
+                                        ref = true;
+                                      });
                                     },
                                   ),
                               ],

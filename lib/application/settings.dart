@@ -309,8 +309,26 @@ class _SettingsState extends State<Settings> {
       settings.add(
         ElevatedButton.icon(
           onPressed: () => setState(() => numOfRatios_++),
-          icon: const Icon(Icons.add),
-          label: const Text('Add Carb Ratio'),
+          icon: const Icon(
+            Icons.add,
+            color: Color.fromARGB(255, 22, 161, 170),
+          ),
+          label: const Text(
+            'Add Carb Ratio',
+            style: TextStyle(
+              color: Color.fromARGB(255, 22, 161, 170),
+            ),
+          ),
+          style: ButtonStyle(
+            backgroundColor:
+                MaterialStateProperty.all<Color>(Colors.transparent),
+            shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
+            overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+            foregroundColor:
+                MaterialStateProperty.all<Color>(Colors.transparent),
+            surfaceTintColor:
+                MaterialStateProperty.all<Color>(Colors.transparent),
+          ),
         ),
       );
     }
@@ -454,6 +472,7 @@ class _SettingsState extends State<Settings> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
+              //crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 settingItem(
                     'Target Glucose:',
