@@ -134,6 +134,23 @@ Future<bool> isConnectedToWifi() async {
   }
 }
 
+Future<bool> changeDoctor(String doctorCode) async {
+  try {
+    var response = await http.get(
+        Uri.parse('http://$localhost:8000/changeDoctor/$doctorCode/$pid_'));
+    if (response.statusCode == 200) {
+      doctorCode_ = doctorCode;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('doctorCode', doctorCode_);
+      return true;
+    } else {
+      return false;
+    }
+  } catch (e) {
+    logger.warning('HTTP request failed: $e');
+    return false;
+  }
+}
 /////////////////////////////////////////////////////////////////////////////
 /////////////////SYNCING AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//////////////////////
 /////////////////////////////////////////////////////////////////////////////

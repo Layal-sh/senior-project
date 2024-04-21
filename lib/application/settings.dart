@@ -335,28 +335,134 @@ class _SettingsState extends State<Settings> {
     return settings;
   }
 
-  Widget doctorConnetion() {
+  List<Widget> doctorConnetion() {
     List<Widget> doctorCon = [];
-    return ElevatedButton.icon(
-      onPressed: () => setState(() => int),
-      icon: const Icon(
-        Icons.link,
-        color: Color.fromARGB(255, 22, 161, 170),
-      ),
-      label: const Text(
-        'Connect to Doctor',
-        style: TextStyle(
+    bool connected = doctorCode_ != "";
+    if (!connected) {
+      doctorCon.add(ElevatedButton.icon(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              final TextEditingController controller = TextEditingController();
+              return AlertDialog(
+                title: Text('Connect to Doctor'),
+                content: TextField(
+                  controller: controller,
+                  decoration: InputDecoration(hintText: "Enter doctor code"),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('Cancel'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () async {
+                      String doctorCode = controller.text;
+                      bool result = await changeDoctor(doctorCode);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(result
+                              ? 'Connected successfully'
+                              : 'Failed to connect'),
+                        ),
+                      );
+                      if (result) {
+                        setState(() {
+                          // Update your state here if necessary
+                        });
+                      }
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        label: const Text(
+          'Connect to Doctor',
+          style: TextStyle(
+            color: Color.fromARGB(255, 22, 161, 170),
+          ),
+        ),
+        icon: const Icon(
+          Icons.link,
           color: Color.fromARGB(255, 22, 161, 170),
         ),
-      ),
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-        shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-        overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-        foregroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-        surfaceTintColor: MaterialStateProperty.all<Color>(Colors.transparent),
-      ),
-    );
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+          shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
+          overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+          foregroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+          surfaceTintColor:
+              MaterialStateProperty.all<Color>(Colors.transparent),
+        ),
+      ));
+    } else {
+      doctorCon.add(ElevatedButton.icon(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Disconnect from Doctor'),
+                content: const Text('Are you sure you want to disconnect?'),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('No'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                      child: const Text('Yes'),
+                      onPressed: () async {
+                        bool result = await changeDoctor("None");
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(result
+                                ? 'Disconnected successfully'
+                                : 'Failed to disconnect'),
+                          ),
+                        );
+                        if (result) {
+                          setState(() {
+                            doctorCode_ = "";
+                          });
+                        }
+                        Navigator.of(context).pop();
+                      }),
+                ],
+              );
+            },
+          );
+        },
+        label: const Text(
+          'Disconnect from Doctor',
+          style: TextStyle(
+            color: Color.fromARGB(255, 255, 53, 53),
+          ),
+        ),
+        icon: const Icon(
+          Icons.link_off,
+          color: Color.fromARGB(255, 255, 53, 53),
+        ),
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+          shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
+          overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+          foregroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+          surfaceTintColor:
+              MaterialStateProperty.all<Color>(Colors.transparent),
+        ),
+      ));
+    }
+
+    return doctorCon;
   }
 
   Widget settingsTitle(String text) {
@@ -616,7 +722,7 @@ class _SettingsState extends State<Settings> {
           const SizedBox(height: 20),
           settingsTitle("Doctor Connection"),
           const SizedBox(height: 20),
-          doctorConnetion(),
+          ...doctorConnetion(),
           const SizedBox(height: 20),
         ],
       ),

@@ -499,8 +499,19 @@ def changePrivacy(privacy, id):
         raise HTTPException(status_code=500, detail="couldn't change privacy")
 
 @app.get("/changeDoctor/{doctorCode}/{id}")
-def changeDoctor(doctorCode, id):
-    row = cursor.execute("UPDATE Patients SET doctorCode = ? where patientID  = ?",(doctorCode,id))
+async def changeDoctor(doctorCode, id):
+    if doctorCode == "None" or doctorCode is None:
+        print("removing doc")
+        row = cursor.execute("UPDATE Patients SET doctorCode = NULL where patientID  = ?", (id,))
+    else:
+        doc = await getDocInfo(doctorCode)
+        print(f"Doc info: {doc}")
+        if(doc is not None):
+            print("printing doc:")
+            print(doc)
+            row = cursor.execute("UPDATE Patients SET doctorCode = ? where patientID  = ?", (doctorCode, id))
+        else:
+            raise HTTPException(status_code=500, detail="couldn't change doctor")
     cnxn.commit()
     if row is not None:
         return True
@@ -518,7 +529,7 @@ async def getDocInfo(doctorCode):
             return None
     except Exception as e:
         print("Exception occurred: {e}")
-        raise
+        return None
 ##############################################################
 
 def isConnectedToWifi():
