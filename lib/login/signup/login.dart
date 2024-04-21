@@ -419,9 +419,9 @@ class _LoginState extends State<Login> {
                                       }),
                                     )
                                     .timeout(const Duration(seconds: 10));
-                                print(int.parse(response.body));
+                               // print(int.parse(response.body));
                                 if (response.statusCode == 200) {
-                                  print(response.body);
+                                  //print(response.body);
                                   setLoginTime();
                                   _isLoading
                                       ? null
