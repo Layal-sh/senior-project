@@ -335,6 +335,30 @@ class _SettingsState extends State<Settings> {
     return settings;
   }
 
+  Widget doctorConnetion() {
+    List<Widget> doctorCon = [];
+    return ElevatedButton.icon(
+      onPressed: () => setState(() => int),
+      icon: const Icon(
+        Icons.link,
+        color: Color.fromARGB(255, 22, 161, 170),
+      ),
+      label: const Text(
+        'Connect to Doctor',
+        style: TextStyle(
+          color: Color.fromARGB(255, 22, 161, 170),
+        ),
+      ),
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+        shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
+        overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+        foregroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+        surfaceTintColor: MaterialStateProperty.all<Color>(Colors.transparent),
+      ),
+    );
+  }
+
   Widget settingsTitle(String text) {
     return Container(
       color: Colors.grey[200], // adjust the shade of gray as needed
@@ -591,11 +615,9 @@ class _SettingsState extends State<Settings> {
           privacyCheckbox(2, 'Meals'),
           const SizedBox(height: 20),
           settingsTitle("Doctor Connection"),
-          ElevatedButton.icon(
-            onPressed: () => int,
-            icon: const Icon(Icons.link),
-            label: const Text('Connect to Doctor'),
-          ),
+          const SizedBox(height: 20),
+          doctorConnetion(),
+          const SizedBox(height: 20),
         ],
       ),
     );
