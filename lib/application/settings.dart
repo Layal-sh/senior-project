@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sugar_sense/Database/variables.dart';
-import 'package:sugar_sense/main.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -281,7 +280,7 @@ class _SettingsState extends State<Settings> {
                         insulins[i](0.0);
                         carbRatios[i](0.0);
                         numOfRatios_--;
-                        saveValues();
+                        saveCarbRatios();
                       }
                     : null,
               ),
@@ -296,7 +295,7 @@ class _SettingsState extends State<Settings> {
                     (carbUnit_ == 0
                         ? carbs[i](null) / 15
                         : newCarbRatio['carbs']!));
-                saveValues();
+                saveCarbRatios();
               });
             }
           },
@@ -354,7 +353,7 @@ class _SettingsState extends State<Settings> {
   Widget privacyCheckbox(int index, String title) {
     if (privacy_.length < 3) {
       privacy_ = "000";
-      saveValues();
+      savePrivacy();
     }
     return CheckboxListTile(
       title: Text(
@@ -372,6 +371,7 @@ class _SettingsState extends State<Settings> {
             privacy_ = privacy_.substring(0, index) +
                 (value ? '1' : '0') +
                 privacy_.substring(index + 1);
+            savePrivacy();
           });
         }
       },
@@ -494,7 +494,7 @@ class _SettingsState extends State<Settings> {
                       targetBloodSugar_ = glucoseUnit_ == 1
                           ? (newTargetBloodSugar).toInt()
                           : (newTargetBloodSugar * 18.0156).toInt();
-                      saveValues();
+                      saveTarget();
                     });
                   }
                 }),
@@ -519,7 +519,7 @@ class _SettingsState extends State<Settings> {
                       insulinSensitivity_ = glucoseUnit_ == 1
                           ? (newInsulinSensitivity).toInt()
                           : (newInsulinSensitivity * 18.0156).toInt();
-                      saveValues();
+                      saveInsulinSensitivity();
                     });
                   }
                 }),

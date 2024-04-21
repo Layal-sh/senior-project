@@ -35,8 +35,12 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await loadPreferences();
-  if (!isSynced_) saveValues();
-
+  if (pid_ != -1) {
+    if (!syncedInsulin_) saveInsulinSensitivity();
+    if (!syncedRatios_) saveCarbRatios();
+    if (!syncedTarget_) saveTarget();
+    if (!syncedPrivacy_) savePrivacy();
+  }
   runApp(MyApp());
 }
 
