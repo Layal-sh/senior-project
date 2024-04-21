@@ -66,9 +66,9 @@ class _LoginState extends State<Login> {
     //dbHelper.dropAllArticles();
     //print(await dbHelper.selectAllArticle());
     // await dbHelper.deleteMealComposition();
-    //await dbHelper.syncMeals();
+    await dbHelper.syncMeals();
     //logger.info("synced meals successfully");
-    //await dbHelper.syncMealComposition();
+    await dbHelper.syncMealComposition();
     // logger.info("synced meal compositions successfully");
     // logger.info("saving values to shared preferences");
 
@@ -419,7 +419,7 @@ class _LoginState extends State<Login> {
                                       }),
                                     )
                                     .timeout(const Duration(seconds: 10));
-                               // print(int.parse(response.body));
+                                // print(int.parse(response.body));
                                 if (response.statusCode == 200) {
                                   //print(response.body);
                                   setLoginTime();

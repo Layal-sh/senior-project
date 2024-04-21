@@ -1093,6 +1093,9 @@ class _editProfileState extends State<editProfile> {
     });
   }
 
+  bool error = false;
+  bool eerror = false;
+  bool perror = false;
   String? phoneNumberErrorMessage;
   String? emailErrorMessage;
   String? usernameErrorMessage;
@@ -1152,6 +1155,7 @@ class _editProfileState extends State<editProfile> {
               child: Form(
                 key: _formKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Center(
                       child: Column(
@@ -1304,7 +1308,7 @@ class _editProfileState extends State<editProfile> {
                           borderRadius: BorderRadius.all(Radius.circular(15)),
                         ),
                       ),
-                      validator: (String? value) {
+                      /*validator: (String? value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your email';
                         }
@@ -1325,8 +1329,20 @@ class _editProfileState extends State<editProfile> {
                             });
                           }
                         }
-                      },
+                      },*/
                     ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    error
+                        ? Text(
+                            usernameErrorMessage!,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 13,
+                            ),
+                          )
+                        : Container(),
                     const SizedBox(
                       height: 20,
                     ),
@@ -1380,7 +1396,7 @@ class _editProfileState extends State<editProfile> {
                           borderRadius: BorderRadius.all(Radius.circular(15)),
                         ),
                       ),
-                      validator: (String? value) {
+                      /*validator: (String? value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your email';
                         }
@@ -1404,8 +1420,20 @@ class _editProfileState extends State<editProfile> {
                             });
                           }
                         }
-                      },
+                      },*/
                     ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    eerror
+                        ? Text(
+                            emailErrorMessage!,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 13,
+                            ),
+                          )
+                        : Container(),
                     const SizedBox(
                       height: 20,
                     ),
@@ -1496,7 +1524,7 @@ class _editProfileState extends State<editProfile> {
                                     BorderRadius.all(Radius.circular(15)),
                               ),
                             ),
-                            validator: (String? value) {
+                            /*validator: (String? value) {
                               // if (value == null || value.isEmpty) {
                               //   return 'Please enter a phone number';
                               // }
@@ -1522,11 +1550,23 @@ class _editProfileState extends State<editProfile> {
                                   });
                                 }
                               }
-                            },
+                            },*/
                           ),
                         ),
                       ],
                     ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    perror
+                        ? Text(
+                            phoneNumberErrorMessage!,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 13,
+                            ),
+                          )
+                        : Container(),
                     const SizedBox(
                       height: 10,
                     ),
@@ -1750,6 +1790,12 @@ class _editProfileState extends State<editProfile> {
                           ),
                         ),
                         onPressed: () async {
+                          String uvalue = _userController.text;
+                          int result = await emailUpdate(uvalue);
+                          String value = _controllerEmail.text;
+                          int result2 = await emailUpdate(value);
+                          String nvalue = _pnController.text;
+                          int result3 = await emailUpdate(nvalue);
                           if (_formKey.currentState!.validate()) {
                             if (await isConnectedToWifi()) {
                               setState(() {
@@ -1761,11 +1807,69 @@ class _editProfileState extends State<editProfile> {
                                   profilePicture_ = '';
                                   saveP();
                                 }
-                                username_ = _userController.text;
-                                email_ = _controllerEmail.text;
-                                phoneNumber_ = _pnController.text;
                               });
-                              Navigator.of(context).pop();
+                              if (uvalue.isNotEmpty) {
+                                if (result == 0 || result == -1) {
+                                  setState(() {
+                                    usernameErrorMessage =
+                                        "* Username already exists";
+                                    error = true;
+                                  });
+                                } else {
+                                  setState(() {
+                                    usernameErrorMessage = null;
+                                    error = false;
+                                    username_ = _userController.text;
+                                  });
+                                }
+                              }
+                              if (value.isNotEmpty) {
+                                if (result2 == 2) {
+                                  setState(() {
+                                    emailErrorMessage = "* Invalid email";
+                                    eerror = true;
+                                  });
+                                } else if (result2 == 0 || result2 == -1) {
+                                  setState(() {
+                                    emailErrorMessage =
+                                        "* Email already exists";
+                                    eerror = true;
+                                  });
+                                } else {
+                                  setState(() {
+                                    emailErrorMessage = null;
+                                    eerror = false;
+                                    email_ = _controllerEmail.text;
+                                  });
+                                }
+                              }
+
+                              if (nvalue.isNotEmpty) {
+                                int result = await phoneUpdate(value);
+                                if (result == 2) {
+                                  setState(() {
+                                    phoneNumberErrorMessage =
+                                        "* Invalid phone number";
+                                    perror = true;
+                                  });
+                                } else if (result == 0 || result == -1) {
+                                  setState(() {
+                                    phoneNumberErrorMessage =
+                                        "* Phone number already exists";
+                                    perror = true;
+                                  });
+                                } else {
+                                  setState(() {
+                                    phoneNumberErrorMessage = null;
+                                    perror = false;
+
+                                    phoneNumber_ = _pnController.text;
+                                  });
+                                }
+                              }
+                              if (result == 1 && result2 == 1 && result3 == 1) {
+                                Navigator.of(context).pop();
+                              }
                             } else {
                               showDialog(
                                 // ignore: use_build_context_synchronously
