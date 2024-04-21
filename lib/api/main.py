@@ -608,12 +608,15 @@ async def addNewEntry(entry: NewEntry):
     print("entered /addNewEntry")
     try:
         print(entry)
-        cursor.execute("INSERT INTO Entry (patientID, entryID, entryDate, glucoseLevel , insulinDosage, totalCarbs, unit, hasMeals) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        row = cursor.execute("INSERT INTO Entry (patientID, entryID, entryDate, glucoseLevel , insulinDosage, totalCarbs, unit, hasMeals) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                        (entry.patientID, entry.entryID, entry.entryDate, entry.glucoseLevel, entry.insulinDosage, entry.totalCarbs, entry.unit, entry.hasMeals))
+        print(row)
         cnxn.commit()
+        
         print("inserted entry successfully")
         return {"message": "inserted entry successfully"}
     except HTTPException as e:
         raise e
     except Exception as e:
+        print(e)
         return {"error": str(e)}

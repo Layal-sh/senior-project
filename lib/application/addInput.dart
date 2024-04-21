@@ -159,7 +159,7 @@ class _AddInputState extends State<AddInput> {
                                                   chosenMeals,
                                                   glucoseUnit_,
                                                   totalCarbs);
-                                              syncEntries();
+                                              
                                               // print('Chosen Meals:');
                                               // print(chosenMeals);
                                               // print('Total Carbs:');
