@@ -424,6 +424,23 @@ async def changeUsername(username,id):
     else:
         raise HTTPException(status_code=401, detail="Username already exists")
 
+@app.get("/changePassword/{old}/{new}/{id}")
+async def changeUsername(old,new,id):
+    if(checkPassword(old,id)):
+        hashed_passwordOld = hashlib.md5(old.encode()).hexdigest()
+        hashed_passwordNew = hashlib.md5(new.encode()).hexdigest()
+        cursor.execute("UPDATE Users SET userPassword = ? where userID  = ?",(hashed_passwordNew,id))
+        cnxn.commit()
+        if(hashed_passwordOld == hashed_passwordNew):
+            raise HTTPException(status_code=400, detail="new password can't be the same as the old one")
+        if cursor.rowcount > 0:
+            return True
+        else:
+            raise HTTPException(status_code=500, detail="couldn't change password")
+    else:
+        raise HTTPException(status_code=401, detail="incorrect password")
+    
+
 @app.get("/changeEmail/{email}/{id}")
 def changeEmail(email,id):
     if checkEmail(email):
@@ -541,6 +558,14 @@ def isConnectedToWifi():
 def checkUsername(username):##used in /register and in checkUsername##
     row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(username,)).fetchone()
     if(row is None):
+        return True
+    else:
+        return False
+
+def checkPassword(passold, id):##used in /register and in checkUsername##
+    hashed_password = hashlib.md5(passold.encode()).hexdigest()
+    row = cursor.execute("SELECT userPassword FROM Users WHERE userID = ?",(id,)).fetchone()
+    if(hashed_password == row[0]):
         return True
     else:
         return False

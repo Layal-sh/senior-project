@@ -171,11 +171,37 @@ class DBHelper {
 //////////////////////////////////////////////////////////////
   /////////////// Fixing for Sign up///////////////////////////
   //////////////////////////////////////////////////////////////
-  deleteMealComposition() async {
+  reset() async{
+    await dropMealComposition();
+    await dropMeals();
+    await dropEntries();
+    await dropAllArticles();
+    logger.info("Database has been reset");
+  }
+  
+  dropMealComposition() async {
     logger.info("Deleting Meal Composition...");
     Database? mydb = await db;
     int response = await mydb!.rawDelete('''
     DELETE FROM MealComposition;
+''');
+    return response;
+  }
+
+  dropMeals() async {
+    logger.info("Deleting Meals...");
+    Database? mydb = await db;
+    int response = await mydb!.rawDelete('''
+    DELETE FROM Meals;
+''');
+    return response;
+  }
+
+  dropEntries() async {
+    logger.info("Deleting entries...");
+    Database? mydb = await db;
+    int response = await mydb!.rawDelete('''
+    DELETE FROM Entry;
 ''');
     return response;
   }
@@ -466,8 +492,11 @@ class DBHelper {
 
   getEntriesYearly() async {
     Database? mydb = await db;
-    var res = await mydb!.rawQuery('''
-    SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-1 year') AND date('now')
+  //   var res = await mydb!.rawQuery('''
+  //   SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-1 year') AND date('now')
+  // ''');
+  var res = await mydb!.rawQuery('''
+    SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-3 month') AND date('now')
   ''');
     return res;
   }
