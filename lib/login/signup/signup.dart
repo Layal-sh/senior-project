@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/accCreation/membership.dart';
@@ -942,6 +943,11 @@ class _SignUpState extends State<SignUp> {
                                             await dbHelper.initialDb();
                                             username_ =
                                                 _controllerUsername.text;
+                                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                                            prefs.setString('username', username_);
+
+                                            firstName_=_controllerFirstname.text;
+                                            prefs.setString('firstName', firstName_);
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
