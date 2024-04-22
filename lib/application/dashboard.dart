@@ -111,6 +111,7 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  bool clicked = false;
   loadLatestEntry() async {
     var entry = await db.getLatestEntry();
     setState(() {
@@ -122,7 +123,6 @@ class _DashboardState extends State<Dashboard> {
     setState(() {});
   }
 
-  bool ref = false;
   @override
   Widget build(BuildContext context) {
     Map<String, List<Map>> entriesByDate = {};
@@ -259,7 +259,7 @@ class _DashboardState extends State<Dashboard> {
                         });
                       },
                       child: Text(
-                        'Yearly',
+                        '3 Months',
                         style: TextStyle(
                           fontSize: 12,
                           color: yearly
@@ -283,9 +283,19 @@ class _DashboardState extends State<Dashboard> {
                   top: 10,
                   bottom: 12,
                 ),
-                child: LineChart(
-                  /*today ? mainData() : */ mainData(),
-                ),
+                child: yearly
+                    ? SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Container(
+                          width: 2000,
+                          child: LineChart(
+                            mainData(),
+                          ),
+                        ),
+                      )
+                    : LineChart(
+                        mainData(),
+                      ),
               ),
             ),
             Row(
@@ -1125,7 +1135,7 @@ class _DashboardState extends State<Dashboard> {
 
                                       refreshData();
                                       setState(() {
-                                        ref = true;
+                                        clicked = true;
                                       });
                                     },
                                   ),
@@ -1628,33 +1638,10 @@ class _DashboardState extends State<Dashboard> {
           break;
       }
     } else {
-      switch (value.toInt()) {
-        case 2:
-          text = const Text('2', style: style);
-          break;
-
-        case 4:
-          text = const Text('4', style: style);
-          break;
-
-        case 6:
-          text = const Text('6', style: style);
-          break;
-
-        case 8:
-          text = const Text('8', style: style);
-          break;
-        case 10:
-          text = const Text('10', style: style);
-          break;
-
-        case 12:
-          text = const Text('12', style: style);
-          break;
-
-        default:
-          text = const Text('', style: style);
-          break;
+      if (value >= 1 && value <= 92) {
+        text = Text(value.toInt().toString(), style: style);
+      } else {
+        text = const Text('', style: style);
       }
     }
     return SideTitleWidget(
@@ -1808,7 +1795,7 @@ class _DashboardState extends State<Dashboard> {
           sideTitles: SideTitles(
             showTitles: true,
             reservedSize: 25,
-            interval: 2,
+            interval: yearly ? 1 : 2,
             getTitlesWidget: bottomTitleWidgets,
           ),
         ),
@@ -1836,13 +1823,13 @@ class _DashboardState extends State<Dashboard> {
           ? 24
           : monthly
               ? 31
-              : 12,
+              : 93,
       minY: 0,
       maxY: b
-          ? 90
+          ? 91
           : g
-              ? 700
-              : 300,
+              ? 710
+              : 310,
       lineBarsData: [
         LineChartBarData(
           spots: (today
