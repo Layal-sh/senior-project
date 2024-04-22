@@ -519,6 +519,11 @@ async def changeDoctor(doctorCode, id):
     if doctorCode == "None" or doctorCode is None:
         print("removing doc")
         row = cursor.execute("UPDATE Patients SET doctorCode = NULL where patientID  = ?", (id,))
+        cnxn.commit()
+        if row is not None:
+            return {"message": "removed"}
+        else:
+            raise HTTPException(status_code=500, detail="couldn't remove doctor")
     else:
         doc = await getDocInfo(doctorCode)
         print(f"Doc info: {doc}")
@@ -530,7 +535,7 @@ async def changeDoctor(doctorCode, id):
             raise HTTPException(status_code=500, detail="couldn't change doctor")
     cnxn.commit()
     if row is not None:
-        return True
+        return {"message":"added","firstName":doc['firstName'], "lastName":doc['lastName']}
     else:
         raise HTTPException(status_code=500, detail="couldn't change doctor")
 

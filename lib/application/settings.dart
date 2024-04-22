@@ -403,6 +403,34 @@ class _SettingsState extends State<Settings> {
         ),
       ));
     } else {
+      doctorCon.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: 16.0), // Adjust the padding as needed
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              const Text(
+                'Connected to:',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Color.fromARGB(255, 38, 20, 84),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                'Dr. $doctorName_',
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Color.fromARGB(255, 22, 161, 170), // Light blue color
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+      doctorCon.add(const SizedBox(height: 20));
       doctorCon.add(ElevatedButton.icon(
         onPressed: () {
           showDialog(
