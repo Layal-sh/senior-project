@@ -347,7 +347,7 @@ async def authenticate(user: User):
         cursor.execute("SELECT * FROM Patients WHERE patientID = ?", uid);
         pid = cursor.fetchone();
         if(pid is None):
-            raise HTTPException(status_code=401, detail="This user is not a patient");
+            raise HTTPException(status_code=400, detail="This user is not a patient");
         else:
             return {"message": "Authenticated successfully", "ID": uid}
             #rowUsername[1] 

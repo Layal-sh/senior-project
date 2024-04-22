@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
+import 'package:sugar_sense/accCreation/userinfo.dart';
 import 'package:sugar_sense/application/app.dart';
 import 'package:sugar_sense/login/signup/forgetPass/forgetpass.dart';
 import 'package:sugar_sense/main.dart';
 import 'package:sugar_sense/values/app_regex.dart';
 import 'signup.dart';
+
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -420,7 +422,14 @@ class _LoginState extends State<Login> {
                                     )
                                     .timeout(const Duration(seconds: 10));
                                 // print(int.parse(response.body));
-                                if (response.statusCode == 200) {
+                                if(response.statusCode==400){
+                                  
+                                  Navigator.push(
+                                        context,
+                                       MaterialPageRoute(builder: (context) => const UserInfo()),
+                                  );  
+                                }
+                                else if (response.statusCode == 200) {
                                   //print(response.body);
                                   setLoginTime();
                                   _isLoading
