@@ -492,8 +492,11 @@ class DBHelper {
 
   getEntriesYearly() async {
     Database? mydb = await db;
-    var res = await mydb!.rawQuery('''
-    SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-1 year') AND date('now')
+  //   var res = await mydb!.rawQuery('''
+  //   SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-1 year') AND date('now')
+  // ''');
+  var res = await mydb!.rawQuery('''
+    SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-3 month') AND date('now')
   ''');
     return res;
   }
