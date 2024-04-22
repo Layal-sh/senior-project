@@ -1791,11 +1791,17 @@ class _editProfileState extends State<editProfile> {
                         ),
                         onPressed: () async {
                           String uvalue = _userController.text;
-                          int result = await emailUpdate(uvalue);
+                          int result = await userNameUpdate(uvalue);
                           String value = _controllerEmail.text;
                           int result2 = await emailUpdate(value);
                           String nvalue = _pnController.text;
-                          int result3 = await emailUpdate(nvalue);
+                          int result3 = await phoneUpdate(nvalue);
+
+                          String oldvalue = _controllerPass.text;
+                          String newvalue = _controllerVeryPass.text;
+                          int result4 = await passwordUpdate(oldvalue,newvalue);
+                          print(result4);
+
                           if (_formKey.currentState!.validate()) {
                             if (await isConnectedToWifi()) {
                               setState(() {

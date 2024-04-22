@@ -101,6 +101,7 @@ phoneUpdate(String phone) async {
         .get(Uri.parse('http://$localhost:8000/changePhone/$phone/$id'));
     if (name.statusCode == 200) {
       phoneNumber_ = phone;
+      saveProfile();
       return 1;
     } else if (name.statusCode == 401) {
       //display snackbar thingy with username already exists
@@ -111,6 +112,36 @@ phoneUpdate(String phone) async {
     }
   } else {
     return 1;
+  }
+}
+
+
+passwordUpdate(String old,String newpass) async {
+  if (old !="" && newpass !="") {
+    if (!isValidPassword(newpass)) {
+      return 2;
+    }
+    final name = await http
+        .get(Uri.parse('http://$localhost:8000/changePassword/$old/$newpass/$id'));
+    if (name.statusCode == 200) {
+      return 1;
+    } else if (name.statusCode == 401) {
+      //old password is incorrect
+      return 0;
+    } else if(name.statusCode==400){
+      //new password can't be the same as the old one
+      return 4;
+    }else {
+      //display snackbar thingy random error occured
+      return -1;
+    }
+  } else if(old =="" && newpass ==""){
+    return 1;
+  }
+  else{
+    //user entered only one of the password textfield
+    //diplay message "both field are required to be filled"
+    return 3;
   }
 }
 
