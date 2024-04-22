@@ -115,7 +115,6 @@ class NewEntry(BaseModel):
     
 
 ##############################################################
-
 ###########################################
 ############|Forgot Password|##############
 ###########################################
@@ -350,8 +349,8 @@ async def authenticate(user: User):
         if(pid is None):
             raise HTTPException(status_code=401, detail="This user is not a patient");
         else:
-            return rowUsername[1] 
-            #{"message": "Authenticated successfully", "ID": uid}
+            return {"message": "Authenticated successfully", "ID": uid}
+            #rowUsername[1] 
     except HTTPException as e:
         raise e
     except Exception as e:
