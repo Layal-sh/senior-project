@@ -12,7 +12,6 @@ import 'package:sugar_sense/main.dart';
 import 'package:sugar_sense/values/app_regex.dart';
 import 'signup.dart';
 
-
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
   //final PageController controller;
@@ -77,7 +76,7 @@ class _LoginState extends State<Login> {
     if (id != pid_) {
       final response = await http
           .post(
-            Uri.parse('http://$localhost:8000/getUserDetails'), //$localhost
+            Uri.parse('http://$localhost:8000/getUserDetails'),
             headers: <String, String>{
               'Content-Type': 'application/json; charset=UTF-8',
             },
@@ -162,6 +161,7 @@ class _LoginState extends State<Login> {
             //privacy_ = patientDetails['privacy'];
             await prefs.setString('privacy', patientDetails['privacy']);
           }
+          changeDoctor(doctorCode_);
           loadPreferences();
           logger.info("saved values to shared preferences successfully");
         } else {
@@ -422,14 +422,13 @@ class _LoginState extends State<Login> {
                                     )
                                     .timeout(const Duration(seconds: 10));
                                 // print(int.parse(response.body));
-                                if(response.statusCode==400){
-                                  
+                                if (response.statusCode == 400) {
                                   Navigator.push(
-                                        context,
-                                       MaterialPageRoute(builder: (context) => const UserInfo()),
-                                  );  
-                                }
-                                else if (response.statusCode == 200) {
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const UserInfo()),
+                                  );
+                                } else if (response.statusCode == 200) {
                                   //print(response.body);
                                   setLoginTime();
                                   _isLoading

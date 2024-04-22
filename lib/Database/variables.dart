@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:sugar_sense/main.dart';
@@ -59,6 +61,7 @@ Future<void> loadPreferences() async {
   email_ = prefs.getString('email') ?? "";
   signedIn_ = prefs.getBool('signedIn') ?? false;
   doctorCode_ = prefs.getString('doctorCode') ?? "";
+  doctorName_ = prefs.getString('doctorName') ?? "";
   phoneNumber_ = prefs.getString('phoneNumber') ?? "";
   profilePicture_ = prefs.getString('profilePicture') ?? "";
   privacy_ = prefs.getString('privacy') ?? "111";
@@ -87,6 +90,7 @@ String lastName_ = "";
 String email_ = "";
 bool signedIn_ = false;
 String doctorCode_ = "";
+String doctorName_ = "";
 String phoneNumber_ = "";
 String profilePicture_ = "";
 int pid_ = -1;
@@ -142,6 +146,14 @@ Future<bool> changeDoctor(String doctorCode) async {
       doctorCode_ = doctorCode;
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('doctorCode', doctorCode_);
+      var responseBody = jsonDecode(response.body);
+      if (responseBody['message'] == 'added') {
+        doctorName_ =
+            responseBody['firstName'] + ' ' + responseBody['lastName'];
+      } else {
+        doctorName_ = "";
+      }
+      await prefs.setString('doctorName', doctorName_);
       return true;
     } else {
       return false;
