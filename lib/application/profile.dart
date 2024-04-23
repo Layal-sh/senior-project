@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/accCreation/membership.dart';
@@ -1088,9 +1089,17 @@ class _editProfileState extends State<editProfile> {
     final ImagePicker _picker = ImagePicker();
     final XFile? image = (await _picker.pickImage(source: ImageSource.gallery));
 
-    setState(() {
-      _selectedImage = image;
-    });
+    // this allegedly only works on mobile but i cant test it :(
+    if (image != null) {
+      final directory = await getApplicationDocumentsDirectory();
+      final newPath =
+          '${directory.path}/${DateTime.now().toIso8601String()}.jpg';
+      final File newImage = await File(image.path).copy(newPath);
+
+      setState(() {
+        _selectedImage = XFile(newImage.path);
+      });
+    }
   }
 
   bool error = false;
@@ -1799,7 +1808,8 @@ class _editProfileState extends State<editProfile> {
 
                           String oldvalue = _controllerPass.text;
                           String newvalue = _controllerVeryPass.text;
-                          int result4 = await passwordUpdate(oldvalue,newvalue);
+                          int result4 =
+                              await passwordUpdate(oldvalue, newvalue);
                           print(result4);
 
                           if (_formKey.currentState!.validate()) {
