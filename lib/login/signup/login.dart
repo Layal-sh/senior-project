@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -55,6 +57,19 @@ class _LoginState extends State<Login> {
   }
 
   bool _isLoading = false;
+
+  int patientId = pid_;
+
+  deleteListEntries() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? list = prefs.getStringList('deleteEntryList');
+    if (list != null) {
+      list.forEach((element) {
+        var response = http.delete(Uri.parse(
+            "https://$localhost:8000/deleteEntry/$element/$patientId"));
+      });
+    }
+  }
 
   Future<void> _signIn(String email, String password, int id) async {
     logger.info("signing in");
@@ -430,6 +445,7 @@ class _LoginState extends State<Login> {
                                   );
                                 } else if (response.statusCode == 200) {
                                   //print(response.body);
+                                  deleteListEntries();
                                   setLoginTime();
                                   _isLoading
                                       ? null

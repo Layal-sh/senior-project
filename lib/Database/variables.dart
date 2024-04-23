@@ -4,6 +4,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:sugar_sense/main.dart';
 
+Future<void> saveStringList(List<String> stringList) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setStringList('deleteEntryList', stringList);
+}
+
 Future<void> savePreferences() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 

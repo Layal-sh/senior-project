@@ -343,11 +343,11 @@ async def authenticate(user: User):
                 raise HTTPException(status_code=401, detail="Incorrect password")
 
         # If the email and password are correct, return a 200 OK response
-        uid = getUserById(user.username);
-        cursor.execute("SELECT * FROM Patients WHERE patientID = ?", uid);
-        pid = cursor.fetchone();
+        uid = getUserById(user.username)
+        cursor.execute("SELECT * FROM Patients WHERE patientID = ?", uid)
+        pid = cursor.fetchone()
         if(pid is None):
-            raise HTTPException(status_code=400, detail="This user is not a patient");
+            raise HTTPException(status_code=400, detail="This user is not a patient")
         else:
             return {"message": "Authenticated successfully", "ID": uid}
             #rowUsername[1] 
@@ -660,3 +660,16 @@ async def addNewEntry(entry: NewEntry):
     except Exception as e:
         print(e)
         return {"error": str(e)}
+
+@app.delete("/deleteEntry/{entryID}/{patientId}")
+async def deleteEntry(entryID: int, patientId: int):
+    try:
+        row = cursor.execute("DELETE FROM Entry WHERE entryID = ? and patientID = ?", (entryID, patientId))
+        cnxn.commit()
+        if row is not None:
+            return True
+        else:
+            return False
+    except Exception as e:
+        return {"error": str(e)}
+    
