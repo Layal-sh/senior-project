@@ -367,10 +367,17 @@ class DBHelper {
   //create an entry for the insulin dosage
   createEntry(double glucose, int insulin, String date, List<Map> meals,
       int unit, double totalCarbs) async {
-    String hasMeals = meals
-        .map((meal) =>
-            '${meal['name']} (Quantity: ${meal['quantity']}, Carbs: ${meal['carbohydrates']})')
-        .join(', ');
+    // String hasMeals = meals
+    //     .map((meal) =>
+    //         '${meal['name']} (Quantity: ${meal['quantity']}, Carbs: ${meal['carbohydrates']})')
+    //     .join(', ');
+    String hasMeals = jsonEncode(meals);
+
+    //print(hasMeals);
+
+    // List<Map<String, dynamic>> meals2 = List<Map<String, dynamic>>.from(jsonDecode(hasMeals));
+
+    // print(meals2);
 
     Database? mydb = await db;
     int idEntry = await generateNewEntry(
