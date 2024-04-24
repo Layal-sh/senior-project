@@ -1208,6 +1208,7 @@ class _UserInfoState extends State<UserInfo> {
                   ),
                 ),
                 onPressed: () async {
+                  if(await isConnectedToWifi()){
                   setState(
                     () {
                       updatelastAnswers();
@@ -1275,7 +1276,14 @@ class _UserInfoState extends State<UserInfo> {
                     },
                   );
                   final response = await registerPatient();
-                  //}
+                }else{
+                  ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Please connect to the internet to sign up!'),
+                                ),
+                              );
+                }
                 },
                 child: const Text(
                   "Finish",
