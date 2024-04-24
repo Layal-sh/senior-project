@@ -109,7 +109,7 @@ String nextLoginTime_ = "";
 
 setLoginTime() {
   DateTime now = DateTime.now();
-  nextLoginTime_ = now.add(Duration(days: 30)).toString();
+  nextLoginTime_ = now.add(const Duration(days: 30)).toString();
 }
 
 checkLoginTime() {

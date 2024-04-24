@@ -11,6 +11,7 @@ import 'package:sugar_sense/login/signup/signup.dart';
 import 'package:sugar_sense/login/signup/splash.dart';
 import 'package:sugar_sense/login/signup/startpage.dart';
 import 'package:logging/logging.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 final logger = Logger('MyLogger');
@@ -41,6 +42,17 @@ Future<void> main() async {
     if (!syncedTarget_) saveTarget();
     if (!syncedPrivacy_) savePrivacy();
   }
+
+  AwesomeNotifications()
+      .initialize('resource://drawable/res_notification_app_icon', [
+    NotificationChannel(
+        channelKey: 'basic_channel',
+        channelName: 'Basic notifications',
+        channelDescription: 'Notification channel for basic tests',
+        defaultColor: Colors.teal,
+        importance: NotificationImportance.High,
+        channelShowBadge: true)
+  ]);
   runApp(MyApp());
 }
 

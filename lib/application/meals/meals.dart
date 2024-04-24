@@ -387,8 +387,7 @@ class _MealsState extends State<Meals> {
                               itemBuilder: (ctx, i) => MealBox(
                                 meal: Meal(
                                   name: meals[i]['mealName'],
-                                  // ignore: prefer_interpolation_to_compose_strings
-                                  imageUrl: 'assets/' +
+                                  imageUrl: 'assets/meals/' +
                                       (meals[i]['mealPicture'] ??
                                           'AddDish.png'),
                                   id: meals[i]['mealId'],
@@ -462,7 +461,7 @@ class _MealsState extends State<Meals> {
                                 meal: Meal(
                                   name: meals[i]['mealName'],
                                   // ignore: prefer_interpolation_to_compose_strings
-                                  imageUrl: 'assets/' +
+                                  imageUrl: 'assets/meals/' +
                                       (meals[i]['mealPicture'] ??
                                           'AddDish.png'),
                                   id: meals[i]['mealId'],
@@ -576,7 +575,7 @@ class _MealsState extends State<Meals> {
                                               name: frequentMeals[i]
                                                   ['mealName'],
                                               // ignore: prefer_interpolation_to_compose_strings
-                                              imageUrl: 'assets/' +
+                                              imageUrl: 'assets/meals/' +
                                                   (frequentMeals[i]
                                                           ['mealPicture'] ??
                                                       'AddDish.png'),
@@ -654,7 +653,7 @@ class _MealsState extends State<Meals> {
                                               name: categoryMeals[i]
                                                   ['mealName'],
                                               // ignore: prefer_interpolation_to_compose_strings
-                                              imageUrl: 'assets/' +
+                                              imageUrl: 'assets/meals/' +
                                                   (categoryMeals[i]
                                                           ['mealPicture'] ??
                                                       'AddDish.png'),
@@ -780,7 +779,7 @@ Function addToChosenMeals = (int id, double quantity) async {
     List<Map> meal = await db.getMealById(id);
 
     // ignore: prefer_interpolation_to_compose_strings
-    var imageUrl = 'assets/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
+    var imageUrl = 'assets/meals/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
     Map<String, dynamic> insertedMeal = {
       'name': meal[0]['mealName'],
       'imageUrl': imageUrl,
@@ -823,7 +822,7 @@ Function addToChosenCMeals = (int id, double quantity) async {
   } else {
     List<Map> meal = await db.getMealById(id);
 
-    var imageUrl = 'assets/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
+    var imageUrl = 'assets/meals/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
     Map<String, dynamic> insertedMeal = {
       'name': meal[0]['mealName'],
       'imageUrl': imageUrl,

@@ -286,7 +286,7 @@ class _DashboardState extends State<Dashboard> {
                 child: yearly
                     ? SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        child: Container(
+                        child: SizedBox(
                           width: 2000,
                           child: LineChart(
                             mainData(),

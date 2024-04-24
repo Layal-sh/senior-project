@@ -21,12 +21,6 @@ version: 1.0.0+1
 environment:
   sdk: ">=3.1.5 <4.0.0"
 
-# Dependencies specify other packages that your package needs in order to work.
-# To automatically upgrade your package dependencies to the latest versions
-# consider running `flutter pub upgrade --major-versions`. Alternatively,
-# dependencies can be manually updated by changing the version numbers below to
-# the latest version available on pub.dev. To see which dependencies have newer
-# versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
     sdk: flutter
@@ -46,27 +40,20 @@ dependencies:
   intl: ^0.19.0
   path_provider: ^2.0.8
   fl_chart: ^0.67.0
-  awesome_notifications: ^0.9.3+1
+  
+  font_awesome_flutter: ^9.1.0
+  awesome_notifications_core: ^0.9.0
+  awesome_notifications: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^3.0.1
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
 
-# The following section is specific to Flutter packages.
 flutter:
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
+
   uses-material-design: true
 
   assets:
@@ -83,185 +70,185 @@ flutter:
     - assets/lock.png
     - assets/AddDish.png
     - assets/no-pictures.png
-    - assets/afandi.jpg
-    - assets/Albeni.jpeg
-    - assets/apples.jpg
-    - assets/apricots.jpg
-    - assets/Ashta.jpeg
-    - assets/balah.jpeg
-    - assets/Balilah.jpg
-    - assets/bananas.jpg
-    - assets/Batata Souffleh.jpg
-    - assets/Beans.jpg
-    - assets/Beer.png
-    - assets/berries.jpg
-    - assets/Borma.jpg
-    - assets/bownies.jpg
-    - assets/bread loaf.jpg
-    - assets/Burgul.jpg
-    - assets/cactus.jpg
-    - assets/candies.jpg
-    - assets/carrots.jpg
-    - assets/cheesecake.jpg
-    - assets/cherries.jpg
-    - assets/chestnut.jpg
-    - assets/chickpeas.jpg
-    - assets/chips.jpg
-    - assets/Choco prince.jpeg
-    - assets/chocolate cereal.jpg
-    - assets/concentrated juice (jellab).jpeg
-    - assets/cooked oatmeal.jpg
-    - assets/cooked veggies.jpg
-    - assets/markouk.jpeg
-    - assets/cookies.jpg
-    - assets/Cordon Bleu.jpg
-    - assets/corn.jpg
-    - assets/cornflakes plain.jpg
-    - assets/Crackers.jpg
-    - assets/crepe.jpg
-    - assets/croissant medium.jpg
-    - assets/croissant small.jpg
-    - assets/Custard.jpg
-    - assets/Debess Roman.jpeg
-    - assets/Debess.jpg
-    - assets/diabetic jam.jpg
-    - assets/digestive x2.jpg
-    - assets/donuts.jpg
-    - assets/dried apples.jpg
-    - assets/dried apricots.jpg
-    - assets/dried fig.jpg
-    - assets/dried oatmeal.jpg
-    - assets/eclairs.jpg
-    - assets/Escalope.jpeg
-    - assets/falafel.jpg
-    - assets/Fasoliya.jpg
-    - assets/Fatayir Bl Jobna.jpeg
-    - assets/Fatayir Bl Sabanikh.jpg
-    - assets/fig.jpg
-    - assets/flour.jpg
-    - assets/Foul Mdammas.jpg
-    - assets/french fries.jpg
-    - assets/fruit milkshake.png
-    - assets/fruit salad.jpg
-    - assets/Ghandour 555.jpg
-    - assets/Ghraybeh.jpg
-    - assets/grapefruit.jpg
-    - assets/grapes.jpg
-    - assets/Grilled Potato.jpg
-    - assets/guava.jpg
-    - assets/Halawet El-Jeben.jpg
-    - assets/hamburger bread.jpeg
-    - assets/honey.jpg
-    - assets/hummus.jpg
-    - assets/ice cream.jpg
-    - assets/ikidinyah.jpg
-    - assets/innab.jpeg
-    - assets/jam.jpg
-    - assets/Jazarieh.jpg
-    - assets/kaak long.JPG
-    - assets/kaak small.jpeg
-    - assets/kator diabtic.jpeg
-    - assets/kator.jpeg
-    - assets/Kebbe Bl Saniyeh.jpg
-    - assets/ketchup.jpg
-    - assets/kharma.jpeg
-    - assets/khoboz arabi large.jpg
-    - assets/Khooboz arabi small.jpeg
-    - assets/Kinders (x2).png
-    - assets/kishk.jpg
-    - assets/kitkat.jpeg
-    - assets/kiwi.jpg
-    - assets/Kol W Chkor.jpg
-    - assets/Koussa Mahshi.jpg
-    - assets/Kunefe.jpg
-    - assets/Laban.jpg
-    - assets/lasagna.jpg
-    - assets/lentil soup.jpg
-    - assets/lentils.jpg
-    - assets/Leo.jpeg
-    - assets/Lion.jpeg
-    - assets/Maamool.jpg
-    - assets/Mafroukeh Bl-Ashta.jpg
-    - assets/makaroni with beef.jpg
-    - assets/Makaroni With Cheese.jpg
-    - assets/Makaroni.jpg
-    - assets/Malfoof Mahshi.jpg
-    - assets/Maltesers.jpg
-    - assets/mango.jpg
-    - assets/Mankousha.jpg
-    - assets/markouk - saj.jpg
-    - assets/Mars.jpeg
-    - assets/melon.jpg
-    - assets/milk.jpg
-    - assets/milkshakes.jpeg
-    - assets/moajanet.jpeg
-    - assets/Moghrabieh.jpg
-    - assets/moghli.jpeg
-    - assets/Mohalabiyeh.jpg
-    - assets/muffins big.jpg
-    - assets/muffins small.jpg
-    - assets/halawat riz.jpeg
-    - assets/Nammoura.jpg
-    - assets/Natural juice.jpg
-    - assets/Nouba.jpg
-    - assets/Number 1.jpg
-    - assets/nutella.jpg
-    - assets/Onion Soup.jpg
-    - assets/orange.jpg
-    - assets/Oreo x2.jpeg
-    - assets/Osmaliyeh.jpg
-    - assets/pain au lait.jpeg
-    - assets/pancake.jpg
-    - assets/papaya.jpg
-    - assets/Pasta Salad.jpeg
-    - assets/peach.jpg
-    - assets/peanut butter.jpg
-    - assets/pears.jpg
-    - assets/peas.jpg
-    - assets/petit four.jpg
-    - assets/pickup.jpg
-    - assets/pineapple.jpg
-    - assets/pizza.jpg
-    - assets/plums.jpg
-    - assets/pomegranate.jpg
-    - assets/popcorn.jpg
-    - assets/potato.jpg
-    - assets/powdered milk.jpg
-    - assets/pretzels.jpg
-    - assets/quinoa cooked.jpg
-    - assets/raisins.jpg
-    - assets/rice cakes.jpg
-    - assets/rice.jpg
-    - assets/Riz-bi-Haleeb.jpg
-    - assets/roasted nuts.jpg
-    - assets/ruit cocktail.jpeg
-    - assets/safarjal.jpeg
-    - assets/Sambousak Bi Jobna.jpg
-    - assets/Smeed.jpg
-    - assets/Snicker.jpeg
-    - assets/Soft Drinks.jpg
-    - assets/strawberry.jpg
-    - assets/sugar.jpg
-    - assets/sushi.jpg
-    - assets/Sweetenedjuice.jpg
-    - assets/tabbouleh.jpg
-    - assets/termos.jpg
-    - assets/Time out.jpg
-    - assets/toast medium.jpg
-    - assets/toast small.jpg
-    - assets/toast soft.jpg
-    - assets/toutt.jpeg
-    - assets/Twirl.jpeg
-    - assets/twix top.png
-    - assets/Twix x2.jpeg
-    - assets/Unica.jpg
-    - assets/veggie soup.jpg
-    - assets/wafers.jpg
-    - assets/Warak Enab.jpg
-    - assets/watermelon.jpg
-    - assets/Wheat.jpg
-    - assets/yogurt with fruits.jpg
-    - assets/Znoud El Set.jpg
+    - assets/meals/afandi.jpg
+    - assets/meals/Albeni.jpeg
+    - assets/meals/apples.jpg
+    - assets/meals/apricots.jpg
+    - assets/meals/Ashta.jpeg
+    - assets/meals/balah.jpeg
+    - assets/meals/Balilah.jpg
+    - assets/meals/bananas.jpg
+    - assets/meals/Batata Souffleh.jpg
+    - assets/meals/Beans.jpg
+    - assets/meals/Beer.png
+    - assets/meals/berries.jpg
+    - assets/meals/Borma.jpg
+    - assets/meals/bownies.jpg
+    - assets/meals/bread loaf.jpg
+    - assets/meals/Burgul.jpg
+    - assets/meals/cactus.jpg
+    - assets/meals/candies.jpg
+    - assets/meals/carrots.jpg
+    - assets/meals/cheesecake.jpg
+    - assets/meals/cherries.jpg
+    - assets/meals/chestnut.jpg
+    - assets/meals/chickpeas.jpg
+    - assets/meals/chips.jpg
+    - assets/meals/Choco prince.jpeg
+    - assets/meals/chocolate cereal.jpg
+    - assets/meals/concentrated juice (jellab).jpeg
+    - assets/meals/cooked oatmeal.jpg
+    - assets/meals/cooked veggies.jpg
+    - assets/meals/markouk.jpeg
+    - assets/meals/cookies.jpg
+    - assets/meals/Cordon Bleu.jpg
+    - assets/meals/corn.jpg
+    - assets/meals/cornflakes plain.jpg
+    - assets/meals/Crackers.jpg
+    - assets/meals/crepe.jpg
+    - assets/meals/croissant medium.jpg
+    - assets/meals/croissant small.jpg
+    - assets/meals/Custard.jpg
+    - assets/meals/Debess Roman.jpeg
+    - assets/meals/Debess.jpg
+    - assets/meals/diabetic jam.jpg
+    - assets/meals/digestive x2.jpg
+    - assets/meals/donuts.jpg
+    - assets/meals/dried apples.jpg
+    - assets/meals/dried apricots.jpg
+    - assets/meals/dried fig.jpg
+    - assets/meals/dried oatmeal.jpg
+    - assets/meals/eclairs.jpg
+    - assets/meals/Escalope.jpeg
+    - assets/meals/falafel.jpg
+    - assets/meals/Fasoliya.jpg
+    - assets/meals/Fatayir Bl Jobna.jpeg
+    - assets/meals/Fatayir Bl Sabanikh.jpg
+    - assets/meals/fig.jpg
+    - assets/meals/flour.jpg
+    - assets/meals/Foul Mdammas.jpg
+    - assets/meals/french fries.jpg
+    - assets/meals/fruit milkshake.png
+    - assets/meals/fruit salad.jpg
+    - assets/meals/Ghandour 555.jpg
+    - assets/meals/Ghraybeh.jpg
+    - assets/meals/grapefruit.jpg
+    - assets/meals/grapes.jpg
+    - assets/meals/Grilled Potato.jpg
+    - assets/meals/guava.jpg
+    - assets/meals/Halawet El-Jeben.jpg
+    - assets/meals/hamburger bread.jpeg
+    - assets/meals/honey.jpg
+    - assets/meals/hummus.jpg
+    - assets/meals/ice cream.jpg
+    - assets/meals/ikidinyah.jpg
+    - assets/meals/innab.jpeg
+    - assets/meals/jam.jpg
+    - assets/meals/Jazarieh.jpg
+    - assets/meals/kaak long.JPG
+    - assets/meals/kaak small.jpeg
+    - assets/meals/kator diabtic.jpeg
+    - assets/meals/kator.jpeg
+    - assets/meals/Kebbe Bl Saniyeh.jpg
+    - assets/meals/ketchup.jpg
+    - assets/meals/kharma.jpeg
+    - assets/meals/khoboz arabi large.jpg
+    - assets/meals/Khooboz arabi small.jpeg
+    - assets/meals/Kinders (x2).png
+    - assets/meals/kishk.jpg
+    - assets/meals/kitkat.jpeg
+    - assets/meals/kiwi.jpg
+    - assets/meals/Kol W Chkor.jpg
+    - assets/meals/Koussa Mahshi.jpg
+    - assets/meals/Kunefe.jpg
+    - assets/meals/Laban.jpg
+    - assets/meals/lasagna.jpg
+    - assets/meals/lentil soup.jpg
+    - assets/meals/lentils.jpg
+    - assets/meals/Leo.jpeg
+    - assets/meals/Lion.jpeg
+    - assets/meals/Maamool.jpg
+    - assets/meals/Mafroukeh Bl-Ashta.jpg
+    - assets/meals/makaroni with beef.jpg
+    - assets/meals/Makaroni With Cheese.jpg
+    - assets/meals/Makaroni.jpg
+    - assets/meals/Malfoof Mahshi.jpg
+    - assets/meals/Maltesers.jpg
+    - assets/meals/mango.jpg
+    - assets/meals/Mankousha.jpg
+    - assets/meals/markouk - saj.jpg
+    - assets/meals/Mars.jpeg
+    - assets/meals/melon.jpg
+    - assets/meals/milk.jpg
+    - assets/meals/milkshakes.jpeg
+    - assets/meals/moajanet.jpeg
+    - assets/meals/Moghrabieh.jpg
+    - assets/meals/moghli.jpeg
+    - assets/meals/Mohalabiyeh.jpg
+    - assets/meals/muffins big.jpg
+    - assets/meals/muffins small.jpg
+    - assets/meals/halawat riz.jpeg
+    - assets/meals/Nammoura.jpg
+    - assets/meals/Natural juice.jpg
+    - assets/meals/Nouba.jpg
+    - assets/meals/Number 1.jpg
+    - assets/meals/nutella.jpg
+    - assets/meals/Onion Soup.jpg
+    - assets/meals/orange.jpg
+    - assets/meals/Oreo x2.jpeg
+    - assets/meals/Osmaliyeh.jpg
+    - assets/meals/pain au lait.jpeg
+    - assets/meals/pancake.jpg
+    - assets/meals/papaya.jpg
+    - assets/meals/Pasta Salad.jpeg
+    - assets/meals/peach.jpg
+    - assets/meals/peanut butter.jpg
+    - assets/meals/pears.jpg
+    - assets/meals/peas.jpg
+    - assets/meals/petit four.jpg
+    - assets/meals/pickup.jpg
+    - assets/meals/pineapple.jpg
+    - assets/meals/pizza.jpg
+    - assets/meals/plums.jpg
+    - assets/meals/pomegranate.jpg
+    - assets/meals/popcorn.jpg
+    - assets/meals/potato.jpg
+    - assets/meals/powdered milk.jpg
+    - assets/meals/pretzels.jpg
+    - assets/meals/quinoa cooked.jpg
+    - assets/meals/raisins.jpg
+    - assets/meals/rice cakes.jpg
+    - assets/meals/rice.jpg
+    - assets/meals/Riz-bi-Haleeb.jpg
+    - assets/meals/roasted nuts.jpg
+    - assets/meals/ruit cocktail.jpeg
+    - assets/meals/safarjal.jpeg
+    - assets/meals/Sambousak Bi Jobna.jpg
+    - assets/meals/Smeed.jpg
+    - assets/meals/Snicker.jpeg
+    - assets/meals/Soft Drinks.jpg
+    - assets/meals/strawberry.jpg
+    - assets/meals/sugar.jpg
+    - assets/meals/sushi.jpg
+    - assets/meals/Sweetenedjuice.jpg
+    - assets/meals/tabbouleh.jpg
+    - assets/meals/termos.jpg
+    - assets/meals/Time out.jpg
+    - assets/meals/toast medium.jpg
+    - assets/meals/toast small.jpg
+    - assets/meals/toast soft.jpg
+    - assets/meals/toutt.jpeg
+    - assets/meals/Twirl.jpeg
+    - assets/meals/twix top.png
+    - assets/meals/Twix x2.jpeg
+    - assets/meals/Unica.jpg
+    - assets/meals/veggie soup.jpg
+    - assets/meals/wafers.jpg
+    - assets/meals/Warak Enab.jpg
+    - assets/meals/watermelon.jpg
+    - assets/meals/Wheat.jpg
+    - assets/meals/yogurt with fruits.jpg
+    - assets/meals/Znoud El Set.jpg
     - assets/completed.png
     - assets/All.png
     - assets/Arabic desserts.png
@@ -280,17 +267,7 @@ flutter:
     - assets/insulin.png
     - assets/blood.png
 
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/assets-and-images/#resolution-aware
-
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/assets-and-images/#from-packages
-
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-  # example:
+  
   fonts:
     - family: Inter
       fonts:
@@ -328,5 +305,4 @@ flutter:
         - asset: fonts/InriaSerif-Bold.ttf
         - weight: 800
 
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/custom-fonts/#from-packages
+

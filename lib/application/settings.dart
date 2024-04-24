@@ -346,20 +346,21 @@ class _SettingsState extends State<Settings> {
             builder: (BuildContext context) {
               final TextEditingController controller = TextEditingController();
               return AlertDialog(
-                title: Text('Connect to Doctor'),
+                title: const Text('Connect to Doctor'),
                 content: TextField(
                   controller: controller,
-                  decoration: InputDecoration(hintText: "Enter doctor code"),
+                  decoration:
+                      const InputDecoration(hintText: "Enter doctor code"),
                 ),
                 actions: <Widget>[
                   TextButton(
-                    child: Text('Cancel'),
+                    child: const Text('Cancel'),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
                   ),
                   TextButton(
-                    child: Text('OK'),
+                    child: const Text('OK'),
                     onPressed: () async {
                       String doctorCode = controller.text;
                       bool result = await changeDoctor(doctorCode);
