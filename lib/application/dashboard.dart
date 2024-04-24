@@ -111,8 +111,8 @@ class _DashboardState extends State<Dashboard> {
     DBHelper dbHelper = DBHelper.instance;
     await dbHelper.deleteEntryById(id);
     if (await isConnectedToWifi()) {
-      final response = await http.delete(
-          Uri.parse("https://$localhost:8000/deleteEntry/$id/$patientId"));
+      final response = await http.get(
+          Uri.parse("http://$localhost:8000/deleteEntry/$id/$patientId"));
     } else {
       addToDeleteEntryList(id.toString());
     }
@@ -1165,9 +1165,9 @@ class _DashboardState extends State<Dashboard> {
                                       color: Color.fromARGB(255, 25, 167, 177),
                                     ),
                                     onPressed: () async {
-                                      await db
-                                          .deleteEntryById(entry['entryId']);
-
+                                      // await db
+                                      //     .deleteEntryById(entry['entryId']);
+                                      deleteEntry(entry['entryId']);    
                                       refreshData();
                                       setState(() {
                                         clicked = true;

@@ -661,7 +661,7 @@ async def addNewEntry(entry: NewEntry):
         print(e)
         return {"error": str(e)}
 
-@app.delete("/deleteEntry/{entryID}/{patientId}")
+@app.get("/deleteEntry/{entryID}/{patientId}")
 async def deleteEntry(entryID: int, patientId: int):
     try:
         row = cursor.execute("DELETE FROM Entry WHERE entryID = ? and patientID = ?", (entryID, patientId))
