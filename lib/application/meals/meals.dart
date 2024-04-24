@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, prefer_interpolation_to_compose_strings
+// ignore_for_file: use_build_context_synchronously, prefer_interpolation_to_compose_strings, duplicate_ignore, non_constant_identifier_names, unused_element, avoid_print, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +11,7 @@ import 'package:sugar_sense/AI/ai_functions.dart';
 
 class Meals extends StatefulWidget {
   final int Index;
-  const Meals({required this.Index});
+  const Meals({super.key, required this.Index});
 
   @override
   State<Meals> createState() => _MealsState();
@@ -128,7 +128,8 @@ class _MealsState extends State<Meals> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => CreateMeal()),
+                        MaterialPageRoute(
+                            builder: (context) => const CreateMeal()),
                       );
                     },
                     child: const Text(
@@ -738,6 +739,7 @@ class Meal {
     required this.unit,
     required this.ingredients,
   });
+  @override
   String toString() {
     return 'Meal{name: $name, imageUrl: $imageUrl, id: $id, carbodydrates: $carbohydrates, quantity: $quantity, unit: $unit}';
   }
@@ -767,11 +769,11 @@ Function addToChosenMeals = (int id, double quantity) async {
   bool found = false;
   print("entered chosen meals");
   print(chosenMeals);
-  chosenMeals.forEach((meal) {
+  for (var meal in chosenMeals) {
     if (meal['id'] == id) {
       found = true;
     }
-  });
+  }
 
   if (found) {
     return false;
@@ -811,11 +813,11 @@ Function addToChosenCMeals = (int id, double quantity) async {
   bool found = false;
   print("entered chosen meals");
   print(chosenCMeals);
-  chosenCMeals.forEach((meal) {
+  for (var meal in chosenCMeals) {
     if (meal['id'] == id) {
       found = true;
     }
-  });
+  }
 
   if (found) {
     return false;
@@ -844,7 +846,7 @@ Function addToChosenCMeals = (int id, double quantity) async {
 class MealBox extends StatefulWidget {
   final Meal meal;
   final int ind;
-  const MealBox({required this.meal, required this.ind});
+  const MealBox({super.key, required this.meal, required this.ind});
   @override
   _MealBoxState createState() => _MealBoxState();
 }
@@ -926,7 +928,7 @@ class _MealBoxState extends State<MealBox> {
                               overflow: TextOverflow.fade,
                               softWrap: false,
                               style: TextStyle(
-                                color: Color.fromARGB(255, 38, 20, 84),
+                                color: const Color.fromARGB(255, 38, 20, 84),
                                 fontSize: unitString(widget.meal.unit) !=
                                         'tablespoons'
                                     ? 16

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, duplicate_ignore
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -1180,6 +1182,7 @@ class _UserInfoState extends State<UserInfo> {
                       }
                     });
                   }
+                  // ignore: avoid_print
                   print(answers);
                 },
                 child: const Text(
@@ -1208,74 +1211,87 @@ class _UserInfoState extends State<UserInfo> {
                   ),
                 ),
                 onPressed: () async {
-                  setState(
-                    () {
-                      updatelastAnswers();
-                      _isLoading = true;
-                    },
-                  );
-                  //final response = await registerPatient();
-                  //if (response.statusCode == 200) {
-                  logger.info("registered patient successfully");
-                  showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (BuildContext context) {
-                      return Dialog(
-                        //Navigator.of(context).pop();
-                        //Navigator.of(context).pushReplacementNamed('/login');
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          height: MediaQuery.of(context).size.height * 0.6,
-                          child: AlertDialog(
-                            insetPadding: const EdgeInsets.only(
-                              left: 10,
-                              right: 10,
-                              top: 20,
-                              bottom: 20,
-                            ),
-                            backgroundColor: Colors.white,
-                            content: Column(
-                              children: [
-                                Image.asset(
-                                    'assets/completed.png'), // Replace with your image path
-                                const SizedBox(
-                                  height: 30,
-                                ),
-                                const Text(
-                                  'Congratulations!',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Inter',
-                                    color: Color.fromARGB(255, 0, 0, 0),
+                  if (await isConnectedToWifi()) {
+                    setState(
+                      () {
+                        updatelastAnswers();
+                        _isLoading = true;
+                      },
+                    );
+                    //final response = await registerPatient();
+                    //if (response.statusCode == 200) {
+                    logger.info("registered patient successfully");
+                    showDialog(
+                      // ignore: use_build_context_synchronously
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return Dialog(
+                          //Navigator.of(context).pop();
+                          //Navigator.of(context).pushReplacementNamed('/login');
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.6,
+                            child: AlertDialog(
+                              insetPadding: const EdgeInsets.only(
+                                left: 10,
+                                right: 10,
+                                top: 20,
+                                bottom: 20,
+                              ),
+                              backgroundColor: Colors.white,
+                              content: Column(
+                                children: [
+                                  Image.asset(
+                                      'assets/completed.png'), // Replace with your image path
+                                  const SizedBox(
+                                    height: 30,
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                const Text(
-                                  'Your account is ready to use. You will be redirected to the Home Page in a few seconds...',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontFamily: 'Inter',
-                                    color: Color.fromARGB(255, 107, 114, 128),
+                                  const Text(
+                                    'Congratulations!',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Inter',
+                                      color: Color.fromARGB(255, 0, 0, 0),
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                _isLoading ? CustomLoading() : Container(),
-                              ],
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Text(
+                                    'Your account is ready to use. You will be redirected to the Home Page in a few seconds...',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontFamily: 'Inter',
+                                      color: Color.fromARGB(255, 107, 114, 128),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  _isLoading
+                                      ? const CustomLoading()
+                                      : Container(),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  );
-                  final response = await registerPatient();
-                  //}
+                        );
+                      },
+                    );
+                    // ignore: unused_local_variable
+                    final response = await registerPatient();
+                  } else {
+                    // ignore: use_build_context_synchronously
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content:
+                            Text('Please connect to the internet to sign up!'),
+                      ),
+                    );
+                  }
                 },
                 child: const Text(
                   "Finish",
@@ -1373,6 +1389,7 @@ class CustomLoading extends StatefulWidget {
   const CustomLoading({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CustomLoadingState createState() => _CustomLoadingState();
 }
 

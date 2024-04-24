@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, use_super_parameters, unused_local_variable, avoid_print, duplicate_ignore, unused_import
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -56,6 +58,19 @@ class _LoginState extends State<Login> {
   }
 
   bool _isLoading = false;
+
+  int patientId = pid_;
+
+  deleteListEntries() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? list = prefs.getStringList('deleteEntryList');
+    if (list != null) {
+      for (var element in list) {
+        var response = http.delete(Uri.parse(
+            "https://$localhost:8000/deleteEntry/$element/$patientId"));
+      }
+    }
+  }
 
   Future<void> _signIn(String email, String password, int id) async {
     logger.info("signing in");
@@ -360,7 +375,7 @@ class _LoginState extends State<Login> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (_) => ForgetPass()));
+                                      builder: (_) => const ForgetPass()));
                             },
                             child: const Text(
                               'Forget Password?',
@@ -432,6 +447,7 @@ class _LoginState extends State<Login> {
                                   );
                                 } else if (response.statusCode == 200) {
                                   //print(response.body);
+                                  deleteListEntries();
                                   setLoginTime();
                                   _isLoading
                                       ? null

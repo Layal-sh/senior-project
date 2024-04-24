@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_function_literals_in_foreach_calls
+// ignore_for_file: avoid_function_literals_in_foreach_calls, unused_local_variable, non_constant_identifier_names, avoid_print, unused_import
 
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -171,14 +171,14 @@ class DBHelper {
 //////////////////////////////////////////////////////////////
   /////////////// Fixing for Sign up///////////////////////////
   //////////////////////////////////////////////////////////////
-  reset() async{
+  reset() async {
     await dropMealComposition();
     await dropMeals();
     await dropEntries();
     await dropAllArticles();
     logger.info("Database has been reset");
   }
-  
+
   dropMealComposition() async {
     logger.info("Deleting Meal Composition...");
     Database? mydb = await db;
@@ -492,10 +492,10 @@ class DBHelper {
 
   getEntriesYearly() async {
     Database? mydb = await db;
-  //   var res = await mydb!.rawQuery('''
-  //   SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-1 year') AND date('now')
-  // ''');
-  var res = await mydb!.rawQuery('''
+    //   var res = await mydb!.rawQuery('''
+    //   SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-1 year') AND date('now')
+    // ''');
+    var res = await mydb!.rawQuery('''
     SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-3 month') AND date('now')
   ''');
     return res;
@@ -649,7 +649,7 @@ class DBHelper {
     double certainty = 0.0;
     int frequency = 0;
     Database? mydb = await db;
-    int mealId = await getMealIdByName("$name");
+    int mealId = await getMealIdByName(name);
 
     int nextId = await getNextMealId();
 
@@ -702,7 +702,7 @@ class DBHelper {
       totalCarbs += element['carbohydrates'] * element['quantity'];
     });
 
-    if (mealName == null || mealName == "") {
+    if (mealName == "") {
       mealName = "My ${response[0]['mealName']}";
     }
 
@@ -714,12 +714,10 @@ class DBHelper {
         response[0]['tags'] + ', myMeals');
 
     if (newMealID != -1) {
-      if (childMeals != null) {
-        childMeals.forEach((element) {
-          createMealComposition(newMealID, element['mealID'], element['unit'],
-              element['quantity']);
-        });
-      }
+      childMeals.forEach((element) {
+        createMealComposition(
+            newMealID, element['mealID'], element['unit'], element['quantity']);
+      });
       logger.info("Meal has been edited successfully with id $newMealID.");
       return newMealID;
     } else {
@@ -766,7 +764,7 @@ class DBHelper {
       List<String> categories, double carbohydrates) async {
     double totalCarbs = carbohydrates;
 
-    if (picture == null || picture == "") {
+    if (picture == "") {
       picture = "All.png";
     }
     if (childMeals.isNotEmpty) {
@@ -776,7 +774,7 @@ class DBHelper {
     }
     String tags = "";
     categories.forEach((element) {
-      tags += element + ", ";
+      tags += "$element, ";
     });
     tags += "myMeals";
     int newMealId = await createNewMeal(mealName, totalCarbs, 7, picture, tags);

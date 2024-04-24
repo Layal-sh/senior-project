@@ -1,13 +1,18 @@
+// ignore_for_file: unused_local_variable, library_private_types_in_public_api
+
 import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
+import 'package:sugar_sense/main.dart';
+import 'package:http/http.dart' as http;
 
 class Dashboard extends StatefulWidget {
   final Function changeTab;
-  Dashboard({required this.changeTab});
+  const Dashboard({super.key, required this.changeTab});
 
   @override
   _DashboardState createState() => _DashboardState();
@@ -81,6 +86,38 @@ class _DashboardState extends State<Dashboard> {
         'averageCarbs': averageCarbs,
       });
     });
+  }
+
+//this is used for deleting entries from the server database
+  Future<void> saveStringList(List<String> stringList) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('DeleteEntryList', stringList);
+  }
+
+  Future<void> addToDeleteEntryList(String newItem) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? stringList = prefs.getStringList('deleteEntryList');
+    if (stringList == null) {
+      stringList = [
+        newItem
+      ]; // if the list does not exist, initialize it with the new item
+    } else {
+      stringList.add(newItem); // if the list exists, add the new item to it
+    }
+    await prefs.setStringList('deleteEntryList', stringList);
+  }
+
+  int patientId = pid_;
+
+  deleteEntry(int id) async {
+    DBHelper dbHelper = DBHelper.instance;
+    await dbHelper.deleteEntryById(id);
+    if (await isConnectedToWifi()) {
+      final response = await http
+          .get(Uri.parse("http://$localhost:8000/deleteEntry/$id/$patientId"));
+    } else {
+      addToDeleteEntryList(id.toString());
+    }
   }
 
   @override
@@ -1130,9 +1167,9 @@ class _DashboardState extends State<Dashboard> {
                                       color: Color.fromARGB(255, 25, 167, 177),
                                     ),
                                     onPressed: () async {
-                                      await db
-                                          .deleteEntryById(entry['entryId']);
-
+                                      // await db
+                                      //     .deleteEntryById(entry['entryId']);
+                                      deleteEntry(entry['entryId']);
                                       refreshData();
                                       setState(() {
                                         clicked = true;

@@ -551,7 +551,9 @@ class _SignUpState extends State<SignUp> {
                                   bool connectedToWifi =
                                       await isConnectedToWifi();
                                   DBHelper dbHelper = DBHelper.instance;
-                                  await dbHelper.dropDatabase();
+                                  //await dbHelper.dropDatabase();
+                                  //await dbHelper.initialDb();
+                            
                                   await dbHelper.reset();
 
                                   String fname = _controllerFirstname.text;
