@@ -171,6 +171,16 @@ class _CreateMealState extends State<CreateMeal> {
                                 },
                               );
                             
+                            }else if(gramsController.text.isEmpty){
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const AlertDialog(
+                                    content: Text('carbs amount is required!'),
+                                  );
+                                },
+                              );
+                            
                             }else if (await dbHelper.getMealIdByName(_nameController.text) != -1) {
                               showDialog(
                                 context: context,

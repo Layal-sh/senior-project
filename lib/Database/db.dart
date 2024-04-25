@@ -772,7 +772,7 @@ class DBHelper {
     double totalCarbs = carbohydrates;
 
     if (picture == "") {
-      picture = "All.png";
+      picture = "meals/All.png";
     }
     if (childMeals.isNotEmpty) {
       childMeals.forEach((element) {
