@@ -160,16 +160,18 @@ class _CreateMealState extends State<CreateMeal> {
                             } else {
                               image = _selectedImage!.path;
                             }
-                            int createdMeal = await dbHelper.createMeal(
-                                _nameController.text,
-                                image,
-                                chosenCMeals,
-                                selectedCategories,
-                                chosenCMeals.isEmpty
-                                    ? double.parse(gramsController.text)
-                                    : totalCCarbs);
-                            print("Created Meal: $createdMeal");
-                            if (createdMeal == -1) {
+                           
+                            if(_nameController.text.isEmpty){
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const AlertDialog(
+                                    content: Text('meal name is required!'),
+                                  );
+                                },
+                              );
+                            
+                            }else if (await dbHelper.getMealIdByName(_nameController.text) != -1) {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -179,6 +181,15 @@ class _CreateMealState extends State<CreateMeal> {
                                 },
                               );
                             } else {
+                               int createdMeal = await dbHelper.createMeal(
+                                _nameController.text,
+                                image,
+                                chosenCMeals,
+                                selectedCategories,
+                                chosenCMeals.isEmpty
+                                    ? double.parse(gramsController.text)
+                                    : totalCCarbs);
+                            print("Created Meal: $createdMeal");
                               Navigator.pop(context);
                               Navigator.pop(context);
 
