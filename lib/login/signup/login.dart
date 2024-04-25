@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -405,7 +406,7 @@ class _LoginState extends State<Login> {
                             //createPlantFoodNotification;
                             bool connectedToWifi = await isConnectedToWifi();
                             print(connectedToWifi);
-                            Notify.instantNotify();
+
                             String email = _emailController.text;
                             String password = _passwordController.text;
                             if (email == 'admin' && password == 'admin') {
@@ -448,12 +449,20 @@ class _LoginState extends State<Login> {
                                   );
                                 } else if (response.statusCode == 200) {
                                   //print(response.body);
+
                                   deleteListEntries();
                                   setLoginTime();
                                   _isLoading
                                       ? null
                                       : _signIn(email, password,
                                           jsonDecode(response.body)['ID']);
+                                  AwesomeNotifications().createNotification(
+                                      content: NotificationContent(
+                                          id: 10,
+                                          channelKey: 'basic_channel',
+                                          title: 'Login Successful',
+                                          body:
+                                              'You have successfully logged in.'));
                                 } else {
                                   //incorrect username or password handling
                                   //for layal you can change this if you want or remove this comment if you think its good
