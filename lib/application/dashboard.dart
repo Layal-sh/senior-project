@@ -875,7 +875,7 @@ class _DashboardState extends State<Dashboard> {
                             padding: const EdgeInsets.only(
                               top: 8.0,
                               left: 20,
-                              right: 20,
+                              right: 5,
                               bottom: 5,
                             ),
                             child: Row(

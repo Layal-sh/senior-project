@@ -962,7 +962,9 @@ class _MealBoxState extends State<MealBox> {
                         ),
                       ),
                       onPressed: () async {
-                        if (quantityController.text.isEmpty) {
+                        if (quantityController.text.isEmpty ||
+                            double.parse(quantityController.text) == 0 ||
+                            double.parse(quantityController.text) < 0) {
                           print('Quantity is empty');
                           showDialog(
                             context: context,
@@ -1130,17 +1132,15 @@ class _MealBoxState extends State<MealBox> {
                               Navigator.pop(context, 'refresh');
                             }
                           },
-                          child: Expanded(
-                            child: CircleAvatar(
-                              radius: MediaQuery.of(context).size.width * 0.024,
-                              backgroundColor:
-                                  const Color.fromARGB(170, 64, 205, 215),
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: const Color.fromARGB(255, 255, 255, 255),
-                                size: MediaQuery.of(context).size.width /
-                                    (MediaQuery.of(context).size.height * 0.05),
-                              ),
+                          child: CircleAvatar(
+                            radius: MediaQuery.of(context).size.width * 0.024,
+                            backgroundColor:
+                                const Color.fromARGB(170, 64, 205, 215),
+                            child: Icon(
+                              Icons.arrow_forward_ios,
+                              color: const Color.fromARGB(255, 255, 255, 255),
+                              size: MediaQuery.of(context).size.width /
+                                  (MediaQuery.of(context).size.height * 0.05),
                             ),
                           ),
                         ),

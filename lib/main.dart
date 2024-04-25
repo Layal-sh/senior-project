@@ -48,12 +48,30 @@ Future<void> main() async {
   AwesomeNotifications()
       .initialize('resource://drawable/res_notification_app_icon', [
     NotificationChannel(
+        channelGroupKey: 'reminders',
+        channelKey: 'instant_notification',
+        channelName: 'Basic Instant Notifications',
+        channelDescription: 'Notification channel for basic tests',
+        defaultColor: Colors.teal,
+        importance: NotificationImportance.High,
+        channelShowBadge: true),
+    /*NotificationChannel(
         channelKey: 'basic_channel',
         channelName: 'Basic notifications',
         channelDescription: 'Notification channel for basic tests',
         defaultColor: Colors.teal,
         importance: NotificationImportance.High,
-        channelShowBadge: true)
+        channelShowBadge: true),
+    NotificationChannel(
+      channelKey: 'scheduled_channel',
+      channelName: 'Scheduled Notifications',
+      defaultColor: Colors.teal,
+      locked: true,
+      importance: NotificationImportance.High,
+      soundSource: 'resource://raw/res_custom_notification',
+      channelDescription: 'Notification channel for Scheduled tests',
+    ),
+  */
   ]);
   runApp(const MyApp());
 }

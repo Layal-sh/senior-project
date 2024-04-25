@@ -12,6 +12,7 @@ import 'package:sugar_sense/application/app.dart';
 import 'package:sugar_sense/login/signup/forgetPass/forgetpass.dart';
 import 'package:sugar_sense/main.dart';
 import 'package:sugar_sense/notifications/notification.dart';
+import 'package:sugar_sense/notifications/notify.dart';
 import 'package:sugar_sense/values/app_regex.dart';
 import 'signup.dart';
 
@@ -404,7 +405,7 @@ class _LoginState extends State<Login> {
                             //createPlantFoodNotification;
                             bool connectedToWifi = await isConnectedToWifi();
                             print(connectedToWifi);
-
+                            Notify.instantNotify();
                             String email = _emailController.text;
                             String password = _passwordController.text;
                             if (email == 'admin' && password == 'admin') {
