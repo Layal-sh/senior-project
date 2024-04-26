@@ -1107,9 +1107,14 @@ class _editProfileState extends State<editProfile> {
   bool error = false;
   bool eerror = false;
   bool perror = false;
+  bool olderro = false;
+  bool newerro = false;
   String? phoneNumberErrorMessage;
   String? emailErrorMessage;
   String? usernameErrorMessage;
+  String? passwordErrorMessage;
+  String? npasswordErrorMessage;
+
   @override
   void initState() {
     super.initState();
@@ -1660,33 +1665,19 @@ class _editProfileState extends State<editProfile> {
                                         BorderRadius.all(Radius.circular(15)),
                                   ),
                                 ),
-                                /*validator: (String? value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter your email';
-                                  }
-            
-                                  return emailErrorMessage;
-                                },
-                                onChanged: (String? value) async {
-                                  if (value != null && value.isNotEmpty) {
-                                    int result = await emailUpdate(value);
-                                    if (result == 2) {
-                                      setState(() {
-                                        emailErrorMessage = "* Invalid email";
-                                      });
-                                    } else if (result == 0 || result == -1) {
-                                      setState(() {
-                                        emailErrorMessage =
-                                            "* Email already exists";
-                                      });
-                                    } else {
-                                      setState(() {
-                                        emailErrorMessage = null;
-                                      });
-                                    }
-                                  }
-                                },*/
                               ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              olderro
+                                  ? Text(
+                                      passwordErrorMessage!,
+                                      style: const TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 13,
+                                      ),
+                                    )
+                                  : Container(),
                               const SizedBox(
                                 height: 20,
                               ),
@@ -1743,33 +1734,19 @@ class _editProfileState extends State<editProfile> {
                                         BorderRadius.all(Radius.circular(15)),
                                   ),
                                 ),
-                                /*validator: (String? value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter your new password';
-                                  }
-            
-                                  return passErrorMessage;
-                                },*/
-                                /*onChanged: (String? value) async {
-                                  if (value != null && value.isNotEmpty) {
-                                    int result = await emailUpdate(value);
-                                    if (result == 2) {
-                                      setState(() {
-                                        emailErrorMessage = "* Invalid email";
-                                      });
-                                    } else if (result == 0 || result == -1) {
-                                      setState(() {
-                                        emailErrorMessage =
-                                            "* Email already exists";
-                                      });
-                                    } else {
-                                      setState(() {
-                                        emailErrorMessage = null;
-                                      });
-                                    }
-                                  }
-                                },*/
                               ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              newerro
+                                  ? Text(
+                                      npasswordErrorMessage!,
+                                      style: const TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 13,
+                                      ),
+                                    )
+                                  : Container(),
                             ],
                           )
                         : Container(),
@@ -1812,7 +1789,6 @@ class _editProfileState extends State<editProfile> {
                           String newvalue = _controllerVeryPass.text;
                           int result4 =
                               await passwordUpdate(oldvalue, newvalue);
-                          print(result4);
 
                           if (_formKey.currentState!.validate()) {
                             if (await isConnectedToWifi()) {
@@ -1826,6 +1802,7 @@ class _editProfileState extends State<editProfile> {
                                   saveP();
                                 }
                               });
+                              String user = username_;
                               if (uvalue.isNotEmpty) {
                                 if (result == 0 || result == -1) {
                                   setState(() {
@@ -1837,10 +1814,11 @@ class _editProfileState extends State<editProfile> {
                                   setState(() {
                                     usernameErrorMessage = null;
                                     error = false;
-                                    username_ = _userController.text;
+                                    user = _userController.text;
                                   });
                                 }
                               }
+                              String email = email_;
                               if (value.isNotEmpty) {
                                 if (result2 == 2) {
                                   setState(() {
@@ -1857,20 +1835,19 @@ class _editProfileState extends State<editProfile> {
                                   setState(() {
                                     emailErrorMessage = null;
                                     eerror = false;
-                                    email_ = _controllerEmail.text;
+                                    email = _controllerEmail.text;
                                   });
                                 }
                               }
-
+                              String phone = phoneNumber_;
                               if (nvalue.isNotEmpty) {
-                                int result = await phoneUpdate(value);
-                                if (result == 2) {
+                                if (result3 == 2) {
                                   setState(() {
                                     phoneNumberErrorMessage =
                                         "* Invalid phone number";
                                     perror = true;
                                   });
-                                } else if (result == 0 || result == -1) {
+                                } else if (result3 == 0 || result3 == -1) {
                                   setState(() {
                                     phoneNumberErrorMessage =
                                         "* Phone number already exists";
@@ -1881,11 +1858,47 @@ class _editProfileState extends State<editProfile> {
                                     phoneNumberErrorMessage = null;
                                     perror = false;
 
-                                    phoneNumber_ = _pnController.text;
+                                    phone = _pnController.text;
                                   });
                                 }
                               }
-                              if (result == 1 && result2 == 1 && result3 == 1) {
+                              if (oldvalue.isNotEmpty && newvalue.isNotEmpty) {
+                                if (result4 == 2) {
+                                  setState(() {
+                                    npasswordErrorMessage =
+                                        "* Invalid password";
+                                    newerro = true;
+                                  });
+                                } else if (result4 == 0 || result4 == -1) {
+                                  setState(() {
+                                    passwordErrorMessage =
+                                        "* Old password is incorrect";
+                                    olderro = true;
+                                  });
+                                } else if (result4 == 4) {
+                                  setState(() {
+                                    passwordErrorMessage =
+                                        "* New password cannot be the same as the old password";
+                                    olderro = true;
+                                  });
+                                } else {
+                                  setState(() {
+                                    passwordErrorMessage = null;
+                                    npasswordErrorMessage = null;
+                                    olderro = false;
+                                    newerro = false;
+                                  });
+                                }
+                              }
+                              if (result == 1 &&
+                                  result2 == 1 &&
+                                  result3 == 1 &&
+                                  result4 == 1) {
+                                username_ = user;
+                                email_ = email;
+                                phoneNumber_ = phone;
+                                saveProfile();
+
                                 Navigator.of(context).pop();
                               }
                             } else {

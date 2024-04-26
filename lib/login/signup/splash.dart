@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -18,11 +21,27 @@ class _SplashState extends State<Splash> {
 
   startTimer() {
     var duration = const Duration(seconds: 3);
-    return Timer(duration, route);
+    return Timer(duration, navigateUser);
   }
 
-  route() {
+  /*route() {
     Navigator.of(context).pushReplacementNamed('/start');
+  }*/
+
+  Future navigateUser() async {
+    // Get the shared preferences instance
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Get the token
+    String? token = prefs.getString('token');
+
+    // If the token is not null, navigate to the App screen
+    // Otherwise, navigate to the Login screen
+    if (token != null) {
+      Navigator.pushReplacementNamed(context, '/app');
+    } else {
+      Navigator.pushReplacementNamed(context, '/start');
+    }
   }
 
   @override

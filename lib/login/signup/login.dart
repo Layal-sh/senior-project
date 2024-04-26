@@ -12,8 +12,8 @@ import 'package:sugar_sense/accCreation/userinfo.dart';
 import 'package:sugar_sense/application/app.dart';
 import 'package:sugar_sense/login/signup/forgetPass/forgetpass.dart';
 import 'package:sugar_sense/main.dart';
-import 'package:sugar_sense/notifications/notification.dart';
-import 'package:sugar_sense/notifications/notify.dart';
+//import 'package:sugar_sense/notifications/notification.dart';
+//import 'package:sugar_sense/notifications/notify.dart';
 import 'package:sugar_sense/values/app_regex.dart';
 import 'signup.dart';
 

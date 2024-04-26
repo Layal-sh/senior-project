@@ -123,10 +123,10 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                             decoration: const BoxDecoration(
                               color: Color.fromARGB(255, 255, 249, 254),
                               borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20), // Top left corner
-                                topRight:
-                                    Radius.circular(20), // Top right corner
-                                // Add other corners if needed
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20),
+                                bottomRight: Radius.circular(20),
+                                bottomLeft: Radius.circular(20),
                               ),
                             ),
                             child: Column(

@@ -189,7 +189,7 @@ class _UserInfoState extends State<UserInfo> {
               return Padding(
                 padding: const EdgeInsets.only(
                   left: 30.0,
-                  right: 30.0,
+                  right: 20.0,
                   top: 45,
                 ),
                 child: Column(
@@ -1062,7 +1062,7 @@ class _UserInfoState extends State<UserInfo> {
                           ),
                         if (index == 3)
                           SizedBox(
-                            height: 150,
+                            height: 200,
                             child: ListView.builder(
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: options.length,
