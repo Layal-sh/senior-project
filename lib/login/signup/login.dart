@@ -12,7 +12,7 @@ import 'package:sugar_sense/accCreation/userinfo.dart';
 import 'package:sugar_sense/application/app.dart';
 import 'package:sugar_sense/login/signup/forgetPass/forgetpass.dart';
 import 'package:sugar_sense/main.dart';
-import 'package:sugar_sense/notifications/notification.dart';
+//import 'package:sugar_sense/notifications/notification.dart';
 import 'package:sugar_sense/notifications/notify.dart';
 import 'package:sugar_sense/values/app_regex.dart';
 import 'signup.dart';
@@ -160,18 +160,18 @@ class _LoginState extends State<Login> {
           await prefs.setInt(
               'targetBloodSugar_', patientDetails['targetBloodGlucose']);
           //carbRatio_ = patientDetails['carbRatio'];
-          await prefs.setDouble('carbRatio_', patientDetails['carbRatio']);
+          await prefs.setDouble('carbRatio', patientDetails['carbRatio']);
           numOfRatios_ = 1;
           prefs.setInt('numOfRatios', 1);
           if (patientDetails['carbRatio2'] != null) {
             carbRatio_2 = patientDetails['carbRatio2'];
-            await prefs.setDouble('carbRatio_2', patientDetails['carbRatio2']);
+            await prefs.setDouble('carbRatio2', patientDetails['carbRatio2']);
             if (carbRatio_2 != 0) numOfRatios_++;
             prefs.setInt('numOfRatios', numOfRatios_);
           }
           if (patientDetails['carbRatio3'] != null) {
             carbRatio_3 = patientDetails['carbRatio3'];
-            await prefs.setDouble('carbRatio_3', patientDetails['carbRatio3']);
+            await prefs.setDouble('carbRatio3', patientDetails['carbRatio3']);
             if (carbRatio_3 != 0) numOfRatios_++;
             prefs.setInt('numOfRatios', numOfRatios_);
           }

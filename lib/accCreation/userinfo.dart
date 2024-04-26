@@ -43,7 +43,7 @@ class _UserInfoState extends State<UserInfo> {
   List<TextEditingController> unitController =
       List.generate(3, (index) => TextEditingController());
   List<double> core = List.generate(3, (index) => 1.0);
-  List<double> units = List.generate(3, (index) => 1.0);
+  List<double> units = List.generate(3, (index) => 0.0);
 
   List<Widget> forms = [];
   //int core = 0;
@@ -110,7 +110,7 @@ class _UserInfoState extends State<UserInfo> {
   void updatefirstAnswer() {
     List<double> coreUnitsValues = List.filled(3, 0.0);
     for (int i = 0; i < 3; i++) {
-      coreUnitsValues[i] = units[i] / core[i];
+      coreUnitsValues[i] = units[i] / (unit1 == 0 ? core[i] / 15 : core[i]);
     }
 
     answers[0] = coreUnitsValues;
@@ -1324,15 +1324,15 @@ class _UserInfoState extends State<UserInfo> {
     double targetGlucosed = (answers[2] as num).toDouble();
 
     List<dynamic> carbRatios = answers[0] as List<dynamic>;
-    double carbRatio1 = (carbRatios[0] as num).toDouble();
-    double carbRatio2 = (carbRatios[1] as num).toDouble();
-    double carbRatio3 = (carbRatios[2] as num).toDouble();
+    double carbRatio1 = carbRatios[0];
+    double carbRatio2 = carbRatios[1];
+    double carbRatio3 = carbRatios[2];
 
-    if (unit1 == 0) {
-      carbRatio1 /= 15;
-      carbRatio2 /= 15;
-      carbRatio3 /= 15;
-    }
+    // if (unit1 == 0) {
+    //   carbRatio1 /= 15;
+    //   carbRatio2 /= 15;
+    //   carbRatio3 /= 15;
+    // }
     if (unit2 == 0) insulinSensitivity *= 18.018;
     if (unit3 == 0) targetGlucosed *= 18.018;
 

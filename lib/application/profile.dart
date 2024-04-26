@@ -1807,7 +1807,10 @@ class _editProfileState extends State<editProfile> {
                           int result2 = await emailUpdate(value);
                           String nvalue = _pnController.text;
                           int result3 = await phoneUpdate(nvalue);
-
+                          //result is name
+                          //result2 is email
+                          //result3 is phone
+                          //result4 is password
                           String oldvalue = _controllerPass.text;
                           String newvalue = _controllerVeryPass.text;
                           int result4 =
