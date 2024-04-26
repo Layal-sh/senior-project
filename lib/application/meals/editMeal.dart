@@ -224,7 +224,7 @@ class _EditMealState extends State<EditMeal> {
                                     height: 175,
                                     fit: BoxFit.cover,
                                   )
-                                : Image.network(
+                                : Image.asset(
                                     widget.meal.imageUrl,
                                     width: 175,
                                     height: 175,
