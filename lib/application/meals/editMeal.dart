@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: avoid_print, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, camel_case_types, library_private_types_in_public_api, file_names
 
 import 'dart:io';
 
@@ -13,7 +13,7 @@ import 'package:sugar_sense/application/meals/meals.dart';
 class EditMeal extends StatefulWidget {
   final Meal meal;
   final int index;
-  const EditMeal({required this.meal, required this.index});
+  const EditMeal({super.key, required this.meal, required this.index});
 
   @override
   State<EditMeal> createState() => _EditMealState();
@@ -398,7 +398,7 @@ class eIngBox extends StatefulWidget {
   final eIngredient ingredient;
   final int index;
   final TextEditingController quantityController = TextEditingController();
-  eIngBox({required this.index, required this.ingredient}) {
+  eIngBox({super.key, required this.index, required this.ingredient}) {
     quantityController.text = ingredient.quantity.toString();
   }
   @override

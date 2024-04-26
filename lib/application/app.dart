@@ -1,14 +1,16 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:sugar_sense/Database/db.dart';
+//import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/addInput.dart';
 import 'package:sugar_sense/application/articles.dart';
 import 'package:sugar_sense/application/dashboard.dart';
 import 'package:sugar_sense/application/meals/meals.dart';
-import 'package:intl/intl.dart';
-import 'dart:convert';
+//import 'package:intl/intl.dart';
+//import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:sugar_sense/application/profile.dart';
 import 'package:sugar_sense/application/settings.dart';
@@ -16,7 +18,7 @@ import 'package:sugar_sense/login/signup/signup.dart';
 import 'package:sugar_sense/main.dart';
 
 class App extends StatefulWidget {
-  const App({Key? key}) : super(key: key);
+  const App({super.key});
 
   @override
   State<App> createState() => _AppState();
@@ -115,30 +117,28 @@ phoneUpdate(String phone) async {
   }
 }
 
-
-passwordUpdate(String old,String newpass) async {
-  if (old !="" && newpass !="") {
+passwordUpdate(String old, String newpass) async {
+  if (old != "" && newpass != "") {
     if (!isValidPassword(newpass)) {
       return 2;
     }
-    final name = await http
-        .get(Uri.parse('http://$localhost:8000/changePassword/$old/$newpass/$id'));
+    final name = await http.get(
+        Uri.parse('http://$localhost:8000/changePassword/$old/$newpass/$id'));
     if (name.statusCode == 200) {
       return 1;
     } else if (name.statusCode == 401) {
       //old password is incorrect
       return 0;
-    } else if(name.statusCode==400){
+    } else if (name.statusCode == 400) {
       //new password can't be the same as the old one
       return 4;
-    }else {
+    } else {
       //display snackbar thingy random error occured
       return -1;
     }
-  } else if(old =="" && newpass ==""){
+  } else if (old == "" && newpass == "") {
     return 1;
-  }
-  else{
+  } else {
     //user entered only one of the password textfield
     //diplay message "both field are required to be filled"
     return 3;
@@ -228,6 +228,68 @@ class _AppState extends State<App> {
     finalList = [];
     starred = [];
     fetchArticles();*/
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (!isAllowed) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Allow Notifications'),
+            content: const Text('Our app would like to send you notifications'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'Don\'t Allow',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              TextButton(
+                  onPressed: () => AwesomeNotifications()
+                      .requestPermissionToSendNotifications()
+                      .then((_) => Navigator.pop(context)),
+                  child: const Text(
+                    'Allow',
+                    style: TextStyle(
+                      color: Colors.teal,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ))
+            ],
+          ),
+        );
+      }
+    });
+    /*AwesomeNotifications().createdStream.listen((notification) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          'Notification Created on ${notification.channelKey}',
+        ),
+      ));
+    });
+
+    AwesomeNotifications().listen((notification) {
+      /*if (notification.channelKey == 'basic_channel' && Platform.isIOS) {
+        AwesomeNotifications().getGlobalBadgeCounter().then(
+              (value) =>
+                  AwesomeNotifications().setGlobalBadgeCounter(value - 1),
+            );
+      }*/
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (_) => App(),
+        ),
+        (route) => route.isFirst,
+      );
+    });
+  */
   }
 
   @override

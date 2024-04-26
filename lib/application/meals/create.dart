@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, no_leading_underscores_for_local_identifiers, avoid_print, unused_import, unnecessary_import
 
 import 'dart:async';
 import 'dart:io';
@@ -119,7 +119,7 @@ class _CreateMealState extends State<CreateMeal> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CircleAvatar(
-                        backgroundColor: Color.fromARGB(0, 0, 236, 253),
+                        backgroundColor: const Color.fromARGB(0, 0, 236, 253),
                         child: IconButton(
                           padding: EdgeInsets.zero,
                           icon: const Icon(
@@ -160,16 +160,28 @@ class _CreateMealState extends State<CreateMeal> {
                             } else {
                               image = _selectedImage!.path;
                             }
-                            int createdMeal = await dbHelper.createMeal(
-                                _nameController.text,
-                                image,
-                                chosenCMeals,
-                                selectedCategories,
-                                chosenCMeals.isEmpty
-                                    ? double.parse(gramsController.text)
-                                    : totalCCarbs);
-                            print("Created Meal: $createdMeal");
-                            if (createdMeal == -1) {
+                           
+                            if(_nameController.text.isEmpty){
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const AlertDialog(
+                                    content: Text('meal name is required!'),
+                                  );
+                                },
+                              );
+                            
+                            }else if(gramsController.text.isEmpty){
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const AlertDialog(
+                                    content: Text('carbs amount is required!'),
+                                  );
+                                },
+                              );
+                            
+                            }else if (await dbHelper.getMealIdByName(_nameController.text) != -1) {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -179,6 +191,15 @@ class _CreateMealState extends State<CreateMeal> {
                                 },
                               );
                             } else {
+                               int createdMeal = await dbHelper.createMeal(
+                                _nameController.text,
+                                image,
+                                chosenCMeals,
+                                selectedCategories,
+                                chosenCMeals.isEmpty
+                                    ? double.parse(gramsController.text)
+                                    : totalCCarbs);
+                            print("Created Meal: $createdMeal");
                               Navigator.pop(context);
                               Navigator.pop(context);
 
@@ -400,6 +421,8 @@ class _CreateMealState extends State<CreateMeal> {
                                                 Color.fromARGB(255, 38, 20, 84),
                                           ),
                                           validator: (value) {
+                                            return null;
+
                                             /*if (value.isEmpty) {
                                         return 'Please enter a number';
                                       }
@@ -449,13 +472,14 @@ class _CreateMealState extends State<CreateMeal> {
                                 var result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Meals(Index: 1)),
+                                      builder: (context) =>
+                                          const Meals(Index: 1)),
                                 );
                                 if (result == 'refresh') {
                                   refresh();
                                 }
-                                _timer = Timer.periodic(Duration(seconds: 1),
-                                    (timer) {
+                                _timer = Timer.periodic(
+                                    const Duration(seconds: 1), (timer) {
                                   if (mounted) {
                                     // Check if the widget is still in the tree
                                     setState(() {});
@@ -471,8 +495,8 @@ class _CreateMealState extends State<CreateMeal> {
                                 foregroundColor: Colors.transparent,
                                 surfaceTintColor: Colors.transparent,
                                 shape:
-                                    CircleBorder(), // Make the button circular
-                                padding: EdgeInsets.all(
+                                    const CircleBorder(), // Make the button circular
+                                padding: const EdgeInsets.all(
                                     15), // Adjust the size of the button
                               ),
                               child: Image.asset(

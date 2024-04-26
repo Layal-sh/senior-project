@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable, library_private_types_in_public_api
+
 import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +12,7 @@ import 'package:http/http.dart' as http;
 
 class Dashboard extends StatefulWidget {
   final Function changeTab;
-  Dashboard({required this.changeTab});
+  const Dashboard({super.key, required this.changeTab});
 
   @override
   _DashboardState createState() => _DashboardState();
@@ -111,8 +113,8 @@ class _DashboardState extends State<Dashboard> {
     DBHelper dbHelper = DBHelper.instance;
     await dbHelper.deleteEntryById(id);
     if (await isConnectedToWifi()) {
-      final response = await http.delete(
-          Uri.parse("https://$localhost:8000/deleteEntry/$id/$patientId"));
+      final response = await http
+          .get(Uri.parse("http://$localhost:8000/deleteEntry/$id/$patientId"));
     } else {
       addToDeleteEntryList(id.toString());
     }
@@ -321,7 +323,7 @@ class _DashboardState extends State<Dashboard> {
                 child: yearly
                     ? SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        child: Container(
+                        child: SizedBox(
                           width: 2000,
                           child: LineChart(
                             mainData(),
@@ -873,7 +875,7 @@ class _DashboardState extends State<Dashboard> {
                             padding: const EdgeInsets.only(
                               top: 8.0,
                               left: 20,
-                              right: 20,
+                              right: 5,
                               bottom: 5,
                             ),
                             child: Row(
@@ -1165,9 +1167,9 @@ class _DashboardState extends State<Dashboard> {
                                       color: Color.fromARGB(255, 25, 167, 177),
                                     ),
                                     onPressed: () async {
-                                      await db
-                                          .deleteEntryById(entry['entryId']);
-
+                                      // await db
+                                      //     .deleteEntryById(entry['entryId']);
+                                      deleteEntry(entry['entryId']);
                                       refreshData();
                                       setState(() {
                                         clicked = true;

@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, unused_import
+
 import 'package:flutter/material.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/application/app.dart';

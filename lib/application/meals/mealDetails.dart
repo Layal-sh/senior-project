@@ -1,3 +1,5 @@
+// ignore_for_file: file_names, use_build_context_synchronously, library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +12,7 @@ import 'package:sugar_sense/main.dart';
 class MealDetailsPage extends StatefulWidget {
   final Meal meal;
   final int index;
-  const MealDetailsPage({required this.meal, required this.index});
+  const MealDetailsPage({super.key, required this.meal, required this.index});
 
   @override
   State<MealDetailsPage> createState() => _MealDetailsPageState();
@@ -780,7 +782,7 @@ class Ingredient {
 class IngBox extends StatefulWidget {
   final Ingredient ingredient;
 
-  const IngBox({required this.ingredient});
+  const IngBox({super.key, required this.ingredient});
   @override
   _IngBoxState createState() => _IngBoxState();
 }

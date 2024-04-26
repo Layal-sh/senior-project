@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element, avoid_print, no_leading_underscores_for_local_identifiers, use_build_context_synchronously, duplicate_ignore, unnecessary_import, unused_import
+
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
