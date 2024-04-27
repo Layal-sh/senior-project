@@ -6,7 +6,6 @@ import 'package:sugar_sense/Database/variables.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
-
   @override
   _SettingsState createState() => _SettingsState();
 }
@@ -128,6 +127,15 @@ class _SettingsState extends State<Settings> {
         TextEditingController(text: initialCarbs.toStringAsFixed(2));
     TextEditingController insulinController =
         TextEditingController(text: initialInsulin.toStringAsFixed(2));
+    bool checkIfValuesExist(double carbs, double insulin) {
+      if (carbUnit_ == 0) carbs /= 15;
+
+      double curRatio = insulin / carbs;
+
+      return (curRatio == carbRatio_ ||
+          curRatio == carbRatio_2 ||
+          curRatio == carbRatio_3);
+    }
 
     List<Widget> actions = [
       TextButton(
@@ -142,10 +150,51 @@ class _SettingsState extends State<Settings> {
         style: TextButton.styleFrom(
             foregroundColor: const Color.fromARGB(255, 22, 161, 170)),
         onPressed: () {
-          Navigator.of(context).pop({
-            'carbs': double.parse(carbsController.text),
-            'insulin': double.parse(insulinController.text),
-          });
+          double carbs = double.parse(carbsController.text);
+          double insulin = double.parse(insulinController.text);
+
+          if (carbs <= 0 || insulin <= 0) {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Error'),
+                  content: const Text('Values must be greater than zero'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: const Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          } else if (checkIfValuesExist(carbs, insulin)) {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Error'),
+                  content: const Text('Values already exist'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: const Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          } else {
+            Navigator.of(context).pop({
+              'carbs': carbs,
+              'insulin': insulin,
+            });
+          }
         },
         child: const Text('OK'),
       ),
@@ -309,7 +358,30 @@ class _SettingsState extends State<Settings> {
     if (numOfRatios_ < 3) {
       settings.add(
         ElevatedButton.icon(
-          onPressed: () => setState(() => numOfRatios_++),
+          onPressed: () async {
+            Map<String, double>? newCarbRatio =
+                await showDialog<Map<String, double>>(
+              context: context,
+              builder: (context) => carbRatioInputDialog(
+                'Enter new carb ratio',
+                0,
+                0,
+                null,
+              ),
+            );
+            if (newCarbRatio != null) {
+              setState(() {
+                carbs[numOfRatios_](carbUnit_ == 0
+                    ? newCarbRatio['carbs']!
+                    : newCarbRatio['carbs']! * 15);
+                insulins[numOfRatios_](newCarbRatio['insulin']!);
+                carbRatios[numOfRatios_](insulins[numOfRatios_](null) /
+                    (carbs[numOfRatios_](null) / 15));
+                numOfRatios_++;
+                saveCarbRatios();
+              });
+            }
+          },
           icon: const Icon(
             Icons.add,
             color: Color.fromARGB(255, 22, 161, 170),
