@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class UnderTwentyTwo extends StatefulWidget {
@@ -12,6 +15,10 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
   final TextEditingController birthDateController = TextEditingController();
   final TextEditingController motherNameController = TextEditingController();
   final TextEditingController fatherNameController = TextEditingController();
+  final TextEditingController doctorCodeController = TextEditingController();
+
+  File? _frontIdImage;
+  File? _backIdImage;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +79,7 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
                       ),
                     ),
                     const SizedBox(
-                      height: 40,
+                      height: 20,
                     ),
                     TextFormField(
                       controller: birthDateController,
@@ -123,7 +130,135 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
                         }
                       },
                     ),
-                    // Add more TextFormField widgets here as per your requirement
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    TextFormField(
+                      controller: doctorCodeController,
+                      keyboardType: TextInputType.number,
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 38, 20, 84),
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
+                      ),
+                      decoration: InputDecoration(
+                        labelText: 'Doctor ID',
+                        labelStyle: const TextStyle(
+                          color: Color.fromARGB(189, 38, 20, 84),
+                          fontSize: 15,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.emoji_emotions_outlined,
+                          color: Color.fromARGB(255, 38, 20, 84),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          borderSide: BorderSide(
+                            width: 2,
+                            color: Color.fromARGB(255, 38, 20, 84),
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            width: 2,
+                            color: Color.fromARGB(255, 38, 20, 84),
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      validator: (String? value) {
+                        return null;
+                      },
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Text(
+                      'National ID:',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 38, 20, 84),
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        GestureDetector(
+                          onTap: () async {
+                            final pickedFile = await ImagePicker()
+                                .pickImage(source: ImageSource.gallery);
+                            if (pickedFile != null) {
+                              setState(() {
+                                _frontIdImage = File(pickedFile.path);
+                              });
+                            }
+                          },
+                          child: _frontIdImage == null
+                              ? const Icon(Icons.add, size: 100)
+                              : Stack(
+                                  children: [
+                                    SizedBox(
+                                      width: 150,
+                                      height: 200,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(5),
+                                        child: Image.file(_frontIdImage!,
+                                            fit: BoxFit.cover),
+                                      ),
+                                    ),
+                                    const Positioned(
+                                      right: 0,
+                                      bottom: 0,
+                                      child: Icon(Icons.edit,
+                                          color: Color.fromARGB(
+                                              255, 22, 161, 170)),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                        GestureDetector(
+                          onTap: () async {
+                            final pickedFile = await ImagePicker()
+                                .pickImage(source: ImageSource.gallery);
+                            if (pickedFile != null) {
+                              setState(() {
+                                _backIdImage = File(pickedFile.path);
+                              });
+                            }
+                          },
+                          child: _backIdImage == null
+                              ? const Icon(Icons.add, size: 50)
+                              : Stack(
+                                  children: [
+                                    SizedBox(
+                                      width: 150,
+                                      height: 200,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(5),
+                                        child: Image.file(_backIdImage!,
+                                            fit: BoxFit.cover),
+                                      ),
+                                    ),
+                                    const Positioned(
+                                      right: 0,
+                                      bottom: 0,
+                                      child: Icon(Icons.edit,
+                                          color: Color.fromARGB(
+                                              255, 22, 161, 170)),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
