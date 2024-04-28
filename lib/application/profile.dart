@@ -1802,7 +1802,7 @@ class _editProfileState extends State<editProfile> {
                                   saveP();
                                 }
                               });
-                              String user = username_;
+                              //String user = username_;
                               if (uvalue.isNotEmpty) {
                                 if (result == 0 || result == -1) {
                                   setState(() {
@@ -1814,11 +1814,11 @@ class _editProfileState extends State<editProfile> {
                                   setState(() {
                                     usernameErrorMessage = null;
                                     error = false;
-                                    user = _userController.text;
+                                    //user = _userController.text;
                                   });
                                 }
                               }
-                              String email = email_;
+                              //String email = email_;
                               if (value.isNotEmpty) {
                                 if (result2 == 2) {
                                   setState(() {
@@ -1835,11 +1835,11 @@ class _editProfileState extends State<editProfile> {
                                   setState(() {
                                     emailErrorMessage = null;
                                     eerror = false;
-                                    email = _controllerEmail.text;
+                                    //email = _controllerEmail.text;
                                   });
                                 }
                               }
-                              String phone = phoneNumber_;
+                              //String phone = phoneNumber_;
                               if (nvalue.isNotEmpty) {
                                 if (result3 == 2) {
                                   setState(() {
@@ -1858,7 +1858,7 @@ class _editProfileState extends State<editProfile> {
                                     phoneNumberErrorMessage = null;
                                     perror = false;
 
-                                    phone = _pnController.text;
+                                    //phone = _pnController.text;
                                   });
                                 }
                               }
@@ -1894,11 +1894,6 @@ class _editProfileState extends State<editProfile> {
                                   result2 == 1 &&
                                   result3 == 1 &&
                                   result4 == 1) {
-                                username_ = user;
-                                email_ = email;
-                                phoneNumber_ = phone;
-                                saveProfile();
-
                                 Navigator.of(context).pop();
                               }
                             } else {
