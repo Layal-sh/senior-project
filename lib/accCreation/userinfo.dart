@@ -889,7 +889,7 @@ class _UserInfoState extends State<UserInfo> {
                                     controller: insulinController,
                                     keyboardType:
                                         const TextInputType.numberWithOptions(
-                                            decimal: false),
+                                            decimal: true),
                                     inputFormatters: <TextInputFormatter>[
                                       FilteringTextInputFormatter.digitsOnly,
                                     ],
@@ -1033,7 +1033,7 @@ class _UserInfoState extends State<UserInfo> {
                                     controller: glucoseController,
                                     keyboardType:
                                         const TextInputType.numberWithOptions(
-                                            decimal: false),
+                                            decimal: true),
                                     inputFormatters: <TextInputFormatter>[
                                       FilteringTextInputFormatter.digitsOnly,
                                     ],

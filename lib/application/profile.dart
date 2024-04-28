@@ -1351,13 +1351,19 @@ class _editProfileState extends State<editProfile> {
                       height: 10,
                     ),
                     error
-                        ? Text(
-                            usernameErrorMessage!,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 13,
-                            ),
-                          )
+                        ? usernameErrorMessage == "* Username changed"
+                            ? Text(usernameErrorMessage!,
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 0, 207, 69),
+                                  fontSize: 13,
+                                ))
+                            : Text(
+                                usernameErrorMessage!,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 13,
+                                ),
+                              )
                         : Container(),
                     const SizedBox(
                       height: 20,
@@ -1442,13 +1448,21 @@ class _editProfileState extends State<editProfile> {
                       height: 10,
                     ),
                     eerror
-                        ? Text(
-                            emailErrorMessage!,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 13,
-                            ),
-                          )
+                        ? emailErrorMessage == '* Email Changed Successfully'
+                            ? Text(
+                                emailErrorMessage!,
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 0, 207, 69),
+                                  fontSize: 13,
+                                ),
+                              )
+                            : Text(
+                                emailErrorMessage!,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 13,
+                                ),
+                              )
                         : Container(),
                     const SizedBox(
                       height: 20,
@@ -1575,13 +1589,22 @@ class _editProfileState extends State<editProfile> {
                       height: 10,
                     ),
                     perror
-                        ? Text(
-                            phoneNumberErrorMessage!,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 13,
-                            ),
-                          )
+                        ? phoneNumberErrorMessage ==
+                                "* Phone Changed Successfully"
+                            ? Text(
+                                phoneNumberErrorMessage!,
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 0, 207, 69),
+                                  fontSize: 13,
+                                ),
+                              )
+                            : Text(
+                                phoneNumberErrorMessage!,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 13,
+                                ),
+                              )
                         : Container(),
                     const SizedBox(
                       height: 10,
@@ -1739,13 +1762,23 @@ class _editProfileState extends State<editProfile> {
                                 height: 10,
                               ),
                               newerro
-                                  ? Text(
-                                      npasswordErrorMessage!,
-                                      style: const TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 13,
-                                      ),
-                                    )
+                                  ? npasswordErrorMessage ==
+                                          "* Password Changed Successfully"
+                                      ? Text(
+                                          npasswordErrorMessage!,
+                                          style: const TextStyle(
+                                            color:
+                                                Color.fromARGB(255, 0, 207, 69),
+                                            fontSize: 13,
+                                          ),
+                                        )
+                                      : Text(
+                                          npasswordErrorMessage!,
+                                          style: const TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 13,
+                                          ),
+                                        )
                                   : Container(),
                             ],
                           )
@@ -1813,6 +1846,13 @@ class _editProfileState extends State<editProfile> {
                                         "* Username already exists";
                                     error = true;
                                   });
+                                }
+                                if (result == 3) {
+                                  setState(() {
+                                    usernameErrorMessage =
+                                        "* Username Changed Successfully";
+                                    error = true;
+                                  });
                                 } else {
                                   setState(() {
                                     usernameErrorMessage = null;
@@ -1832,6 +1872,12 @@ class _editProfileState extends State<editProfile> {
                                   setState(() {
                                     emailErrorMessage =
                                         "* Email already exists";
+                                    eerror = true;
+                                  });
+                                } else if (result2 == 3) {
+                                  setState(() {
+                                    emailErrorMessage =
+                                        "* Email Changed Successfully";
                                     eerror = true;
                                   });
                                 } else {
@@ -1854,6 +1900,12 @@ class _editProfileState extends State<editProfile> {
                                   setState(() {
                                     phoneNumberErrorMessage =
                                         "* Phone number already exists";
+                                    perror = true;
+                                  });
+                                } else if (result3 == 3) {
+                                  setState(() {
+                                    phoneNumberErrorMessage =
+                                        "* Phone Changed Successfully";
                                     perror = true;
                                   });
                                 } else {
@@ -1882,6 +1934,12 @@ class _editProfileState extends State<editProfile> {
                                   setState(() {
                                     passwordErrorMessage =
                                         "* New password cannot be the same as the old password";
+                                    olderro = true;
+                                  });
+                                } else if (result4 == 3) {
+                                  setState(() {
+                                    passwordErrorMessage =
+                                        "* Password Changed Successfully";
                                     olderro = true;
                                   });
                                 } else {
