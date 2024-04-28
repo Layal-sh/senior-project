@@ -45,6 +45,13 @@ class _UserInfoState extends State<UserInfo> {
   List<double> core = List.generate(3, (index) => 1.0);
   List<double> units = List.generate(3, (index) => 0.0);
 
+  void updateControllers() {
+    for (int i = 0; i < 3; i++) {
+      carbohydratesController[i].text = core[i].toString();
+      unitController[i].text = units[i].toString();
+    }
+  }
+
   List<Widget> forms = [];
   //int core = 0;
   //int units = 1;
@@ -548,13 +555,21 @@ class _UserInfoState extends State<UserInfo> {
                                                       size: 20,
                                                     ),
                                                     onPressed: () {
+                                                      logger.info(
+                                                          "before setState core[1] = ${core[1]} and unit[1] = ${units[1]}");
                                                       setState(() {
                                                         clicked--;
-                                                        core[1] = 1;
-                                                        units[1] = 0;
+                                                        isVisible[clicked] =
+                                                            false;
+                                                        core[1] = core[2];
+                                                        units[1] = units[2];
+                                                        core[clicked + 1] = 1;
+                                                        units[clicked + 1] = 0;
                                                         add = true;
-                                                        isVisible[0] = false;
+                                                        updateControllers();
                                                       });
+                                                      logger.info(
+                                                          "after setState core[1] = ${core[1]} and unit[1] = ${units[1]}");
                                                     },
                                                   ),
                                                 ],
@@ -690,6 +705,7 @@ class _UserInfoState extends State<UserInfo> {
                                                         units[2] = 0;
                                                         add = true;
                                                         isVisible[1] = false;
+                                                        updateControllers();
                                                       });
                                                     },
                                                   ),
