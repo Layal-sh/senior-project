@@ -566,7 +566,21 @@ class _UserInfoState extends State<UserInfo> {
                                                         core[clicked + 1] = 1;
                                                         units[clicked + 1] = 0;
                                                         add = true;
-                                                        updateControllers();
+                                                        carbohydratesController[
+                                                                    1]
+                                                                .text =
+                                                            carbohydratesController[
+                                                                    2]
+                                                                .text;
+                                                        unitController[1].text =
+                                                            unitController[2]
+                                                                .text;
+                                                        carbohydratesController[
+                                                                clicked + 1]
+                                                            .text = "";
+                                                        unitController[
+                                                                clicked + 1]
+                                                            .text = "";
                                                       });
                                                       logger.info(
                                                           "after setState core[1] = ${core[1]} and unit[1] = ${units[1]}");
@@ -705,7 +719,11 @@ class _UserInfoState extends State<UserInfo> {
                                                         units[2] = 0;
                                                         add = true;
                                                         isVisible[1] = false;
-                                                        updateControllers();
+                                                        carbohydratesController[
+                                                                2]
+                                                            .text = "";
+                                                        unitController[2].text =
+                                                            "";
                                                       });
                                                     },
                                                   ),
