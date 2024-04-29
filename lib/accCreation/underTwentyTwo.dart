@@ -202,7 +202,17 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
                             }
                           },
                           child: _frontIdImage == null
-                              ? const Icon(Icons.add, size: 100)
+                              ? Container(
+                                  width: 150,
+                                  height: 200,
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromARGB(50, 38, 20, 84),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: const Icon(Icons.add,
+                                      size: 100,
+                                      color: Color.fromARGB(255, 38, 20, 84)),
+                                )
                               : Stack(
                                   children: [
                                     SizedBox(
@@ -235,7 +245,17 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
                             }
                           },
                           child: _backIdImage == null
-                              ? const Icon(Icons.add, size: 50)
+                              ? Container(
+                                  width: 150,
+                                  height: 200,
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromARGB(50, 38, 20, 84),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: const Icon(Icons.add,
+                                      size: 100,
+                                      color: Color.fromARGB(255, 38, 20, 84)),
+                                )
                               : Stack(
                                   children: [
                                     SizedBox(
@@ -258,6 +278,28 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
                                 ),
                         ),
                       ],
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 38, 20, 84),
+                        minimumSize: const Size.fromHeight(55),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: () {},
+                      child: const Text(
+                        'Submit',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 255, 249, 254),
+                          fontSize: 22,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
                   ],
                 ),
