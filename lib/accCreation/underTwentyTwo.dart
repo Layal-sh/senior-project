@@ -13,8 +13,6 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController birthDateController = TextEditingController();
-  final TextEditingController motherNameController = TextEditingController();
-  final TextEditingController fatherNameController = TextEditingController();
   final TextEditingController doctorCodeController = TextEditingController();
 
   File? _frontIdImage;
