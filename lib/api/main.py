@@ -356,11 +356,10 @@ async def authenticate(user: User):
         # If the email and password are correct, return a 200 OK response
         uid = getUserById(user.username)
         cursor.execute("SELECT * FROM Patients WHERE patientID = ?", uid)
-        pid = cursor.fetchone()
-
+        pid = cursor.fetchone() 
         subs=await getSubscription(uid)
         if(subs is None):
-            raise HTTPException(status_code=400, detail="This user is not subscribed")
+            raise HTTPException(status_code=400, detail="This user is not subscribed", username="")
         elif(pid is None):
             raise HTTPException(status_code=402, detail="This user is not a patient")
         else:

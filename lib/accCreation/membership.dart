@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/accCreation/thanks.dart';
 import 'package:sugar_sense/accCreation/underTwentyTwo.dart';
