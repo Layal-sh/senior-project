@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/accCreation/thanks.dart';
 import 'package:sugar_sense/accCreation/underTwentyTwo.dart';
@@ -30,6 +31,13 @@ class _MembershipState extends State<Membership> {
               ? IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () => {
+                        // int n=1;
+                        // if(selectedPlanIndex==1 || selectedPlanIndex==2){
+                        //    final response2 = await http.get(Uri.parse('http://$localhost:8000/updateSubscription/$pid_/$n'));
+                        //   if(response2.statusCode ==200){
+                        //     //Navigator.of(context).pop(),
+                        //   }
+                        // }
                         Navigator.of(context).pop(),
                       })
               : Container(),
