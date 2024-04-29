@@ -727,3 +727,22 @@ async def deleteEntry(entryID: int, patientId: int):
     except Exception as e:
         return {"error": str(e)}
     
+@app.get("/getEntries/{id}")
+async def getEntries(id:int):
+    cursor.execute("SELECT * FROM Entry WHERE patientID = ?", (id,))
+    rows = cursor.fetchall()
+    column_names = [column[0] for column in cursor.description]
+    if rows is None:
+        return None
+    else:
+        return [{column_name: column for column_name, column in zip(column_names, row)} for row in rows]
+    
+@app.get("/getAppointment/{id}")
+async def getAppointment(id:int):
+    row = cursor.execute("SELECT nextAppointment from Patients where patientsID = ?",(id))
+    if row is not None:
+        return row[0]
+    else:
+        return None
+    
+    

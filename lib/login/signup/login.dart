@@ -86,13 +86,36 @@ class _LoginState extends State<Login> {
     //dbHelper.dropAllArticles();
     //print(await dbHelper.selectAllArticle());
     // await dbHelper.deleteMealComposition();
-    await dbHelper.syncMeals();
+    //await dbHelper.syncMeals();
     //logger.info("synced meals successfully");
-    await dbHelper.syncMealComposition();
+    //await dbHelper.syncMealComposition();
     // logger.info("synced meal compositions successfully");
     // logger.info("saving values to shared preferences");
+    if (nextAppointment_ != "") {
+      DateTime now = DateTime.now();
+      print(now);
+      DateTime appointment = DateTime.parse(nextAppointment_);
+      if (now.isAfter(appointment)) {
+        final response = await http
+            .get(Uri.parse("http://$localhost:8000/getAppointment/$pid_"));
+        if (response.statusCode == 200) {
+          Map<String, dynamic> appointmentDetails = jsonDecode(response.body);
+          nextAppointment_ = appointmentDetails['appointment'];
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString(
+            'nextAppointment',
+            nextAppointment_,
+          );
+        }
+      }
+    }
 
     if (id != pid_) {
+      DBHelper dbHelper = DBHelper.instance;
+      //fetch entries from the server
+      await dbHelper.dropEntries();
+      await dbHelper.syncEntriesById(id);
+
       final response = await http
           .post(
             Uri.parse('http://$localhost:8000/getUserDetails'),
@@ -180,7 +203,12 @@ class _LoginState extends State<Login> {
             //privacy_ = patientDetails['privacy'];
             await prefs.setString('privacy', patientDetails['privacy']);
           }
-          changeDoctor(doctorCode_);
+          if (patientDetails['nextAppointment'] != null) {
+            nextAppointment_ = patientDetails['nextAppointment'];
+            await prefs.setString(
+                'nextAppointment', patientDetails['nextAppointment']);
+          }
+          //changeDoctor(doctorCode_);
           loadPreferences();
           logger.info("saved values to shared preferences successfully");
         } else {
@@ -404,6 +432,7 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           onPressed: () async {
+                            DBHelper dbHelper = DBHelper.instance;
                             //createPlantFoodNotification;
                             bool connectedToWifi = await isConnectedToWifi();
                             print(connectedToWifi);
@@ -443,6 +472,7 @@ class _LoginState extends State<Login> {
                                     .timeout(const Duration(seconds: 10));
                                 // print(int.parse(response.body));
                                 if (response.statusCode == 402) {
+                                  //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
                                   // Navigator.push(
                                   //     context,
                                   //     MaterialPageRoute(
