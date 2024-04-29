@@ -86,18 +86,18 @@ class _LoginState extends State<Login> {
     //dbHelper.dropAllArticles();
     //print(await dbHelper.selectAllArticle());
     // await dbHelper.deleteMealComposition();
-    await dbHelper.syncMeals();
+    //await dbHelper.syncMeals();
     //logger.info("synced meals successfully");
-    await dbHelper.syncMealComposition();
+    //await dbHelper.syncMealComposition();
     // logger.info("synced meal compositions successfully");
     // logger.info("saving values to shared preferences");
 
     if (id != pid_) {
       DBHelper dbHelper = DBHelper.instance;
       //fetch entries from the server
-      int patientID = pid_;
-      dbHelper.dropEntries();
-      dbHelper.syncEntries(pid_);
+      await dbHelper.dropEntries();
+      await dbHelper.syncEntriesById(id);
+
       final response = await http
           .post(
             Uri.parse('http://$localhost:8000/getUserDetails'),
@@ -409,6 +409,8 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           onPressed: () async {
+                            DBHelper dbHelper = DBHelper.instance;
+                            print(await dbHelper.getEntries(4));
                             //createPlantFoodNotification;
                             bool connectedToWifi = await isConnectedToWifi();
                             print(connectedToWifi);
@@ -448,6 +450,7 @@ class _LoginState extends State<Login> {
                                     .timeout(const Duration(seconds: 10));
                                 // print(int.parse(response.body));
                                 if (response.statusCode == 402) {
+                                  //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
                                   // Navigator.push(
                                   //     context,
                                   //     MaterialPageRoute(

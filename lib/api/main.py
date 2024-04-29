@@ -729,7 +729,11 @@ async def deleteEntry(entryID: int, patientId: int):
     
 @app.get("/getEntries/{id}")
 async def getEntries(id:int):
-    row = cursor.execute("SELECT * FROM Entry WHERE patientID = ?", (id,))
-    if row is not None:
-        return row
+    cursor.execute("SELECT * FROM Entry WHERE patientID = ?", (id,))
+    rows = cursor.fetchall()
+    column_names = [column[0] for column in cursor.description]
+    if rows is None:
+        return None
+    else:
+        return [{column_name: column for column_name, column in zip(column_names, row)} for row in rows]
     

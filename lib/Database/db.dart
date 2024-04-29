@@ -372,7 +372,7 @@ class DBHelper {
     //         '${meal['name']} (Quantity: ${meal['quantity']}, Carbs: ${meal['carbohydrates']})')
     //     .join(', ');
     String hasMeals = jsonEncode(meals);
-
+    print(hasMeals);
     //print(hasMeals);
 
     // List<Map<String, dynamic>> meals2 = List<Map<String, dynamic>>.from(jsonDecode(hasMeals));
@@ -455,16 +455,19 @@ class DBHelper {
     return response;
   }
 
-  syncEntries(int id) async {
+  syncEntriesById(int id) async {
+    logger.info("Syncing entries...");
     Database? mydb = await db;
     final entries =
         await http.get(Uri.parse('http://$localhost:8000/getEntries/$id'));
+    print(entries.body);
     if (entries.statusCode == 200) {
       var entriesData = jsonDecode(entries.body);
       for (var entry in entriesData) {
+        String meals = entry['hasMeals'].replaceAll('"', '\\"');
         await mydb!.rawInsert('''
         INSERT INTO Entry(entryId, glucoseLevel, insulinDosage, entryDate, unit, totalCarbs, hasMeals, sync)
-        VALUES(${entry['entryId']}, ${entry['glucoseLevel']}, ${entry['insulinDosage']}, "${entry['entryDate']}", ${entry['unit']}, ${entry['totalCarbs']}, "${entry['hasMeals']}", 1);
+        VALUES(${entry['entryId']}, ${entry['glucoseLevel']}, ${entry['insulinDosage']}, '${entry['entryDate']}', ${entry['unit']}, ${entry['totalCarbs']}, '${entry['hasMeals']}', 1);
       ''');
       }
       logger.info("Entries have been synced successfully.");
