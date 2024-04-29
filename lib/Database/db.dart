@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_function_literals_in_foreach_calls
+// ignore_for_file: avoid_function_literals_in_foreach_calls, unused_local_variable, non_constant_identifier_names, avoid_print, unused_import
 
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -367,10 +367,17 @@ class DBHelper {
   //create an entry for the insulin dosage
   createEntry(double glucose, int insulin, String date, List<Map> meals,
       int unit, double totalCarbs) async {
-    String hasMeals = meals
-        .map((meal) =>
-            '${meal['name']} (Quantity: ${meal['quantity']}, Carbs: ${meal['carbohydrates']})')
-        .join(', ');
+    // String hasMeals = meals
+    //     .map((meal) =>
+    //         '${meal['name']} (Quantity: ${meal['quantity']}, Carbs: ${meal['carbohydrates']})')
+    //     .join(', ');
+    String hasMeals = jsonEncode(meals);
+
+    //print(hasMeals);
+
+    // List<Map<String, dynamic>> meals2 = List<Map<String, dynamic>>.from(jsonDecode(hasMeals));
+
+    // print(meals2);
 
     Database? mydb = await db;
     int idEntry = await generateNewEntry(
@@ -665,7 +672,7 @@ class DBHelper {
     double certainty = 0.0;
     int frequency = 0;
     Database? mydb = await db;
-    int mealId = await getMealIdByName("$name");
+    int mealId = await getMealIdByName(name);
 
     int nextId = await getNextMealId();
 
@@ -718,7 +725,7 @@ class DBHelper {
       totalCarbs += element['carbohydrates'] * element['quantity'];
     });
 
-    if (mealName == null || mealName == "") {
+    if (mealName == "") {
       mealName = "My ${response[0]['mealName']}";
     }
 
@@ -730,12 +737,10 @@ class DBHelper {
         response[0]['tags'] + ', myMeals');
 
     if (newMealID != -1) {
-      if (childMeals != null) {
-        childMeals.forEach((element) {
-          createMealComposition(newMealID, element['mealID'], element['unit'],
-              element['quantity']);
-        });
-      }
+      childMeals.forEach((element) {
+        createMealComposition(
+            newMealID, element['mealID'], element['unit'], element['quantity']);
+      });
       logger.info("Meal has been edited successfully with id $newMealID.");
       return newMealID;
     } else {
@@ -782,8 +787,8 @@ class DBHelper {
       List<String> categories, double carbohydrates) async {
     double totalCarbs = carbohydrates;
 
-    if (picture == null || picture == "") {
-      picture = "All.png";
+    if (picture == "") {
+      picture = "meals/All.png";
     }
     if (childMeals.isNotEmpty) {
       childMeals.forEach((element) {
@@ -792,7 +797,7 @@ class DBHelper {
     }
     String tags = "";
     categories.forEach((element) {
-      tags += element + ", ";
+      tags += "$element, ";
     });
     tags += "myMeals";
     int newMealId = await createNewMeal(mealName, totalCarbs, 7, picture, tags);

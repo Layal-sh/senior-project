@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, duplicate_ignore
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,7 +43,14 @@ class _UserInfoState extends State<UserInfo> {
   List<TextEditingController> unitController =
       List.generate(3, (index) => TextEditingController());
   List<double> core = List.generate(3, (index) => 1.0);
-  List<double> units = List.generate(3, (index) => 1.0);
+  List<double> units = List.generate(3, (index) => 0.0);
+
+  void updateControllers() {
+    for (int i = 0; i < 3; i++) {
+      carbohydratesController[i].text = core[i].toString();
+      unitController[i].text = units[i].toString();
+    }
+  }
 
   List<Widget> forms = [];
   //int core = 0;
@@ -108,7 +117,7 @@ class _UserInfoState extends State<UserInfo> {
   void updatefirstAnswer() {
     List<double> coreUnitsValues = List.filled(3, 0.0);
     for (int i = 0; i < 3; i++) {
-      coreUnitsValues[i] = units[i] / core[i];
+      coreUnitsValues[i] = units[i] / (unit1 == 0 ? core[i] / 15 : core[i]);
     }
 
     answers[0] = coreUnitsValues;
@@ -187,7 +196,7 @@ class _UserInfoState extends State<UserInfo> {
               return Padding(
                 padding: const EdgeInsets.only(
                   left: 30.0,
-                  right: 30.0,
+                  right: 20.0,
                   top: 45,
                 ),
                 child: Column(
@@ -546,13 +555,35 @@ class _UserInfoState extends State<UserInfo> {
                                                       size: 20,
                                                     ),
                                                     onPressed: () {
+                                                      logger.info(
+                                                          "before setState core[1] = ${core[1]} and unit[1] = ${units[1]}");
                                                       setState(() {
                                                         clicked--;
-                                                        core[1] = 1;
-                                                        units[1] = 0;
+                                                        isVisible[clicked] =
+                                                            false;
+                                                        core[1] = core[2];
+                                                        units[1] = units[2];
+                                                        core[clicked + 1] = 1;
+                                                        units[clicked + 1] = 0;
                                                         add = true;
-                                                        isVisible[0] = false;
+                                                        carbohydratesController[
+                                                                    1]
+                                                                .text =
+                                                            carbohydratesController[
+                                                                    2]
+                                                                .text;
+                                                        unitController[1].text =
+                                                            unitController[2]
+                                                                .text;
+                                                        carbohydratesController[
+                                                                clicked + 1]
+                                                            .text = "";
+                                                        unitController[
+                                                                clicked + 1]
+                                                            .text = "";
                                                       });
+                                                      logger.info(
+                                                          "after setState core[1] = ${core[1]} and unit[1] = ${units[1]}");
                                                     },
                                                   ),
                                                 ],
@@ -688,6 +719,11 @@ class _UserInfoState extends State<UserInfo> {
                                                         units[2] = 0;
                                                         add = true;
                                                         isVisible[1] = false;
+                                                        carbohydratesController[
+                                                                2]
+                                                            .text = "";
+                                                        unitController[2].text =
+                                                            "";
                                                       });
                                                     },
                                                   ),
@@ -887,7 +923,7 @@ class _UserInfoState extends State<UserInfo> {
                                     controller: insulinController,
                                     keyboardType:
                                         const TextInputType.numberWithOptions(
-                                            decimal: false),
+                                            decimal: true),
                                     inputFormatters: <TextInputFormatter>[
                                       FilteringTextInputFormatter.digitsOnly,
                                     ],
@@ -1031,7 +1067,7 @@ class _UserInfoState extends State<UserInfo> {
                                     controller: glucoseController,
                                     keyboardType:
                                         const TextInputType.numberWithOptions(
-                                            decimal: false),
+                                            decimal: true),
                                     inputFormatters: <TextInputFormatter>[
                                       FilteringTextInputFormatter.digitsOnly,
                                     ],
@@ -1060,7 +1096,7 @@ class _UserInfoState extends State<UserInfo> {
                           ),
                         if (index == 3)
                           SizedBox(
-                            height: 150,
+                            height: 200,
                             child: ListView.builder(
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: options.length,
@@ -1180,6 +1216,7 @@ class _UserInfoState extends State<UserInfo> {
                       }
                     });
                   }
+                  // ignore: avoid_print
                   print(answers);
                 },
                 child: const Text(
@@ -1208,74 +1245,87 @@ class _UserInfoState extends State<UserInfo> {
                   ),
                 ),
                 onPressed: () async {
-                  setState(
-                    () {
-                      updatelastAnswers();
-                      _isLoading = true;
-                    },
-                  );
-                  //final response = await registerPatient();
-                  //if (response.statusCode == 200) {
-                  logger.info("registered patient successfully");
-                  showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (BuildContext context) {
-                      return Dialog(
-                        //Navigator.of(context).pop();
-                        //Navigator.of(context).pushReplacementNamed('/login');
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          height: MediaQuery.of(context).size.height * 0.6,
-                          child: AlertDialog(
-                            insetPadding: const EdgeInsets.only(
-                              left: 10,
-                              right: 10,
-                              top: 20,
-                              bottom: 20,
-                            ),
-                            backgroundColor: Colors.white,
-                            content: Column(
-                              children: [
-                                Image.asset(
-                                    'assets/completed.png'), // Replace with your image path
-                                const SizedBox(
-                                  height: 30,
-                                ),
-                                const Text(
-                                  'Congratulations!',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Inter',
-                                    color: Color.fromARGB(255, 0, 0, 0),
+                  if (await isConnectedToWifi()) {
+                    setState(
+                      () {
+                        updatelastAnswers();
+                        _isLoading = true;
+                      },
+                    );
+                    //final response = await registerPatient();
+                    //if (response.statusCode == 200) {
+                    logger.info("registered patient successfully");
+                    showDialog(
+                      // ignore: use_build_context_synchronously
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return Dialog(
+                          //Navigator.of(context).pop();
+                          //Navigator.of(context).pushReplacementNamed('/login');
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.6,
+                            child: AlertDialog(
+                              insetPadding: const EdgeInsets.only(
+                                left: 10,
+                                right: 10,
+                                top: 20,
+                                bottom: 20,
+                              ),
+                              backgroundColor: Colors.white,
+                              content: Column(
+                                children: [
+                                  Image.asset(
+                                      'assets/completed.png'), // Replace with your image path
+                                  const SizedBox(
+                                    height: 30,
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                const Text(
-                                  'Your account is ready to use. You will be redirected to the Home Page in a few seconds...',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontFamily: 'Inter',
-                                    color: Color.fromARGB(255, 107, 114, 128),
+                                  const Text(
+                                    'Congratulations!',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Inter',
+                                      color: Color.fromARGB(255, 0, 0, 0),
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                _isLoading ? CustomLoading() : Container(),
-                              ],
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Text(
+                                    'Your account is ready to use. You will be redirected to the Home Page in a few seconds...',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontFamily: 'Inter',
+                                      color: Color.fromARGB(255, 107, 114, 128),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  _isLoading
+                                      ? const CustomLoading()
+                                      : Container(),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  );
-                  final response = await registerPatient();
-                  //}
+                        );
+                      },
+                    );
+                    // ignore: unused_local_variable
+                    final response = await registerPatient();
+                  } else {
+                    // ignore: use_build_context_synchronously
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content:
+                            Text('Please connect to the internet to sign up!'),
+                      ),
+                    );
+                  }
                 },
                 child: const Text(
                   "Finish",
@@ -1308,15 +1358,15 @@ class _UserInfoState extends State<UserInfo> {
     double targetGlucosed = (answers[2] as num).toDouble();
 
     List<dynamic> carbRatios = answers[0] as List<dynamic>;
-    double carbRatio1 = (carbRatios[0] as num).toDouble();
-    double carbRatio2 = (carbRatios[1] as num).toDouble();
-    double carbRatio3 = (carbRatios[2] as num).toDouble();
+    double carbRatio1 = carbRatios[0];
+    double carbRatio2 = carbRatios[1];
+    double carbRatio3 = carbRatios[2];
 
-    if (unit1 == 0) {
-      carbRatio1 /= 15;
-      carbRatio2 /= 15;
-      carbRatio3 /= 15;
-    }
+    // if (unit1 == 0) {
+    //   carbRatio1 /= 15;
+    //   carbRatio2 /= 15;
+    //   carbRatio3 /= 15;
+    // }
     if (unit2 == 0) insulinSensitivity *= 18.018;
     if (unit3 == 0) targetGlucosed *= 18.018;
 
@@ -1373,6 +1423,7 @@ class CustomLoading extends StatefulWidget {
   const CustomLoading({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CustomLoadingState createState() => _CustomLoadingState();
 }
 

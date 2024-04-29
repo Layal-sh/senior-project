@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: avoid_print, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, camel_case_types, library_private_types_in_public_api, file_names
 
 import 'dart:io';
 
@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/application/meals/meals.dart';
@@ -13,7 +14,7 @@ import 'package:sugar_sense/application/meals/meals.dart';
 class EditMeal extends StatefulWidget {
   final Meal meal;
   final int index;
-  const EditMeal({required this.meal, required this.index});
+  const EditMeal({super.key, required this.meal, required this.index});
 
   @override
   State<EditMeal> createState() => _EditMealState();
@@ -205,8 +206,15 @@ class _EditMealState extends State<EditMeal> {
                           await _picker.pickImage(source: ImageSource.gallery);
 
                       if (image != null) {
+                        final directory =
+                            await getApplicationDocumentsDirectory();
+                        final newPath =
+                            '${directory.path}/${DateTime.now().toIso8601String()}.jpg';
+                        final File newImage =
+                            await File(image.path).copy(newPath);
+
                         setState(() {
-                          _selectedImagePath = image.path;
+                          _selectedImagePath = newImage.path;
                         });
                       }
                     },
@@ -224,7 +232,7 @@ class _EditMealState extends State<EditMeal> {
                                     height: 175,
                                     fit: BoxFit.cover,
                                   )
-                                : Image.network(
+                                : Image.asset(
                                     widget.meal.imageUrl,
                                     width: 175,
                                     height: 175,
@@ -242,8 +250,15 @@ class _EditMealState extends State<EditMeal> {
                                   source: ImageSource.gallery);
 
                               if (image != null) {
+                                final directory =
+                                    await getApplicationDocumentsDirectory();
+                                final newPath =
+                                    '${directory.path}/${DateTime.now().toIso8601String()}.jpg';
+                                final File newImage =
+                                    await File(image.path).copy(newPath);
+
                                 setState(() {
-                                  _selectedImagePath = image.path;
+                                  _selectedImagePath = newImage.path;
                                 });
                               }
                             },
@@ -398,7 +413,7 @@ class eIngBox extends StatefulWidget {
   final eIngredient ingredient;
   final int index;
   final TextEditingController quantityController = TextEditingController();
-  eIngBox({required this.index, required this.ingredient}) {
+  eIngBox({super.key, required this.index, required this.ingredient}) {
     quantityController.text = ingredient.quantity.toString();
   }
   @override

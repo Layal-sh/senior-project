@@ -1,16 +1,20 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, use_super_parameters, unused_local_variable, avoid_print, duplicate_ignore, unused_import
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
+import 'package:sugar_sense/accCreation/membership.dart';
 import 'package:sugar_sense/accCreation/userinfo.dart';
 import 'package:sugar_sense/application/app.dart';
 import 'package:sugar_sense/login/signup/forgetPass/forgetpass.dart';
 import 'package:sugar_sense/main.dart';
+//import 'package:sugar_sense/notifications/notification.dart';
+//import 'package:sugar_sense/notifications/notify.dart';
 import 'package:sugar_sense/values/app_regex.dart';
 import 'signup.dart';
 
@@ -64,10 +68,10 @@ class _LoginState extends State<Login> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? list = prefs.getStringList('deleteEntryList');
     if (list != null) {
-      list.forEach((element) {
+      for (var element in list) {
         var response = http.delete(Uri.parse(
             "https://$localhost:8000/deleteEntry/$element/$patientId"));
-      });
+      }
     }
   }
 
@@ -162,18 +166,18 @@ class _LoginState extends State<Login> {
           await prefs.setInt(
               'targetBloodSugar_', patientDetails['targetBloodGlucose']);
           //carbRatio_ = patientDetails['carbRatio'];
-          await prefs.setDouble('carbRatio_', patientDetails['carbRatio']);
+          await prefs.setDouble('carbRatio', patientDetails['carbRatio']);
           numOfRatios_ = 1;
           prefs.setInt('numOfRatios', 1);
           if (patientDetails['carbRatio2'] != null) {
             carbRatio_2 = patientDetails['carbRatio2'];
-            await prefs.setDouble('carbRatio_2', patientDetails['carbRatio2']);
+            await prefs.setDouble('carbRatio2', patientDetails['carbRatio2']);
             if (carbRatio_2 != 0) numOfRatios_++;
             prefs.setInt('numOfRatios', numOfRatios_);
           }
           if (patientDetails['carbRatio3'] != null) {
             carbRatio_3 = patientDetails['carbRatio3'];
-            await prefs.setDouble('carbRatio_3', patientDetails['carbRatio3']);
+            await prefs.setDouble('carbRatio3', patientDetails['carbRatio3']);
             if (carbRatio_3 != 0) numOfRatios_++;
             prefs.setInt('numOfRatios', numOfRatios_);
           }
@@ -379,7 +383,7 @@ class _LoginState extends State<Login> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (_) => ForgetPass()));
+                                      builder: (_) => const ForgetPass()));
                             },
                             child: const Text(
                               'Forget Password?',
@@ -405,6 +409,7 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           onPressed: () async {
+                            //createPlantFoodNotification;
                             bool connectedToWifi = await isConnectedToWifi();
                             print(connectedToWifi);
 
@@ -442,7 +447,13 @@ class _LoginState extends State<Login> {
                                     )
                                     .timeout(const Duration(seconds: 10));
                                 // print(int.parse(response.body));
-                                if (response.statusCode == 400) {
+                                if (response.statusCode == 402) {
+                                  // Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) => const Membership()
+                                  //     ));
+                                } else if (response.statusCode == 400) {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -450,12 +461,20 @@ class _LoginState extends State<Login> {
                                   );
                                 } else if (response.statusCode == 200) {
                                   //print(response.body);
+
                                   deleteListEntries();
                                   setLoginTime();
                                   _isLoading
                                       ? null
                                       : _signIn(email, password,
                                           jsonDecode(response.body)['ID']);
+                                  AwesomeNotifications().createNotification(
+                                      content: NotificationContent(
+                                          id: 10,
+                                          channelKey: 'basic_channel',
+                                          title: 'Login Successful',
+                                          body:
+                                              'You have successfully logged in.'));
                                 } else {
                                   //incorrect username or password handling
                                   //for layal you can change this if you want or remove this comment if you think its good

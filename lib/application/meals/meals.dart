@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, prefer_interpolation_to_compose_strings
+// ignore_for_file: use_build_context_synchronously, prefer_interpolation_to_compose_strings, duplicate_ignore, non_constant_identifier_names, unused_element, avoid_print, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +11,7 @@ import 'package:sugar_sense/AI/ai_functions.dart';
 
 class Meals extends StatefulWidget {
   final int Index;
-  const Meals({required this.Index});
+  const Meals({super.key, required this.Index});
 
   @override
   State<Meals> createState() => _MealsState();
@@ -128,7 +128,8 @@ class _MealsState extends State<Meals> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => CreateMeal()),
+                        MaterialPageRoute(
+                            builder: (context) => const CreateMeal()),
                       );
                     },
                     child: const Text(
@@ -387,8 +388,7 @@ class _MealsState extends State<Meals> {
                               itemBuilder: (ctx, i) => MealBox(
                                 meal: Meal(
                                   name: meals[i]['mealName'],
-                                  // ignore: prefer_interpolation_to_compose_strings
-                                  imageUrl: 'assets/' +
+                                  imageUrl: 'assets/meals/' +
                                       (meals[i]['mealPicture'] ??
                                           'AddDish.png'),
                                   id: meals[i]['mealId'],
@@ -462,7 +462,7 @@ class _MealsState extends State<Meals> {
                                 meal: Meal(
                                   name: meals[i]['mealName'],
                                   // ignore: prefer_interpolation_to_compose_strings
-                                  imageUrl: 'assets/' +
+                                  imageUrl: 'assets/meals/' +
                                       (meals[i]['mealPicture'] ??
                                           'AddDish.png'),
                                   id: meals[i]['mealId'],
@@ -576,7 +576,7 @@ class _MealsState extends State<Meals> {
                                               name: frequentMeals[i]
                                                   ['mealName'],
                                               // ignore: prefer_interpolation_to_compose_strings
-                                              imageUrl: 'assets/' +
+                                              imageUrl: 'assets/meals/' +
                                                   (frequentMeals[i]
                                                           ['mealPicture'] ??
                                                       'AddDish.png'),
@@ -654,7 +654,7 @@ class _MealsState extends State<Meals> {
                                               name: categoryMeals[i]
                                                   ['mealName'],
                                               // ignore: prefer_interpolation_to_compose_strings
-                                              imageUrl: 'assets/' +
+                                              imageUrl: 'assets/meals/' +
                                                   (categoryMeals[i]
                                                           ['mealPicture'] ??
                                                       'AddDish.png'),
@@ -739,6 +739,7 @@ class Meal {
     required this.unit,
     required this.ingredients,
   });
+  @override
   String toString() {
     return 'Meal{name: $name, imageUrl: $imageUrl, id: $id, carbodydrates: $carbohydrates, quantity: $quantity, unit: $unit}';
   }
@@ -768,11 +769,11 @@ Function addToChosenMeals = (int id, double quantity) async {
   bool found = false;
   print("entered chosen meals");
   print(chosenMeals);
-  chosenMeals.forEach((meal) {
+  for (var meal in chosenMeals) {
     if (meal['id'] == id) {
       found = true;
     }
-  });
+  }
 
   if (found) {
     return false;
@@ -780,7 +781,7 @@ Function addToChosenMeals = (int id, double quantity) async {
     List<Map> meal = await db.getMealById(id);
 
     // ignore: prefer_interpolation_to_compose_strings
-    var imageUrl = 'assets/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
+    var imageUrl = 'assets/meals/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
     Map<String, dynamic> insertedMeal = {
       'name': meal[0]['mealName'],
       'imageUrl': imageUrl,
@@ -812,18 +813,18 @@ Function addToChosenCMeals = (int id, double quantity) async {
   bool found = false;
   print("entered chosen meals");
   print(chosenCMeals);
-  chosenCMeals.forEach((meal) {
+  for (var meal in chosenCMeals) {
     if (meal['id'] == id) {
       found = true;
     }
-  });
+  }
 
   if (found) {
     return false;
   } else {
     List<Map> meal = await db.getMealById(id);
 
-    var imageUrl = 'assets/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
+    var imageUrl = 'assets/meals/' + (meal[0]['mealPicture'] ?? 'AddDish.png');
     Map<String, dynamic> insertedMeal = {
       'name': meal[0]['mealName'],
       'imageUrl': imageUrl,
@@ -845,7 +846,7 @@ Function addToChosenCMeals = (int id, double quantity) async {
 class MealBox extends StatefulWidget {
   final Meal meal;
   final int ind;
-  const MealBox({required this.meal, required this.ind});
+  const MealBox({super.key, required this.meal, required this.ind});
   @override
   _MealBoxState createState() => _MealBoxState();
 }
@@ -927,7 +928,7 @@ class _MealBoxState extends State<MealBox> {
                               overflow: TextOverflow.fade,
                               softWrap: false,
                               style: TextStyle(
-                                color: Color.fromARGB(255, 38, 20, 84),
+                                color: const Color.fromARGB(255, 38, 20, 84),
                                 fontSize: unitString(widget.meal.unit) !=
                                         'tablespoons'
                                     ? 16
@@ -961,7 +962,9 @@ class _MealBoxState extends State<MealBox> {
                         ),
                       ),
                       onPressed: () async {
-                        if (quantityController.text.isEmpty) {
+                        if (quantityController.text.isEmpty ||
+                            double.parse(quantityController.text) == 0 ||
+                            double.parse(quantityController.text) < 0) {
                           print('Quantity is empty');
                           showDialog(
                             context: context,
@@ -1129,17 +1132,15 @@ class _MealBoxState extends State<MealBox> {
                               Navigator.pop(context, 'refresh');
                             }
                           },
-                          child: Expanded(
-                            child: CircleAvatar(
-                              radius: MediaQuery.of(context).size.width * 0.024,
-                              backgroundColor:
-                                  const Color.fromARGB(170, 64, 205, 215),
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: const Color.fromARGB(255, 255, 255, 255),
-                                size: MediaQuery.of(context).size.width /
-                                    (MediaQuery.of(context).size.height * 0.05),
-                              ),
+                          child: CircleAvatar(
+                            radius: MediaQuery.of(context).size.width * 0.03,
+                            backgroundColor:
+                                const Color.fromARGB(170, 64, 205, 215),
+                            child: Icon(
+                              Icons.arrow_forward_ios,
+                              color: const Color.fromARGB(255, 255, 255, 255),
+                              size: MediaQuery.of(context).size.width /
+                                  (MediaQuery.of(context).size.height * 0.03),
                             ),
                           ),
                         ),

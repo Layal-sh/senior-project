@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable, library_private_types_in_public_api, use_build_context_synchronously, file_names
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -11,7 +13,7 @@ import 'package:sugar_sense/main.dart';
 
 class AddInput extends StatefulWidget {
   final Function changeTab;
-  AddInput({required this.changeTab});
+  const AddInput({super.key, required this.changeTab});
 
   @override
   _AddInputState createState() => _AddInputState();
@@ -25,6 +27,7 @@ class _AddInputState extends State<AddInput> {
     setState(() {});
   }
 
+  // ignore: non_constant_identifier_names
   final TextEditingController _GlucoseController = TextEditingController();
   String? carbRatioSelected = carbRatio_.toString();
   ValueNotifier<double> glucoseLevelNotifier = ValueNotifier<double>(0.0);

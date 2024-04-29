@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sugar_sense/login/signup/login.dart';
 
 class Start extends StatefulWidget {
-  const Start({Key? key}) : super(key: key);
+  const Start({super.key});
 
   @override
   State<Start> createState() => _StartState();

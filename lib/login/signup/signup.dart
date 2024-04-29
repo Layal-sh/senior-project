@@ -551,7 +551,9 @@ class _SignUpState extends State<SignUp> {
                                   bool connectedToWifi =
                                       await isConnectedToWifi();
                                   DBHelper dbHelper = DBHelper.instance;
-                                  await dbHelper.dropDatabase();
+                                  //await dbHelper.dropDatabase();
+                                  //await dbHelper.initialDb();
+
                                   await dbHelper.reset();
 
                                   String fname = _controllerFirstname.text;
@@ -572,14 +574,14 @@ class _SignUpState extends State<SignUp> {
                                   } else {
                                     final checkName = await http.get(Uri.parse(
                                         'http://$localhost:8000/checkUsername/$username'));
-                          
+
                                     final body = jsonDecode(checkName.body);
 
                                     final checkEmail = await http.get(Uri.parse(
                                         'http://$localhost:8000/checkEmail/$email'));
                                     final body2 = jsonDecode(checkEmail.body);
                                     int docCode = 0;
-                                   
+
                                     if (doctorId.isEmpty) {
                                       doctorCode_ = "NULL";
                                     } else {
@@ -671,8 +673,7 @@ class _SignUpState extends State<SignUp> {
                                         //List<Map> m=dbHelper.selectAllMeals();
                                         //m.forEach(print);
 
-                                        bool accept =
-                                            await showModalBottomSheet(
+                                        await showModalBottomSheet(
                                           context: context,
                                           isScrollControlled: true,
                                           useRootNavigator: true,
@@ -901,10 +902,108 @@ class _SignUpState extends State<SignUp> {
                                                                   ),
                                                                 ),
                                                               ),
-                                                              onPressed: () {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop(true);
+                                                              onPressed:
+                                                                  () async {
+                                                                final response =
+                                                                    await http
+                                                                        .post(
+                                                                          Uri.parse(
+                                                                              'http://$localhost:8000/register'),
+                                                                          headers: <String,
+                                                                              String>{
+                                                                            'Content-Type':
+                                                                                'application/json; charset=UTF-8',
+                                                                          },
+                                                                          body: jsonEncode(<String,
+                                                                              String>{
+                                                                            'firstName':
+                                                                                fname,
+                                                                            'lastName':
+                                                                                lname,
+                                                                            'username':
+                                                                                username,
+                                                                            'email':
+                                                                                email,
+                                                                            'password':
+                                                                                password,
+                                                                            'confirmPassword':
+                                                                                confirmPassword,
+                                                                          }),
+                                                                        )
+                                                                        .timeout(const Duration(
+                                                                            seconds:
+                                                                                10));
+                                                                if (response
+                                                                        .statusCode ==
+                                                                    200) {
+                                                                  await dbHelper
+                                                                      .initialDb();
+                                                                  username_ =
+                                                                      _controllerUsername
+                                                                          .text;
+                                                                  SharedPreferences
+                                                                      prefs =
+                                                                      await SharedPreferences
+                                                                          .getInstance();
+                                                                  prefs.setString(
+                                                                      'username',
+                                                                      username_);
+
+                                                                  firstName_ =
+                                                                      _controllerFirstname
+                                                                          .text;
+                                                                  prefs.setString(
+                                                                      'firstName',
+                                                                      firstName_);
+
+                                                                  final response2 =
+                                                                      await http.get(
+                                                                          Uri.parse(
+                                                                              'http://$localhost:8000/getUserId/$username_'));
+                                                                  print(response2
+                                                                      .body);
+                                                                  pid_ = int.parse(
+                                                                      response2
+                                                                          .body);
+                                                                  prefs.setInt(
+                                                                      "pid",
+                                                                      pid_);
+                                                                  print(pid_);
+
+                                                                  Navigator
+                                                                      .push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              Membership(
+                                                                        username:
+                                                                            _controllerUsername.text,
+                                                                        index:
+                                                                            0,
+                                                                      ),
+                                                                    ),
+                                                                  );
+                                                                } else {
+                                                                  // ignore: avoid_print
+                                                                  print(response
+                                                                      .body);
+                                                                  var responseBody =
+                                                                      jsonDecode(
+                                                                          response
+                                                                              .body);
+                                                                  var errorMessage =
+                                                                      responseBody[
+                                                                              'detail'] ??
+                                                                          'Unknown error';
+                                                                  ScaffoldMessenger.of(
+                                                                          context)
+                                                                      .showSnackBar(
+                                                                    SnackBar(
+                                                                        content:
+                                                                            Text('$errorMessage')),
+                                                                  );
+                                                                }
                                                               },
                                                             ),
                                                           ),
@@ -917,7 +1016,7 @@ class _SignUpState extends State<SignUp> {
                                             );
                                           },
                                         );
-                                        if (accept == true) {
+                                        /*if (accept == true) {
                                           //server authentication
                                           final response = await http
                                               .post(
@@ -975,7 +1074,7 @@ class _SignUpState extends State<SignUp> {
                                                       Text('$errorMessage')),
                                             );
                                           }
-                                        } //if accept==true
+                                        } */ //if accept==true
                                       } catch (e) {
                                         // ignore: avoid_print
                                         print('Error: $e');
@@ -987,236 +1086,6 @@ class _SignUpState extends State<SignUp> {
                                         );
                                       }
                                     }
-                                    // bool accept = await showModalBottomSheet(
-                                    //   context: context,
-                                    //   isScrollControlled: true,
-                                    //   useRootNavigator: true,
-                                    //   builder: (context) {
-                                    //     return SizedBox(
-                                    //       height:
-                                    //           MediaQuery.of(context).size.height *
-                                    //               0.9,
-                                    //       child: Stack(
-                                    //         //mainAxisAlignment:MainAxisAlignment.spaceBetween,
-                                    //         children: [
-                                    //           ShaderMask(
-                                    //             shaderCallback: (Rect bounds) {
-                                    //               return const LinearGradient(
-                                    //                 begin: Alignment.topCenter,
-                                    //                 end: Alignment.bottomCenter,
-                                    //                 colors: <Color>[
-                                    //                   Colors.transparent,
-                                    //                   Colors.white
-                                    //                 ],
-                                    //                 stops: <double>[0.75, 0.85],
-                                    //               ).createShader(bounds);
-                                    //             },
-                                    //             blendMode: BlendMode.dstOut,
-                                    //             child: SingleChildScrollView(
-                                    //               child: Container(
-                                    //                 padding:
-                                    //                     const EdgeInsets.only(
-                                    //                   left: 30,
-                                    //                   right: 30,
-                                    //                   top: 20,
-                                    //                   bottom: 10,
-                                    //                 ),
-                                    //                 child: Column(
-                                    //                   crossAxisAlignment:
-                                    //                       CrossAxisAlignment
-                                    //                           .start,
-                                    //                   children: [
-                                    //                     const Text(
-                                    //                       'AGREEMENT',
-                                    //                       style: TextStyle(
-                                    //                         fontSize: 16.0,
-                                    //                         color: Color.fromARGB(
-                                    //                             255,
-                                    //                             173,
-                                    //                             173,
-                                    //                             173),
-                                    //                         fontWeight:
-                                    //                             FontWeight.normal,
-                                    //                         fontFamily: 'Inter',
-                                    //                       ),
-                                    //                     ),
-                                    //                     const Text(
-                                    //                       'Terms of Service',
-                                    //                       style: TextStyle(
-                                    //                         fontSize: 32.0,
-                                    //                         fontWeight:
-                                    //                             FontWeight.bold,
-                                    //                       ),
-                                    //                     ),
-                                    //                     const SizedBox(
-                                    //                         height: 20.0),
-                                    //                     const Text(
-                                    //                       '1. OUR SERVICES',
-                                    //                       style: TextStyle(
-                                    //                         fontSize: 18.0,
-                                    //                         fontWeight:
-                                    //                             FontWeight.bold,
-                                    //                       ),
-                                    //                     ),
-                                    //                     const Text(
-                                    //                       'The information provided when using the Services is not intended for distribution to or use by any person or entity in any jurisdiction or country where such distribution or use would be contrary to law or regulation or which would subject us to any registration requirement within such jurisdiction or country. Accordingly, those persons who choose to access the Services from other locations do so on their own initiative and are solely responsible for compliance with local laws, if and to the extent local laws are applicable.',
-                                    //                       style: TextStyle(
-                                    //                           fontSize: 18.0),
-                                    //                     ),
-                                    //                     const SizedBox(
-                                    //                         height: 10.0),
-                                    //                     const Text(
-                                    //                       '2. Use License',
-                                    //                       style: TextStyle(
-                                    //                         fontSize: 18.0,
-                                    //                         fontWeight:
-                                    //                             FontWeight.bold,
-                                    //                       ),
-                                    //                     ),
-                                    //                     const Text(
-                                    //                       'Subject to your compliance with these Legal Terms, including the "PROHIBITED ACTIVITIES" section below, we grant you a non-exclusive, non-transferable, revocable license to: access the Services; and download or print a copy of any portion of the Content to which you have properly gained access. solely for your personal, non-commercial use or internal business purpose. Except as set out in this section or elsewhere in our Legal Terms, no part of the Services and no Content or Marks may be copied, reproduced, aggregated, ',
-                                    //                       style: TextStyle(
-                                    //                           fontSize: 18.0),
-                                    //                     ),
-                                    //                     SizedBox(
-                                    //                       height: MediaQuery.of(
-                                    //                                   context)
-                                    //                               .size
-                                    //                               .height *
-                                    //                           0.15,
-                                    //                     ),
-                                    //                   ],
-                                    //                 ),
-                                    //               ),
-                                    //             ),
-                                    //           ),
-                                    //           Positioned(
-                                    //             left: 0,
-                                    //             right: 0,
-                                    //             bottom: 0,
-                                    //             child: Padding(
-                                    //               padding: const EdgeInsets.only(
-                                    //                 left: 20,
-                                    //                 right: 20,
-                                    //                 bottom: 40,
-                                    //               ),
-                                    //               child: Row(
-                                    //                 mainAxisAlignment:
-                                    //                     MainAxisAlignment
-                                    //                         .spaceAround,
-                                    //                 children: [
-                                    //                   SizedBox(
-                                    //                     width:
-                                    //                         MediaQuery.of(context)
-                                    //                                 .size
-                                    //                                 .width *
-                                    //                             0.4,
-                                    //                     child: ElevatedButton(
-                                    //                       style: ButtonStyle(
-                                    //                         shape: MaterialStateProperty
-                                    //                             .all<
-                                    //                                 RoundedRectangleBorder>(
-                                    //                           RoundedRectangleBorder(
-                                    //                             borderRadius:
-                                    //                                 BorderRadius
-                                    //                                     .circular(
-                                    //                                         10.0),
-                                    //                             side:
-                                    //                                 const BorderSide(
-                                    //                               color: Color
-                                    //                                   .fromARGB(
-                                    //                                 255,
-                                    //                                 49,
-                                    //                                 205,
-                                    //                                 215,
-                                    //                               ),
-                                    //                             ),
-                                    //                           ),
-                                    //                         ),
-                                    //                       ),
-                                    //                       child: const Text(
-                                    //                         'Decline',
-                                    //                         style: TextStyle(
-                                    //                           color:
-                                    //                               Color.fromARGB(
-                                    //                             255,
-                                    //                             49,
-                                    //                             205,
-                                    //                             215,
-                                    //                           ),
-                                    //                           fontWeight:
-                                    //                               FontWeight.w700,
-                                    //                         ),
-                                    //                       ),
-                                    //                       onPressed: () {
-                                    //                         Navigator.of(context)
-                                    //                             .pop(false);
-                                    //                       },
-                                    //                     ),
-                                    //                   ),
-                                    //                   SizedBox(
-                                    //                     width:
-                                    //                         MediaQuery.of(context)
-                                    //                                 .size
-                                    //                                 .width *
-                                    //                             0.4,
-                                    //                     child: ElevatedButton(
-                                    //                       style: ElevatedButton
-                                    //                           .styleFrom(
-                                    //                         backgroundColor:
-                                    //                             const Color
-                                    //                                 .fromARGB(
-                                    //                           255,
-                                    //                           49,
-                                    //                           205,
-                                    //                           215,
-                                    //                         ),
-                                    //                         shape:
-                                    //                             RoundedRectangleBorder(
-                                    //                           borderRadius:
-                                    //                               BorderRadius
-                                    //                                   .circular(
-                                    //                                       10), // Change this value as needed
-                                    //                         ),
-                                    //                       ),
-                                    //                       child: const Text(
-                                    //                         'Accept',
-                                    //                         style: TextStyle(
-                                    //                           color:
-                                    //                               Color.fromARGB(
-                                    //                             255,
-                                    //                             255,
-                                    //                             249,
-                                    //                             254,
-                                    //                           ),
-                                    //                         ),
-                                    //                       ),
-                                    //                       onPressed: () {
-                                    //                         Navigator.of(context)
-                                    //                             .pop(true);
-                                    //                       },
-                                    //                     ),
-                                    //                   ),
-                                    //                 ],
-                                    //               ),
-                                    //             ),
-                                    //           ),
-                                    //         ],
-                                    //       ),
-                                    //     );
-                                    //   },
-                                    // );
-                                    // if (accept == true) {
-                                    //   username_ = _controllerUsername.text;
-                                    //   Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //       builder: (context) => Membership(
-                                    //         username: _controllerUsername.text,
-                                    //       ),
-                                    //     ),
-                                    //   );
-                                    // }
                                   }
                                 },
                                 child: const Text(

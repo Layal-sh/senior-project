@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unused_local_variable, non_constant_identifier_names, unnecessary_import
 
 import 'dart:async';
 
@@ -180,7 +180,7 @@ class _ForgetPassState extends State<ForgetPass> {
                   child: Text(
                     'Next',
                     style: TextStyle(
-                      color: Color.fromARGB(255, 255, 255, 255),
+                      color: const Color.fromARGB(255, 255, 255, 255),
                       fontSize: MediaQuery.of(context).size.width * 0.045,
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w900,
