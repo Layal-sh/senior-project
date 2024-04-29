@@ -737,3 +737,12 @@ async def getEntries(id:int):
     else:
         return [{column_name: column for column_name, column in zip(column_names, row)} for row in rows]
     
+@app.get("/getAppointment/{id}")
+async def getAppointment(id:int):
+    row = cursor.execute("SELECT nextAppointment from Patients where patientsID = ?",(id))
+    if row is not None:
+        return row[0]
+    else:
+        return None
+    
+    
