@@ -2,7 +2,7 @@
 
 import 'dart:io';
 
-import 'package:background_fetch/background_fetch.dart';
+//import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -69,7 +69,7 @@ Future<void> main() async {
   */
   ]);
   runApp(const MyApp());
-  BackgroundFetch.configure(
+  /*BackgroundFetch.configure(
       BackgroundFetchConfig(
         minimumFetchInterval: 15, // Fetch interval in minutes
         stopOnTerminate: false,
@@ -95,6 +95,7 @@ Future<void> main() async {
   BackgroundFetch.status.then((int status) {
     print('[BackgroundFetch] STATUS: $status');
   });
+*/
 }
 
 void checkLatestEntryDateAndShowNotification() async {
@@ -107,8 +108,8 @@ void checkLatestEntryDateAndShowNotification() async {
   // Define the notification times
   List<DateTime> notificationTimes = [
     DateTime(now.year, now.month, now.day, 10),
-    DateTime(now.year, now.month, now.day, 16),
-    DateTime(now.year, now.month, now.day, 20),
+    DateTime(now.year, now.month, now.day, 17),
+    DateTime(now.year, now.month, now.day, 21),
   ];
 
   int notificationId = 0;

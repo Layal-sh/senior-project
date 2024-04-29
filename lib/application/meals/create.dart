@@ -9,6 +9,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/application/meals/meals.dart';
@@ -34,9 +35,16 @@ class _CreateMealState extends State<CreateMeal> {
     final ImagePicker _picker = ImagePicker();
     final XFile? image = (await _picker.pickImage(source: ImageSource.gallery));
 
-    setState(() {
-      _selectedImage = image;
-    });
+    if (image != null) {
+      final directory = await getApplicationDocumentsDirectory();
+      final newPath =
+          '${directory.path}/${DateTime.now().toIso8601String()}.jpg';
+      final File newImage = await File(image.path).copy(newPath);
+
+      setState(() {
+        _selectedImage = XFile(newImage.path);
+      });
+    }
   }
 
   final _nameController = TextEditingController();
@@ -160,8 +168,8 @@ class _CreateMealState extends State<CreateMeal> {
                             } else {
                               image = _selectedImage!.path;
                             }
-                           
-                            if(_nameController.text.isEmpty){
+
+                            if (_nameController.text.isEmpty) {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -170,8 +178,7 @@ class _CreateMealState extends State<CreateMeal> {
                                   );
                                 },
                               );
-                            
-                            }else if(gramsController.text.isEmpty){
+                            } else if (gramsController.text.isEmpty) {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -180,8 +187,9 @@ class _CreateMealState extends State<CreateMeal> {
                                   );
                                 },
                               );
-                            
-                            }else if (await dbHelper.getMealIdByName(_nameController.text) != -1) {
+                            } else if (await dbHelper
+                                    .getMealIdByName(_nameController.text) !=
+                                -1) {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -191,15 +199,15 @@ class _CreateMealState extends State<CreateMeal> {
                                 },
                               );
                             } else {
-                               int createdMeal = await dbHelper.createMeal(
-                                _nameController.text,
-                                image,
-                                chosenCMeals,
-                                selectedCategories,
-                                chosenCMeals.isEmpty
-                                    ? double.parse(gramsController.text)
-                                    : totalCCarbs);
-                            print("Created Meal: $createdMeal");
+                              int createdMeal = await dbHelper.createMeal(
+                                  _nameController.text,
+                                  image,
+                                  chosenCMeals,
+                                  selectedCategories,
+                                  chosenCMeals.isEmpty
+                                      ? double.parse(gramsController.text)
+                                      : totalCCarbs);
+                              print("Created Meal: $createdMeal");
                               Navigator.pop(context);
                               Navigator.pop(context);
 

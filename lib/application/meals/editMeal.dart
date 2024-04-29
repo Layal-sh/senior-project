@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/application/meals/meals.dart';
@@ -205,8 +206,15 @@ class _EditMealState extends State<EditMeal> {
                           await _picker.pickImage(source: ImageSource.gallery);
 
                       if (image != null) {
+                        final directory =
+                            await getApplicationDocumentsDirectory();
+                        final newPath =
+                            '${directory.path}/${DateTime.now().toIso8601String()}.jpg';
+                        final File newImage =
+                            await File(image.path).copy(newPath);
+
                         setState(() {
-                          _selectedImagePath = image.path;
+                          _selectedImagePath = newImage.path;
                         });
                       }
                     },
@@ -224,7 +232,7 @@ class _EditMealState extends State<EditMeal> {
                                     height: 175,
                                     fit: BoxFit.cover,
                                   )
-                                : Image.network(
+                                : Image.asset(
                                     widget.meal.imageUrl,
                                     width: 175,
                                     height: 175,
@@ -242,8 +250,15 @@ class _EditMealState extends State<EditMeal> {
                                   source: ImageSource.gallery);
 
                               if (image != null) {
+                                final directory =
+                                    await getApplicationDocumentsDirectory();
+                                final newPath =
+                                    '${directory.path}/${DateTime.now().toIso8601String()}.jpg';
+                                final File newImage =
+                                    await File(image.path).copy(newPath);
+
                                 setState(() {
-                                  _selectedImagePath = image.path;
+                                  _selectedImagePath = newImage.path;
                                 });
                               }
                             },

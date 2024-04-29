@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/accCreation/thanks.dart';
+import 'package:sugar_sense/accCreation/underTwentyTwo.dart';
 
 class Membership extends StatefulWidget {
   final String username;
@@ -430,14 +431,13 @@ class _MembershipState extends State<Membership> {
                       ),
                     ),
                     InkWell(
-                      /*onTap: () async {
-                        const url = 'https://www.google.com';
-                        if (await canLaunchUrl(Uri.parse(url))) {
-                          await launchUrl(Uri.parse(url));
-                        } else {
-                          throw 'Could not launch $url';
-                        }
-                      },*/
+                      onTap: () async {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UnderTwentyTwo()),
+                        );
+                      },
                       child: Stack(
                         children: [
                           const Text(

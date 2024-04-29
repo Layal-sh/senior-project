@@ -54,7 +54,7 @@ userNameUpdate(String username) async {
       if (name.statusCode == 200) {
         username_ = username;
         saveProfile();
-        return 1;
+        return 3;
       } else if (name.statusCode == 401) {
         //display snackbar thingy with username already exists
         return 0;
@@ -81,7 +81,7 @@ emailUpdate(String email) async {
     if (name.statusCode == 200) {
       email_ = email;
       saveProfile();
-      return 1;
+      return 3;
     } else if (name.statusCode == 401) {
       //display snackbar thingy with username already exists
       return 0;
@@ -104,7 +104,7 @@ phoneUpdate(String phone) async {
     if (name.statusCode == 200) {
       phoneNumber_ = phone;
       saveProfile();
-      return 1;
+      return 3;
     } else if (name.statusCode == 401) {
       //display snackbar thingy with username already exists
       return 0;
@@ -125,7 +125,7 @@ passwordUpdate(String old, String newpass) async {
     final name = await http.get(
         Uri.parse('http://$localhost:8000/changePassword/$old/$newpass/$id'));
     if (name.statusCode == 200) {
-      return 1;
+      return 3;
     } else if (name.statusCode == 401) {
       //old password is incorrect
       return 0;

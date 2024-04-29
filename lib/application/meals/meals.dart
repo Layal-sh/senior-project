@@ -1133,14 +1133,14 @@ class _MealBoxState extends State<MealBox> {
                             }
                           },
                           child: CircleAvatar(
-                            radius: MediaQuery.of(context).size.width * 0.024,
+                            radius: MediaQuery.of(context).size.width * 0.03,
                             backgroundColor:
                                 const Color.fromARGB(170, 64, 205, 215),
                             child: Icon(
                               Icons.arrow_forward_ios,
                               color: const Color.fromARGB(255, 255, 255, 255),
                               size: MediaQuery.of(context).size.width /
-                                  (MediaQuery.of(context).size.height * 0.05),
+                                  (MediaQuery.of(context).size.height * 0.03),
                             ),
                           ),
                         ),

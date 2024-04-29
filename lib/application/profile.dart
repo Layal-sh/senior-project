@@ -1091,7 +1091,6 @@ class _editProfileState extends State<editProfile> {
     final ImagePicker _picker = ImagePicker();
     final XFile? image = (await _picker.pickImage(source: ImageSource.gallery));
 
-    // this allegedly only works on mobile but i cant test it :(
     if (image != null) {
       final directory = await getApplicationDocumentsDirectory();
       final newPath =
@@ -1107,9 +1106,14 @@ class _editProfileState extends State<editProfile> {
   bool error = false;
   bool eerror = false;
   bool perror = false;
+  bool olderro = false;
+  bool newerro = false;
   String? phoneNumberErrorMessage;
   String? emailErrorMessage;
   String? usernameErrorMessage;
+  String? passwordErrorMessage;
+  String? npasswordErrorMessage;
+
   @override
   void initState() {
     super.initState();
@@ -1346,13 +1350,19 @@ class _editProfileState extends State<editProfile> {
                       height: 10,
                     ),
                     error
-                        ? Text(
-                            usernameErrorMessage!,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 13,
-                            ),
-                          )
+                        ? usernameErrorMessage == "* Username changed"
+                            ? Text(usernameErrorMessage!,
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 0, 207, 69),
+                                  fontSize: 13,
+                                ))
+                            : Text(
+                                usernameErrorMessage!,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 13,
+                                ),
+                              )
                         : Container(),
                     const SizedBox(
                       height: 20,
@@ -1437,13 +1447,21 @@ class _editProfileState extends State<editProfile> {
                       height: 10,
                     ),
                     eerror
-                        ? Text(
-                            emailErrorMessage!,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 13,
-                            ),
-                          )
+                        ? emailErrorMessage == '* Email Changed Successfully'
+                            ? Text(
+                                emailErrorMessage!,
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 0, 207, 69),
+                                  fontSize: 13,
+                                ),
+                              )
+                            : Text(
+                                emailErrorMessage!,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 13,
+                                ),
+                              )
                         : Container(),
                     const SizedBox(
                       height: 20,
@@ -1570,13 +1588,22 @@ class _editProfileState extends State<editProfile> {
                       height: 10,
                     ),
                     perror
-                        ? Text(
-                            phoneNumberErrorMessage!,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 13,
-                            ),
-                          )
+                        ? phoneNumberErrorMessage ==
+                                "* Phone Changed Successfully"
+                            ? Text(
+                                phoneNumberErrorMessage!,
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 0, 207, 69),
+                                  fontSize: 13,
+                                ),
+                              )
+                            : Text(
+                                phoneNumberErrorMessage!,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 13,
+                                ),
+                              )
                         : Container(),
                     const SizedBox(
                       height: 10,
@@ -1660,33 +1687,19 @@ class _editProfileState extends State<editProfile> {
                                         BorderRadius.all(Radius.circular(15)),
                                   ),
                                 ),
-                                /*validator: (String? value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter your email';
-                                  }
-            
-                                  return emailErrorMessage;
-                                },
-                                onChanged: (String? value) async {
-                                  if (value != null && value.isNotEmpty) {
-                                    int result = await emailUpdate(value);
-                                    if (result == 2) {
-                                      setState(() {
-                                        emailErrorMessage = "* Invalid email";
-                                      });
-                                    } else if (result == 0 || result == -1) {
-                                      setState(() {
-                                        emailErrorMessage =
-                                            "* Email already exists";
-                                      });
-                                    } else {
-                                      setState(() {
-                                        emailErrorMessage = null;
-                                      });
-                                    }
-                                  }
-                                },*/
                               ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              olderro
+                                  ? Text(
+                                      passwordErrorMessage!,
+                                      style: const TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 13,
+                                      ),
+                                    )
+                                  : Container(),
                               const SizedBox(
                                 height: 20,
                               ),
@@ -1743,33 +1756,29 @@ class _editProfileState extends State<editProfile> {
                                         BorderRadius.all(Radius.circular(15)),
                                   ),
                                 ),
-                                /*validator: (String? value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter your new password';
-                                  }
-            
-                                  return passErrorMessage;
-                                },*/
-                                /*onChanged: (String? value) async {
-                                  if (value != null && value.isNotEmpty) {
-                                    int result = await emailUpdate(value);
-                                    if (result == 2) {
-                                      setState(() {
-                                        emailErrorMessage = "* Invalid email";
-                                      });
-                                    } else if (result == 0 || result == -1) {
-                                      setState(() {
-                                        emailErrorMessage =
-                                            "* Email already exists";
-                                      });
-                                    } else {
-                                      setState(() {
-                                        emailErrorMessage = null;
-                                      });
-                                    }
-                                  }
-                                },*/
                               ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              newerro
+                                  ? npasswordErrorMessage ==
+                                          "* Password Changed Successfully"
+                                      ? Text(
+                                          npasswordErrorMessage!,
+                                          style: const TextStyle(
+                                            color:
+                                                Color.fromARGB(255, 0, 207, 69),
+                                            fontSize: 13,
+                                          ),
+                                        )
+                                      : Text(
+                                          npasswordErrorMessage!,
+                                          style: const TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 13,
+                                          ),
+                                        )
+                                  : Container(),
                             ],
                           )
                         : Container(),
@@ -1807,12 +1816,14 @@ class _editProfileState extends State<editProfile> {
                           int result2 = await emailUpdate(value);
                           String nvalue = _pnController.text;
                           int result3 = await phoneUpdate(nvalue);
-
+                          //result is name
+                          //result2 is email
+                          //result3 is phone
+                          //result4 is password
                           String oldvalue = _controllerPass.text;
                           String newvalue = _controllerVeryPass.text;
                           int result4 =
                               await passwordUpdate(oldvalue, newvalue);
-                          print(result4);
 
                           if (_formKey.currentState!.validate()) {
                             if (await isConnectedToWifi()) {
@@ -1826,6 +1837,7 @@ class _editProfileState extends State<editProfile> {
                                   saveP();
                                 }
                               });
+                              //String user = username_;
                               if (uvalue.isNotEmpty) {
                                 if (result == 0 || result == -1) {
                                   setState(() {
@@ -1833,14 +1845,22 @@ class _editProfileState extends State<editProfile> {
                                         "* Username already exists";
                                     error = true;
                                   });
+                                }
+                                if (result == 3) {
+                                  setState(() {
+                                    usernameErrorMessage =
+                                        "* Username Changed Successfully";
+                                    error = true;
+                                  });
                                 } else {
                                   setState(() {
                                     usernameErrorMessage = null;
                                     error = false;
-                                    username_ = _userController.text;
+                                    //user = _userController.text;
                                   });
                                 }
                               }
+                              //String email = email_;
                               if (value.isNotEmpty) {
                                 if (result2 == 2) {
                                   setState(() {
@@ -1853,27 +1873,38 @@ class _editProfileState extends State<editProfile> {
                                         "* Email already exists";
                                     eerror = true;
                                   });
+                                } else if (result2 == 3) {
+                                  setState(() {
+                                    emailErrorMessage =
+                                        "* Email Changed Successfully";
+                                    eerror = true;
+                                  });
                                 } else {
                                   setState(() {
                                     emailErrorMessage = null;
                                     eerror = false;
-                                    email_ = _controllerEmail.text;
+                                    //email = _controllerEmail.text;
                                   });
                                 }
                               }
-
+                              //String phone = phoneNumber_;
                               if (nvalue.isNotEmpty) {
-                                int result = await phoneUpdate(value);
-                                if (result == 2) {
+                                if (result3 == 2) {
                                   setState(() {
                                     phoneNumberErrorMessage =
                                         "* Invalid phone number";
                                     perror = true;
                                   });
-                                } else if (result == 0 || result == -1) {
+                                } else if (result3 == 0 || result3 == -1) {
                                   setState(() {
                                     phoneNumberErrorMessage =
                                         "* Phone number already exists";
+                                    perror = true;
+                                  });
+                                } else if (result3 == 3) {
+                                  setState(() {
+                                    phoneNumberErrorMessage =
+                                        "* Phone Changed Successfully";
                                     perror = true;
                                   });
                                 } else {
@@ -1881,11 +1912,48 @@ class _editProfileState extends State<editProfile> {
                                     phoneNumberErrorMessage = null;
                                     perror = false;
 
-                                    phoneNumber_ = _pnController.text;
+                                    //phone = _pnController.text;
                                   });
                                 }
                               }
-                              if (result == 1 && result2 == 1 && result3 == 1) {
+                              if (oldvalue.isNotEmpty && newvalue.isNotEmpty) {
+                                if (result4 == 2) {
+                                  setState(() {
+                                    npasswordErrorMessage =
+                                        "* Invalid password";
+                                    newerro = true;
+                                  });
+                                } else if (result4 == 0 || result4 == -1) {
+                                  setState(() {
+                                    passwordErrorMessage =
+                                        "* Old password is incorrect";
+                                    olderro = true;
+                                  });
+                                } else if (result4 == 4) {
+                                  setState(() {
+                                    passwordErrorMessage =
+                                        "* New password cannot be the same as the old password";
+                                    olderro = true;
+                                  });
+                                } else if (result4 == 3) {
+                                  setState(() {
+                                    passwordErrorMessage =
+                                        "* Password Changed Successfully";
+                                    olderro = true;
+                                  });
+                                } else {
+                                  setState(() {
+                                    passwordErrorMessage = null;
+                                    npasswordErrorMessage = null;
+                                    olderro = false;
+                                    newerro = false;
+                                  });
+                                }
+                              }
+                              if (result == 1 &&
+                                  result2 == 1 &&
+                                  result3 == 1 &&
+                                  result4 == 1) {
                                 Navigator.of(context).pop();
                               }
                             } else {
