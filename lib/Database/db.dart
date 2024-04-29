@@ -171,14 +171,14 @@ class DBHelper {
 //////////////////////////////////////////////////////////////
   /////////////// Fixing for Sign up///////////////////////////
   //////////////////////////////////////////////////////////////
-  reset() async{
+  reset() async {
     await dropMealComposition();
     await dropMeals();
     await dropEntries();
     await dropAllArticles();
     logger.info("Database has been reset");
   }
-  
+
   dropMealComposition() async {
     logger.info("Deleting Meal Composition...");
     Database? mydb = await db;
@@ -448,6 +448,22 @@ class DBHelper {
     return response;
   }
 
+  syncEntries(int id) async {
+    Database? mydb = await db;
+    final entries =
+        await http.get(Uri.parse('http://$localhost:8000/getEntries/$id'));
+    if (entries.statusCode == 200) {
+      var entriesData = jsonDecode(entries.body);
+      for (var entry in entriesData) {
+        await mydb!.rawInsert('''
+        INSERT INTO Entry(entryId, glucoseLevel, insulinDosage, entryDate, unit, totalCarbs, hasMeals, sync)
+        VALUES(${entry['entryId']}, ${entry['glucoseLevel']}, ${entry['insulinDosage']}, "${entry['entryDate']}", ${entry['unit']}, ${entry['totalCarbs']}, "${entry['hasMeals']}", 1);
+      ''');
+      }
+      logger.info("Entries have been synced successfully.");
+    }
+  }
+
   // insertEntry(double glucose, int insulin, String date) async {
   //   Database? mydb = await db;
   //   int response = await mydb!.rawInsert('''
@@ -492,10 +508,10 @@ class DBHelper {
 
   getEntriesYearly() async {
     Database? mydb = await db;
-  //   var res = await mydb!.rawQuery('''
-  //   SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-1 year') AND date('now')
-  // ''');
-  var res = await mydb!.rawQuery('''
+    //   var res = await mydb!.rawQuery('''
+    //   SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-1 year') AND date('now')
+    // ''');
+    var res = await mydb!.rawQuery('''
     SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-3 month') AND date('now')
   ''');
     return res;

@@ -89,6 +89,11 @@ class _LoginState extends State<Login> {
     // logger.info("saving values to shared preferences");
 
     if (id != pid_) {
+      DBHelper dbHelper = DBHelper.instance;
+      //fetch entries from the server
+      int patientID = pid_;
+      dbHelper.dropEntries();
+      dbHelper.syncEntries(pid_);
       final response = await http
           .post(
             Uri.parse('http://$localhost:8000/getUserDetails'),

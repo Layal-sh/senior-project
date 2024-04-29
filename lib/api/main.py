@@ -673,3 +673,9 @@ async def deleteEntry(entryID: int, patientId: int):
     except Exception as e:
         return {"error": str(e)}
     
+@app.get("/getEntries/{id}")
+async def getEntries(id:int):
+    row = cursor.execute("SELECT * FROM Entry WHERE patientID = ?", (id,))
+    if row is not None:
+        return row
+    
