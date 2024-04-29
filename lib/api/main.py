@@ -13,6 +13,8 @@ from serpapi import GoogleSearch
 import time
 import threading
 import platform
+import base64
+
 ###########################################
 ##########|API functionality|##############
 ###########################################
@@ -89,6 +91,15 @@ class NewUser(BaseModel):
     email: str
     password: str
     confirmPassword: str
+
+
+class freeUser(BaseModel):
+    userId: int
+    birthDate: str
+    address: str
+    doctorCode: str
+    idCard1: str
+    idCard2: str
     
 class NewPatient(BaseModel):
     username: str
@@ -624,6 +635,20 @@ async def getSubscription(userid):##used in /getPatientDetails and in /regPatien
         return row[0]
     else:
         return None
+
+@app.post("/freeRequest")
+async def freeRequest(user: freeUser):
+    image_bytes1 = base64.b64decode(user.idCard1)
+    image_bytes2 = base64.b64decode(user.idCard2)
+    try:
+        cursor.execute("INSERT INTO freeAccount (userId, birthdayDate, address, doctorCode, idCard1,idCard2) VALUES (?, ?, ?, ?, ?,?)",
+                       (user.userId, user.birthDate,user.address, user.doctorCode, image_bytes1, image_bytes2))
+        cnxn.commit()
+        return {"message": "Registered successfully"}
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        return {"error": str(e)}
  
  
 ###########################################

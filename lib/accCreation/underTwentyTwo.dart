@@ -1,8 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'package:sugar_sense/Database/variables.dart';
+import 'package:sugar_sense/main.dart';
+import 'package:sugar_sense/Database/variables.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UnderTwentyTwo extends StatefulWidget {
   @override
@@ -17,6 +23,7 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
 
   File? _frontIdImage;
   File? _backIdImage;
+//final bytes = await _frontIdImage.readAsBytes();
 
   @override
   Widget build(BuildContext context) {
@@ -288,7 +295,50 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () async {
+                        if (birthDateController.text.isNotEmpty &&
+                            addressController.text.isNotEmpty &&
+                            doctorCodeController.text.isNotEmpty &&
+                            _frontIdImage != null &&
+                            _backIdImage != null) {
+                          final bytes = await _frontIdImage!.readAsBytes();
+                          final bytes2 = await _backIdImage!.readAsBytes();
+
+                          final string = base64Encode(bytes);
+                          final string2 = base64Encode(bytes2);
+
+                          print(string);
+
+                          final response = await http
+                              .post(
+                                Uri.parse('http://$localhost:8000/freeRequest'),
+                                headers: <String, String>{
+                                  'Content-Type':
+                                      'application/json; charset=UTF-8',
+                                },
+                                body: jsonEncode(<String, dynamic>{
+                                  'userId': pid_,
+                                  'birthDate': birthDateController.text,
+                                  'address': addressController.text,
+                                  'doctorCode': doctorCodeController.text,
+                                  'idCard1': string,
+                                  'idCard2': string2,
+                                }),
+                              )
+                              .timeout(const Duration(seconds: 10));
+
+                          if (response.statusCode == 200) {
+                            logger.info('Request sent successfully');
+                            logger.info(response.body);
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('All fields must be filled!'),
+                            ),
+                          );
+                        }
+                      },
                       child: const Text(
                         'Submit',
                         style: TextStyle(
