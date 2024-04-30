@@ -114,6 +114,14 @@ class _LoginState extends State<Login> {
     }
 
     if (id != pid_) {
+      final birthday =
+          await http.get(Uri.parse("http://$localhost:8000/getBirthday/$id"));
+      if (birthday.statusCode == 200) {
+        Map<String, dynamic> birthdayDetails = jsonDecode(birthday.body);
+        birthDate_ = birthdayDetails['birthday'];
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('birthDate', birthDate_);
+      }
       final response = await http
           .post(
             Uri.parse('http://$localhost:8000/getUserDetails'),
@@ -460,6 +468,23 @@ class _LoginState extends State<Login> {
                                 );
                               } else {
                                 try {
+                                  //birthday stuff
+                                  if (birthDate_ != "" && selectedPlan_ == -1) {
+                                    DateTime birthDate = DateTime.parse(
+                                        birthDate_); // assuming user.birthDate is in 'yyyy-MM-dd' format
+                                    DateTime twentyTwoYearsLater =
+                                        birthDate.add(Duration(
+                                            days: 22 *
+                                                365)); // this is a rough calculation, not accounting for leap years
+
+                                    if (twentyTwoYearsLater
+                                        .isAfter(DateTime.now())) {
+                                      //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
+                                      // The birthday after 22 years is in the future
+                                      final response = await http.get(Uri.parse(
+                                          "http:$localhost:8000/updateSubscription/$pid_/0"));
+                                    }
+                                  }
                                   //server authentication
                                   final response = await http
                                       .post(
@@ -479,6 +504,13 @@ class _LoginState extends State<Login> {
                                   if (response.statusCode == 402) {
                                     //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
                                     Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const UserInfo()),
+                                    );
+                                  } else if (response.statusCode == 400) {
+                                    Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
@@ -487,29 +519,9 @@ class _LoginState extends State<Login> {
                                                       "", //USERNAME TO BE GOT FROM BACKEND
                                                   index: 0,
                                                 )));
-                                  } else if (response.statusCode == 400) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const UserInfo()),
-                                    );
                                   } else if (response.statusCode == 200) {
                                     //print(response.body);
-                                    if (birthDate_ != "") {
-                                      DateTime birthDate = DateTime.parse(
-                                          birthDate_); // assuming user.birthDate is in 'yyyy-MM-dd' format
-                                      DateTime twentyTwoYearsLater =
-                                          birthDate.add(Duration(
-                                              days: 22 *
-                                                  365)); // this is a rough calculation, not accounting for leap years
 
-                                      if (twentyTwoYearsLater
-                                          .isAfter(DateTime.now())) {
-                                        //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
-                                        // The birthday after 22 years is in the future
-                                      }
-                                    }
                                     deleteListEntries();
                                     setLoginTime();
                                     _signIn(email, password,
