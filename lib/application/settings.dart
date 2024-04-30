@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sugar_sense/Database/variables.dart';
+import 'package:sugar_sense/login/signup/login.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -836,7 +837,35 @@ class _SettingsState extends State<Settings> {
             ),
             child: TextButton(
               onPressed: () {
-                // Put your delete account function here
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Delete Account'),
+                      content: const Text(
+                          'Are you sure you want to delete your account?'),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text('No'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: const Text('Yes'),
+                          onPressed: () async {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const Login(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
               child: const Row(
                 children: <Widget>[
