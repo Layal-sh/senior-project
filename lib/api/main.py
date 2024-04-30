@@ -356,11 +356,10 @@ async def authenticate(user: User):
         # If the email and password are correct, return a 200 OK response
         uid = getUserById(user.username)
         cursor.execute("SELECT * FROM Patients WHERE patientID = ?", uid)
-        pid = cursor.fetchone()
-
+        pid = cursor.fetchone() 
         subs=await getSubscription(uid)
         if(subs is None):
-            raise HTTPException(status_code=400, detail="This user is not subscribed")
+            raise HTTPException(status_code=400, detail="This user is not subscribed", username="")
         elif(pid is None):
             raise HTTPException(status_code=402, detail="This user is not a patient")
         else:
@@ -650,6 +649,13 @@ async def freeRequest(user: freeUser):
     except Exception as e:
         return {"error": str(e)}
  
+@app.get("/getBirthday/{userid}")   
+async def getBirthday(userid):##used in /getPatientDetails and in /regPatient##
+    row = cursor.execute("SELECT birthDate FROM freeMembership WHERE userID = ?",(userid,)).fetchone()
+    if row is not None:
+        return row[0]
+    else:
+        return None
  
 ###########################################
 ########|Articles API Integration|#########

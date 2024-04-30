@@ -1245,11 +1245,13 @@ class _UserInfoState extends State<UserInfo> {
                   ),
                 ),
                 onPressed: () async {
+                  setState(() {
+                    _isLoading = true;
+                  });
                   if (await isConnectedToWifi()) {
                     setState(
                       () {
                         updatelastAnswers();
-                        _isLoading = true;
                       },
                     );
                     //final response = await registerPatient();
