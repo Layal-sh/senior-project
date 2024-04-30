@@ -86,13 +86,22 @@ class _LoginState extends State<Login> {
     //dbHelper.dropAllArticles();
     //print(await dbHelper.selectAllArticle());
     // await dbHelper.deleteMealComposition();
-    await dbHelper.syncMeals();
-    //logger.info("synced meals successfully");
-    await dbHelper.syncMealComposition();
+    // await dbHelper.syncMeals();
+    // //logger.info("synced meals successfully");
+    // await dbHelper.syncMealComposition();
     // logger.info("synced meal compositions successfully");
     // logger.info("saving values to shared preferences");
 
     if (id != pid_) {
+      if (selectedPlan_ == -1) {
+        final response =
+            await http.get(Uri.parse('http://$localhost:8000/getBirthday/$id'));
+        if (response.statusCode == 200) {
+          birthDate_ = jsonDecode(response.body)['birthDate'];
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('birthDate', birthDate_);
+        }
+      }
       final response = await http
           .post(
             Uri.parse('http://$localhost:8000/getUserDetails'),
@@ -456,7 +465,22 @@ class _LoginState extends State<Login> {
                                   );
                                 } else if (response.statusCode == 200) {
                                   //print(response.body);
+                                  DateTime birthDate = DateTime.parse(
+                                      birthDate_); // assuming user.birthDate is in 'yyyy-MM-dd' format
+                                  DateTime twentyTwoYearsLater = birthDate.add(
+                                      Duration(
+                                          days: 22 *
+                                              365)); // this is a rough calculation, not accounting for leap years
 
+                                  if (twentyTwoYearsLater
+                                      .isAfter(DateTime.now())) {
+                                    /////////TAKEEE HIMM TO THE MEMMBERSHIPPP PAGGEEEEE////
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) => const Membership()
+                                    //     ));
+                                  }
                                   deleteListEntries();
                                   setLoginTime();
                                   _isLoading

@@ -650,6 +650,13 @@ async def freeRequest(user: freeUser):
     except Exception as e:
         return {"error": str(e)}
  
+@app.get("/getBirthday/{userid}")   
+async def getBirthday(userid):##used in /getPatientDetails and in /regPatient##
+    row = cursor.execute("SELECT birthDate FROM freeMembership WHERE userID = ?",(userid,)).fetchone()
+    if row is not None:
+        return row[0]
+    else:
+        return None
  
 ###########################################
 ########|Articles API Integration|#########
