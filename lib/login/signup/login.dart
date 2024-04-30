@@ -496,7 +496,20 @@ class _LoginState extends State<Login> {
                                     );
                                   } else if (response.statusCode == 200) {
                                     //print(response.body);
+                                    if (birthDate_ != "") {
+                                      DateTime birthDate = DateTime.parse(
+                                          birthDate_); // assuming user.birthDate is in 'yyyy-MM-dd' format
+                                      DateTime twentyTwoYearsLater =
+                                          birthDate.add(Duration(
+                                              days: 22 *
+                                                  365)); // this is a rough calculation, not accounting for leap years
 
+                                      if (twentyTwoYearsLater
+                                          .isAfter(DateTime.now())) {
+                                        //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
+                                        // The birthday after 22 years is in the future
+                                      }
+                                    }
                                     deleteListEntries();
                                     setLoginTime();
                                     _signIn(email, password,
