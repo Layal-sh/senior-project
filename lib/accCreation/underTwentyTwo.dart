@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:sugar_sense/Database/variables.dart';
+import 'package:sugar_sense/accCreation/underTwentyTwoThanksPage.dart';
 import 'package:sugar_sense/main.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,7 +21,7 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
   final TextEditingController addressController = TextEditingController();
   final TextEditingController birthDateController = TextEditingController();
   final TextEditingController doctorCodeController = TextEditingController();
-
+  bool loading = false;
   File? _frontIdImage;
   File? _backIdImage;
 //final bytes = await _frontIdImage.readAsBytes();
@@ -30,7 +31,7 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage("assets/signin.png"), // replace with your image
+          image: AssetImage("assets/signin.png"),
           fit: BoxFit.cover,
         ),
       ),
@@ -296,58 +297,75 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
                         ),
                       ),
                       onPressed: () async {
-                        if (birthDateController.text.isNotEmpty &&
-                            addressController.text.isNotEmpty &&
-                            doctorCodeController.text.isNotEmpty &&
-                            _frontIdImage != null &&
-                            _backIdImage != null) {
-                          final bytes = await _frontIdImage!.readAsBytes();
-                          final bytes2 = await _backIdImage!.readAsBytes();
+                        if (!loading) {
+                          setState(() {
+                            loading = true;
+                          });
+                          if (birthDateController.text.isNotEmpty &&
+                              addressController.text.isNotEmpty &&
+                              doctorCodeController.text.isNotEmpty &&
+                              _frontIdImage != null &&
+                              _backIdImage != null) {
+                            final bytes = await _frontIdImage!.readAsBytes();
+                            final bytes2 = await _backIdImage!.readAsBytes();
 
-                          final string = base64Encode(bytes);
-                          final string2 = base64Encode(bytes2);
+                            final string = base64Encode(bytes);
+                            final string2 = base64Encode(bytes2);
 
-                          print(string);
+                            print(string);
 
-                          final response = await http
-                              .post(
-                                Uri.parse('http://$localhost:8000/freeRequest'),
-                                headers: <String, String>{
-                                  'Content-Type':
-                                      'application/json; charset=UTF-8',
-                                },
-                                body: jsonEncode(<String, dynamic>{
-                                  'userId': pid_,
-                                  'birthDate': birthDateController.text,
-                                  'address': addressController.text,
-                                  'doctorCode': doctorCodeController.text,
-                                  'idCard1': string,
-                                  'idCard2': string2,
-                                }),
-                              )
-                              .timeout(const Duration(seconds: 10));
+                            final response = await http
+                                .post(
+                                  Uri.parse(
+                                      'http://$localhost:8000/freeRequest'),
+                                  headers: <String, String>{
+                                    'Content-Type':
+                                        'application/json; charset=UTF-8',
+                                  },
+                                  body: jsonEncode(<String, dynamic>{
+                                    'userId': pid_,
+                                    'birthDate': birthDateController.text,
+                                    'address': addressController.text,
+                                    'doctorCode': doctorCodeController.text,
+                                    'idCard1': string,
+                                    'idCard2': string2,
+                                  }),
+                                )
+                                .timeout(const Duration(seconds: 10));
 
-                          if (response.statusCode == 200) {
-                            logger.info('Request sent successfully');
-                            logger.info(response.body);
+                            if (response.statusCode == 200) {
+                              // ignore: use_build_context_synchronously
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const SuccessPage()),
+                              );
+                              logger.info('Request sent successfully');
+                              logger.info(response.body);
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('All fields must be filled!'),
+                              ),
+                            );
                           }
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('All fields must be filled!'),
-                            ),
-                          );
+                          setState(() {
+                            loading = false;
+                          });
                         }
                       },
-                      child: const Text(
-                        'Submit',
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 255, 249, 254),
-                          fontSize: 22,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      child: loading
+                          ? const CircularProgressIndicator()
+                          : const Text(
+                              'Submit',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 255, 249, 254),
+                                fontSize: 22,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                     ),
                   ],
                 ),

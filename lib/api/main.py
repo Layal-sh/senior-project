@@ -356,11 +356,10 @@ async def authenticate(user: User):
         # If the email and password are correct, return a 200 OK response
         uid = getUserById(user.username)
         cursor.execute("SELECT * FROM Patients WHERE patientID = ?", uid)
-        pid = cursor.fetchone()
-
+        pid = cursor.fetchone() 
         subs=await getSubscription(uid)
         if(subs is None):
-            raise HTTPException(status_code=400, detail="This user is not subscribed")
+            raise HTTPException(status_code=400, detail="This user is not subscribed", username="")
         elif(pid is None):
             raise HTTPException(status_code=402, detail="This user is not a patient")
         else:
@@ -733,4 +732,23 @@ async def deleteEntry(entryID: int, patientId: int):
             return False
     except Exception as e:
         return {"error": str(e)}
+    
+@app.get("/getEntries/{id}")
+async def getEntries(id:int):
+    cursor.execute("SELECT * FROM Entry WHERE patientID = ?", (id,))
+    rows = cursor.fetchall()
+    column_names = [column[0] for column in cursor.description]
+    if rows is None:
+        return None
+    else:
+        return [{column_name: column for column_name, column in zip(column_names, row)} for row in rows]
+    
+@app.get("/getAppointment/{id}")
+async def getAppointment(id:int):
+    row = cursor.execute("SELECT nextAppointment from Patients where patientsID = ?",(id))
+    if row is not None:
+        return row[0]
+    else:
+        return None
+    
     

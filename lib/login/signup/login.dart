@@ -86,22 +86,34 @@ class _LoginState extends State<Login> {
     //dbHelper.dropAllArticles();
     //print(await dbHelper.selectAllArticle());
     // await dbHelper.deleteMealComposition();
+    //await dbHelper.syncMeals();
+    //logger.info("synced meals successfully");
+    //await dbHelper.syncMealComposition();
     // await dbHelper.syncMeals();
     // //logger.info("synced meals successfully");
     // await dbHelper.syncMealComposition();
     // logger.info("synced meal compositions successfully");
     // logger.info("saving values to shared preferences");
-
-    if (id != pid_) {
-      if (selectedPlan_ == -1) {
-        final response =
-            await http.get(Uri.parse('http://$localhost:8000/getBirthday/$id'));
+    if (nextAppointment_ != "") {
+      DateTime now = DateTime.now();
+      print(now);
+      DateTime appointment = DateTime.parse(nextAppointment_);
+      if (now.isAfter(appointment)) {
+        final response = await http
+            .get(Uri.parse("http://$localhost:8000/getAppointment/$pid_"));
         if (response.statusCode == 200) {
-          birthDate_ = jsonDecode(response.body)['birthDate'];
+          Map<String, dynamic> appointmentDetails = jsonDecode(response.body);
+          nextAppointment_ = appointmentDetails['appointment'];
           SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString('birthDate', birthDate_);
+          await prefs.setString(
+            'nextAppointment',
+            nextAppointment_,
+          );
         }
       }
+    }
+
+    if (id != pid_) {
       final response = await http
           .post(
             Uri.parse('http://$localhost:8000/getUserDetails'),
@@ -114,7 +126,10 @@ class _LoginState extends State<Login> {
             }),
           )
           .timeout(const Duration(seconds: 10));
-
+      DBHelper dbHelper = DBHelper.instance;
+      //fetch entries from the server
+      await dbHelper.dropEntries();
+      await dbHelper.syncEntriesById(id);
       if (response.statusCode == 200) {
         logger.info('Response body: ${response.body}');
         Map<String, dynamic> userDetails = jsonDecode(response.body);
@@ -189,7 +204,12 @@ class _LoginState extends State<Login> {
             //privacy_ = patientDetails['privacy'];
             await prefs.setString('privacy', patientDetails['privacy']);
           }
-          changeDoctor(doctorCode_);
+          if (patientDetails['nextAppointment'] != null) {
+            nextAppointment_ = patientDetails['nextAppointment'];
+            await prefs.setString(
+                'nextAppointment', patientDetails['nextAppointment']);
+          }
+          //changeDoctor(doctorCode_);
           loadPreferences();
           logger.info("saved values to shared preferences successfully");
         } else {
@@ -413,105 +433,101 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           onPressed: () async {
-                            //createPlantFoodNotification;
-                            bool connectedToWifi = await isConnectedToWifi();
-                            print(connectedToWifi);
+                            if (!_isLoading) {
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              DBHelper dbHelper = DBHelper.instance;
+                              //createPlantFoodNotification;
+                              bool connectedToWifi = await isConnectedToWifi();
+                              print(connectedToWifi);
 
-                            String email = _emailController.text;
-                            String password = _passwordController.text;
-                            if (email == 'admin' && password == 'admin') {
-                              //alowing admins to login without server connection
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const App()),
-                              );
-                            } else if (connectedToWifi == false) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                      'Please connect to the internet to sign in'),
-                                ),
-                              );
-                            } else {
-                              try {
-                                //server authentication
-                                final response = await http
-                                    .post(
-                                      Uri.parse(
-                                          'http://$localhost:8000/authenticate'), //$localhost
-                                      headers: <String, String>{
-                                        'Content-Type':
-                                            'application/json; charset=UTF-8',
-                                      },
-                                      body: jsonEncode(<String, String>{
-                                        'username': email,
-                                        'password': password,
-                                      }),
-                                    )
-                                    .timeout(const Duration(seconds: 10));
-                                // print(int.parse(response.body));
-                                if (response.statusCode == 402) {
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) => const Membership()
-                                  //     ));
-                                } else if (response.statusCode == 400) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const UserInfo()),
-                                  );
-                                } else if (response.statusCode == 200) {
-                                  //print(response.body);
-                                  DateTime birthDate = DateTime.parse(
-                                      birthDate_); // assuming user.birthDate is in 'yyyy-MM-dd' format
-                                  DateTime twentyTwoYearsLater = birthDate.add(
-                                      Duration(
-                                          days: 22 *
-                                              365)); // this is a rough calculation, not accounting for leap years
+                              String email = _emailController.text;
+                              String password = _passwordController.text;
+                              if (email == 'admin' && password == 'admin') {
+                                //alowing admins to login without server connection
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const App()),
+                                );
+                              } else if (connectedToWifi == false) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Please connect to the internet to sign in'),
+                                  ),
+                                );
+                              } else {
+                                try {
+                                  //server authentication
+                                  final response = await http
+                                      .post(
+                                        Uri.parse(
+                                            'http://$localhost:8000/authenticate'), //$localhost
+                                        headers: <String, String>{
+                                          'Content-Type':
+                                              'application/json; charset=UTF-8',
+                                        },
+                                        body: jsonEncode(<String, String>{
+                                          'username': email,
+                                          'password': password,
+                                        }),
+                                      )
+                                      .timeout(const Duration(seconds: 10));
+                                  // print(int.parse(response.body));
+                                  if (response.statusCode == 402) {
+                                    //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const Membership(
+                                                  username:
+                                                      "", //USERNAME TO BE GOT FROM BACKEND
+                                                  index: 0,
+                                                )));
+                                  } else if (response.statusCode == 400) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const UserInfo()),
+                                    );
+                                  } else if (response.statusCode == 200) {
+                                    //print(response.body);
 
-                                  if (twentyTwoYearsLater
-                                      .isAfter(DateTime.now())) {
-                                    /////////TAKEEE HIMM TO THE MEMMBERSHIPPP PAGGEEEEE////
-                                    // Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //         builder: (context) => const Membership()
-                                    //     ));
+                                    deleteListEntries();
+                                    setLoginTime();
+                                    _signIn(email, password,
+                                        jsonDecode(response.body)['ID']);
+                                    AwesomeNotifications().createNotification(
+                                        content: NotificationContent(
+                                            id: 10,
+                                            channelKey: 'basic_channel',
+                                            title: 'Login Successful',
+                                            body:
+                                                'You have successfully logged in.'));
+                                  } else {
+                                    //incorrect username or password handling
+                                    //for layal you can change this if you want or remove this comment if you think its good
+                                    var responseBody =
+                                        jsonDecode(response.body);
+                                    var errorMessage = responseBody['detail'] ??
+                                        'Unknown error';
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('$errorMessage')),
+                                    );
                                   }
-                                  deleteListEntries();
-                                  setLoginTime();
-                                  _isLoading
-                                      ? null
-                                      : _signIn(email, password,
-                                          jsonDecode(response.body)['ID']);
-                                  AwesomeNotifications().createNotification(
-                                      content: NotificationContent(
-                                          id: 10,
-                                          channelKey: 'basic_channel',
-                                          title: 'Login Successful',
-                                          body:
-                                              'You have successfully logged in.'));
-                                } else {
-                                  //incorrect username or password handling
-                                  //for layal you can change this if you want or remove this comment if you think its good
-                                  var responseBody = jsonDecode(response.body);
-                                  var errorMessage =
-                                      responseBody['detail'] ?? 'Unknown error';
+                                } catch (e) {
+                                  // ignore: avoid_print
+                                  print('Error: $e');
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('$errorMessage')),
+                                    SnackBar(
+                                        content: Text(
+                                            'The server did not respond error : $e')),
                                   );
                                 }
-                              } catch (e) {
-                                // ignore: avoid_print
-                                print('Error: $e');
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(
-                                          'The server did not respond error : $e')),
-                                );
                               }
                             }
                           },
