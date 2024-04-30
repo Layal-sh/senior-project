@@ -1169,11 +1169,37 @@ class _DashboardState extends State<Dashboard> {
                                     onPressed: () async {
                                       // await db
                                       //     .deleteEntryById(entry['entryId']);
-                                      deleteEntry(entry['entryId']);
-                                      refreshData();
-                                      setState(() {
-                                        clicked = true;
-                                      });
+
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text('Confirm Delete'),
+                                            content: const Text(
+                                                'Are you sure you want to delete this entry?'),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                child: const Text('Cancel'),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                              TextButton(
+                                                child: const Text('Delete'),
+                                                onPressed: () {
+                                                  deleteEntry(entry['entryId']);
+                                                  refreshData();
+                                                  setState(() {
+                                                    clicked = true;
+                                                    widget.changeTab(2);
+                                                    Navigator.of(context).pop();
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
                                     },
                                   ),
                               ],

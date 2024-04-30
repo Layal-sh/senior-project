@@ -827,6 +827,39 @@ class _SettingsState extends State<Settings> {
           const SizedBox(height: 20),
           ...doctorConnetion(),
           const SizedBox(height: 20),
+          settingsTitle("Account"),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 10,
+              right: 10,
+            ),
+            child: TextButton(
+              onPressed: () {
+                // Put your delete account function here
+              },
+              child: const Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.delete,
+                    color: Colors.red,
+                    size: 30,
+                  ),
+                  SizedBox(
+                      width:
+                          15.0), // Add some space between the icon and the text
+                  Text(
+                    'Delete Account',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
         ],
       ),
     );
