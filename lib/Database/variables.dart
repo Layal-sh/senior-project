@@ -111,7 +111,8 @@ double insulin_3 = 0;
 int selectedPlan_ = -1;
 int numOfRatios_ = 1;
 String nextLoginTime_ = "";
-
+String birthDate_ = "";
+String nextAppointment_ = "";
 setLoginTime() {
   DateTime now = DateTime.now();
   nextLoginTime_ = now.add(const Duration(days: 30)).toString();

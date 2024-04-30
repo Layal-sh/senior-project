@@ -955,6 +955,21 @@ class _SignUpState extends State<SignUp> {
                                                                   prefs.setString(
                                                                       'firstName',
                                                                       firstName_);
+
+                                                                  final response2 =
+                                                                      await http.get(
+                                                                          Uri.parse(
+                                                                              'http://$localhost:8000/getUserId/$username_'));
+                                                                  print(response2
+                                                                      .body);
+                                                                  pid_ = int.parse(
+                                                                      response2
+                                                                          .body);
+                                                                  prefs.setInt(
+                                                                      "pid",
+                                                                      pid_);
+                                                                  print(pid_);
+
                                                                   Navigator
                                                                       .push(
                                                                     context,

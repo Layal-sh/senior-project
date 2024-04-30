@@ -1091,7 +1091,6 @@ class _editProfileState extends State<editProfile> {
     final ImagePicker _picker = ImagePicker();
     final XFile? image = (await _picker.pickImage(source: ImageSource.gallery));
 
-    // this allegedly only works on mobile but i cant test it :(
     if (image != null) {
       final directory = await getApplicationDocumentsDirectory();
       final newPath =

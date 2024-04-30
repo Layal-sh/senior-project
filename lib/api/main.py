@@ -13,6 +13,8 @@ from serpapi import GoogleSearch
 import time
 import threading
 import platform
+import base64
+
 ###########################################
 ##########|API functionality|##############
 ###########################################
@@ -89,6 +91,15 @@ class NewUser(BaseModel):
     email: str
     password: str
     confirmPassword: str
+
+
+class freeUser(BaseModel):
+    userId: int
+    birthDate: str
+    address: str
+    doctorCode: str
+    idCard1: str
+    idCard2: str
     
 class NewPatient(BaseModel):
     username: str
@@ -345,9 +356,12 @@ async def authenticate(user: User):
         # If the email and password are correct, return a 200 OK response
         uid = getUserById(user.username)
         cursor.execute("SELECT * FROM Patients WHERE patientID = ?", uid)
-        pid = cursor.fetchone()
-        if(pid is None):
-            raise HTTPException(status_code=400, detail="This user is not a patient")
+        pid = cursor.fetchone() 
+        subs=await getSubscription(uid)
+        if(subs is None):
+            raise HTTPException(status_code=400, detail="This user is not subscribed", username="")
+        elif(pid is None):
+            raise HTTPException(status_code=402, detail="This user is not a patient")
         else:
             return {"message": "Authenticated successfully", "ID": uid}
             #rowUsername[1] 
@@ -595,7 +609,53 @@ def getUserById(username):##used in /getPatientDetails and in /regPatient##
         return row[0]
     else:
         return None
+    
+@app.get("/getUserId/{username}")   
+async def getUserId(username):##used in /getPatientDetails and in /regPatient##
+    row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(username,)).fetchone()
+    if row is not None:
+        return row[0]
+    else:
+        return None
+    
+@app.get("/updateSubscription/{userID}/{subscription}")   
+async def updateSubscription(userID,subscription):##used in /getPatientDetails and in /regPatient##
+    row = cursor.execute("UPDATE Users SET subscription = ? where userID  = ?", (id,subscription))
+    cnxn.commit() 
+    if row is not None:
+        return {"message": "subscription updated"}
+    else:
+        raise HTTPException(status_code=500, detail="couldn't update subscription")
+
+@app.get("/getSubscription/{userid}")   
+async def getSubscription(userid):##used in /getPatientDetails and in /regPatient##
+    row = cursor.execute("SELECT subscription FROM Users WHERE userID = ?",(userid,)).fetchone()
+    if row is not None:
+        return row[0]
+    else:
+        return None
+
+@app.post("/freeRequest")
+async def freeRequest(user: freeUser):
+    image_bytes1 = base64.b64decode(user.idCard1)
+    image_bytes2 = base64.b64decode(user.idCard2)
+    try:
+        cursor.execute("INSERT INTO freeAccount (userId, birthdayDate, address, doctorCode, idCard1,idCard2) VALUES (?, ?, ?, ?, ?,?)",
+                       (user.userId, user.birthDate,user.address, user.doctorCode, image_bytes1, image_bytes2))
+        cnxn.commit()
+        return {"message": "Registered successfully"}
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        return {"error": str(e)}
  
+@app.get("/getBirthday/{userid}")   
+async def getBirthday(userid):##used in /getPatientDetails and in /regPatient##
+    row = cursor.execute("SELECT birthDate FROM freeMembership WHERE userID = ?",(userid,)).fetchone()
+    if row is not None:
+        return row[0]
+    else:
+        return None
  
 ###########################################
 ########|Articles API Integration|#########
@@ -672,4 +732,23 @@ async def deleteEntry(entryID: int, patientId: int):
             return False
     except Exception as e:
         return {"error": str(e)}
+    
+@app.get("/getEntries/{id}")
+async def getEntries(id:int):
+    cursor.execute("SELECT * FROM Entry WHERE patientID = ?", (id,))
+    rows = cursor.fetchall()
+    column_names = [column[0] for column in cursor.description]
+    if rows is None:
+        return None
+    else:
+        return [{column_name: column for column_name, column in zip(column_names, row)} for row in rows]
+    
+@app.get("/getAppointment/{id}")
+async def getAppointment(id:int):
+    row = cursor.execute("SELECT nextAppointment from Patients where patientsID = ?",(id))
+    if row is not None:
+        return row[0]
+    else:
+        return None
+    
     
