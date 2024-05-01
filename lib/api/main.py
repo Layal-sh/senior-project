@@ -358,8 +358,9 @@ async def authenticate(user: User):
         cursor.execute("SELECT * FROM Patients WHERE patientID = ?", uid)
         pid = cursor.fetchone() 
         subs=await getSubscription(uid)
-        if(subs is None):
-            raise HTTPException(status_code=400, detail="This user is not subscribed", username="")
+        print(subs)
+        if(subs == 0):
+            raise HTTPException(status_code=400, detail="This user is not subscribed")
         elif(pid is None):
             raise HTTPException(status_code=402, detail="This user is not a patient")
         else:
@@ -375,6 +376,21 @@ async def authenticate(user: User):
 ##########|User Registration|##############
 ###########################################   
 ##############################################################
+@app.get("/spam")
+async def spamFunction():
+    for i in range(1000,  1500):
+        # cursor.execute("INSERT INTO Users (firstName, lastName, userName, email, userPassword) VALUES (?, ?, ?, ?, ?)",
+        #                ("test", "test", "test" + str(i), "test", "test"))
+        cursor.execute("INSERT INTO Entry (entryId, patientID, glucoseLevel, insulinDosage, entryDate, unit, totalCarbs, hasMeals) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                       (i, i, 80.0, 5, "test", 1, 20.0, "test"))
+        #id = getUserById("test" + str(i))
+        # cursor.execute("INSERT INTO Patients (patientID, doctorCode, insulinSensivity, targetBloodGlucose , carbRatio, carbRatio2, carbRatio3, privacy) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        #                (id, "test", 20.0, 100, 3.0, 4.0, 5.0, "test"))
+        #
+        # cursor.execute("INSERT INTO Doctors (doctorID, doctorCode) VALUES (?, ?)",
+        #                (id, "test"+str(i)))
+        cnxn.commit()
+        print("current i: "+ str(i))
 @app.post("/register")
 async def registerfunction(user: NewUser):
     try:
@@ -604,7 +620,7 @@ def checkPhoneNumber(phoneNumber):
         return False
 
 def getUserById(username):##used in /getPatientDetails and in /regPatient##
-    row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(username,)).fetchone()
+    row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ? OR CAST(email AS NVARCHAR(MAX)) = ?",(username, username)).fetchone()
     if row is not None:
         return row[0]
     else:
@@ -655,7 +671,7 @@ async def getBirthday(userid):##used in /getPatientDetails and in /regPatient##
     if row is not None:
         return row[0]
     else:
-        return None
+        raise HTTPException(status_code=500, detail="couldn't get birthday")
  
 ###########################################
 ########|Articles API Integration|#########

@@ -12,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 import 'package:sugar_sense/Database/db.dart';
+import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/meals/meals.dart';
 import 'package:sugar_sense/main.dart';
 
@@ -50,6 +51,7 @@ class _CreateMealState extends State<CreateMeal> {
   final _nameController = TextEditingController();
   final gramsController = TextEditingController();
   DBHelper dbHelper = DBHelper.instance;
+  double ingredientCarbs = 0;
   List<Map> allMeals = [];
   List<int> selectedMeals = [];
   List<String> categories = [
@@ -394,9 +396,9 @@ class _CreateMealState extends State<CreateMeal> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Total Carbs: ',
-                          style: TextStyle(
+                        Text(
+                          'Total ${carbUnit_ == 0 ? 'Carbs' : 'Exchanges'}: ',
+                          style: const TextStyle(
                             color: Color.fromARGB(255, 38, 20, 84),
                             fontSize: 17,
                             fontFamily: 'Inter',

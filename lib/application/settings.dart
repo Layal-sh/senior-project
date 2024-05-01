@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sugar_sense/Database/variables.dart';
+import 'package:sugar_sense/login/signup/login.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -826,6 +827,67 @@ class _SettingsState extends State<Settings> {
           settingsTitle("Doctor Connection"),
           const SizedBox(height: 20),
           ...doctorConnetion(),
+          const SizedBox(height: 20),
+          settingsTitle("Account"),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 10,
+              right: 10,
+            ),
+            child: TextButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Delete Account'),
+                      content: const Text(
+                          'Are you sure you want to delete your account?'),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text('No'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: const Text('Yes'),
+                          onPressed: () async {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const Login(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: const Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.delete,
+                    color: Colors.red,
+                    size: 30,
+                  ),
+                  SizedBox(
+                      width:
+                          15.0), // Add some space between the icon and the text
+                  Text(
+                    'Delete Account',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(height: 20),
         ],
       ),

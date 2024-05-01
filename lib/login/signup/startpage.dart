@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sugar_sense/login/signup/login.dart';
+import 'package:sugar_sense/main.dart';
+import 'package:http/http.dart' as http;
 
 class Start extends StatefulWidget {
   const Start({super.key});
@@ -94,7 +96,7 @@ class _StartState extends State<Start> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         Navigator.push(
                           context,
                           MaterialPageRoute(

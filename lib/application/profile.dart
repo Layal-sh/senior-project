@@ -1113,7 +1113,8 @@ class _editProfileState extends State<editProfile> {
   String? usernameErrorMessage;
   String? passwordErrorMessage;
   String? npasswordErrorMessage;
-
+  bool _obscurePassword = true;
+  bool _obscurePassword2 = true;
   @override
   void initState() {
     super.initState();
@@ -1636,6 +1637,7 @@ class _editProfileState extends State<editProfile> {
                             children: [
                               TextFormField(
                                 controller: _controllerPass,
+                                obscureText: _obscurePassword,
                                 keyboardType: TextInputType.visiblePassword,
                                 style: const TextStyle(
                                   color: Color.fromARGB(255, 38, 20, 84),
@@ -1654,6 +1656,19 @@ class _editProfileState extends State<editProfile> {
                                   prefixIcon: const Icon(
                                     Icons.lock_outline,
                                     color: Color.fromARGB(255, 38, 20, 84),
+                                  ),
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _obscurePassword = !_obscurePassword;
+                                      });
+                                    },
+                                    color: const Color.fromARGB(
+                                        255, 107, 100, 126),
+                                    icon: _obscurePassword
+                                        ? const Icon(
+                                            Icons.visibility_off_outlined)
+                                        : const Icon(Icons.visibility_outlined),
                                   ),
                                   focusedBorder: const OutlineInputBorder(
                                     borderRadius:
@@ -1705,6 +1720,7 @@ class _editProfileState extends State<editProfile> {
                               ),
                               TextFormField(
                                 controller: _controllerVeryPass,
+                                obscureText: _obscurePassword2,
                                 keyboardType: TextInputType.visiblePassword,
                                 style: const TextStyle(
                                   color: Color.fromARGB(255, 38, 20, 84),
@@ -1723,6 +1739,19 @@ class _editProfileState extends State<editProfile> {
                                   prefixIcon: const Icon(
                                     Icons.lock_outline,
                                     color: Color.fromARGB(255, 38, 20, 84),
+                                  ),
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _obscurePassword2 = !_obscurePassword2;
+                                      });
+                                    },
+                                    color: const Color.fromARGB(
+                                        255, 107, 100, 126),
+                                    icon: _obscurePassword2
+                                        ? const Icon(
+                                            Icons.visibility_off_outlined)
+                                        : const Icon(Icons.visibility_outlined),
                                   ),
                                   focusedBorder: const OutlineInputBorder(
                                     borderRadius:
