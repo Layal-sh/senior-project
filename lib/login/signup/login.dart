@@ -118,6 +118,13 @@ class _LoginState extends State<Login> {
         birthDate_ = birthdayDetails['birthday'];
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('birthDate', birthDate_);
+        
+        DateTime twentyTwoYears=DateTime.parse(birthDate_).add(Duration(
+                                            days: 22 *
+                                                365));
+        twentyTwoYearsLater_ = twentyTwoYears.toString();
+        await prefs.setString('twentyTwoYearsLater', twentyTwoYearsLater_);
+        // this is a rough calculation, not accounting for leap years
       }
       final response = await http
           .post(
@@ -462,21 +469,13 @@ class _LoginState extends State<Login> {
                               } else {
                                 try {
                                   //birthday stuff
-                                  if (birthDate_ != "" && selectedPlan_ == -1) {
-                                    DateTime birthDate = DateTime.parse(
-                                        birthDate_); // assuming user.birthDate is in 'yyyy-MM-dd' format
-                                    DateTime twentyTwoYearsLater =
-                                        birthDate.add(Duration(
-                                            days: 22 *
-                                                365)); // this is a rough calculation, not accounting for leap years
-
-                                    if (twentyTwoYearsLater
-                                        .isAfter(DateTime.now())) {
+                                  if (birthDate_ != "" && selectedPlan_ == -1 &&
+                                  DateTime.parse(twentyTwoYearsLater_).isAfter(DateTime.now())) {
                                       //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
                                       // The birthday after 22 years is in the future
                                       final response = await http.get(Uri.parse(
                                           "http:$localhost:8000/updateSubscription/$pid_/0"));
-                                    }
+                                    
                                   }
                                   //server authentication
                                   final response = await http
