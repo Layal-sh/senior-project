@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ int selectedPlanIndex = -1;
 class _MembershipState extends State<Membership> {
   @override
   Widget build(BuildContext context) {
+    logger.info("username inside of the membershit: $username_");
     return Container(
       decoration: const BoxDecoration(
         color: Color.fromARGB(255, 38, 20, 84),
@@ -32,14 +34,6 @@ class _MembershipState extends State<Membership> {
               ? IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () async {
-                    int n = 1;
-                    if (selectedPlanIndex == 1 || selectedPlanIndex == 2) {
-                      final response2 = await http.get(Uri.parse(
-                          'http://$localhost:8000/updateSubscription/$pid_/$n'));
-                      if (response2.statusCode == 200) {
-                        //Navigator.of(context).pop(),
-                      }
-                    }
                     // ignore: use_build_context_synchronously
                     Navigator.of(context).pop();
                   })
@@ -123,7 +117,7 @@ class _MembershipState extends State<Membership> {
                   height: 20,
                 ),
                 Text(
-                  'Welcome $firstName_!', //${}
+                  'Welcome $username_!', //${}
                   style: const TextStyle(
                     color: Color.fromARGB(255, 49, 205, 215),
                     fontSize: 21,
@@ -362,12 +356,26 @@ class _MembershipState extends State<Membership> {
                       } else {
                         if (widget.index == 0) {
                           selectedPlan_ = selectedPlanIndex;
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ThankYou(),
-                            ),
-                          );
+                          int n = 1;
+                          if (selectedPlanIndex == 1 ||
+                              selectedPlanIndex == 2) {
+                            final IDresponse = await http.get(Uri.parse(
+                                'http://$localhost:8000/getUserId/$username_'));
+                            if (IDresponse.statusCode == 200) {
+                              pid_ = jsonDecode(IDresponse.body);
+                            }
+                            final response2 = await http.get(Uri.parse(
+                                'http://$localhost:8000/updateSubscription/$pid_/$n'));
+                            if (response2.statusCode == 200) {
+                              // ignore: use_build_context_synchronously
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const ThankYou(),
+                                ),
+                              );
+                            }
+                          }
                         } else {
                           if (selectedPlan_ == selectedPlanIndex) {
                             if (selectedPlanIndex == 1) {

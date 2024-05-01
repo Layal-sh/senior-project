@@ -632,13 +632,13 @@ async def getUserId(username):##used in /getPatientDetails and in /regPatient##
     if row is not None:
         return row[0]
     else:
-        return None
+        raise HTTPException(status_code=401, detail="could not get the user ID")
     
 @app.get("/updateSubscription/{userID}/{subscription}")   
 async def updateSubscription(userID,subscription):##used in /getPatientDetails and in /regPatient##
-    row = cursor.execute("UPDATE Users SET subscription = ? where userID  = ?", (id,subscription))
+    row = cursor.execute("UPDATE Users SET subscription = ? where userID  = ?", (subscription, userID))
     cnxn.commit() 
-    if row is not None:
+    if cursor.rowcount > 0:
         return {"message": "subscription updated"}
     else:
         raise HTTPException(status_code=500, detail="couldn't update subscription")

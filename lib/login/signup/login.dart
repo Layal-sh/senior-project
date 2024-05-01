@@ -110,25 +110,55 @@ class _LoginState extends State<Login> {
       }
     }
 
-    if (id != pid_) {
-      final birthday =
-          await http.get(Uri.parse("http://$localhost:8000/getBirthday/$id"));
-      if (birthday.statusCode == 200) {
-        Map<String, dynamic> birthdayDetails = jsonDecode(birthday.body);
-        birthDate_ = birthdayDetails['birthday'];
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('birthDate', birthDate_);
-        
-        DateTime twentyTwoYears=DateTime.parse(birthDate_).add(Duration(
-                                            days: 22 *
-                                                365));
-        twentyTwoYearsLater_ = twentyTwoYears.toString();
-        await prefs.setString('twentyTwoYearsLater', twentyTwoYearsLater_);
-        // this is a rough calculation, not accounting for leap years
-      }
-      final response = await http
+    final birthday =
+        await http.get(Uri.parse("http://$localhost:8000/getBirthday/$id"));
+    if (birthday.statusCode == 200) {
+      Map<String, dynamic> birthdayDetails = jsonDecode(birthday.body);
+      birthDate_ = birthdayDetails['birthday'];
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('birthDate', birthDate_);
+
+      DateTime twentyTwoYears =
+          DateTime.parse(birthDate_).add(Duration(days: 22 * 365));
+      twentyTwoYearsLater_ = twentyTwoYears.toString();
+      await prefs.setString('twentyTwoYearsLater', twentyTwoYearsLater_);
+      // this is a rough calculation, not accounting for leap years
+    }
+    final response = await http
+        .post(
+          Uri.parse('http://$localhost:8000/getUserDetails'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, String>{
+            'username': email,
+            'password': password,
+          }),
+        )
+        .timeout(const Duration(seconds: 10));
+
+    //fetch entries from the server
+    await dbHelper.dropEntries();
+    await dbHelper.syncEntriesById(id);
+    if (response.statusCode == 200) {
+      logger.info('Response body: ${response.body}');
+      Map<String, dynamic> userDetails = jsonDecode(response.body);
+      logger.info("user details: $userDetails");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+      username_ = userDetails['userName'];
+      firstName_ = userDetails['firstName'];
+      lastName_ = userDetails['lastName'];
+      email_ = userDetails['email'];
+      pid_ = userDetails['userID'];
+      await prefs.setString('username', userDetails['userName']);
+      await prefs.setString('firstName', userDetails['firstName']);
+      await prefs.setString('lastName', userDetails['lastName']);
+      await prefs.setString('email', userDetails['email']);
+      await prefs.setInt('pid', userDetails['userID']);
+      final responsePatient = await http
           .post(
-            Uri.parse('http://$localhost:8000/getUserDetails'),
+            Uri.parse('http://$localhost:8000/getPatientDetails'), //$localhost
             headers: <String, String>{
               'Content-Type': 'application/json; charset=UTF-8',
             },
@@ -138,95 +168,60 @@ class _LoginState extends State<Login> {
             }),
           )
           .timeout(const Duration(seconds: 10));
-      DBHelper dbHelper = DBHelper.instance;
-      //fetch entries from the server
-      await dbHelper.dropEntries();
-      await dbHelper.syncEntriesById(id);
-      if (response.statusCode == 200) {
-        logger.info('Response body: ${response.body}');
-        Map<String, dynamic> userDetails = jsonDecode(response.body);
-        logger.info("user details: $userDetails");
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
-        // username_ = userDetails['userName'];
-        // firstName_ = userDetails['firstName'];
-        // lastName_ = userDetails['lastName'];
-        // email_ = userDetails['email'];
-        // pid_ = userDetails['userID'];
-        await prefs.setString('username', userDetails['userName']);
-        await prefs.setString('firstName', userDetails['firstName']);
-        await prefs.setString('lastName', userDetails['lastName']);
-        await prefs.setString('email', userDetails['email']);
-        await prefs.setInt('pid', userDetails['userID']);
-        pid_ = userDetails['userID'];
-        final responsePatient = await http
-            .post(
-              Uri.parse(
-                  'http://$localhost:8000/getPatientDetails'), //$localhost
-              headers: <String, String>{
-                'Content-Type': 'application/json; charset=UTF-8',
-              },
-              body: jsonEncode(<String, String>{
-                'username': email,
-                'password': password,
-              }),
-            )
-            .timeout(const Duration(seconds: 10));
-        if (responsePatient.statusCode == 200) {
-          logger.info('Response body: ${responsePatient.body}');
-          Map<String, dynamic> patientDetails =
-              jsonDecode(responsePatient.body);
-          logger.info("patient details: $patientDetails");
-          if (patientDetails['doctorCode'] != null) {
-            //doctorCode_ = patientDetails['doctorCode'];
-            await prefs.setString('doctorCode_', patientDetails['doctorCode']);
-          }
-          if (patientDetails['phoneNumber'] != null) {
-            //phoneNumber_ = patientDetails['phoneNumber'];
-            await prefs.setInt('phoneNumber_', patientDetails['phoneNumber']);
-          }
-          if (patientDetails['profilePhoto'] != null) {
-            //profilePicture_ = patientDetails['profilePhoto'];
-            await prefs.setString(
-                'profilePicture_', patientDetails['profilePhoto']);
-          }
-          insulinSensitivity_ = patientDetails['insulinSensivity'].toInt();
-          await prefs.setInt('insulinSensitivity_',
-              patientDetails['insulinSensivity'].toInt());
-          //targetBloodSugar_ = patientDetails['targetBloodGlucose'];
-          await prefs.setInt(
-              'targetBloodSugar_', patientDetails['targetBloodGlucose']);
-          //carbRatio_ = patientDetails['carbRatio'];
-          await prefs.setDouble('carbRatio', patientDetails['carbRatio']);
-          numOfRatios_ = 1;
-          prefs.setInt('numOfRatios', 1);
-          if (patientDetails['carbRatio2'] != null) {
-            carbRatio_2 = patientDetails['carbRatio2'];
-            await prefs.setDouble('carbRatio2', patientDetails['carbRatio2']);
-            if (carbRatio_2 != 0) numOfRatios_++;
-            prefs.setInt('numOfRatios', numOfRatios_);
-          }
-          if (patientDetails['carbRatio3'] != null) {
-            carbRatio_3 = patientDetails['carbRatio3'];
-            await prefs.setDouble('carbRatio3', patientDetails['carbRatio3']);
-            if (carbRatio_3 != 0) numOfRatios_++;
-            prefs.setInt('numOfRatios', numOfRatios_);
-          }
-          if (patientDetails['privacy'] != null) {
-            //privacy_ = patientDetails['privacy'];
-            await prefs.setString('privacy', patientDetails['privacy']);
-          }
-          if (patientDetails['nextAppointment'] != null) {
-            nextAppointment_ = patientDetails['nextAppointment'];
-            await prefs.setString(
-                'nextAppointment', patientDetails['nextAppointment']);
-          }
-          //changeDoctor(doctorCode_);
-          loadPreferences();
-          logger.info("saved values to shared preferences successfully");
-        } else {
-          logger.warning(responsePatient.body);
+      if (responsePatient.statusCode == 200) {
+        logger.info('Response body: ${responsePatient.body}');
+        Map<String, dynamic> patientDetails = jsonDecode(responsePatient.body);
+        logger.info("patient details: $patientDetails");
+        if (patientDetails['doctorCode'] != null) {
+          //doctorCode_ = patientDetails['doctorCode'];
+          await prefs.setString('doctorCode', patientDetails['doctorCode']);
         }
+        if (patientDetails['phoneNumber'] != null) {
+          //phoneNumber_ = patientDetails['phoneNumber'];
+          await prefs.setInt('phoneNumber', patientDetails['phoneNumber']);
+        }
+        if (patientDetails['profilePhoto'] != null) {
+          //profilePicture_ = patientDetails['profilePhoto'];
+          await prefs.setString(
+              'profilePicture', patientDetails['profilePhoto']);
+        }
+        insulinSensitivity_ = patientDetails['insulinSensivity'].toInt();
+        await prefs.setInt(
+            'insulinSensitivity', patientDetails['insulinSensivity'].toInt());
+        //targetBloodSugar_ = patientDetails['targetBloodGlucose'];
+        await prefs.setInt(
+            'targetBloodSugar', patientDetails['targetBloodGlucose']);
+        //carbRatio_ = patientDetails['carbRatio'];
+        await prefs.setDouble('carbRatio', patientDetails['carbRatio']);
+        numOfRatios_ = 1;
+        prefs.setInt('numOfRatios', 1);
+        if (patientDetails['carbRatio2'] != null) {
+          carbRatio_2 = patientDetails['carbRatio2'];
+          await prefs.setDouble('carbRatio2', patientDetails['carbRatio2']);
+
+          if (carbRatio_2 != 0) numOfRatios_++;
+          prefs.setInt('numOfRatios', numOfRatios_);
+        }
+        if (patientDetails['carbRatio3'] != null) {
+          carbRatio_3 = patientDetails['carbRatio3'];
+          await prefs.setDouble('carbRatio3', patientDetails['carbRatio3']);
+          if (carbRatio_3 != 0) numOfRatios_++;
+          prefs.setInt('numOfRatios', numOfRatios_);
+        }
+        if (patientDetails['privacy'] != null) {
+          //privacy_ = patientDetails['privacy'];
+          await prefs.setString('privacy', patientDetails['privacy']);
+        }
+        if (patientDetails['nextAppointment'] != null) {
+          nextAppointment_ = patientDetails['nextAppointment'];
+          await prefs.setString(
+              'nextAppointment', patientDetails['nextAppointment']);
+        }
+        //changeDoctor(doctorCode_);
+        loadPreferences();
+        logger.info("saved values to shared preferences successfully");
+      } else {
+        logger.warning(responsePatient.body);
       }
     }
 
@@ -469,13 +464,14 @@ class _LoginState extends State<Login> {
                               } else {
                                 try {
                                   //birthday stuff
-                                  if (birthDate_ != "" && selectedPlan_ == -1 &&
-                                  DateTime.parse(twentyTwoYearsLater_).isAfter(DateTime.now())) {
-                                      //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
-                                      // The birthday after 22 years is in the future
-                                      final response = await http.get(Uri.parse(
-                                          "http:$localhost:8000/updateSubscription/$pid_/0"));
-                                    
+                                  if (birthDate_ != "" &&
+                                      selectedPlan_ == -1 &&
+                                      DateTime.parse(twentyTwoYearsLater_)
+                                          .isAfter(DateTime.now())) {
+                                    //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
+                                    // The birthday after 22 years is in the future
+                                    final response = await http.get(Uri.parse(
+                                        "http:$localhost:8000/updateSubscription/$pid_/0"));
                                   }
                                   //server authentication
                                   final response = await http
@@ -492,9 +488,12 @@ class _LoginState extends State<Login> {
                                         }),
                                       )
                                       .timeout(const Duration(seconds: 10));
+                                  username_ = email;
+                                  logger.info(
+                                      "user name after setting it to email $username_");
                                   // print(int.parse(response.body));
                                   if (response.statusCode == 402) {
-                                    //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
+                                    //is not a patient
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -502,6 +501,9 @@ class _LoginState extends State<Login> {
                                               const UserInfo()),
                                     );
                                   } else if (response.statusCode == 400) {
+                                    //is not subscribed
+                                    logger.info(
+                                        "user name just before going to membership $username_");
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
