@@ -341,7 +341,22 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
                               )
                               .timeout(const Duration(seconds: 10));
 
-                          if (response.statusCode == 200) {
+                        if(birthDateController.text.isEmpty || addressController.text.isEmpty || _frontIdImage == null || _backIdImage == null){
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('All fields must be filled!'),
+                            ),
+                          );
+                        }else if (response.statusCode == 400) {
+                            // ignore: use_build_context_synchronously
+                            ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('You have already applied, your application is still in process'),
+                            ),
+                          );
+                            logger.info('user already applied');
+                          }
+                          else if (response.statusCode == 200) {
                             // ignore: use_build_context_synchronously
                             Navigator.push(
                               context,
@@ -351,13 +366,7 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
                             logger.info('Request sent successfully');
                             logger.info(response.body);
                           }
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('All fields must be filled!'),
-                            ),
-                          );
-                        }
+                        } 
                         setState(() {
                           loading = false;
                         });

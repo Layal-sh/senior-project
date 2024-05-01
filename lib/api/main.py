@@ -656,6 +656,8 @@ async def freeRequest(user: freeUser):
     image_bytes1 = base64.b64decode(user.idCard1)
     image_bytes2 = base64.b64decode(user.idCard2)
     try:
+        if(await checkUserFree(user.userId)):
+            raise HTTPException(status_code=401, detail="user already applied")
         cursor.execute("INSERT INTO freeAccount (userId, birthdayDate, address, doctorCode, idCard1,idCard2) VALUES (?, ?, ?, ?, ?,?)",
                        (user.userId, user.birthDate,user.address, user.doctorCode, image_bytes1, image_bytes2))
         cnxn.commit()
@@ -664,6 +666,14 @@ async def freeRequest(user: freeUser):
         raise e
     except Exception as e:
         return {"error": str(e)}
+
+#@app.get("/checkUserFree/{userid}")   
+async def checkUserFree(userid):##used in /getPatientDetails and in /regPatient##
+    row = cursor.execute("SELECT birthDate FROM freeAccount WHERE userId = ?",(userid,)).fetchone()
+    if row is not None:
+        return True
+    else:
+        raise False
  
 @app.get("/getBirthday/{userid}")   
 async def getBirthday(userid):##used in /getPatientDetails and in /regPatient##
@@ -767,4 +777,21 @@ async def getAppointment(id:int):
     else:
         return None
     
+############################3333
+##############################3
+#######delete account##########
+###############################
+@app.get("/deleteAccount/{id}")
+async def deleteAccount(id:int):
+    row = cursor.execute("DELETE FROM Entry WHERE patientID = ?", (id,))
+    print("deleted entries")
+    row1 = cursor.execute("DELETE FROM Patients WHERE patientID = ?", (id,))
+    print("deleted patient")
+    row2 = cursor.execute("DELETE FROM Users WHERE userID = ?", (id,))
+    print("deleted user")
+    cnxn.commit()
+    if (row is not None) and (row1 is not None) and (row2 is not None):
+        return True
+    else:
+        raise HTTPException(status_code=500, detail="couldn't delete account")
     
