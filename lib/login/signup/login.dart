@@ -513,10 +513,16 @@ class _LoginState extends State<Login> {
                                                   index: 0,
                                                 )));
                                   } else if (response.statusCode == 200) {
-                                    //print(response.body);
-
+                                    print(response.body);
+                                    logger.info("we got to response 200!!");
                                     deleteListEntries();
+                                    logger
+                                        .info("we did the deleteListEntries!!");
                                     setLoginTime();
+                                    logger.info("we did the setLoginTime!!");
+                                    // ignore: prefer_interpolation_to_compose_strings
+                                    // logger.info("ID: " +
+                                    //     jsonDecode(response.body)['ID']);
                                     _signIn(email, password,
                                         jsonDecode(response.body)['ID']);
                                     AwesomeNotifications().createNotification(
@@ -538,8 +544,7 @@ class _LoginState extends State<Login> {
                                     );
                                   }
                                 } catch (e) {
-                                  // ignore: avoid_print
-                                  print('Error: $e');
+                                  logger.warning('Error: $e');
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                         content: Text(

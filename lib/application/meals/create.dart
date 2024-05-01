@@ -26,9 +26,10 @@ class CreateMeal extends StatefulWidget {
 Timer? _timer;
 
 class _CreateMealState extends State<CreateMeal> {
-  void refresh() {
-    setState(() {});
-  }
+  //why is that even a thing?????
+  // void refresh() {
+  //   setState(() {});
+  // }
 
   double totalCCarbs = 0;
   XFile? _selectedImage;
@@ -52,6 +53,8 @@ class _CreateMealState extends State<CreateMeal> {
   final gramsController = TextEditingController();
   DBHelper dbHelper = DBHelper.instance;
   double ingredientCarbs = 0;
+  double additionalCarbs = 0;
+  double totalCarbs = 0;
   List<Map> allMeals = [];
   List<int> selectedMeals = [];
   List<String> categories = [
@@ -68,15 +71,21 @@ class _CreateMealState extends State<CreateMeal> {
     'Dinner'
   ];
 
+  void updateTotal() {
+    setState(() {
+      ingredientCarbs = calculateTotalCarbs(chosenCMeals);
+      additionalCarbs = double.tryParse(gramsController.text) ?? 0.0;
+      totalCarbs = (carbUnit_ == 0 ? additionalCarbs : additionalCarbs * 15) +
+          ingredientCarbs;
+    });
+  }
+
   List<String> selectedCategories = [];
-  bool showTotalCarbs = false;
   void addMeal() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {});
     });
-    setState(() {
-      showTotalCarbs = false;
-    });
+    setState(() {});
   }
 
   @override
@@ -180,12 +189,13 @@ class _CreateMealState extends State<CreateMeal> {
                                   );
                                 },
                               );
-                            } else if (gramsController.text.isEmpty) {
+                            } else if (totalCarbs == 0) {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return const AlertDialog(
-                                    content: Text('carbs amount is required!'),
+                                  return AlertDialog(
+                                    content: Text(
+                                        'total ${carbUnit_ == 0 ? 'carbs' : 'exchanges'} can not be zero!'),
                                   );
                                 },
                               );
@@ -201,14 +211,14 @@ class _CreateMealState extends State<CreateMeal> {
                                 },
                               );
                             } else {
+                              logger.info(
+                                  "total carbs on create is: $totalCarbs");
                               int createdMeal = await dbHelper.createMeal(
                                   _nameController.text,
                                   image,
                                   chosenCMeals,
                                   selectedCategories,
-                                  chosenCMeals.isEmpty
-                                      ? double.parse(gramsController.text)
-                                      : totalCCarbs);
+                                  totalCarbs);
                               print("Created Meal: $createdMeal");
                               Navigator.pop(context);
                               Navigator.pop(context);
@@ -393,8 +403,137 @@ class _CreateMealState extends State<CreateMeal> {
                           ),
                       ],
                     ),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Additional ${carbUnit_ == 0 ? 'Carbs' : 'Exchanges'}: ',
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 38, 20, 84),
+                            fontSize: 17,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 50,
+                              child: TextFormField(
+                                controller: gramsController,
+                                textAlign: TextAlign.center,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                        decimal: true),
+                                decoration: const InputDecoration(
+                                  hintText: '0.0',
+                                  hintStyle: TextStyle(
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: Color.fromARGB(255, 38, 20, 84),
+                                ),
+                                validator: (value) {
+                                  return null;
+                                },
+                                onChanged: (value) {
+                                  updateTotal();
+                                },
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'^\d*\.?\d*')),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 71,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Ingredient ${carbUnit_ == 0 ? 'Carbs' : 'Exchanges'}: ',
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 38, 20, 84),
+                            fontSize: 17,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 50,
+                              child: Text(
+                                '${carbUnit_ == 0 ? ingredientCarbs : ingredientCarbs / 15}',
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: Color.fromARGB(255, 38, 20, 84),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const Meals(Index: 1)),
+                                );
+
+                                _timer = Timer.periodic(
+                                    const Duration(seconds: 1), (timer) {
+                                  if (mounted) {
+// Check if the widget is still in the tree
+
+                                    setState(() {});
+                                  }
+                                });
+
+                                updateTotal();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+
+                                shadowColor: Colors.transparent,
+
+                                foregroundColor: Colors.transparent,
+
+                                surfaceTintColor: Colors.transparent,
+
+                                shape:
+                                    const CircleBorder(), // Make the button circular
+
+                                padding: const EdgeInsets.all(
+                                    15), // Adjust the size of the button
+                              ),
+                              child: Image.asset(
+                                'assets/AddDish.png',
+                                height: 32,
+                                width: 32,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           'Total ${carbUnit_ == 0 ? 'Carbs' : 'Exchanges'}: ',
@@ -407,114 +546,20 @@ class _CreateMealState extends State<CreateMeal> {
                         ),
                         Row(
                           children: [
-                            Row(
-                              children: [
-                                chosenCMeals.isEmpty
-                                    ? SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.15,
-                                        child: TextFormField(
-                                          controller: gramsController,
-                                          textAlign: TextAlign.center,
-                                          keyboardType: const TextInputType
-                                              .numberWithOptions(decimal: true),
-                                          decoration: const InputDecoration(
-                                            hintText: '0.0',
-                                            hintStyle: TextStyle(
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                          style: const TextStyle(
-                                            fontSize: 20,
-                                            color:
-                                                Color.fromARGB(255, 38, 20, 84),
-                                          ),
-                                          validator: (value) {
-                                            return null;
-
-                                            /*if (value.isEmpty) {
-                                        return 'Please enter a number';
-                                      }
-                                      return null;*/
-                                          },
-                                        ),
-                                      )
-                                    : !showTotalCarbs
-                                        ? ElevatedButton(
-                                            onPressed: () {
-                                              _timer?.cancel();
-                                              totalCCarbs = calculateTotalCarbs(
-                                                  chosenCMeals);
-                                              setState(
-                                                () {
-                                                  showTotalCarbs = true;
-                                                },
-                                              );
-                                            },
-                                            child: const Text('Calculate'),
-                                          )
-                                        : Text(
-                                            '$totalCCarbs',
-                                            style: const TextStyle(
-                                              fontSize: 20,
-                                              color: Color.fromARGB(
-                                                  255, 38, 20, 84),
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                const SizedBox(
-                                  width: 10,
+                            SizedBox(
+                              width: 50,
+                              child: Text(
+                                '${carbUnit_ == 0 ? totalCarbs : totalCarbs / 15}',
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: Color.fromARGB(255, 38, 20, 84),
+                                  fontWeight: FontWeight.w600,
                                 ),
-                                const Text(
-                                  'grams',
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 38, 20, 84),
-                                    fontSize: 17,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                            ElevatedButton(
-                              onPressed: () async {
-                                var result = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const Meals(Index: 1)),
-                                );
-                                if (result == 'refresh') {
-                                  refresh();
-                                }
-                                _timer = Timer.periodic(
-                                    const Duration(seconds: 1), (timer) {
-                                  if (mounted) {
-                                    // Check if the widget is still in the tree
-                                    setState(() {});
-                                  }
-                                });
-                                setState(() {
-                                  showTotalCarbs = false;
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                foregroundColor: Colors.transparent,
-                                surfaceTintColor: Colors.transparent,
-                                shape:
-                                    const CircleBorder(), // Make the button circular
-                                padding: const EdgeInsets.all(
-                                    15), // Adjust the size of the button
-                              ),
-                              child: Image.asset(
-                                'assets/AddDish.png',
-                                height: 32,
-                                width: 32,
-                              ),
-                            )
+                            const SizedBox(
+                              width: 61,
+                            ),
                           ],
                         ),
                       ],
@@ -558,9 +603,8 @@ class _CreateMealState extends State<CreateMeal> {
                                                   meal['quantity']);
                                       setState(() {
                                         chosenCMeals.remove(meal);
-
-                                        showTotalCarbs = false;
                                       });
+                                      updateTotal();
                                     },
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(50),

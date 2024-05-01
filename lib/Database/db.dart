@@ -793,11 +793,7 @@ class DBHelper {
     if (picture == "") {
       picture = "meals/All.png";
     }
-    if (childMeals.isNotEmpty) {
-      childMeals.forEach((element) {
-        totalCarbs += element['carbohydrates'] * element['quantity'];
-      });
-    }
+
     String tags = "";
     categories.forEach((element) {
       tags += "$element, ";
