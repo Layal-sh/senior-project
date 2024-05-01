@@ -77,9 +77,6 @@ class _LoginState extends State<Login> {
 
   Future<void> _signIn(String email, String password, int id) async {
     logger.info("signing in");
-    setState(() {
-      _isLoading = true;
-    });
 
     //logger.info("syncing meals from the server to the local database");
     DBHelper dbHelper = DBHelper.instance;
@@ -225,10 +222,6 @@ class _LoginState extends State<Login> {
         }
       }
     }
-
-    setState(() {
-      _isLoading = false;
-    });
 
     Navigator.push(
       context,
@@ -554,6 +547,9 @@ class _LoginState extends State<Login> {
                                   );
                                 }
                               }
+                              setState(() {
+                                _isLoading = false;
+                              });
                             }
                           },
                           child: _isLoading
