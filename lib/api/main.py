@@ -620,7 +620,7 @@ def checkPhoneNumber(phoneNumber):
         return False
 
 def getUserById(username):##used in /getPatientDetails and in /regPatient##
-    row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ?",(username,)).fetchone()
+    row = cursor.execute("SELECT userID FROM Users WHERE CAST(userName AS VARCHAR(255)) = ? OR CAST(email AS NVARCHAR(MAX)) = ?",(username, username)).fetchone()
     if row is not None:
         return row[0]
     else:

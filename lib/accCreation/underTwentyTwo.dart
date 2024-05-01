@@ -9,11 +9,12 @@ import 'package:http/http.dart' as http;
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/accCreation/underTwentyTwoThanksPage.dart';
 import 'package:sugar_sense/main.dart';
-import 'package:sugar_sense/Database/variables.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class UnderTwentyTwo extends StatefulWidget {
+  const UnderTwentyTwo({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _UnderTwentyTwoState createState() => _UnderTwentyTwoState();
 }
 
@@ -320,7 +321,7 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
                           final string = base64Encode(bytes);
                           final string2 = base64Encode(bytes2);
 
-                          print(string);
+                          logger.info(string);
 
                           final response = await http
                               .post(
