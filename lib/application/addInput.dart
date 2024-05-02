@@ -581,8 +581,9 @@ class _AddInputState extends State<AddInput> {
                                                   meal['quantity']);
                                       setState(() {
                                         chosenMeals.remove(meal);
-
-                                        showTotalCarbs = false;
+                                        totalCCarbs =
+                                            calculateTotalCarbs(meals);
+                                        //showTotalCarbs = false;
                                       });
                                     },
                                     child: ClipRRect(

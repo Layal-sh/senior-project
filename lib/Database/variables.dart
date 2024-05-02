@@ -75,7 +75,7 @@ Future<void> loadPreferences() async {
   carbs_ = prefs.getDouble('carbs') ?? 15;
   insulin_ = prefs.getDouble('insulin') ?? carbRatio_;
   carbs_2 = prefs.getDouble('carbs2') ?? 15;
-  insulin_3 = prefs.getDouble('insulin2') ?? carbRatio_2;
+  insulin_2 = prefs.getDouble('insulin2') ?? carbRatio_2;
   carbs_3 = prefs.getDouble('carbs3') ?? 15;
   insulin_3 = prefs.getDouble('insulin3') ?? carbRatio_3;
   selectedPlan_ = prefs.getInt('selectedPlan_') ?? -1;
@@ -112,6 +112,7 @@ int selectedPlan_ = -1;
 int numOfRatios_ = 1;
 String nextLoginTime_ = "";
 String birthDate_ = "";
+String twentyTwoYearsLater_ = "";
 String nextAppointment_ = "";
 setLoginTime() {
   DateTime now = DateTime.now();

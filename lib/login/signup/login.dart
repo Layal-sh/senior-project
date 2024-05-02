@@ -77,9 +77,6 @@ class _LoginState extends State<Login> {
 
   Future<void> _signIn(String email, String password, int id) async {
     logger.info("signing in");
-    setState(() {
-      _isLoading = true;
-    });
 
     //logger.info("syncing meals from the server to the local database");
     DBHelper dbHelper = DBHelper.instance;
@@ -475,9 +472,12 @@ class _LoginState extends State<Login> {
                                         }),
                                       )
                                       .timeout(const Duration(seconds: 10));
+                                  username_ = email;
+                                  logger.info(
+                                      "user name after setting it to email $username_");
                                   // print(int.parse(response.body));
                                   if (response.statusCode == 402) {
-                                    //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
+                                    //is not a patient
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -485,6 +485,9 @@ class _LoginState extends State<Login> {
                                               const UserInfo()),
                                     );
                                   } else if (response.statusCode == 400) {
+                                    //is not subscribed
+                                    logger.info(
+                                        "user name just before going to membership $username_");
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -495,10 +498,16 @@ class _LoginState extends State<Login> {
                                                   index: 0,
                                                 )));
                                   } else if (response.statusCode == 200) {
-                                    //print(response.body);
-
+                                    print(response.body);
+                                    logger.info("we got to response 200!!");
                                     deleteListEntries();
+                                    logger
+                                        .info("we did the deleteListEntries!!");
                                     setLoginTime();
+                                    logger.info("we did the setLoginTime!!");
+                                    // ignore: prefer_interpolation_to_compose_strings
+                                    // logger.info("ID: " +
+                                    //     jsonDecode(response.body)['ID']);
                                     _signIn(email, password,
                                         jsonDecode(response.body)['ID']);
                                     AwesomeNotifications().createNotification(
@@ -520,8 +529,7 @@ class _LoginState extends State<Login> {
                                     );
                                   }
                                 } catch (e) {
-                                  // ignore: avoid_print
-                                  print('Error: $e');
+                                  logger.warning('Error: $e');
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                         content: Text(
@@ -529,6 +537,9 @@ class _LoginState extends State<Login> {
                                   );
                                 }
                               }
+                              setState(() {
+                                _isLoading = false;
+                              });
                             }
                           },
                           child: _isLoading
