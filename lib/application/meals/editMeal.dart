@@ -231,12 +231,34 @@ class _EditMealState extends State<EditMeal> {
                                     width: 175,
                                     height: 175,
                                     fit: BoxFit.cover,
+                                    errorBuilder: (BuildContext context,
+                                        Object exception,
+                                        StackTrace? stackTrace) {
+                                      // If there is an error, return the default image
+                                      return Image.asset(
+                                        'assets/All.png', // replace with your default image path
+                                        width: 175,
+                                        height: 175,
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
                                   )
                                 : Image.asset(
                                     widget.meal.imageUrl,
                                     width: 175,
                                     height: 175,
                                     fit: BoxFit.cover,
+                                    errorBuilder: (BuildContext context,
+                                        Object exception,
+                                        StackTrace? stackTrace) {
+                                      // If there is an error, return the default image
+                                      return Image.asset(
+                                        'assets/All.png', // replace with your default image path
+                                        width: 175,
+                                        height: 175,
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
                                   ),
                           ),
                         ),

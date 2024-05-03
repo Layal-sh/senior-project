@@ -21,7 +21,7 @@ Future<void> savePreferences() async {
   await prefs.setString('firstName', firstName_);
   await prefs.setString('lastName', lastName_);
   await prefs.setString('email', email_);
-  await prefs.setBool('signedIn', signedIn_);
+  await prefs.setBool('signedIn', isLoggedIn);
   await prefs.setString('doctorCode', doctorCode_);
   await prefs.setString('phoneNumber', phoneNumber_);
   await prefs.setString('profilePicture', profilePicture_);
@@ -64,7 +64,7 @@ Future<void> loadPreferences() async {
   firstName_ = prefs.getString('firstName') ?? "";
   lastName_ = prefs.getString('lastName') ?? "";
   email_ = prefs.getString('email') ?? "";
-  signedIn_ = prefs.getBool('signedIn') ?? false;
+  isLoggedIn = prefs.getBool('signedIn') ?? false;
   doctorCode_ = prefs.getString('doctorCode') ?? "";
   doctorName_ = prefs.getString('doctorName') ?? "";
   phoneNumber_ = prefs.getString('phoneNumber') ?? "";
@@ -93,7 +93,6 @@ String username_ = "";
 String firstName_ = "";
 String lastName_ = "";
 String email_ = "";
-bool signedIn_ = false;
 String doctorCode_ = "";
 String doctorName_ = "";
 String phoneNumber_ = "";
@@ -113,6 +112,7 @@ int numOfRatios_ = 1;
 String nextLoginTime_ = "";
 String birthDate_ = "";
 String nextAppointment_ = "";
+bool isLoggedIn = false;
 setLoginTime() {
   DateTime now = DateTime.now();
   nextLoginTime_ = now.add(const Duration(days: 30)).toString();
@@ -127,6 +127,7 @@ checkLoginTime() {
   if (now.isAfter(nextLoginTime)) {
     return false;
   }
+
   return true;
 //if it returns false then it forces him to go to the login, if it's true then it takes him to the dashboard immediately.
 }

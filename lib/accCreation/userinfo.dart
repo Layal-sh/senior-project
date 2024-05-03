@@ -1,6 +1,7 @@
-// ignore_for_file: use_build_context_synchronously, duplicate_ignore
+// ignore_for_file: use_build_context_synchronously, duplicate_ignore, deprecated_member_use
 
 import 'dart:convert';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -1319,6 +1320,12 @@ class _UserInfoState extends State<UserInfo> {
                     );
                     // ignore: unused_local_variable
                     final response = await registerPatient();
+                    AwesomeNotifications().createNotification(
+                        content: NotificationContent(
+                            id: 10,
+                            channelKey: 'basic_channel',
+                            title: 'Sign Up Successful',
+                            body: 'Welcome To SugarSense.'));
                   } else {
                     // ignore: use_build_context_synchronously
                     ScaffoldMessenger.of(context).showSnackBar(

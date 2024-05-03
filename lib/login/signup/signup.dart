@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, avoid_print, duplicate_ignore
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -819,7 +819,7 @@ class _SignUpState extends State<SignUp> {
                                                                 ElevatedButton(
                                                               style:
                                                                   ButtonStyle(
-                                                                shape: MaterialStateProperty
+                                                                shape: WidgetStateProperty
                                                                     .all<
                                                                         RoundedRectangleBorder>(
                                                                   RoundedRectangleBorder(

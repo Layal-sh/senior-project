@@ -51,7 +51,7 @@ Future<NotificationWeekAndTime?> pickSchedule(
                     Navigator.pop(context);
                   },
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
+                    backgroundColor: WidgetStateProperty.all(
                       Colors.teal,
                     ),
                   ),

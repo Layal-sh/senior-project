@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/accCreation/membership.dart';
@@ -1019,7 +1020,10 @@ class _ProfileState extends State<Profile> {
                 height: 5,
               ),
               GestureDetector(
-                onTap: () {
+                onTap: () async {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  prefs.setBool('signedIn', false);
                   Navigator.push(
                     context,
                     MaterialPageRoute(

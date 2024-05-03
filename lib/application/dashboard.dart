@@ -63,7 +63,7 @@ class _DashboardState extends State<Dashboard> {
 
   void calculateAverageMonthly() {
     var groupedEntries = groupBy(yearentries, (entry) {
-      return DateTime.parse(entry['entryDate']).month;
+      return DateTime.parse(entry['entryDate']).day;
     });
 
     groupedEntries.forEach((month, entries) {

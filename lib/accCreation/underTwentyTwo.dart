@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import, library_private_types_in_public_api, avoid_print, use_build_context_synchronously, duplicate_ignore
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -8,10 +10,11 @@ import 'package:http/http.dart' as http;
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/accCreation/underTwentyTwoThanksPage.dart';
 import 'package:sugar_sense/main.dart';
-import 'package:sugar_sense/Database/variables.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UnderTwentyTwo extends StatefulWidget {
+  const UnderTwentyTwo({super.key});
+
   @override
   _UnderTwentyTwoState createState() => _UnderTwentyTwoState();
 }

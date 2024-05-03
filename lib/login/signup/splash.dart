@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sugar_sense/Database/variables.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -34,10 +35,11 @@ class _SplashState extends State<Splash> {
 
     // Get the token
     String? token = prefs.getString('token');
+    bool loggedIn = prefs.getBool('signedIn') ?? false;
 
     // If the token is not null, navigate to the App screen
     // Otherwise, navigate to the Login screen
-    if (token != null) {
+    if (loggedIn && checkLoginTime()) {
       Navigator.pushReplacementNamed(context, '/app');
     } else {
       Navigator.pushReplacementNamed(context, '/start');
