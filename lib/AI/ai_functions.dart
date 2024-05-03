@@ -26,7 +26,7 @@ void updatePrevMeals(double bloodSugar, carbRatio) async {
   List<Map> meals = [];
   double bloodSugarDiff = bloodSugar - targetBloodSugar_;
   if ((bloodSugarDiff).abs() <= insulinSensitivity_) {
-    //bro is good certainty factor goes up for all meals
+    //patient is good certainty factor goes up for all meals
     int mealCount = 0;
     for (Map mid in hasMeals) {
       Map meal = await dbHelper.getMealById(mid["mealId"])[0];
@@ -41,7 +41,7 @@ void updatePrevMeals(double bloodSugar, carbRatio) async {
           meal["mealId"], meal["carbohydrates"], newCertainty);
     }
   } else {
-    //bro is not good carbs for each meal go up
+    //patient is not good carbs for each meal go up (or down depending if they have low or high bloodsugar)
     double totalBlame = 0;
     for (Map mid in hasMeals) {
       Map meal = await dbHelper.getMealById(mid["mealId"])[0];

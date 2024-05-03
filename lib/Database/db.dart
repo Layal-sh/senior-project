@@ -429,11 +429,29 @@ class DBHelper {
   /////////////// Functions related to Entries///////////////////////////
   /////////////////////////////////////////////////////////////////////
   getMealsFromEntryID(int entryId) async {
+    logger.info("inside of the getMealsFromEntryID function");
     Database? mydb = await db;
-    List<Map> response = await mydb!.rawQuery('''
-    SELECT * FROM "hasMeal" WHERE entryId = $entryId;
+    try {
+      List<Map> response = await mydb!.rawQuery('''
+    SELECT "hasMeals" FROM "Entry" WHERE entryId = $entryId;
     ''');
-    return response;
+      // logger.info("bro tried");
+      // logger.info("rizzbonz of 0: ");
+      // logger.info(response[0]);
+      List<Map> allMeals = [];
+      //logger.info(response[0]['hasMeals']);
+      var hasMealsDecode = json.decode(response[0]['hasMeals']);
+      //logger.info("vat: $vat");
+      for (Map meal in hasMealsDecode) {
+        //print(meal);
+        allMeals.add(meal);
+      }
+      //print(allMeals);
+      return allMeals;
+    } catch (e) {
+      logger.info("bro caught an error in getMealsFromEntryID");
+      logger.warning('error: $e');
+    }
   }
 
   getEntryDate(String date) async {
@@ -793,11 +811,7 @@ class DBHelper {
     if (picture == "") {
       picture = "meals/All.png";
     }
-    if (childMeals.isNotEmpty) {
-      childMeals.forEach((element) {
-        totalCarbs += element['carbohydrates'] * element['quantity'];
-      });
-    }
+
     String tags = "";
     categories.forEach((element) {
       tags += "$element, ";

@@ -2,8 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/login/signup/login.dart';
+import 'package:sugar_sense/main.dart';
+import 'package:http/http.dart' as http;
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -854,6 +857,7 @@ class _SettingsState extends State<Settings> {
                         TextButton(
                           child: const Text('Yes'),
                           onPressed: () async {
+                            await deleteAccount();
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -889,8 +893,30 @@ class _SettingsState extends State<Settings> {
             ),
           ),
           const SizedBox(height: 20),
+          settingsTitle(
+              "FOR TESTING SAKE PLEASE DONT FORGET TO REMOVE BEFORE PRODUCTION"),
+          TextButton(
+              onPressed: () {
+                DBHelper dbHelper = DBHelper.instance;
+                dbHelper.getMealsFromEntryID(7);
+              },
+              child: const Text("hehe")),
         ],
       ),
     );
+  }
+}
+
+deleteAccount() async {
+  DBHelper dbHelper = DBHelper.instance;
+  await dbHelper.reset();
+  logger.info('local DB has been reset');
+
+  final response =
+      await http.get(Uri.parse('http://$localhost:8000/deleteAccount/$pid_'));
+  if (response.statusCode == 200) {
+    logger.info('account has been deleted');
+  } else {
+    logger.warning('Failed to delete account');
   }
 }

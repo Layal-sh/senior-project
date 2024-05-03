@@ -77,9 +77,6 @@ class _LoginState extends State<Login> {
 
   Future<void> _signIn(String email, String password, int id) async {
     logger.info("signing in");
-    setState(() {
-      _isLoading = true;
-    });
 
     //logger.info("syncing meals from the server to the local database");
     DBHelper dbHelper = DBHelper.instance;
@@ -114,6 +111,20 @@ class _LoginState extends State<Login> {
     }
 
     if (id != pid_) {
+      final birthday =
+          await http.get(Uri.parse("http://$localhost:8000/getBirthday/$id"));
+      if (birthday.statusCode == 200) {
+        Map<String, dynamic> birthdayDetails = jsonDecode(birthday.body);
+        birthDate_ = birthdayDetails['birthday'];
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('birthDate', birthDate_);
+
+        DateTime twentyTwoYears =
+            DateTime.parse(birthDate_).add(Duration(days: 22 * 365));
+        twentyTwoYearsLater_ = twentyTwoYears.toString();
+        await prefs.setString('twentyTwoYearsLater', twentyTwoYearsLater_);
+        // this is a rough calculation, not accounting for leap years
+      }
       final response = await http
           .post(
             Uri.parse('http://$localhost:8000/getUserDetails'),
@@ -221,10 +232,6 @@ class _LoginState extends State<Login> {
         }
       }
     }
-
-    setState(() {
-      _isLoading = false;
-    });
 
     Navigator.push(
       context,
@@ -551,6 +558,9 @@ class _LoginState extends State<Login> {
                                           'The server did not respond error : $e')),
                                 );
                               }
+                              setState(() {
+                                _isLoading = false;
+                              });
                             }
                           },
                           child: _isLoading
