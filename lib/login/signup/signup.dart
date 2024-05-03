@@ -812,26 +812,18 @@ class _SignUpState extends State<SignUp> {
                                                           SizedBox(
                                                             width: MediaQuery.of(
                                                                         context)
-                                                                    .size
-                                                                    .width *
-                                                                0.4,
-                                                            child:
-                                                                ElevatedButton(
-                                                              style:
-                                                                  ButtonStyle(
-                                                                shape: WidgetStateProperty
-                                                                    .all<
-                                                                        RoundedRectangleBorder>(
-                                                                  RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            10.0),
-                                                                    side:
-                                                                        const BorderSide(
-                                                                      color: Color
-                                                                          .fromARGB(
-                                                                        255,
-                                                                        49,
+    .size
+    .width *
+    0.4,
+    child: ElevatedButton(
+        style: ButtonStyle(
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    side: BorderSide(
+                        color: Color.fromARGB(
+                            255,
+                            49,
                                                                         205,
                                                                         215,
                                                                       ),
