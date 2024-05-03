@@ -898,7 +898,7 @@ class _SettingsState extends State<Settings> {
           TextButton(
               onPressed: () {
                 DBHelper dbHelper = DBHelper.instance;
-                dbHelper.getMealsFromEntryID(6);
+                dbHelper.getMealsFromEntryID(7);
               },
               child: const Text("hehe")),
         ],

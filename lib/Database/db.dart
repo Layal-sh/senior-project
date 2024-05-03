@@ -435,16 +435,22 @@ class DBHelper {
       List<Map> response = await mydb!.rawQuery('''
     SELECT "hasMeals" FROM "Entry" WHERE entryId = $entryId;
     ''');
-      logger.info("bro tried");
-      print(response);
-      print(response[0]['hasMeals']);
-      for (Map meal in response) {
-        print(meal);
+      // logger.info("bro tried");
+      // logger.info("rizzbonz of 0: ");
+      // logger.info(response[0]);
+      List<Map> allMeals = [];
+      //logger.info(response[0]['hasMeals']);
+      var hasMealsDecode = json.decode(response[0]['hasMeals']);
+      //logger.info("vat: $vat");
+      for (Map meal in hasMealsDecode) {
+        //print(meal);
+        allMeals.add(meal);
       }
-      return response;
+      //print(allMeals);
+      return allMeals;
     } catch (e) {
-      logger.info("bro caught");
-      print('error: $e');
+      logger.info("bro caught an error in getMealsFromEntryID");
+      logger.warning('error: $e');
     }
   }
 
