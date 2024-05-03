@@ -83,9 +83,9 @@ class _LoginState extends State<Login> {
     //dbHelper.dropAllArticles();
     //print(await dbHelper.selectAllArticle());
     // await dbHelper.deleteMealComposition();
-    await dbHelper.syncMeals();
-    //logger.info("synced meals successfully");
-    await dbHelper.syncMealComposition();
+    // await dbHelper.syncMeals();
+    // //logger.info("synced meals successfully");
+    // await dbHelper.syncMealComposition();
     // await dbHelper.syncMeals();
     // //logger.info("synced meals successfully");
     // await dbHelper.syncMealComposition();
@@ -444,10 +444,10 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           onPressed: () async {
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
                             setState(() {
                               _isLoading = true;
                             });
-
                             DBHelper dbHelper = DBHelper.instance;
                             //createPlantFoodNotification;
                             bool connectedToWifi = await isConnectedToWifi();
@@ -514,6 +514,9 @@ class _LoginState extends State<Login> {
                                         builder: (context) => const UserInfo()),
                                   );
                                 } else if (response.statusCode == 200) {
+                                  
+                            isLoggedIn=true;
+                            await prefs.setBool('signedIn', isLoggedIn);
                                   //print(response.body);
                                   if (birthDate_ != "") {
                                     DateTime birthDate = DateTime.parse(

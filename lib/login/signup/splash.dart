@@ -36,10 +36,11 @@ class _SplashState extends State<Splash> {
     // Get the token
     String? token = prefs.getString('token');
     bool loggedIn = prefs.getBool('signedIn') ?? false;
-
+    bool e=!checkLoginTime();
+    print("$loggedIn   $e");
     // If the token is not null, navigate to the App screen
     // Otherwise, navigate to the Login screen
-    if (loggedIn && checkLoginTime()) {
+    if (loggedIn && !checkLoginTime()) {
       Navigator.pushReplacementNamed(context, '/app');
     } else {
       Navigator.pushReplacementNamed(context, '/start');
