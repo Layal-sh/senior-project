@@ -310,6 +310,16 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
                         setState(() {
                           loading = true;
                         });
+
+                         if(birthDateController.text.isEmpty || addressController.text.isEmpty || _frontIdImage == null || _backIdImage == null){
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('All fields must be filled!'),
+                            ),
+                          );
+                         }
+
+                        else{ 
                         if (birthDateController.text.isNotEmpty &&
                             addressController.text.isNotEmpty &&
                             doctorCodeController.text.isNotEmpty &&
@@ -320,8 +330,6 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
 
                           final string = base64Encode(bytes);
                           final string2 = base64Encode(bytes2);
-
-                          logger.info(string);
 
                           final response = await http
                               .post(
@@ -341,13 +349,7 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
                               )
                               .timeout(const Duration(seconds: 10));
 
-                        if(birthDateController.text.isEmpty || addressController.text.isEmpty || _frontIdImage == null || _backIdImage == null){
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('All fields must be filled!'),
-                            ),
-                          );
-                        }else if (response.statusCode == 400) {
+                       if (response.statusCode == 400) {
                             // ignore: use_build_context_synchronously
                             ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -366,6 +368,7 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
                             logger.info('Request sent successfully');
                             logger.info(response.body);
                           }
+                            }
                         } 
                         setState(() {
                           loading = false;

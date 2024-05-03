@@ -111,6 +111,21 @@ class _LoginState extends State<Login> {
     }
 
     if (id != pid_) {
+      final birthday =
+          await http.get(Uri.parse("http://$localhost:8000/getBirthday/$id"));
+      if (birthday.statusCode == 200) {
+        Map<String, dynamic> birthdayDetails = jsonDecode(birthday.body);
+        birthDate_ = birthdayDetails['birthday'];
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('birthDate', birthDate_);
+        
+        DateTime twentyTwoYears=DateTime.parse(birthDate_).add(Duration(
+                                            days: 22 *
+                                                365));
+        twentyTwoYearsLater_ = twentyTwoYears.toString();
+        await prefs.setString('twentyTwoYearsLater', twentyTwoYearsLater_);
+        // this is a rough calculation, not accounting for leap years
+      }
       final response = await http
           .post(
             Uri.parse('http://$localhost:8000/getUserDetails'),
@@ -214,10 +229,6 @@ class _LoginState extends State<Login> {
         }
       }
     }
-
-    setState(() {
-      _isLoading = false;
-    });
 
     Navigator.push(
       context,
@@ -457,6 +468,15 @@ class _LoginState extends State<Login> {
                                 );
                               } else {
                                 try {
+                                  //birthday stuff
+                                  if (birthDate_ != "" && selectedPlan_ == -1 &&
+                                  DateTime.parse(twentyTwoYearsLater_).isAfter(DateTime.now())) {
+                                      //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
+                                      // The birthday after 22 years is in the future
+                                      final response = await http.get(Uri.parse(
+                                          "http:$localhost:8000/updateSubscription/$pid_/0"));
+                                    
+                                  }
                                   //server authentication
                                   final response = await http
                                       .post(
@@ -472,12 +492,9 @@ class _LoginState extends State<Login> {
                                         }),
                                       )
                                       .timeout(const Duration(seconds: 10));
-                                  username_ = email;
-                                  logger.info(
-                                      "user name after setting it to email $username_");
                                   // print(int.parse(response.body));
                                   if (response.statusCode == 402) {
-                                    //is not a patient
+                                    //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -485,9 +502,6 @@ class _LoginState extends State<Login> {
                                               const UserInfo()),
                                     );
                                   } else if (response.statusCode == 400) {
-                                    //is not subscribed
-                                    logger.info(
-                                        "user name just before going to membership $username_");
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -498,16 +512,11 @@ class _LoginState extends State<Login> {
                                                   index: 0,
                                                 )));
                                   } else if (response.statusCode == 200) {
-                                    print(response.body);
-                                    logger.info("we got to response 200!!");
+                                    //print(response.body);
+
                                     deleteListEntries();
-                                    logger
-                                        .info("we did the deleteListEntries!!");
                                     setLoginTime();
-                                    logger.info("we did the setLoginTime!!");
-                                    // ignore: prefer_interpolation_to_compose_strings
-                                    // logger.info("ID: " +
-                                    //     jsonDecode(response.body)['ID']);
+                                    print(nextLoginTime_);
                                     _signIn(email, password,
                                         jsonDecode(response.body)['ID']);
                                     AwesomeNotifications().createNotification(
@@ -529,7 +538,8 @@ class _LoginState extends State<Login> {
                                     );
                                   }
                                 } catch (e) {
-                                  logger.warning('Error: $e');
+                                  // ignore: avoid_print
+                                  print('Error: $e');
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                         content: Text(
