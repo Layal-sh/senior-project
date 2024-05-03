@@ -893,22 +893,30 @@ class _SettingsState extends State<Settings> {
             ),
           ),
           const SizedBox(height: 20),
+          settingsTitle(
+              "FOR TESTING SAKE PLEASE DONT FORGET TO REMOVE BEFORE PRODUCTION"),
+          TextButton(
+              onPressed: () {
+                DBHelper dbHelper = DBHelper.instance;
+                dbHelper.getMealsFromEntryID(6);
+              },
+              child: const Text("hehe")),
         ],
       ),
     );
   }
 }
 
-deleteAccount() async{
-DBHelper dbHelper = DBHelper.instance;
-await dbHelper.reset();
-logger.info('local DB has been reset');
+deleteAccount() async {
+  DBHelper dbHelper = DBHelper.instance;
+  await dbHelper.reset();
+  logger.info('local DB has been reset');
 
-final response = await http.get(Uri.parse(
-                          'http://$localhost:8000/deleteAccount/$pid_'));
- if (response.statusCode == 200) { 
+  final response =
+      await http.get(Uri.parse('http://$localhost:8000/deleteAccount/$pid_'));
+  if (response.statusCode == 200) {
     logger.info('account has been deleted');
- } else {
+  } else {
     logger.warning('Failed to delete account');
-    }
+  }
 }

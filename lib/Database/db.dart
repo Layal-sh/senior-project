@@ -429,11 +429,23 @@ class DBHelper {
   /////////////// Functions related to Entries///////////////////////////
   /////////////////////////////////////////////////////////////////////
   getMealsFromEntryID(int entryId) async {
+    logger.info("inside of the getMealsFromEntryID function");
     Database? mydb = await db;
-    List<Map> response = await mydb!.rawQuery('''
-    SELECT * FROM "hasMeal" WHERE entryId = $entryId;
+    try {
+      List<Map> response = await mydb!.rawQuery('''
+    SELECT "hasMeals" FROM "Entry" WHERE entryId = $entryId;
     ''');
-    return response;
+      logger.info("bro tried");
+      print(response);
+      print(response[0]['hasMeals']);
+      for (Map meal in response) {
+        print(meal);
+      }
+      return response;
+    } catch (e) {
+      logger.info("bro caught");
+      print('error: $e');
+    }
   }
 
   getEntryDate(String date) async {
