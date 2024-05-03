@@ -680,9 +680,7 @@ class _AddInputState extends State<AddInput> {
   }
 
   Widget calc() {
-    return Container(
-      //height: MediaQuery.of(context).size.height,
-      color: const Color.fromARGB(255, 255, 249, 254),
+    return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -981,21 +979,16 @@ class _AddInputState extends State<AddInput> {
                     Navigator.pop(context);
                   },
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                      const Color.fromARGB(255, 255, 249, 254),
-                    ),
-                    shadowColor: MaterialStateProperty.all<Color>(
-                      const Color.fromARGB(255, 255, 249, 254),
-                    ),
-                    overlayColor: MaterialStateProperty.all<Color>(
-                      const Color.fromARGB(255, 255, 249, 254),
-                    ),
-                    foregroundColor: MaterialStateProperty.all<Color>(
-                      const Color.fromARGB(255, 255, 249, 254),
-                    ),
-                    surfaceTintColor: MaterialStateProperty.all<Color>(
-                      const Color.fromARGB(255, 255, 249, 254),
-                    ),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.transparent),
+                    shadowColor:
+                        MaterialStateProperty.all<Color>(Colors.transparent),
+                    overlayColor:
+                        MaterialStateProperty.all<Color>(Colors.transparent),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.transparent),
+                    surfaceTintColor:
+                        MaterialStateProperty.all<Color>(Colors.transparent),
                   ),
                   child: const Text(
                     'OK',
