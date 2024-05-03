@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:sugar_sense/AI/ai_functions.dart';
 import 'package:sugar_sense/Database/db.dart';
@@ -260,25 +261,45 @@ class _AddInputState extends State<AddInput> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Column(
+                              Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Total Bolus',
                                     style: TextStyle(
                                         fontSize: 18,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w700),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 5,
                                   ),
-                                  Text(
-                                    'CALCULATIONS',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Color.fromARGB(255, 116, 97, 164),
-                                      fontWeight: FontWeight.w500,
+                                  GestureDetector(
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        builder: (BuildContext context) {
+                                          return SizedBox(
+                                            height: MediaQuery.of(context)
+                                                .size
+                                                .height,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            child: calc(),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: const Text(
+                                      'CALCULATIONS',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color:
+                                            Color.fromARGB(255, 116, 97, 164),
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -406,7 +427,7 @@ class _AddInputState extends State<AddInput> {
                             children: [
                               SizedBox(
                                 width: MediaQuery.of(context).size.width / 7,
-                                height: 20,
+                                height: 30,
                                 child: TextFormField(
                                   controller: _GlucoseController,
                                   keyboardType:
@@ -654,6 +675,342 @@ class _AddInputState extends State<AddInput> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget calc() {
+    return Container(
+      //height: MediaQuery.of(context).size.height,
+      color: const Color.fromARGB(255, 255, 249, 254),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            color: const Color.fromARGB(255, 219, 219, 219),
+            child: const Padding(
+              padding: EdgeInsets.only(
+                left: 10.0,
+                top: 10,
+                bottom: 10,
+              ),
+              child: Text(
+                'Input Data',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontFamily: 'Inter',
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 10.0,
+              top: 10,
+              bottom: 10,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                const Text(
+                  'Bolus Intake = 0 U',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Color.fromARGB(255, 23, 128, 136),
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  carbRatio_2 != 0
+                      ? 'Carb Ratio 1 = $carbRatio_'
+                      : 'Carb Ratio = $carbRatio_',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Color.fromARGB(255, 23, 128, 136),
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                carbRatio_2 != 0
+                    ? Text(
+                        'Carb Ratio 2 = $carbRatio_2',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontFamily: 'Inter',
+                          color: Color.fromARGB(255, 23, 128, 136),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )
+                    : Container(),
+                carbRatio_2 != 0
+                    ? const SizedBox(
+                        height: 10,
+                      )
+                    : Container(),
+                carbRatio_3 != 0
+                    ? Text(
+                        'Carb Ratio 3 = $carbRatio_3',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontFamily: 'Inter',
+                          color: Color.fromARGB(255, 23, 128, 136),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )
+                    : Container(),
+                carbRatio_3 != 0
+                    ? const SizedBox(
+                        height: 10,
+                      )
+                    : Container(),
+                Text(
+                  'Insulin Sensitivity = $insulinSensitivity_',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Color.fromARGB(255, 23, 128, 136),
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Target = $targetBloodSugar_',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontFamily: 'Inter',
+                    color: Color.fromARGB(255, 23, 128, 136),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                const Text(
+                  'Glucose = N/A',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Color.fromARGB(255, 23, 128, 136),
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                const Text(
+                  'Carbohydrates = N/A',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Color.fromARGB(255, 23, 128, 136),
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            color: const Color.fromARGB(255, 219, 219, 219),
+            child: const Padding(
+              padding: EdgeInsets.only(
+                left: 10.0,
+                top: 10,
+                bottom: 10,
+              ),
+              child: Text(
+                'Algorithm',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontFamily: 'Inter',
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(
+              left: 10.0,
+              top: 10,
+              bottom: 10,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      'Correction =  ',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Color.fromARGB(255, 23, 128, 136),
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          'Glucose - Target',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Color.fromARGB(255, 23, 128, 136),
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 120,
+                          child: Divider(
+                            color: Color.fromARGB(255, 23, 128, 136),
+                            thickness: 1,
+                          ),
+                        ), // Add this line
+
+                        Text(
+                          'Insulin Sensitivity',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Color.fromARGB(255, 23, 128, 136),
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      'Bolus =  ',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Color.fromARGB(255, 23, 128, 136),
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      'Correction + (  ',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Color.fromARGB(255, 23, 128, 136),
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          'Carbohydrates',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Color.fromARGB(255, 23, 128, 136),
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 100,
+                          child: Divider(
+                            color: Color.fromARGB(255, 23, 128, 136),
+                            thickness: 1,
+                          ),
+                        ),
+                        Text(
+                          '15',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Color.fromARGB(255, 23, 128, 136),
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      ' * Carb Ratio )',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Color.fromARGB(255, 23, 128, 136),
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      const Color.fromARGB(255, 255, 249, 254),
+                    ),
+                    shadowColor: MaterialStateProperty.all<Color>(
+                      const Color.fromARGB(255, 255, 249, 254),
+                    ),
+                    overlayColor: MaterialStateProperty.all<Color>(
+                      const Color.fromARGB(255, 255, 249, 254),
+                    ),
+                    foregroundColor: MaterialStateProperty.all<Color>(
+                      const Color.fromARGB(255, 255, 249, 254),
+                    ),
+                    surfaceTintColor: MaterialStateProperty.all<Color>(
+                      const Color.fromARGB(255, 255, 249, 254),
+                    ),
+                  ),
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Color.fromARGB(255, 23, 128, 136),
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

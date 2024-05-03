@@ -61,7 +61,10 @@ class _LoginState extends State<Login> {
   }
 
   bool _isLoading = false;
-
+  bool eerror = false;
+  bool perror = false;
+  String? emailErrorMessage;
+  String? passErrorMessage;
   int patientId = pid_;
 
   deleteListEntries() async {
@@ -346,6 +349,15 @@ class _LoginState extends State<Login> {
                           //  return null;
                           //},
                         ),
+                        eerror
+                            ? Text(
+                                emailErrorMessage!,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 13,
+                                ),
+                              )
+                            : Container(),
                         const SizedBox(
                           height: 30,
                         ),
@@ -408,6 +420,15 @@ class _LoginState extends State<Login> {
                           //  return null;
                           //},
                         ),
+                        perror
+                            ? Text(
+                                passErrorMessage!,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 13,
+                                ),
+                              )
+                            : Container(),
                         const SizedBox(
                           height: 15,
                         ),
@@ -447,7 +468,8 @@ class _LoginState extends State<Login> {
                             setState(() {
                               _isLoading = true;
                             });
-
+                            String uvalue = _emailController.text;
+                            String pvalue = _passwordController.text;
                             DBHelper dbHelper = DBHelper.instance;
                             //createPlantFoodNotification;
                             bool connectedToWifi = await isConnectedToWifi();
@@ -455,112 +477,156 @@ class _LoginState extends State<Login> {
 
                             String email = _emailController.text;
                             String password = _passwordController.text;
-                            if (email == 'admin' && password == 'admin') {
-                              //alowing admins to login without server connection
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const App()),
-                              );
-                            } else if (connectedToWifi == false) {
-                              setState(() {
-                                _isLoading = false;
-                              });
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                      'Please connect to the internet to sign in'),
-                                ),
-                              );
+                            if (uvalue.isEmpty || pvalue.isEmpty) {
+                              if (uvalue.isEmpty) {
+                                setState(() {
+                                  emailErrorMessage =
+                                      "* Please enter your email/username";
+                                  eerror = true;
+                                  _isLoading = false;
+                                });
+                              } else {
+                                setState(() {
+                                  eerror = false;
+                                });
+                              }
+                              if (pvalue.isEmpty) {
+                                setState(() {
+                                  passErrorMessage =
+                                      "* Please enter your password";
+                                  perror = true;
+                                  _isLoading = false;
+                                });
+                              } else {
+                                setState(() {
+                                  perror = false;
+                                });
+                              }
                             } else {
-                              try {
-                                //server authentication
-                                final response = await http
-                                    .post(
-                                      Uri.parse(
-                                          'http://$localhost:8000/authenticate'), //$localhost
-                                      headers: <String, String>{
-                                        'Content-Type':
-                                            'application/json; charset=UTF-8',
-                                      },
-                                      body: jsonEncode(<String, String>{
-                                        'username': email,
-                                        'password': password,
-                                      }),
-                                    )
-                                    .timeout(const Duration(seconds: 10));
-                                // print(int.parse(response.body));
-                                if (response.statusCode == 402) {
-                                  //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
-                                  setState(() {
-                                    _isLoading = false;
-                                  });
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const Membership(
-                                                username:
-                                                    "", //USERNAME TO BE GOT FROM BACKEND
-                                                index: 0,
-                                              )));
-                                } else if (response.statusCode == 400) {
-                                  setState(() {
-                                    _isLoading = false;
-                                  });
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const UserInfo()),
-                                  );
-                                } else if (response.statusCode == 200) {
-                                  //print(response.body);
-                                  if (birthDate_ != "") {
-                                    DateTime birthDate = DateTime.parse(
-                                        birthDate_); // assuming user.birthDate is in 'yyyy-MM-dd' format
-                                    DateTime twentyTwoYearsLater =
-                                        birthDate.add(const Duration(
-                                            days: 22 *
-                                                365)); // this is a rough calculation, not accounting for leap years
-
-                                    if (twentyTwoYearsLater
-                                        .isAfter(DateTime.now())) {
-                                      //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
-                                      // The birthday after 22 years is in the future
-                                    }
-                                  }
-                                  deleteListEntries();
-                                  setLoginTime();
-                                  _signIn(email, password,
-                                      jsonDecode(response.body)['ID']);
-                                } else {
-                                  //incorrect username or password handling
-                                  //for layal you can change this if you want or remove this comment if you think its good
-                                  setState(() {
-                                    _isLoading = false;
-                                  });
-                                  var responseBody = jsonDecode(response.body);
-                                  var errorMessage =
-                                      responseBody['detail'] ?? 'Unknown error';
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('$errorMessage')),
-                                  );
-                                }
-                              } catch (e) {
-                                // ignore: avoid_print
+                              if (email == 'admin' && password == 'admin') {
+                                //alowing admins to login without server connection
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const App()),
+                                );
+                              } else if (connectedToWifi == false) {
                                 setState(() {
                                   _isLoading = false;
                                 });
-                                print('Error: $e');
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(
-                                          'The server did not respond error : $e')),
+                                  const SnackBar(
+                                    content: Text(
+                                        'Please connect to the internet to sign in'),
+                                  ),
                                 );
+                              } else {
+                                try {
+                                  //server authentication
+                                  final response = await http
+                                      .post(
+                                        Uri.parse(
+                                            'http://$localhost:8000/authenticate'), //$localhost
+                                        headers: <String, String>{
+                                          'Content-Type':
+                                              'application/json; charset=UTF-8',
+                                        },
+                                        body: jsonEncode(<String, String>{
+                                          'username': email,
+                                          'password': password,
+                                        }),
+                                      )
+                                      .timeout(const Duration(seconds: 10));
+                                  // print(int.parse(response.body));
+                                  if (response.statusCode == 402) {
+                                    //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const Membership(
+                                                  username:
+                                                      "", //USERNAME TO BE GOT FROM BACKEND
+                                                  index: 0,
+                                                )));
+                                  } else if (response.statusCode == 400) {
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const UserInfo()),
+                                    );
+                                  } else if (response.statusCode == 200) {
+                                    //print(response.body);
+                                    if (birthDate_ != "") {
+                                      DateTime birthDate = DateTime.parse(
+                                          birthDate_); // assuming user.birthDate is in 'yyyy-MM-dd' format
+                                      DateTime twentyTwoYearsLater =
+                                          birthDate.add(const Duration(
+                                              days: 22 *
+                                                  365)); // this is a rough calculation, not accounting for leap years
+
+                                      if (twentyTwoYearsLater
+                                          .isAfter(DateTime.now())) {
+                                        //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
+                                        // The birthday after 22 years is in the future
+                                      }
+                                    }
+                                    deleteListEntries();
+                                    setLoginTime();
+                                    setState(() {
+                                      eerror = false;
+
+                                      perror = false;
+                                    });
+                                    _signIn(email, password,
+                                        jsonDecode(response.body)['ID']);
+                                  } else {
+                                    //incorrect username or password handling
+                                    //for layal you can change this if you want or remove this comment if you think its good
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                    setState(() {
+                                      emailErrorMessage =
+                                          "* Incorrect username or password";
+                                      eerror = true;
+                                      _isLoading = false;
+                                      passErrorMessage =
+                                          "* Incorrect username or password";
+                                      perror = true;
+                                    });
+
+                                    var responseBody =
+                                        jsonDecode(response.body);
+                                    var errorMessage = responseBody['detail'] ??
+                                        'Unknown error';
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('$errorMessage')),
+                                    );
+                                  }
+                                } catch (e) {
+                                  // ignore: avoid_print
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  print('Error: $e');
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'The server did not respond error : $e')),
+                                  );
+                                }
+                                setState(() {
+                                  _isLoading = false;
+                                });
                               }
-                              setState(() {
-                                _isLoading = false;
-                              });
                             }
                           },
                           child: _isLoading
