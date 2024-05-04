@@ -61,6 +61,7 @@ class DBHelper {
     // }
   }
 
+  //the unit column should be removed because the unit should follow the users settings and not be stored in the database
   _onCreate(Database db, int version) async {
     await db.execute('''
   CREATE TABLE "Entry"(
@@ -316,7 +317,7 @@ class DBHelper {
   updateMealById(int mealId, double carbs, double certainty) async {
     Database? mydb = await db;
     int response = await mydb!.rawUpdate('''
-    UPDATE Meals SET carbohydrate = $carbs , certainty = $certainty
+    UPDATE Meals SET carbohydrates = $carbs , certainty = $certainty
     WHERE mealId = $mealId
     ''');
     logger.info("Meal $mealId has been updated successfully.");
@@ -470,6 +471,7 @@ class DBHelper {
     ORDER BY entryDate DESC
     LIMIT $n
     ''');
+    logger.info("entry from id response: $response");
     return response;
   }
 

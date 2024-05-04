@@ -156,6 +156,10 @@ class _AddInputState extends State<AddInput> {
                                                       _GlucoseController.text);
                                               DBHelper dbHelper =
                                                   DBHelper.instance;
+                                              updatePrevMeals(
+                                                  glucoseLevel,
+                                                  double.parse(
+                                                      carbRatioSelected!));
                                               await dbHelper.createEntry(
                                                   glucoseLevel,
                                                   bolusCalculation.value,
@@ -604,6 +608,7 @@ class _AddInputState extends State<AddInput> {
                                         chosenMeals.remove(meal);
                                         totalCCarbs =
                                             calculateTotalCarbs(meals);
+                                        updateBolusCalculation();
                                         //showTotalCarbs = false;
                                       });
                                     },
