@@ -39,7 +39,7 @@ class _AddInputState extends State<AddInput> {
   String date = "";
   int bolusCalculationResult = 0;
   double totalCarbs = 0;
-  void updateBolusCalculation() {
+  void updateBolusCalculation() async {
     if (_GlucoseController.text.isNotEmpty && showTotalCarbs == true) {
       glucoseLevel = double.parse(_GlucoseController.text);
 
@@ -48,7 +48,10 @@ class _AddInputState extends State<AddInput> {
       bolusCalculation.value = bolusCalculationResult + 0;
       DBHelper dbHelper = DBHelper.instance;
       DateTime now = DateTime.now();
+      //DateTime.parse('2024-05-1 20:28:54.345');
+      //
       date = DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(now);
+      //date = '2024-02-05 21:34:54.000';
     } else {
       bolusCalculation.value = 0;
     }
@@ -151,11 +154,11 @@ class _AddInputState extends State<AddInput> {
                                           TextButton(
                                             child: const Text('Yes'),
                                             onPressed: () async {
+                                              DBHelper dbHelper =
+                                                  DBHelper.instance;
                                               double glucoseLevel =
                                                   double.parse(
                                                       _GlucoseController.text);
-                                              DBHelper dbHelper =
-                                                  DBHelper.instance;
                                               updatePrevMeals(
                                                   glucoseLevel,
                                                   double.parse(
