@@ -537,7 +537,10 @@ class _AddInputState extends State<AddInput> {
                                       ),
                                     if (showTotalCarbs)
                                       Text(
-                                        '${carbUnit_ == 0 ? totalCarbs : totalCarbs ~/ 15}',
+                                        (carbUnit_ == 0
+                                                ? totalCarbs
+                                                : totalCarbs ~/ 15)
+                                            .toStringAsFixed(1),
                                         style: const TextStyle(
                                           fontSize: 20,
                                           color: Color.fromARGB(255, 0, 0, 0),

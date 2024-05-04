@@ -1,5 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously, deprecated_member_use
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sugar_sense/Database/db.dart';
@@ -833,74 +835,213 @@ class _SettingsState extends State<Settings> {
           const SizedBox(height: 20),
           settingsTitle("Account"),
           const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 10,
-              right: 10,
-            ),
-            child: TextButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Delete Account'),
-                      content: const Text(
-                          'Are you sure you want to delete your account?'),
-                      actions: <Widget>[
-                        TextButton(
-                          child: const Text('No'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        TextButton(
-                          child: const Text('Yes'),
-                          onPressed: () async {
-                            await deleteAccount();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const Login(),
+          ElevatedButton.icon(
+            onPressed: () {
+              String pass = "";
+              String confirmationString = "";
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Delete Account'),
+                    content: SingleChildScrollView(
+                      child: SizedBox(
+                        height: 200,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            const Text(
+                                'Please enter your password and type "I want to delete my account" to confirm.'),
+                            TextField(
+                              obscureText: true,
+                              decoration: const InputDecoration(
+                                labelText: 'Password',
                               ),
-                            );
-                          },
+                              onChanged: (value) {
+                                pass = value;
+                              },
+                            ),
+                            TextField(
+                              decoration: const InputDecoration(
+                                labelText: 'Confirmation Phrase',
+                              ),
+                              onChanged: (value) {
+                                confirmationString = value;
+                              },
+                            ),
+                          ],
                         ),
-                      ],
-                    );
-                  },
-                );
-              },
-              child: const Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.delete,
-                    color: Colors.red,
-                    size: 30,
-                  ),
-                  SizedBox(
-                      width:
-                          15.0), // Add some space between the icon and the text
-                  Text(
-                    'Delete Account',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 18,
+                      ),
                     ),
-                  ),
-                ],
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: const Text('Confirm'),
+                        onPressed: () async {
+                          if (confirmationString ==
+                              'I want to delete my account') {
+                            final response = await http
+                                .post(
+                                  Uri.parse(
+                                      'http://$localhost:8000/deleteAccount'),
+                                  headers: <String, String>{
+                                    'Content-Type':
+                                        'application/json; charset=UTF-8',
+                                  },
+                                  body: jsonEncode(<String, String>{
+                                    'username': username_,
+                                    'password': pass,
+                                  }),
+                                )
+                                .timeout(const Duration(seconds: 10));
+                            if (response.statusCode == 200) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Login(),
+                                  ));
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('Error'),
+                                    content:
+                                        const Text("Couldn't delete account"),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: const Text('OK'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Error'),
+                                  content: const Text(
+                                      "Confirmation string is incorrect"),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: const Text('OK'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            label: const Text(
+              'Delete Account',
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 53, 53),
               ),
             ),
-          ),
-          const SizedBox(height: 20),
-          settingsTitle(
-              "FOR TESTING SAKE PLEASE DONT FORGET TO REMOVE BEFORE PRODUCTION"),
-          TextButton(
-              onPressed: () {
-                DBHelper dbHelper = DBHelper.instance;
-                dbHelper.getMealsFromEntryID(7);
-              },
-              child: const Text("hehe")),
+            icon: const Icon(
+              Icons.delete,
+              color: Color.fromARGB(255, 255, 53, 53),
+            ),
+            style: ButtonStyle(
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(Colors.transparent),
+              shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
+              overlayColor:
+                  MaterialStateProperty.all<Color>(Colors.transparent),
+              foregroundColor:
+                  MaterialStateProperty.all<Color>(Colors.transparent),
+              surfaceTintColor:
+                  MaterialStateProperty.all<Color>(Colors.transparent),
+            ),
+          )
+          // Padding(
+          //   padding: const EdgeInsets.only(
+          //     left: 10,
+          //     right: 10,
+          //   ),
+          //   child: TextButton(
+          //     onPressed: () {
+          //       showDialog(
+          //         context: context,
+          //         builder: (BuildContext context) {
+          //           return AlertDialog(
+          //             title: const Text('Delete Account'),
+          //             content: const Text(
+          //                 'Are you sure you want to delete your account?'),
+          //             actions: <Widget>[
+          //               TextButton(
+          //                 child: const Text('No'),
+          //                 onPressed: () {
+          //                   Navigator.of(context).pop();
+          //                 },
+          //               ),
+          //               TextButton(
+          //                 child: const Text('Yes'),
+          //                 onPressed: () async {
+          //                   await deleteAccount();
+          //                   Navigator.push(
+          //                     context,
+          //                     MaterialPageRoute(
+          //                       builder: (context) => const Login(),
+          //                     ),
+          //                   );
+          //                 },
+          //               ),
+          //             ],
+          //           );
+          //         },
+          //       );
+          //     },
+          //     child: const Row(
+          //       children: <Widget>[
+          //         Icon(
+          //           Icons.delete,
+          //           color: Colors.red,
+          //           size: 30,
+          //         ),
+          //         SizedBox(
+          //             width:
+          //                 15.0), // Add some space between the icon and the text
+          //         Text(
+          //           'Delete Account',
+          //           style: TextStyle(
+          //             color: Colors.red,
+          //             fontSize: 18,
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(height: 20),
+          // settingsTitle(
+          //     "FOR TESTING SAKE PLEASE DONT FORGET TO REMOVE BEFORE PRODUCTION"),
+          // TextButton(
+          //     onPressed: () {
+          //       DBHelper dbHelper = DBHelper.instance;
+          //       dbHelper.getMealsFromEntryID(7);
+          //     },
+          //     child: const Text("hehe")),
         ],
       ),
     );

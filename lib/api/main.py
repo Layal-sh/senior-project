@@ -781,17 +781,22 @@ async def getAppointment(id:int):
 ##############################3
 #######delete account##########
 ###############################
-@app.get("/deleteAccount/{id}")
-async def deleteAccount(id:int):
-    row = cursor.execute("DELETE FROM Entry WHERE patientID = ?", (id,))
-    print("deleted entries")
-    row1 = cursor.execute("DELETE FROM Patients WHERE patientID = ?", (id,))
-    print("deleted patient")
-    row2 = cursor.execute("DELETE FROM Users WHERE userID = ?", (id,))
-    print("deleted user")
-    cnxn.commit()
-    if (row is not None) and (row1 is not None) and (row2 is not None):
-        return True
+@app.post("/deleteAccount")
+async def deleteAccount(user:User):
+    authentication = await authenticate(user)
+    if 'error' not in authentication:
+        id = getUserById(user.username)
+        row = cursor.execute("DELETE FROM Entry WHERE patientID = ?", (id,))
+        print("deleted entries")
+        row1 = cursor.execute("DELETE FROM Patients WHERE patientID = ?", (id,))
+        print("deleted patient")
+        row2 = cursor.execute("DELETE FROM Users WHERE userID = ?", (id,))
+        print("deleted user")
+        cnxn.commit()
+        if (row is not None) and (row1 is not None) and (row2 is not None):
+            return True
+        else:
+            raise HTTPException(status_code=500, detail="couldn't delete account")
     else:
-        raise HTTPException(status_code=500, detail="couldn't delete account")
+        raise HTTPException(status_code=400, detail="couldn't authenticate user")
     
