@@ -467,28 +467,40 @@ class _LoginState extends State<Login> {
                             String password = _passwordController.text;
                             if (uvalue.isEmpty || pvalue.isEmpty) {
                               if (uvalue.isEmpty) {
-                                setState(() {
-                                  emailErrorMessage =
-                                      "* Please enter your email/username";
-                                  eerror = true;
-                                  _isLoading = false;
-                                });
-                              } else {
-                                setState(() {
-                                  eerror = false;
-                                });
+                              //   setState(() {
+                              //     emailErrorMessage =
+                              //         "* Please enter your email/username";
+                              //     eerror = true;
+                              //     _isLoading = false;
+                              //   });
+                              // } else {
+                              //   setState(() {
+                              //     eerror = false;
+                              //   });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Please enter your username or email'),
+                                  ),
+                                );
                               }
-                              if (pvalue.isEmpty) {
-                                setState(() {
-                                  passErrorMessage =
-                                      "* Please enter your password";
-                                  perror = true;
-                                  _isLoading = false;
-                                });
-                              } else {
-                                setState(() {
-                                  perror = false;
-                                });
+                              else if (pvalue.isEmpty) {
+                              //   setState(() {
+                              //     passErrorMessage =
+                              //         "* Please enter your password";
+                              //     perror = true;
+                              //     _isLoading = false;
+                              //   });
+                              // } else {
+                              //   setState(() {
+                              //     perror = false;
+                              //   });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Please enter your password'),
+                                  ),
+                                );
                               }
                             } else {
                               if (email == 'admin' && password == 'admin') {
@@ -554,20 +566,7 @@ class _LoginState extends State<Login> {
                                     isLoggedIn = true;
                                     await prefs.setBool('signedIn', isLoggedIn);
                                     //print(response.body);
-                                    if (birthDate_ != "") {
-                                      DateTime birthDate = DateTime.parse(
-                                          birthDate_); // assuming user.birthDate is in 'yyyy-MM-dd' format
-                                      DateTime twentyTwoYearsLater =
-                                          birthDate.add(const Duration(
-                                              days: 22 *
-                                                  365)); // this is a rough calculation, not accounting for leap years
-
-                                      if (twentyTwoYearsLater
-                                          .isAfter(DateTime.now())) {
-                                        //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
-                                        // The birthday after 22 years is in the future
-                                      }
-                                    }
+                                    
                                     deleteListEntries();
                                     setLoginTime();
                                     setState(() {
@@ -580,18 +579,18 @@ class _LoginState extends State<Login> {
                                   } else {
                                     //incorrect username or password handling
                                     //for layal you can change this if you want or remove this comment if you think its good
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                    setState(() {
-                                      emailErrorMessage =
-                                          "* Incorrect username or password";
-                                      eerror = true;
-                                      _isLoading = false;
-                                      passErrorMessage =
-                                          "* Incorrect username or password";
-                                      perror = true;
-                                    });
+                                    // setState(() {
+                                    //   _isLoading = false;
+                                    // });
+                                    // setState(() {
+                                    //   emailErrorMessage =
+                                    //       "* Incorrect username or password";
+                                    //   eerror = true;
+                                    //   _isLoading = false;
+                                    //   passErrorMessage =
+                                    //       "* Incorrect username or password";
+                                    //   perror = true;
+                                    // });
 
                                     var responseBody =
                                         jsonDecode(response.body);
