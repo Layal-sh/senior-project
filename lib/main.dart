@@ -23,6 +23,11 @@ bool isNotMobile = false;
 String localhost = "";
 DBHelper db = DBHelper.instance;
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {
     print('${record.level.name}: ${record.time}: ${record.message}');
