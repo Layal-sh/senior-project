@@ -467,38 +467,36 @@ class _LoginState extends State<Login> {
                             String password = _passwordController.text;
                             if (uvalue.isEmpty || pvalue.isEmpty) {
                               if (uvalue.isEmpty) {
-                              //   setState(() {
-                              //     emailErrorMessage =
-                              //         "* Please enter your email/username";
-                              //     eerror = true;
-                              //     _isLoading = false;
-                              //   });
-                              // } else {
-                              //   setState(() {
-                              //     eerror = false;
-                              //   });
-                              ScaffoldMessenger.of(context).showSnackBar(
+                                //   setState(() {
+                                //     emailErrorMessage =
+                                //         "* Please enter your email/username";
+                                //     eerror = true;
+                                //     _isLoading = false;
+                                //   });
+                                // } else {
+                                //   setState(() {
+                                //     eerror = false;
+                                //   });
+                                ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
                                         'Please enter your username or email'),
                                   ),
                                 );
-                              }
-                              else if (pvalue.isEmpty) {
-                              //   setState(() {
-                              //     passErrorMessage =
-                              //         "* Please enter your password";
-                              //     perror = true;
-                              //     _isLoading = false;
-                              //   });
-                              // } else {
-                              //   setState(() {
-                              //     perror = false;
-                              //   });
-                              ScaffoldMessenger.of(context).showSnackBar(
+                              } else if (pvalue.isEmpty) {
+                                //   setState(() {
+                                //     passErrorMessage =
+                                //         "* Please enter your password";
+                                //     perror = true;
+                                //     _isLoading = false;
+                                //   });
+                                // } else {
+                                //   setState(() {
+                                //     perror = false;
+                                //   });
+                                ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text(
-                                        'Please enter your password'),
+                                    content: Text('Please enter your password'),
                                   ),
                                 );
                               }
@@ -537,8 +535,9 @@ class _LoginState extends State<Login> {
                                         }),
                                       )
                                       .timeout(const Duration(seconds: 10));
+                                  username_ = email;
                                   // print(int.parse(response.body));
-                                  if (response.statusCode == 402) {
+                                  if (response.statusCode == 400) {
                                     //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
                                     setState(() {
                                       _isLoading = false;
@@ -552,7 +551,7 @@ class _LoginState extends State<Login> {
                                                       "", //USERNAME TO BE GOT FROM BACKEND
                                                   index: 0,
                                                 )));
-                                  } else if (response.statusCode == 400) {
+                                  } else if (response.statusCode == 402) {
                                     setState(() {
                                       _isLoading = false;
                                     });
@@ -566,7 +565,7 @@ class _LoginState extends State<Login> {
                                     isLoggedIn = true;
                                     await prefs.setBool('signedIn', isLoggedIn);
                                     //print(response.body);
-                                    
+
                                     deleteListEntries();
                                     setLoginTime();
                                     setState(() {

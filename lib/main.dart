@@ -33,6 +33,7 @@ Future<void> main() async {
 
   isNotMobile = kIsWeb || (!Platform.isAndroid && !Platform.isIOS);
   localhost = !isNotMobile ? "10.0.2.2" : "localhost";
+  localhost = "192.168.1.104";
   if (isNotMobile) {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
