@@ -86,12 +86,10 @@ class _LoginState extends State<Login> {
     //dbHelper.dropAllArticles();
     //print(await dbHelper.selectAllArticle());
     // await dbHelper.deleteMealComposition();
-    // await dbHelper.syncMeals();
     // //logger.info("synced meals successfully");
-    // await dbHelper.syncMealComposition();
-    // await dbHelper.syncMeals();
+    await dbHelper.syncMealComposition();
+    await dbHelper.syncMeals();
     // //logger.info("synced meals successfully");
-    // await dbHelper.syncMealComposition();
     // logger.info("synced meal compositions successfully");
     // logger.info("saving values to shared preferences");
     // if (nextAppointment_ != "") {
@@ -474,6 +472,9 @@ class _LoginState extends State<Login> {
                                 //   setState(() {
                                 //     eerror = false;
                                 //   });
+                                setState(() {
+                                  _isLoading = false;
+                                });
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
@@ -491,6 +492,9 @@ class _LoginState extends State<Login> {
                                 //   setState(() {
                                 //     perror = false;
                                 //   });
+                                setState(() {
+                                  _isLoading = false;
+                                });
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('Please enter your password'),
@@ -595,7 +599,9 @@ class _LoginState extends State<Login> {
                                     //       "* Incorrect username or password";
                                     //   perror = true;
                                     // });
-
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
                                     var responseBody =
                                         jsonDecode(response.body);
                                     var errorMessage = responseBody['detail'] ??

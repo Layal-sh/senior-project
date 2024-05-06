@@ -296,6 +296,12 @@ class _AppState extends State<App> {
       );
     });
   */
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (isAllowed) {
+        _timer = Timer.periodic(const Duration(minutes: 5),
+            (Timer t) => checkLatestEntryDateAndShowNotification());
+      }
+    });
   }
 
   @override
