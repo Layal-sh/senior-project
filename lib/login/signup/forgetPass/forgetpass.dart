@@ -267,7 +267,7 @@ class _EmailCodeState extends State<EmailCode> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Verefication Code',
+                'Verification Code',
                 style: TextStyle(
                   color: const Color.fromARGB(255, 0, 0, 0),
                   fontSize: MediaQuery.of(context).size.width * 0.045,

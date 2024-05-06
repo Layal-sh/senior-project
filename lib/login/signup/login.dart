@@ -86,12 +86,10 @@ class _LoginState extends State<Login> {
     //dbHelper.dropAllArticles();
     //print(await dbHelper.selectAllArticle());
     // await dbHelper.deleteMealComposition();
-    // await dbHelper.syncMeals();
     // //logger.info("synced meals successfully");
-    // await dbHelper.syncMealComposition();
-    // await dbHelper.syncMeals();
+    await dbHelper.syncMealComposition();
+    await dbHelper.syncMeals();
     // //logger.info("synced meals successfully");
-    // await dbHelper.syncMealComposition();
     // logger.info("synced meal compositions successfully");
     // logger.info("saving values to shared preferences");
     // if (nextAppointment_ != "") {
@@ -467,38 +465,36 @@ class _LoginState extends State<Login> {
                             String password = _passwordController.text;
                             if (uvalue.isEmpty || pvalue.isEmpty) {
                               if (uvalue.isEmpty) {
-                              //   setState(() {
-                              //     emailErrorMessage =
-                              //         "* Please enter your email/username";
-                              //     eerror = true;
-                              //     _isLoading = false;
-                              //   });
-                              // } else {
-                              //   setState(() {
-                              //     eerror = false;
-                              //   });
-                              ScaffoldMessenger.of(context).showSnackBar(
+                                //   setState(() {
+                                //     emailErrorMessage =
+                                //         "* Please enter your email/username";
+                                //     eerror = true;
+                                //     _isLoading = false;
+                                //   });
+                                // } else {
+                                //   setState(() {
+                                //     eerror = false;
+                                //   });
+                                ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
                                         'Please enter your username or email'),
                                   ),
                                 );
-                              }
-                              else if (pvalue.isEmpty) {
-                              //   setState(() {
-                              //     passErrorMessage =
-                              //         "* Please enter your password";
-                              //     perror = true;
-                              //     _isLoading = false;
-                              //   });
-                              // } else {
-                              //   setState(() {
-                              //     perror = false;
-                              //   });
-                              ScaffoldMessenger.of(context).showSnackBar(
+                              } else if (pvalue.isEmpty) {
+                                //   setState(() {
+                                //     passErrorMessage =
+                                //         "* Please enter your password";
+                                //     perror = true;
+                                //     _isLoading = false;
+                                //   });
+                                // } else {
+                                //   setState(() {
+                                //     perror = false;
+                                //   });
+                                ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text(
-                                        'Please enter your password'),
+                                    content: Text('Please enter your password'),
                                   ),
                                 );
                               }
@@ -566,7 +562,7 @@ class _LoginState extends State<Login> {
                                     isLoggedIn = true;
                                     await prefs.setBool('signedIn', isLoggedIn);
                                     //print(response.body);
-                                    
+
                                     deleteListEntries();
                                     setLoginTime();
                                     setState(() {

@@ -73,7 +73,7 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        //resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -92,8 +92,8 @@ class _SignUpState extends State<SignUp> {
           ),
           titleSpacing: -10.0,
         ),
-        body: Center(
-          child: SingleChildScrollView(
+        body: SingleChildScrollView(
+          child: Center(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 20),
               child: Column(
@@ -363,7 +363,7 @@ class _SignUpState extends State<SignUp> {
                               TextFormField(
                                 controller: _controllerDoctorID,
                                 focusNode: _focusNodeDoctorID,
-                                keyboardType: TextInputType.number,
+                                keyboardType: TextInputType.text,
                                 style: const TextStyle(
                                   color: Color.fromARGB(255, 38, 20, 84),
                                   fontSize: 15,
@@ -812,18 +812,26 @@ class _SignUpState extends State<SignUp> {
                                                           SizedBox(
                                                             width: MediaQuery.of(
                                                                         context)
-    .size
-    .width *
-    0.4,
-    child: ElevatedButton(
-        style: ButtonStyle(
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    side: BorderSide(
-                        color: Color.fromARGB(
-                            255,
-                            49,
+                                                                    .size
+                                                                    .width *
+                                                                0.4,
+                                                            child:
+                                                                ElevatedButton(
+                                                              style:
+                                                                  ButtonStyle(
+                                                                shape: MaterialStateProperty
+                                                                    .all<
+                                                                        RoundedRectangleBorder>(
+                                                                  RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10.0),
+                                                                    side:
+                                                                        BorderSide(
+                                                                      color: Color
+                                                                          .fromARGB(
+                                                                        255,
+                                                                        49,
                                                                         205,
                                                                         215,
                                                                       ),
@@ -1037,7 +1045,7 @@ class _SignUpState extends State<SignUp> {
                                                 _controllerUsername.text;
                                             SharedPreferences prefs = await SharedPreferences.getInstance();
                                             prefs.setString('username', username_);
-
+                  
                                             firstName_=_controllerFirstname.text;
                                             prefs.setString('firstName', firstName_);
                                             Navigator.push(
