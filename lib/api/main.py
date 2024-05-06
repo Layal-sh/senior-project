@@ -80,6 +80,13 @@ timeAfterMonth = ""
 ############|Pydantic Models|##############
 ###########################################
 ##############################################################
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    message: str
+    ID: int
+
 class User(BaseModel):
     username: str
     password: str
@@ -124,6 +131,9 @@ class NewEntry(BaseModel):
     unit: int
     hasMeals: str
     
+class UserForm(BaseModel):
+    username: str
+    password: str
 
 ##############################################################
 ###########################################
@@ -332,8 +342,30 @@ async def getPatientDetails(user: User):
 ##########|User Authentication|############
 ###########################################
 ##############################################################
-@app.post("/authenticate")
-async def authenticate(user: User):
+from fastapi import Depends, HTTPException, status
+from fastapi import Body
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+from datetime import datetime, timedelta
+
+SECRET_KEY = "bfedd62227958245913f74acc9ed79a86b3e1df1863e428a5e4728bfe0986315"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 1000000
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+def create_access_token(data: dict, expires_delta: timedelta):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + expires_delta
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+@app.post("/token", response_model=Token)
+async def login_for_access_token(form_data: UserForm = Body(...)):
+    user = User(username=form_data.username, password=form_data.password)
     try: 
         # Query the database for the user
         cursor.execute("SELECT userPassword,userID FROM Users WHERE CAST(userName AS NVARCHAR(MAX)) = ?", (user.username,))
@@ -341,11 +373,8 @@ async def authenticate(user: User):
         cursor.execute("SELECT userPassword,userID FROM Users WHERE CAST(email AS NVARCHAR(MAX)) = ?",(user.username,))
         rowEmail = cursor.fetchone()
 
-
         # If the user doesn't exist or the password is incorrect, return a 401 Unauthorized response
-
         hashed_password = hashlib.md5(user.password.encode()).hexdigest()
-
 
         if (rowUsername is None or hashed_password != rowUsername[0]) and (rowEmail is None or hashed_password != rowEmail[0]):
             if(rowUsername is None and rowEmail is None):
@@ -364,12 +393,33 @@ async def authenticate(user: User):
         elif(pid is None):
             raise HTTPException(status_code=402, detail="This user is not a patient")
         else:
-            return {"message": "Authenticated successfully", "ID": uid}
-            #rowUsername[1] 
+            access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            access_token = create_access_token(
+                data={"sub": user.username}, expires_delta=access_token_expires
+            )
+            return {"message": "Authenticated successfully", "ID": uid,"access_token": access_token, "token_type": "bearer"}
     except HTTPException as e:
         raise e
     except Exception as e:
-        return {"error": str(e)}
+        raise HTTPException(status_code=403, detail=str(e))
+    
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    print(f"Token: {token}")
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        print(f"Payload: {payload}")
+        username: str = payload.get("sub")
+        print(username)
+        if username is None:
+            raise credentials_exception
+        return username
+    except JWTError:
+        raise credentials_exception
 ############################################################## 
 
 ###########################################
@@ -471,17 +521,36 @@ async def changeUsername(old,new,id):
         raise HTTPException(status_code=401, detail="incorrect password")
     
 
-@app.get("/changeEmail/{email}/{id}")
-def changeEmail(email,id):
-    if checkEmail(email):
-        row = cursor.execute("UPDATE Users SET email = ? where userID  = ?",(email,id))
-        cnxn.commit()
-        if row is not None:
-            return True
+# @app.get("/changeEmail/{email}/{id}")
+# def changeEmail(email,id):
+#     if checkEmail(email):
+#         row = cursor.execute("UPDATE Users SET email = ? where userID  = ?",(email,id))
+#         cnxn.commit()
+#         if row is not None:
+#             return True
+#         else:
+#             return False
+#     else:
+#         raise HTTPException(status_code=401, detail="email already exists")
+
+@app.get("/changeEmail/{email}")
+def changeEmail(email: str, current_user: str = Depends(get_current_user)):
+    try:
+        if checkEmail(email):
+            uid = getUserById(current_user)
+            row = cursor.execute("UPDATE Users SET email = ? where userID  = ?",(email, uid))
+            cnxn.commit()
+            if row is not None:
+                return {"message": "Email updated successfully"}
+            else:
+                return {"message": "Failed to update email"}
         else:
-            return False
-    else:
-        raise HTTPException(status_code=401, detail="email already exists")
+            raise HTTPException(status_code=403, detail="email already exists")
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(e)
+        return {"error": str(e)}
     
 @app.get("/changePhone/{phoneNumber}/{id}")
 def changePhone(phoneNumber,id):
@@ -579,7 +648,7 @@ async def getDocInfo(doctorCode):
         else:
             return None
     except Exception as e:
-        print("Exception occurred: {e}")
+        print(e) #cries
         return None
 ##############################################################
 
@@ -606,11 +675,17 @@ def checkPassword(passold, id):##used in /register and in checkUsername##
         return False
 
 def checkEmail(email):##used in /register and in checkEmail##
-    row = cursor.execute("SELECT userID FROM Users WHERE CAST(email AS VARCHAR(255)) = ?",(email,)).fetchone()
-    if(row is None):
-        return True
-    else:
-        return False
+    try:
+        row = cursor.execute("SELECT userID FROM Users WHERE CAST(email AS VARCHAR(255)) = ?",(email,)).fetchone()
+        print("printing row from check email")
+        print(row)
+        if(row is None):
+            return True
+        else:
+            return False
+    except Exception as e:
+        print(e)
+        return {"error":e}
     
 def checkPhoneNumber(phoneNumber):
     row = cursor.execute("SELECT userID FROM Users WHERE CAST(phoneNumber AS VARCHAR(255)) = ?",(phoneNumber,)).fetchone()

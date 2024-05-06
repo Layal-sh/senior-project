@@ -56,6 +56,7 @@ Future<void> loadPreferences() async {
   syncedPrivacy_ = prefs.getBool('syncedPrivacy') ?? true;
   targetBloodSugar_ = prefs.getInt('targetBloodSugar') ?? 100;
   pid_ = prefs.getInt('pid') ?? -1;
+  token_ = prefs.getString('tokenAPI') ?? "";
   insulinSensitivity_ = prefs.getInt('insulinSensitivity') ?? 20;
   carbRatio_ = prefs.getDouble('carbRatio') ?? 3;
   carbRatio_2 = prefs.getDouble('carbRatio2') ?? 0;
@@ -84,6 +85,7 @@ Future<void> loadPreferences() async {
 
 //0 mmol/L
 //1 mg/dL
+String token_ = "";
 int targetBloodSugar_ = 100;
 int insulinSensitivity_ = 20;
 double carbRatio_ = 3;

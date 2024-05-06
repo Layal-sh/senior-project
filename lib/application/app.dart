@@ -76,8 +76,14 @@ emailUpdate(String email) async {
     return 2;
   }
   if (email != email_) {
-    final name = await http
-        .get(Uri.parse('http://$localhost:8000/changeEmail/$email/$id'));
+    logger.info("token at changing email is $token_");
+    var url = Uri.http('$localhost:8000', '/changeEmail/$email');
+    var name = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token_',
+      },
+    );
     if (name.statusCode == 200) {
       email_ = email;
       saveProfile();

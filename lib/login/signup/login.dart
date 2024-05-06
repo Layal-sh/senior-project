@@ -129,11 +129,13 @@ class _LoginState extends State<Login> {
     await dbHelper.dropEntries();
     await dbHelper.syncEntriesById(id);
     if (response.statusCode == 200) {
-      logger.info('Response body: ${response.body}');
+      // logger.info('Response body: ${response.body}');
       Map<String, dynamic> userDetails = jsonDecode(response.body);
-      logger.info("user details: $userDetails");
+      // logger.info("user details: $userDetails");
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.clear();
+      await prefs.setString('tokenAPI', token_);
+      logger.info("token at singing in: $token_");
       // username_ = userDetails['userName'];
       // firstName_ = userDetails['firstName'];
       // lastName_ = userDetails['lastName'];
@@ -163,11 +165,11 @@ class _LoginState extends State<Login> {
         logger.info("patient details: $patientDetails");
         if (patientDetails['doctorCode'] != null) {
           //doctorCode_ = patientDetails['doctorCode'];
-          await prefs.setString('doctorCode_', patientDetails['doctorCode']);
+          await prefs.setString('doctorCode', patientDetails['doctorCode']);
         }
         if (patientDetails['phoneNumber'] != null) {
           //phoneNumber_ = patientDetails['phoneNumber'];
-          await prefs.setInt('phoneNumber_', patientDetails['phoneNumber']);
+          await prefs.setInt('phoneNumber', patientDetails['phoneNumber']);
         }
         if (patientDetails['profilePhoto'] != null) {
           //profilePicture_ = patientDetails['profilePhoto'];
@@ -516,10 +518,12 @@ class _LoginState extends State<Login> {
                               } else {
                                 try {
                                   //server authentication
+                                  email = _emailController.text;
+                                  password = _passwordController.text;
                                   final response = await http
                                       .post(
                                         Uri.parse(
-                                            'http://$localhost:8000/authenticate'), //$localhost
+                                            'http://$localhost:8000/token'), // changed from /authenticate to /token
                                         headers: <String, String>{
                                           'Content-Type':
                                               'application/json; charset=UTF-8',
@@ -557,6 +561,11 @@ class _LoginState extends State<Login> {
                                               const UserInfo()),
                                     );
                                   } else if (response.statusCode == 200) {
+                                    Map<String, dynamic> responseBody =
+                                        jsonDecode(response.body);
+                                    token_ = responseBody['access_token'];
+                                    await prefs.setString('tokenAPI', token_);
+                                    logger.info(token_);
                                     isLoggedIn = true;
                                     await prefs.setBool('signedIn', isLoggedIn);
                                     //print(response.body);
@@ -568,6 +577,7 @@ class _LoginState extends State<Login> {
 
                                       perror = false;
                                     });
+
                                     _signIn(email, password,
                                         jsonDecode(response.body)['ID']);
                                   } else {
@@ -593,6 +603,7 @@ class _LoginState extends State<Login> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text('$errorMessage')),
                                     );
+                                    print(errorMessage);
                                   }
                                 } catch (e) {
                                   // ignore: avoid_print
@@ -600,6 +611,7 @@ class _LoginState extends State<Login> {
                                     _isLoading = false;
                                   });
                                   print('Error: $e');
+                                  logger.info(e);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                         content: Text(
