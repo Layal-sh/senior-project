@@ -97,6 +97,7 @@ class _EditMealState extends State<EditMeal> {
     setState(() {});
   }
 
+  bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -140,6 +141,9 @@ class _EditMealState extends State<EditMeal> {
                                 const EdgeInsets.symmetric(horizontal: 16.0),
                           ),
                           onPressed: () async {
+                            setState(() {
+                              _isLoading = true;
+                            });
                             print(controllers);
                             DBHelper db = DBHelper.instance;
                             // print(await createChildMeal());
@@ -175,6 +179,9 @@ class _EditMealState extends State<EditMeal> {
                               //here the amount is set to 1.0 by default, you still have to make the user choose the amount
                               //RAJ3INA AALA L ADD INPUTSSSS
                             } else {
+                              setState(() {
+                                _isLoading = false;
+                              });
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -185,8 +192,10 @@ class _EditMealState extends State<EditMeal> {
                               );
                             }
                           },
-                          child: const Text('Save',
-                              style: TextStyle(color: Colors.white)),
+                          child: _isLoading
+                              ? const CircularProgressIndicator()
+                              : const Text('Save',
+                                  style: TextStyle(color: Colors.white)),
                         ),
                       ),
                     ],

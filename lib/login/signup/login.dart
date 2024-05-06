@@ -111,10 +111,41 @@ class _LoginState extends State<Login> {
     //   }
     // }
 
-    if (id != pid_) {
-      final response = await http
+    final response = await http
+        .post(
+          Uri.parse('http://$localhost:8000/getUserDetails'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, String>{
+            'username': email,
+            'password': password,
+          }),
+        )
+        .timeout(const Duration(seconds: 10));
+    //fetch entries from the server
+    await dbHelper.dropEntries();
+    await dbHelper.syncEntriesById(id);
+    if (response.statusCode == 200) {
+      logger.info('Response body: ${response.body}');
+      Map<String, dynamic> userDetails = jsonDecode(response.body);
+      logger.info("user details: $userDetails");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+      // username_ = userDetails['userName'];
+      // firstName_ = userDetails['firstName'];
+      // lastName_ = userDetails['lastName'];
+      // email_ = userDetails['email'];
+      // pid_ = userDetails['userID'];
+      await prefs.setString('username', userDetails['userName']);
+      await prefs.setString('firstName', userDetails['firstName']);
+      await prefs.setString('lastName', userDetails['lastName']);
+      await prefs.setString('email', userDetails['email']);
+      await prefs.setInt('pid', userDetails['userID']);
+      pid_ = userDetails['userID'];
+      final responsePatient = await http
           .post(
-            Uri.parse('http://$localhost:8000/getUserDetails'),
+            Uri.parse('http://$localhost:8000/getPatientDetails'), //$localhost
             headers: <String, String>{
               'Content-Type': 'application/json; charset=UTF-8',
             },
@@ -124,99 +155,63 @@ class _LoginState extends State<Login> {
             }),
           )
           .timeout(const Duration(seconds: 10));
-      DBHelper dbHelper = DBHelper.instance;
-      //fetch entries from the server
-      await dbHelper.dropEntries();
-      await dbHelper.syncEntriesById(id);
-      if (response.statusCode == 200) {
-        logger.info('Response body: ${response.body}');
-        Map<String, dynamic> userDetails = jsonDecode(response.body);
-        logger.info("user details: $userDetails");
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
-        // username_ = userDetails['userName'];
-        // firstName_ = userDetails['firstName'];
-        // lastName_ = userDetails['lastName'];
-        // email_ = userDetails['email'];
-        // pid_ = userDetails['userID'];
-        await prefs.setString('username', userDetails['userName']);
-        await prefs.setString('firstName', userDetails['firstName']);
-        await prefs.setString('lastName', userDetails['lastName']);
-        await prefs.setString('email', userDetails['email']);
-        await prefs.setInt('pid', userDetails['userID']);
-        pid_ = userDetails['userID'];
-        final responsePatient = await http
-            .post(
-              Uri.parse(
-                  'http://$localhost:8000/getPatientDetails'), //$localhost
-              headers: <String, String>{
-                'Content-Type': 'application/json; charset=UTF-8',
-              },
-              body: jsonEncode(<String, String>{
-                'username': email,
-                'password': password,
-              }),
-            )
-            .timeout(const Duration(seconds: 10));
-        if (responsePatient.statusCode == 200) {
-          logger.info('Response body: ${responsePatient.body}');
-          Map<String, dynamic> patientDetails =
-              jsonDecode(responsePatient.body);
-          logger.info("patient details: $patientDetails");
-          if (patientDetails['doctorCode'] != null) {
-            //doctorCode_ = patientDetails['doctorCode'];
-            await prefs.setString('doctorCode_', patientDetails['doctorCode']);
-          }
-          if (patientDetails['phoneNumber'] != null) {
-            //phoneNumber_ = patientDetails['phoneNumber'];
-            await prefs.setInt('phoneNumber_', patientDetails['phoneNumber']);
-          }
-          if (patientDetails['profilePhoto'] != null) {
-            //profilePicture_ = patientDetails['profilePhoto'];
-            await prefs.setString(
-                'profilePicture_', patientDetails['profilePhoto']);
-          }
-          insulinSensitivity_ = patientDetails['insulinSensivity'].toInt();
-          await prefs.setInt('insulinSensitivity_',
-              patientDetails['insulinSensivity'].toInt());
-          //targetBloodSugar_ = patientDetails['targetBloodGlucose'];
-          await prefs.setInt(
-              'targetBloodSugar_', patientDetails['targetBloodGlucose']);
-          //carbRatio_ = patientDetails['carbRatio'];
-          await prefs.setDouble('carbRatio', patientDetails['carbRatio']);
-          numOfRatios_ = 1;
-          prefs.setInt('numOfRatios', 1);
-          if (patientDetails['carbRatio2'] != null) {
-            carbRatio_2 = patientDetails['carbRatio2'];
-            await prefs.setDouble('carbRatio2', patientDetails['carbRatio2']);
-            if (carbRatio_2 != 0) numOfRatios_++;
-            prefs.setInt('numOfRatios', numOfRatios_);
-          }
-          if (patientDetails['carbRatio3'] != null) {
-            carbRatio_3 = patientDetails['carbRatio3'];
-            await prefs.setDouble('carbRatio3', patientDetails['carbRatio3']);
-            if (carbRatio_3 != 0) numOfRatios_++;
-            prefs.setInt('numOfRatios', numOfRatios_);
-          }
-          if (patientDetails['privacy'] != null) {
-            //privacy_ = patientDetails['privacy'];
-            await prefs.setString('privacy', patientDetails['privacy']);
-          }
-          if (patientDetails['nextAppointment'] != null) {
-            nextAppointment_ = patientDetails['nextAppointment'];
-            await prefs.setString(
-                'nextAppointment', patientDetails['nextAppointment']);
-          }
-          //changeDoctor(doctorCode_);
-          loadPreferences();
-          prefs.setBool('signedIn', true);
-          logger.info("saved values to shared preferences successfully");
-        } else {
-          setState(() {
-            _isLoading = false;
-          });
-          logger.warning(responsePatient.body);
+      if (responsePatient.statusCode == 200) {
+        logger.info('Response body: ${responsePatient.body}');
+        Map<String, dynamic> patientDetails = jsonDecode(responsePatient.body);
+        logger.info("patient details: $patientDetails");
+        if (patientDetails['doctorCode'] != null) {
+          //doctorCode_ = patientDetails['doctorCode'];
+          await prefs.setString('doctorCode_', patientDetails['doctorCode']);
         }
+        if (patientDetails['phoneNumber'] != null) {
+          //phoneNumber_ = patientDetails['phoneNumber'];
+          await prefs.setInt('phoneNumber_', patientDetails['phoneNumber']);
+        }
+        if (patientDetails['profilePhoto'] != null) {
+          //profilePicture_ = patientDetails['profilePhoto'];
+          await prefs.setString(
+              'profilePicture_', patientDetails['profilePhoto']);
+        }
+        insulinSensitivity_ = patientDetails['insulinSensivity'].toInt();
+        await prefs.setInt(
+            'insulinSensitivity_', patientDetails['insulinSensivity'].toInt());
+        //targetBloodSugar_ = patientDetails['targetBloodGlucose'];
+        await prefs.setInt(
+            'targetBloodSugar_', patientDetails['targetBloodGlucose']);
+        //carbRatio_ = patientDetails['carbRatio'];
+        await prefs.setDouble('carbRatio', patientDetails['carbRatio']);
+        numOfRatios_ = 1;
+        prefs.setInt('numOfRatios', 1);
+        if (patientDetails['carbRatio2'] != null) {
+          carbRatio_2 = patientDetails['carbRatio2'];
+          await prefs.setDouble('carbRatio2', patientDetails['carbRatio2']);
+          if (carbRatio_2 != 0) numOfRatios_++;
+          prefs.setInt('numOfRatios', numOfRatios_);
+        }
+        if (patientDetails['carbRatio3'] != null) {
+          carbRatio_3 = patientDetails['carbRatio3'];
+          await prefs.setDouble('carbRatio3', patientDetails['carbRatio3']);
+          if (carbRatio_3 != 0) numOfRatios_++;
+          prefs.setInt('numOfRatios', numOfRatios_);
+        }
+        if (patientDetails['privacy'] != null) {
+          //privacy_ = patientDetails['privacy'];
+          await prefs.setString('privacy', patientDetails['privacy']);
+        }
+        if (patientDetails['nextAppointment'] != null) {
+          nextAppointment_ = patientDetails['nextAppointment'];
+          await prefs.setString(
+              'nextAppointment', patientDetails['nextAppointment']);
+        }
+        //changeDoctor(doctorCode_);
+        loadPreferences();
+        prefs.setBool('signedIn', true);
+        logger.info("saved values to shared preferences successfully");
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        logger.warning(responsePatient.body);
       }
     }
 
@@ -475,6 +470,9 @@ class _LoginState extends State<Login> {
                                 //   setState(() {
                                 //     eerror = false;
                                 //   });
+                                setState(() {
+                                  _isLoading = false;
+                                });
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
@@ -492,6 +490,9 @@ class _LoginState extends State<Login> {
                                 //   setState(() {
                                 //     perror = false;
                                 //   });
+                                setState(() {
+                                  _isLoading = false;
+                                });
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('Please enter your password'),
@@ -533,8 +534,9 @@ class _LoginState extends State<Login> {
                                         }),
                                       )
                                       .timeout(const Duration(seconds: 10));
+                                  username_ = email;
                                   // print(int.parse(response.body));
-                                  if (response.statusCode == 402) {
+                                  if (response.statusCode == 400) {
                                     //WE HAVE TO GO TO THE MEMBERSHIPP PAGEESSSOUYIGHFUIHBKJDHBUYDS
                                     setState(() {
                                       _isLoading = false;
@@ -548,7 +550,7 @@ class _LoginState extends State<Login> {
                                                       "", //USERNAME TO BE GOT FROM BACKEND
                                                   index: 0,
                                                 )));
-                                  } else if (response.statusCode == 400) {
+                                  } else if (response.statusCode == 402) {
                                     setState(() {
                                       _isLoading = false;
                                     });
@@ -587,7 +589,9 @@ class _LoginState extends State<Login> {
                                     //       "* Incorrect username or password";
                                     //   perror = true;
                                     // });
-
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
                                     var responseBody =
                                         jsonDecode(response.body);
                                     var errorMessage = responseBody['detail'] ??

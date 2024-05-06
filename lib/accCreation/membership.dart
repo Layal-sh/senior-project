@@ -358,7 +358,7 @@ class _MembershipState extends State<Membership> {
                           selectedPlan_ = selectedPlanIndex;
                           int n = 1;
                           if (selectedPlanIndex == 1 ||
-                              selectedPlanIndex == 2) {
+                              selectedPlanIndex == 0) {
                             final IDresponse = await http.get(Uri.parse(
                                 'http://$localhost:8000/getUserId/$username_'));
                             if (IDresponse.statusCode == 200) {

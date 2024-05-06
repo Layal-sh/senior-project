@@ -134,16 +134,17 @@ checkLoginTime() {
 }
 
 Future<bool> isConnectedToWifi() async {
-  try {
-    final response = await http.get(Uri.parse('http://www.google.com'));
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (_) {
-    return false;
-  }
+  return true;
+  // try {
+  //   final response = await http.get(Uri.parse('http://www.google.com'));
+  //   if (response.statusCode == 200) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // } catch (_) {
+  //   return false;
+  // }
 }
 
 Future<bool> changeDoctor(String doctorCode) async {

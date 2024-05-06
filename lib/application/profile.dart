@@ -1139,6 +1139,7 @@ class _editProfileState extends State<editProfile> {
     });
   }
 
+  bool _isLoading = false;
   bool show = false;
   final _formKey = GlobalKey<FormState>();
   @override
@@ -1355,7 +1356,8 @@ class _editProfileState extends State<editProfile> {
                       height: 10,
                     ),
                     error
-                        ? usernameErrorMessage == "* Username changed"
+                        ? usernameErrorMessage ==
+                                '* Username Changed Successfully'
                             ? Text(usernameErrorMessage!,
                                 style: const TextStyle(
                                   color: Color.fromARGB(255, 0, 207, 69),
@@ -1830,19 +1832,21 @@ class _editProfileState extends State<editProfile> {
                                 10), // Change this value as needed
                           ),
                         ),
-                        child: const Text(
-                          'Accept',
-                          style: TextStyle(
-                            color: Color.fromARGB(
-                              255,
-                              255,
-                              249,
-                              254,
-                            ),
-                            fontSize: 20,
-                          ),
-                        ),
+                        child: _isLoading
+                            ? const CircularProgressIndicator()
+                            : const Text(
+                                'Accept',
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 255, 249, 254),
+                                  fontSize: 20,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                         onPressed: () async {
+                          setState(() {
+                            _isLoading = true;
+                          });
                           String uvalue = _userController.text;
                           int result = await userNameUpdate(uvalue);
                           String value = _controllerEmail.text;
@@ -1877,6 +1881,8 @@ class _editProfileState extends State<editProfile> {
                                     usernameErrorMessage =
                                         "* Username already exists";
                                     error = true;
+
+                                    _isLoading = false;
                                   });
                                 }
                                 if (result == 3) {
@@ -1884,6 +1890,7 @@ class _editProfileState extends State<editProfile> {
                                     usernameErrorMessage =
                                         "* Username Changed Successfully";
                                     error = true;
+                                    _isLoading = false;
                                   });
                                 } else {
                                   setState(() {
@@ -1899,18 +1906,21 @@ class _editProfileState extends State<editProfile> {
                                   setState(() {
                                     emailErrorMessage = "* Invalid email";
                                     eerror = true;
+                                    _isLoading = false;
                                   });
                                 } else if (result2 == 0 || result2 == -1) {
                                   setState(() {
                                     emailErrorMessage =
                                         "* Email already exists";
                                     eerror = true;
+                                    _isLoading = false;
                                   });
                                 } else if (result2 == 3) {
                                   setState(() {
                                     emailErrorMessage =
                                         "* Email Changed Successfully";
                                     eerror = true;
+                                    _isLoading = false;
                                   });
                                 } else {
                                   setState(() {
@@ -1927,11 +1937,13 @@ class _editProfileState extends State<editProfile> {
                                     phoneNumberErrorMessage =
                                         "* Invalid phone number";
                                     perror = true;
+                                    _isLoading = false;
                                   });
                                 } else if (result3 == 0 || result3 == -1) {
                                   setState(() {
                                     phoneNumberErrorMessage =
                                         "* Phone number already exists";
+                                    _isLoading = false;
                                     perror = true;
                                   });
                                 } else if (result3 == 3) {
@@ -1939,6 +1951,7 @@ class _editProfileState extends State<editProfile> {
                                     phoneNumberErrorMessage =
                                         "* Phone Changed Successfully";
                                     perror = true;
+                                    _isLoading = false;
                                   });
                                 } else {
                                   setState(() {
@@ -1954,6 +1967,7 @@ class _editProfileState extends State<editProfile> {
                                   setState(() {
                                     npasswordErrorMessage =
                                         "* Invalid password";
+                                    _isLoading = false;
                                     newerro = true;
                                   });
                                 } else if (result4 == 0 || result4 == -1) {
@@ -1961,18 +1975,21 @@ class _editProfileState extends State<editProfile> {
                                     passwordErrorMessage =
                                         "* Old password is incorrect";
                                     olderro = true;
+                                    _isLoading = false;
                                   });
                                 } else if (result4 == 4) {
                                   setState(() {
                                     passwordErrorMessage =
                                         "* New password cannot be the same as the old password";
                                     olderro = true;
+                                    _isLoading = false;
                                   });
                                 } else if (result4 == 3) {
                                   setState(() {
                                     passwordErrorMessage =
                                         "* Password Changed Successfully";
                                     olderro = true;
+                                    _isLoading = false;
                                   });
                                 } else {
                                   setState(() {
@@ -1987,9 +2004,11 @@ class _editProfileState extends State<editProfile> {
                                   result2 == 1 &&
                                   result3 == 1 &&
                                   result4 == 1) {
+                                _isLoading = false;
                                 Navigator.of(context).pop();
                               }
                             } else {
+                              _isLoading = false;
                               showDialog(
                                 // ignore: use_build_context_synchronously
                                 context: context,
