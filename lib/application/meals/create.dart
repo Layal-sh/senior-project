@@ -115,6 +115,7 @@ class _CreateMealState extends State<CreateMeal> {
     super.dispose();
   }
 
+  bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -171,7 +172,9 @@ class _CreateMealState extends State<CreateMeal> {
                                 const EdgeInsets.symmetric(horizontal: 16.0),
                           ),
                           onPressed: () async {
-                            ///////////////////////////////////////////////////////////////////////
+                            setState(() {
+                              _isLoading = true;
+                            });
                             DBHelper dbHelper = DBHelper.instance;
                             String image = "";
                             if (_selectedImage == null) {
@@ -189,7 +192,13 @@ class _CreateMealState extends State<CreateMeal> {
                                   );
                                 },
                               );
+                              setState(() {
+                                _isLoading = false;
+                              });
                             } else if (totalCarbs == 0) {
+                              setState(() {
+                                _isLoading = false;
+                              });
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -202,6 +211,9 @@ class _CreateMealState extends State<CreateMeal> {
                             } else if (await dbHelper
                                     .getMealIdByName(_nameController.text) !=
                                 -1) {
+                              setState(() {
+                                _isLoading = false;
+                              });
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -240,10 +252,12 @@ class _CreateMealState extends State<CreateMeal> {
                               selectedCategory = 'mymeals';
                             }
                           },
-                          child: const Text(
-                            'Create',
-                            style: TextStyle(color: Colors.white),
-                          ),
+                          child: _isLoading
+                              ? const CircularProgressIndicator()
+                              : const Text(
+                                  'Create',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                         ),
                       ),
                     ],
