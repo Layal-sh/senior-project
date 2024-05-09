@@ -210,9 +210,6 @@ class _LoginState extends State<Login> {
         prefs.setBool('signedIn', true);
         logger.info("saved values to shared preferences successfully");
       } else {
-        setState(() {
-          _isLoading = false;
-        });
         logger.warning(responsePatient.body);
       }
     }

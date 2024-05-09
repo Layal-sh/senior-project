@@ -1044,7 +1044,7 @@ class _ProfileState extends State<Profile> {
                           Icon(
                             Icons.logout_rounded,
                             size: MediaQuery.of(context).size.width * 0.07,
-                            color: const Color.fromARGB(255, 28, 42, 58),
+                            color: const Color.fromARGB(255, 255, 53, 53),
                           ),
                           const SizedBox(
                             width: 10,
@@ -1055,9 +1055,9 @@ class _ProfileState extends State<Profile> {
                               fontSize: min(MediaQuery.of(context).size.width,
                                       MediaQuery.of(context).size.height) *
                                   0.035,
-                              color: const Color.fromARGB(255, 84, 95, 107),
+                              color: const Color.fromARGB(255, 255, 53, 53),
                               fontFamily: 'Inter',
-                              fontWeight: FontWeight.w400,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
