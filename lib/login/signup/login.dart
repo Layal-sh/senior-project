@@ -621,9 +621,6 @@ class _LoginState extends State<Login> {
                                             'The server did not respond error : $e')),
                                   );
                                 }
-                                setState(() {
-                                  _isLoading = false;
-                                });
                               }
                             }
                           },

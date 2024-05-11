@@ -18,6 +18,7 @@ import 'package:sugar_sense/login/signup/login.dart';
 import 'package:sugar_sense/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+DBHelper db = DBHelper.instance;
 Timer? _timer;
 
 class Profile extends StatefulWidget {
@@ -33,7 +34,7 @@ XFile? _selectedImage;
 class _ProfileState extends State<Profile> {
   List<bool>? fav;
 
-  /*Future<void> resizeFavList() async {
+  Future<void> resizeFavList() async {
     List<Map> articles = await db.selectAllArticle();
     int length = articles.length;
 
@@ -44,7 +45,7 @@ class _ProfileState extends State<Profile> {
         fav?.add(true);
       }
     }
-  }*/
+  }
 
   @override
   void initState() {
@@ -56,7 +57,7 @@ class _ProfileState extends State<Profile> {
       }
     });
     fav = [];
-    //resizeFavList();
+    resizeFavList();
   }
 
   @override
@@ -243,7 +244,7 @@ class _ProfileState extends State<Profile> {
               ),
               GestureDetector(
                 onTap: () async {
-                  /*showModalBottomSheet(
+                  showModalBottomSheet(
                     context: context,
                     isScrollControlled: true,
                     useRootNavigator: true,
@@ -601,7 +602,6 @@ class _ProfileState extends State<Profile> {
                       });
                     },
                   );
-                */
                 },
                 child: Container(
                   decoration: const BoxDecoration(
