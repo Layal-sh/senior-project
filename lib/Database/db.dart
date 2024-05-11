@@ -516,6 +516,7 @@ class DBHelper {
     Database? mydb = await db;
     var res = await mydb!.rawQuery('''
     SELECT * FROM Entry WHERE substr(entryDate, 1, 10) = date('now')
+    order by entryDate
   ''');
     return res;
   }
@@ -524,6 +525,7 @@ class DBHelper {
     Database? mydb = await db;
     var res = await mydb!.rawQuery('''
     SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-7 day') AND date('now')
+    order by entryDate
   ''');
     return res;
   }
@@ -532,6 +534,7 @@ class DBHelper {
     Database? mydb = await db;
     var res = await mydb!.rawQuery('''
     SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-1 month') AND date('now')
+    order by entryDate
   ''');
     return res;
   }
@@ -543,6 +546,7 @@ class DBHelper {
     // ''');
     var res = await mydb!.rawQuery('''
     SELECT * FROM Entry WHERE substr(entryDate, 1, 10) BETWEEN date('now', '-3 month') AND date('now')
+    order by entryDate
   ''');
     return res;
   }

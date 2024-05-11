@@ -14,7 +14,12 @@ import time
 import threading
 import platform
 import base64
-
+from fastapi import Depends, HTTPException, status
+from fastapi import Body
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+from datetime import datetime, timedelta
 ###########################################
 ##########|API functionality|##############
 ###########################################
@@ -342,16 +347,11 @@ async def getPatientDetails(user: User):
 ##########|User Authentication|############
 ###########################################
 ##############################################################
-from fastapi import Depends, HTTPException, status
-from fastapi import Body
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jose import JWTError, jwt
-from passlib.context import CryptContext
-from datetime import datetime, timedelta
+
 
 SECRET_KEY = "bfedd62227958245913f74acc9ed79a86b3e1df1863e428a5e4728bfe0986315"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 1000000
+ACCESS_TOKEN_EXPIRE_MINUTES = 42800
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -774,7 +774,6 @@ def get_results(search):
     
 @app.get("/News/{query}")
 async def get_news(query: str):
-    print("We got here")
     params = {
         "q": query,
         "hl": "en",
@@ -783,7 +782,6 @@ async def get_news(query: str):
         "api_key": apiKey
     }
     search = GoogleSearch(params)
-    print("we searched :D")
 
     for i in range(10):  # Retry up to 3 times
         thread = threading.Thread(target=get_results, args=(search,))
@@ -791,13 +789,10 @@ async def get_news(query: str):
         thread.join(10)
 
         if thread.is_alive():
-            print("get_dict() is stuck, retrying...")
             time.sleep(5)  # Wait for 5 seconds before retrying
         else:
-            print("get_dict() finished successfully")
-            print("frfr")
+            
             return results["organic_results"]
-    print("wifi do be no cap not working")
     return {"error": "Failed to get results after 3 attempts"}   
 
 ###########################################
