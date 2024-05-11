@@ -652,7 +652,7 @@ class _DashboardState extends State<Dashboard> {
                                                 0.001,
                                           ),
                                           Text(
-                                            '${latestEntry['insulinDosage']}',
+                                            '${double.parse(latestEntry['insulinDosage'].toStringAsFixed(2))}',
                                             style: TextStyle(
                                               fontSize: MediaQuery.of(context)
                                                       .size
@@ -764,7 +764,7 @@ class _DashboardState extends State<Dashboard> {
                                                     0.001,
                                               ),
                                               Text(
-                                                '${latestEntry['glucoseLevel']}',
+                                                '${double.parse(latestEntry['glucoseLevel'].toStringAsFixed(2))}',
                                                 style: TextStyle(
                                                   fontSize:
                                                       MediaQuery.of(context)
@@ -890,7 +890,7 @@ class _DashboardState extends State<Dashboard> {
                                                     0.001,
                                               ),
                                               Text(
-                                                '${latestEntry['totalCarbs']}',
+                                                '${double.parse(latestEntry['totalCarbs'].toStringAsFixed(2))}',
                                                 style: TextStyle(
                                                   fontSize:
                                                       MediaQuery.of(context)

@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable, library_private_types_in_public_api, use_build_context_synchronously, file_names
+// ignore_for_file: unused_local_variable, library_private_types_in_public_api, use_build_context_synchronously, file_names, deprecated_member_use
 
 import 'dart:async';
 

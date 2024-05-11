@@ -765,9 +765,9 @@ async def getBirthday(userid):##used in /getPatientDetails and in /regPatient##
 
 #0abfbff3f1efcf35311a048b948c01aed8b7f17f552a4b882aa3c8544f9410dc
 #eb03e6986533c14f2abb8e891cd2438a7f519c1e05935951a61141e23f9fd3b0
+#6947fb817c89933b817e45fc405c8ac73f6ebcd227ce30702e943fab23304733 layal
 
-
-apiKey = 'eb03e6986533c14f2abb8e891cd2438a7f519c1e05935951a61141e23f9fd3b0'
+apiKey = '6947fb817c89933b817e45fc405c8ac73f6ebcd227ce30702e943fab23304733'
 def get_results(search):
     global results
     results = search.get_dict()

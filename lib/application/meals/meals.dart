@@ -202,7 +202,7 @@ class _MealsState extends State<Meals> {
                     right: 10,
                   ),
                   child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.75,
+                    height: MediaQuery.of(context).size.height * 0.8,
                     child: GridView.builder(
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
