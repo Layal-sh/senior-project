@@ -841,11 +841,11 @@ async def getEntries(id:int):
     
 @app.get("/getAppointment/{id}")
 async def getAppointment(id:int):
-    row = cursor.execute("SELECT nextAppointment from Patients where patientsID = ?",(id))
+    row = cursor.execute("SELECT nextAppointment from Patients where patientID = ?",(id)).fetchone()
     if row is not None:
         return row[0]
     else:
-        return None
+        raise HTTPException(status_code=404, detail="No apointment found")
     
 ############################3333
 ##############################3

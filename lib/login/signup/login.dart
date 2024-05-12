@@ -92,24 +92,25 @@ class _LoginState extends State<Login> {
     // //logger.info("synced meals successfully");
     // logger.info("synced meal compositions successfully");
     // logger.info("saving values to shared preferences");
-    // if (nextAppointment_ != "") {
-    //   DateTime now = DateTime.now();
-    //   print(now);
-    //   DateTime appointment = DateTime.parse(nextAppointment_);
-    //   if (now.isAfter(appointment)) {
-    //     final response = await http
-    //         .get(Uri.parse("http://$localhost:8000/getAppointment/$pid_"));
-    //     if (response.statusCode == 200) {
-    //       Map<String, dynamic> appointmentDetails = jsonDecode(response.body);
-    //       nextAppointment_ = appointmentDetails['appointment'];
-    //       SharedPreferences prefs = await SharedPreferences.getInstance();
-    //       await prefs.setString(
-    //         'nextAppointment',
-    //         nextAppointment_,
-    //       );
-    //     }
-    //   }
-    // }
+    if (nextAppointment_ != "") {
+      DateTime now = DateTime.now();
+      print(now);
+      DateTime appointment = DateTime.parse(nextAppointment_);
+      if (now.isAfter(appointment)) {
+        final response = await http
+            .get(Uri.parse("http://$localhost:8000/getAppointment/$pid_"));
+        if (response.statusCode == 200) {
+          Map<String, dynamic> appointmentDetails = jsonDecode(response.body);
+          print(appointmentDetails);
+          nextAppointment_ = appointmentDetails['appointment'];
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString(
+            'nextAppointment',
+            nextAppointment_,
+          );
+        }
+      }
+    }
 
     final response = await http
         .post(
@@ -521,6 +522,7 @@ class _LoginState extends State<Login> {
                                   //server authentication
                                   email = _emailController.text;
                                   password = _passwordController.text;
+
                                   final response = await http
                                       .post(
                                         Uri.parse(
@@ -655,7 +657,37 @@ class _LoginState extends State<Login> {
                               width: 2.5,
                             ),
                             InkWell(
-                              onTap: () {
+                              onTap: () async {
+                                //BATATAATATATATATATATATTATATATATATATATATAATATAAT
+                                //FOR GETTING THE APPOINTMENT OF DA USER
+                                /*
+                                final responseAppointment = await http.get(
+                                    Uri.parse(
+                                        "http://$localhost:8000/getAppointment/$pid_"));
+                                if (responseAppointment.statusCode == 200) {
+                                  logger.info(responseAppointment.body);
+                                  dynamic appointmentDetails =
+                                      jsonDecode(responseAppointment.body);
+                                  logger.info(
+                                      'appointments body: $appointmentDetails');
+                                  nextAppointment_ =
+                                      appointmentDetails['startDay'];
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  await prefs.setString(
+                                    'nextAppointment',
+                                    nextAppointment_,
+                                  );
+                                  logger.info('bro worked: $nextAppointment_');
+                                } else if (responseAppointment.statusCode ==
+                                    404) {
+                                  logger.info(
+                                      'No appointments available for this user');
+                                } else {
+                                  logger.warning(
+                                      'Failed to get appointments for this user');
+                                }
+                                */
                                 _formKey.currentState?.reset();
 
                                 Navigator.push(
