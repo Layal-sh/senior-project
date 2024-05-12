@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/login/signup/login.dart';
@@ -415,7 +416,7 @@ class _SettingsState extends State<Settings> {
     return settings;
   }
 
-  List<Widget> doctorConnetion() {
+  List<Widget> doctorConnection() {
     List<Widget> doctorCon = [];
     bool connected = doctorCode_ != "";
     if (!connected) {
@@ -486,8 +487,7 @@ class _SettingsState extends State<Settings> {
     } else {
       doctorCon.add(
         Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: 16.0), // Adjust the padding as needed
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -503,72 +503,92 @@ class _SettingsState extends State<Settings> {
                 'Dr. $doctorName_',
                 style: const TextStyle(
                   fontSize: 18,
-                  color: Color.fromARGB(255, 22, 161, 170), // Light blue color
+                  color: Color.fromARGB(255, 22, 161, 170),
                   fontWeight: FontWeight.bold,
                 ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.link_off,
+                    color: Color.fromARGB(255, 255, 53, 53)),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Disconnect from Doctor'),
+                        content:
+                            const Text('Are you sure you want to disconnect?'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('No'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Yes'),
+                            onPressed: () async {
+                              bool result = await changeDoctor("None");
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(result
+                                      ? 'Disconnected successfully'
+                                      : 'Failed to disconnect'),
+                                ),
+                              );
+                              if (result) {
+                                setState(() {
+                                  doctorCode_ = "";
+                                });
+                              }
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),
         ),
       );
       doctorCon.add(const SizedBox(height: 20));
-      doctorCon.add(ElevatedButton.icon(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Disconnect from Doctor'),
-                content: const Text('Are you sure you want to disconnect?'),
-                actions: <Widget>[
-                  TextButton(
-                    child: const Text('No'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  TextButton(
-                      child: const Text('Yes'),
-                      onPressed: () async {
-                        bool result = await changeDoctor("None");
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(result
-                                ? 'Disconnected successfully'
-                                : 'Failed to disconnect'),
-                          ),
-                        );
-                        if (result) {
-                          setState(() {
-                            doctorCode_ = "";
-                          });
-                        }
-                        Navigator.of(context).pop();
-                      }),
-                ],
-              );
-            },
-          );
-        },
-        label: const Text(
-          'Disconnect from Doctor',
-          style: TextStyle(
-            color: Color.fromARGB(255, 255, 53, 53),
+      doctorCon.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              const Text(
+                'Appointment:',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Color.fromARGB(255, 38, 20, 84),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                nextAppointment_ == "" ? "No appointments" : nextAppointment_,
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Color.fromARGB(255, 22, 161, 170),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.refresh,
+                    color: Color.fromARGB(255, 22, 161, 170)),
+                onPressed: () async {
+                  await refreshNextAppointment();
+                  setState(() {});
+                },
+              ),
+            ],
           ),
         ),
-        icon: const Icon(
-          Icons.link_off,
-          color: Color.fromARGB(255, 255, 53, 53),
-        ),
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-          shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-          overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-          foregroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-          surfaceTintColor:
-              MaterialStateProperty.all<Color>(Colors.transparent),
-        ),
-      ));
+      );
     }
 
     return doctorCon;
@@ -831,7 +851,7 @@ class _SettingsState extends State<Settings> {
           const SizedBox(height: 20),
           settingsTitle("Doctor Connection"),
           const SizedBox(height: 20),
-          ...doctorConnetion(),
+          ...doctorConnection(),
           const SizedBox(height: 20),
           settingsTitle("Account"),
           const SizedBox(height: 20),
@@ -1059,5 +1079,29 @@ deleteAccount() async {
     logger.info('account has been deleted');
   } else {
     logger.warning('Failed to delete account');
+  }
+}
+
+refreshNextAppointment() async {
+  final responseAppointment =
+      await http.get(Uri.parse("http://$localhost:8000/getAppointment/$pid_"));
+  if (responseAppointment.statusCode == 200) {
+    logger.info(responseAppointment.body);
+    dynamic appointmentDetails = jsonDecode(responseAppointment.body);
+    appointmentDetails = jsonDecode(appointmentDetails);
+    logger.info('appointments body: $appointmentDetails');
+    if (appointmentDetails != null) {
+      nextAppointment_ = appointmentDetails['startDay'];
+    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      'nextAppointment',
+      nextAppointment_,
+    );
+    logger.info('bro worked: $nextAppointment_');
+  } else if (responseAppointment.statusCode == 404) {
+    logger.info('No appointments available for this user');
+  } else {
+    logger.warning('Failed to get appointments for this user');
   }
 }
