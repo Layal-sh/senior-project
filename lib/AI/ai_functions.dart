@@ -50,8 +50,10 @@ void updatePrevMeals(double bloodSugar, double carbRatio) async {
   } else {
     logger.info("Patient is not good");
     //patient is not good carbs for each meal go up (or down depending if they have low or high bloodsugar)
+    int mealCount = 0; //number of distinct meals
     double totalBlame = 0;
     for (Map mid in hasMeals) {
+      mealCount++;
       List<Map> mealResponse = await dbHelper.getMealById(mid["id"]);
       Map<String, dynamic> meal = Map<String, dynamic>.from(mealResponse[0]);
       meal["quantity"] = mid["quantity"];
@@ -60,6 +62,7 @@ void updatePrevMeals(double bloodSugar, double carbRatio) async {
       totalBlame += blame * meal["quantity"];
       meals.add(meal);
     }
+    double alpha = sqrt(mealCount) / mealCount;
     double unaccountedCarbs =
         ((bloodSugarDiff / insulinSensitivity_) / carbRatio) * 15;
     unaccountedCarbs /= 2; //accounting for uncontrollable factors
@@ -67,9 +70,13 @@ void updatePrevMeals(double bloodSugar, double carbRatio) async {
     for (Map meal in meals) {
       double ratio = meal["blame"] / totalBlame;
       double newCarbs = meal["carbohydrates"] + unaccountedCarbs * ratio;
-      await dbHelper.updateMealById(
-          meal["mealId"], newCarbs, meal["certainty"]);
-      logger.info("updated: ${meal["mealName"]} to $newCarbs");
+      double newCertainty = meal["certainty"] -
+          alpha *
+              (meal["certainty"]) /
+              5; //ensuring certainty does not go below 0
+      await dbHelper.updateMealById(meal["mealId"], newCarbs, newCertainty);
+      logger
+          .info("updated: ${meal["mealName"]} to $newCarbs and $newCertainty");
     }
   }
 }

@@ -35,55 +35,176 @@ class _DashboardState extends State<Dashboard> {
   List<Map> averageInsulinDosagePerDay = [];
   List<Map> averageInsulinDosagePerMonth = [];
   void calculateAverageInsulinDosage() {
-    var groupedEntries = groupBy(monthentries, (entry) {
-      return DateTime.parse(entry['entryDate']).day;
+    /*var groupedEntries = groupBy(monthentries, (entry) {
+      return DateTime.parse(entry['entryDate']).month;
+    });*/
+    var entriesGroupedByMonth = groupBy(monthentries, (entry) {
+      DateTime entryDate = DateTime.parse(entry['entryDate']);
+      return entryDate.month;
     });
 
-    groupedEntries.forEach((day, entries) {
-      double averageInsulinDosage = entries
-              .map((e) => double.parse(e['insulinDosage'].toString()))
-              .reduce((a, b) => a + b) /
-          entries.length;
-      double averageGlucose = entries
-              .map((e) => double.parse(e['glucoseLevel'].toString()))
-              .reduce((a, b) => a + b) /
-          entries.length;
-      double averageCarbs = entries
-              .map((e) => double.parse(e['totalCarbs'].toString()))
-              .reduce((a, b) => a + b) /
-          entries.length;
-      averageInsulinDosagePerDay.add({
-        'day': day,
-        'averageInsulinDosage': averageInsulinDosage,
-        'averageGlucose': averageGlucose,
-        'averageCarbs': averageCarbs,
+// For each month, group entries by day
+    var entriesGroupedByMonthAndDay =
+        entriesGroupedByMonth.map((month, entriesInMonth) {
+      return MapEntry(
+          month,
+          groupBy(entriesInMonth, (entry) {
+            DateTime entryDate = DateTime.parse(entry['entryDate']);
+            return entryDate.day;
+          }));
+    });
+    entriesGroupedByMonthAndDay.forEach((month, entriesGroupedByDay) {
+      entriesGroupedByDay.forEach((day, entries) {
+        var now = DateTime.now();
+        var oneMonthAgo = DateTime(now.year, now.month - 1, now.day);
+
+        double averageInsulinDosage = entries
+                .map((e) => double.parse(e['insulinDosage'].toString()))
+                .reduce((a, b) => a + b) /
+            entries.length;
+        double averageGlucose = entries
+                .map((e) => double.parse(e['glucoseLevel'].toString()))
+                .reduce((a, b) => a + b) /
+            entries.length;
+        double averageCarbs = entries
+                .map((e) => double.parse(e['totalCarbs'].toString()))
+                .reduce((a, b) => a + b) /
+            entries.length;
+
+        for (var entry in entries) {
+          DateTime entryDate = DateTime.parse(entry['entryDate']);
+          if (entryDate.month == now.month) {
+            // This month
+            var lastDayOfPreviousMonth = DateTime(now.year, now.month, 0).day;
+            day = (lastDayOfPreviousMonth + entryDate.day) - oneMonthAgo.day;
+          } else if (entryDate.month == now.month - 1 ||
+              (now.month == 1 && entryDate.month == 12)) {
+            // Previous month
+            day = entryDate.day - oneMonthAgo.day;
+          }
+        }
+
+        averageInsulinDosagePerDay.add({
+          'day': day,
+          'averageInsulinDosage': averageInsulinDosage,
+          'averageGlucose': averageGlucose,
+          'averageCarbs': averageCarbs,
+        });
       });
     });
   }
 
   void calculateAverageMonthly() {
-    var groupedEntries = groupBy(yearentries, (entry) {
-      return DateTime.parse(entry['entryDate']).day;
+    /*entriesGroupedByMonthAndDay.forEach((month, entriesGroupedByDay) {
+      entriesGroupedByDay.forEach((day, entries) {
+        var now = DateTime.now();
+        var twoMonthAgo = DateTime(now.year, now.month - 2, now.day);
+
+        double averageInsulinDosage = entries
+                .map((e) => double.parse(e['insulinDosage'].toString()))
+                .reduce((a, b) => a + b) /
+            entries.length;
+        double averageGlucose = entries
+                .map((e) => double.parse(e['glucoseLevel'].toString()))
+                .reduce((a, b) => a + b) /
+            entries.length;
+        double averageCarbs = entries
+                .map((e) => double.parse(e['totalCarbs'].toString()))
+                .reduce((a, b) => a + b) /
+            entries.length;
+
+        for (var entry in entries) {
+          DateTime entryDate = DateTime.parse(entry['entryDate']);
+          if (entryDate.month == now.month) {
+            // This month
+            var lastDayOfPreviousMonth = DateTime(now.year, now.month, 0).day;
+            var lastDayOfTwoMonthsAgo =
+                DateTime(now.year, now.month - 1, 0).day;
+            day = (lastDayOfPreviousMonth +
+                    lastDayOfTwoMonthsAgo +
+                    entryDate.day) -
+                twoMonthAgo.day;
+          } else if (entryDate.month == now.month - 1 ||
+              (now.month == 1 && entryDate.month == 12)) {
+            var lastDayOfTwoMonthsAgo =
+                DateTime(now.year, now.month - 2, 0).day;
+            // Previous 2 month
+            day = (lastDayOfTwoMonthsAgo + entryDate.day) - twoMonthAgo.day;
+          } else if (entryDate.month == now.month - 2) {
+            day = entryDate.day - twoMonthAgo.day;
+          }
+        }
+
+        averageInsulinDosagePerMonth.add({
+          'day': day,
+          'averageInsulinDosage': averageInsulinDosage,
+          'averageGlucose': averageGlucose,
+          'averageCarbs': averageCarbs,
+        });
+      });
+    });
+    */
+    var entriesGroupedByMonth = groupBy(yearentries, (entry) {
+      DateTime entryDate = DateTime.parse(entry['entryDate']);
+      return entryDate.month;
     });
 
-    groupedEntries.forEach((month, entries) {
-      double averageInsulinDosage = entries
-              .map((e) => double.parse(e['insulinDosage'].toString()))
-              .reduce((a, b) => a + b) /
-          entries.length;
-      double averageGlucose = entries
-              .map((e) => double.parse(e['glucoseLevel'].toString()))
-              .reduce((a, b) => a + b) /
-          entries.length;
-      double averageCarbs = entries
-              .map((e) => double.parse(e['totalCarbs'].toString()))
-              .reduce((a, b) => a + b) /
-          entries.length;
-      averageInsulinDosagePerMonth.add({
-        'month': month,
-        'averageInsulinDosage': averageInsulinDosage,
-        'averageGlucose': averageGlucose,
-        'averageCarbs': averageCarbs,
+// For each month, group entries by day
+    var entriesGroupedByMonthAndDay =
+        entriesGroupedByMonth.map((month, entriesInMonth) {
+      return MapEntry(
+          month,
+          groupBy(entriesInMonth, (entry) {
+            DateTime entryDate = DateTime.parse(entry['entryDate']);
+            return entryDate.day;
+          }));
+    });
+    entriesGroupedByMonthAndDay.forEach((month, entriesGroupedByDay) {
+      entriesGroupedByDay.forEach((day, entries) {
+        var now = DateTime.now();
+        var twoMonthAgo = DateTime(now.year, now.month - 2, now.day);
+
+        double averageInsulinDosage = entries
+                .map((e) => double.parse(e['insulinDosage'].toString()))
+                .reduce((a, b) => a + b) /
+            entries.length;
+        double averageGlucose = entries
+                .map((e) => double.parse(e['glucoseLevel'].toString()))
+                .reduce((a, b) => a + b) /
+            entries.length;
+        double averageCarbs = entries
+                .map((e) => double.parse(e['totalCarbs'].toString()))
+                .reduce((a, b) => a + b) /
+            entries.length;
+
+        for (var entry in entries) {
+          DateTime entryDate = DateTime.parse(entry['entryDate']);
+          if (entryDate.month == now.month) {
+            // This month
+            var lastDayOfPreviousMonth = DateTime(now.year, now.month, 0).day;
+            var lastDayOfTwoMonthsAgo =
+                DateTime(now.year, now.month - 1, 0).day;
+            day = (lastDayOfPreviousMonth +
+                    lastDayOfTwoMonthsAgo +
+                    entryDate.day) -
+                twoMonthAgo.day;
+          } else if (entryDate.month == now.month - 1 ||
+              (now.month == 1 && entryDate.month == 12)) {
+            var lastDayOfTwoMonthsAgo =
+                DateTime(now.year, now.month - 2, 0).day;
+            // Previous 2 month
+            day = (lastDayOfTwoMonthsAgo + entryDate.day) - twoMonthAgo.day;
+          } else if (entryDate.month == now.month - 2) {
+            day = entryDate.day - twoMonthAgo.day;
+          }
+        }
+
+        averageInsulinDosagePerMonth.add({
+          'day': day,
+          'averageInsulinDosage': averageInsulinDosage,
+          'averageGlucose': averageGlucose,
+          'averageCarbs': averageCarbs,
+        });
       });
     });
   }
@@ -531,7 +652,7 @@ class _DashboardState extends State<Dashboard> {
                                                 0.001,
                                           ),
                                           Text(
-                                            '${latestEntry['insulinDosage']}',
+                                            '${double.parse(latestEntry['insulinDosage'].toStringAsFixed(2))}',
                                             style: TextStyle(
                                               fontSize: MediaQuery.of(context)
                                                       .size
@@ -643,7 +764,7 @@ class _DashboardState extends State<Dashboard> {
                                                     0.001,
                                               ),
                                               Text(
-                                                '${latestEntry['glucoseLevel']}',
+                                                '${double.parse(latestEntry['glucoseLevel'].toStringAsFixed(2))}',
                                                 style: TextStyle(
                                                   fontSize:
                                                       MediaQuery.of(context)
@@ -769,7 +890,7 @@ class _DashboardState extends State<Dashboard> {
                                                     0.001,
                                               ),
                                               Text(
-                                                '${latestEntry['totalCarbs']}',
+                                                '${double.parse(latestEntry['totalCarbs'].toStringAsFixed(2))}',
                                                 style: TextStyle(
                                                   fontSize:
                                                       MediaQuery.of(context)
@@ -1915,7 +2036,7 @@ class _DashboardState extends State<Dashboard> {
                         })
                       : averageInsulinDosagePerMonth.map((entry) {
                           return FlSpot(
-                            entry['month'].toDouble(),
+                            entry['day'].toDouble(),
                             double.parse(
                                 entry['averageInsulinDosage'].toString()),
                           );
@@ -1952,7 +2073,7 @@ class _DashboardState extends State<Dashboard> {
                         })
                       : averageInsulinDosagePerMonth.map((entry) {
                           return FlSpot(
-                            entry['month'].toDouble(),
+                            entry['day'].toDouble(),
                             double.parse(entry['averageGlucose'].toString()),
                           );
                         }))
@@ -1988,7 +2109,7 @@ class _DashboardState extends State<Dashboard> {
                         })
                       : averageInsulinDosagePerMonth.map((entry) {
                           return FlSpot(
-                            entry['month'].toDouble(),
+                            entry['day'].toDouble(),
                             double.parse(entry['averageCarbs'].toString()),
                           );
                         }))

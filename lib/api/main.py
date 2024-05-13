@@ -14,7 +14,12 @@ import time
 import threading
 import platform
 import base64
-
+from fastapi import Depends, HTTPException, status
+from fastapi import Body
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+from datetime import datetime, timedelta
 ###########################################
 ##########|API functionality|##############
 ###########################################
@@ -342,16 +347,11 @@ async def getPatientDetails(user: User):
 ##########|User Authentication|############
 ###########################################
 ##############################################################
-from fastapi import Depends, HTTPException, status
-from fastapi import Body
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jose import JWTError, jwt
-from passlib.context import CryptContext
-from datetime import datetime, timedelta
+
 
 SECRET_KEY = "bfedd62227958245913f74acc9ed79a86b3e1df1863e428a5e4728bfe0986315"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 1000000
+ACCESS_TOKEN_EXPIRE_MINUTES = 42800
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -765,16 +765,15 @@ async def getBirthday(userid):##used in /getPatientDetails and in /regPatient##
 
 #0abfbff3f1efcf35311a048b948c01aed8b7f17f552a4b882aa3c8544f9410dc
 #eb03e6986533c14f2abb8e891cd2438a7f519c1e05935951a61141e23f9fd3b0
+#6947fb817c89933b817e45fc405c8ac73f6ebcd227ce30702e943fab23304733 layal
 
-
-apiKey = 'eb03e6986533c14f2abb8e891cd2438a7f519c1e05935951a61141e23f9fd3b0'
+apiKey = '6947fb817c89933b817e45fc405c8ac73f6ebcd227ce30702e943fab23304733'
 def get_results(search):
     global results
     results = search.get_dict()
     
 @app.get("/News/{query}")
 async def get_news(query: str):
-    print("We got here")
     params = {
         "q": query,
         "hl": "en",
@@ -783,7 +782,6 @@ async def get_news(query: str):
         "api_key": apiKey
     }
     search = GoogleSearch(params)
-    print("we searched :D")
 
     for i in range(10):  # Retry up to 3 times
         thread = threading.Thread(target=get_results, args=(search,))
@@ -791,13 +789,10 @@ async def get_news(query: str):
         thread.join(10)
 
         if thread.is_alive():
-            print("get_dict() is stuck, retrying...")
             time.sleep(5)  # Wait for 5 seconds before retrying
         else:
-            print("get_dict() finished successfully")
-            print("frfr")
+            
             return results["organic_results"]
-    print("wifi do be no cap not working")
     return {"error": "Failed to get results after 3 attempts"}   
 
 ###########################################
@@ -846,11 +841,11 @@ async def getEntries(id:int):
     
 @app.get("/getAppointment/{id}")
 async def getAppointment(id:int):
-    row = cursor.execute("SELECT nextAppointment from Patients where patientsID = ?",(id))
+    row = cursor.execute("SELECT nextAppointment from Patients where patientID = ?",(id)).fetchone()
     if row is not None:
         return row[0]
     else:
-        return None
+        raise HTTPException(status_code=404, detail="No apointment found")
     
 ############################3333
 ##############################3

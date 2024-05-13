@@ -3,14 +3,14 @@
 import 'dart:async';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
-//import 'package:sugar_sense/Database/db.dart';
+import 'package:sugar_sense/Database/db.dart';
 import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/application/addInput.dart';
 import 'package:sugar_sense/application/articles.dart';
 import 'package:sugar_sense/application/dashboard.dart';
 import 'package:sugar_sense/application/meals/meals.dart';
-//import 'package:intl/intl.dart';
-//import 'dart:convert';
+import 'package:intl/intl.dart';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:sugar_sense/application/profile.dart';
 import 'package:sugar_sense/application/settings.dart';
@@ -26,11 +26,11 @@ class App extends StatefulWidget {
 
 Timer? _timer;
 var selectedIndex = 0;
-/*List articles = [];
+List articles = [];
 List<bool>? starred;
 late List filteredArticles;
 late List restArticles;
-late List finalList;*/
+late List finalList;
 
 isValidPhoneNumber(String phone) {
   final RegExp regex = RegExp(r'^\d{8}$');
@@ -154,10 +154,10 @@ passwordUpdate(String old, String newpass) async {
 class _AppState extends State<App> {
   /*void fetchArticles() async {
     List<String> searches = [
-      // 'diabetes type 1',
-      // 'diabetes lifestyle',
-      // 'diabetes article',
-      // 'diabetes insulin'
+      'diabetes type 1',
+      'diabetes lifestyle',
+      'diabetes article',
+      'diabetes insulin'
     ];
 
     for (String s in searches) {
@@ -222,18 +222,18 @@ class _AppState extends State<App> {
     finalList = [...filteredArticles, ...restArticles];
     //print(restArticles);
     logger.info(restArticles);
-  }
-*/
+  }*/
+
   @override
   void initState() {
     super.initState();
     TotalCarbs();
     selectedIndex = 0;
-    /*filteredArticles = [];
+    filteredArticles = [];
     restArticles = [];
     finalList = [];
     starred = [];
-    fetchArticles();*/
+    //fetchArticles();
     AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
       if (!isAllowed) {
         showDialog(

@@ -11,6 +11,7 @@ import 'package:sugar_sense/Database/variables.dart';
 import 'package:sugar_sense/accCreation/membership.dart';
 import 'package:sugar_sense/accCreation/userinfo.dart';
 import 'package:sugar_sense/application/app.dart';
+import 'package:sugar_sense/application/settings.dart';
 import 'package:sugar_sense/login/signup/forgetPass/forgetpass.dart';
 import 'package:sugar_sense/main.dart';
 //import 'package:sugar_sense/notifications/notification.dart';
@@ -92,24 +93,6 @@ class _LoginState extends State<Login> {
     // //logger.info("synced meals successfully");
     // logger.info("synced meal compositions successfully");
     // logger.info("saving values to shared preferences");
-    // if (nextAppointment_ != "") {
-    //   DateTime now = DateTime.now();
-    //   print(now);
-    //   DateTime appointment = DateTime.parse(nextAppointment_);
-    //   if (now.isAfter(appointment)) {
-    //     final response = await http
-    //         .get(Uri.parse("http://$localhost:8000/getAppointment/$pid_"));
-    //     if (response.statusCode == 200) {
-    //       Map<String, dynamic> appointmentDetails = jsonDecode(response.body);
-    //       nextAppointment_ = appointmentDetails['appointment'];
-    //       SharedPreferences prefs = await SharedPreferences.getInstance();
-    //       await prefs.setString(
-    //         'nextAppointment',
-    //         nextAppointment_,
-    //       );
-    //     }
-    //   }
-    // }
 
     final response = await http
         .post(
@@ -132,6 +115,7 @@ class _LoginState extends State<Login> {
       // logger.info("user details: $userDetails");
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.clear();
+      refreshNextAppointment();
       await prefs.setString('tokenAPI', token_);
       logger.info("token at singing in: $token_");
       // username_ = userDetails['userName'];
@@ -164,6 +148,15 @@ class _LoginState extends State<Login> {
         if (patientDetails['doctorCode'] != null) {
           //doctorCode_ = patientDetails['doctorCode'];
           await prefs.setString('doctorCode', patientDetails['doctorCode']);
+          final doctorResponse = await http.get(Uri.parse(
+              'http://$localhost:8000/getDoctorInfo/${patientDetails['doctorCode']}'));
+          if (doctorResponse.statusCode == 200) {
+            var responseBody = jsonDecode(doctorResponse.body);
+            logger.info("doctor response: $responseBody");
+            doctorName_ =
+                responseBody['firstName'] + ' ' + responseBody['lastName'];
+            await prefs.setString('doctorName', doctorName_);
+          }
         }
         if (patientDetails['phoneNumber'] != null) {
           //phoneNumber_ = patientDetails['phoneNumber'];
@@ -200,19 +193,11 @@ class _LoginState extends State<Login> {
           //privacy_ = patientDetails['privacy'];
           await prefs.setString('privacy', patientDetails['privacy']);
         }
-        if (patientDetails['nextAppointment'] != null) {
-          nextAppointment_ = patientDetails['nextAppointment'];
-          await prefs.setString(
-              'nextAppointment', patientDetails['nextAppointment']);
-        }
         //changeDoctor(doctorCode_);
         loadPreferences();
         prefs.setBool('signedIn', true);
         logger.info("saved values to shared preferences successfully");
       } else {
-        setState(() {
-          _isLoading = false;
-        });
         logger.warning(responsePatient.body);
       }
     }
@@ -524,6 +509,7 @@ class _LoginState extends State<Login> {
                                   //server authentication
                                   email = _emailController.text;
                                   password = _passwordController.text;
+
                                   final response = await http
                                       .post(
                                         Uri.parse(
@@ -624,9 +610,6 @@ class _LoginState extends State<Login> {
                                             'The server did not respond error : $e')),
                                   );
                                 }
-                                setState(() {
-                                  _isLoading = false;
-                                });
                               }
                             }
                           },
@@ -661,7 +644,7 @@ class _LoginState extends State<Login> {
                               width: 2.5,
                             ),
                             InkWell(
-                              onTap: () {
+                              onTap: () async {
                                 _formKey.currentState?.reset();
 
                                 Navigator.push(
