@@ -733,6 +733,7 @@ async def freeRequest(user: freeUser):
     try:
         if(await checkUserFree(user.userId)):
             raise HTTPException(status_code=401, detail="user already applied")
+        
         cursor.execute("INSERT INTO freeAccount (userId, birthdayDate, address, doctorCode, idCard1,idCard2) VALUES (?, ?, ?, ?, ?,?)",
                        (user.userId, user.birthDate,user.address, user.doctorCode, image_bytes1, image_bytes2))
         cnxn.commit()
@@ -740,19 +741,20 @@ async def freeRequest(user: freeUser):
     except HTTPException as e:
         raise e
     except Exception as e:
+        print(e)
         return {"error": str(e)}
 
 #@app.get("/checkUserFree/{userid}")   
 async def checkUserFree(userid):##used in /getPatientDetails and in /regPatient##
-    row = cursor.execute("SELECT birthDate FROM freeAccount WHERE userId = ?",(userid,)).fetchone()
+    row = cursor.execute("SELECT birthdayDate FROM freeAccount WHERE userId = ?",(userid,)).fetchone()
     if row is not None:
         return True
     else:
-        raise False
+        return False
  
 @app.get("/getBirthday/{userid}")   
 async def getBirthday(userid):##used in /getPatientDetails and in /regPatient##
-    row = cursor.execute("SELECT birthDate FROM freeMembership WHERE userID = ?",(userid,)).fetchone()
+    row = cursor.execute("SELECT birthdayDate FROM freeAccount WHERE userId = ?",(userid,)).fetchone()
     if row is not None:
         return row[0]
     else:

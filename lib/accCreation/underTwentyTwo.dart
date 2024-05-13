@@ -354,7 +354,7 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
                                 )
                                 .timeout(const Duration(seconds: 10));
 
-                            if (response.statusCode == 400) {
+                            if (response.statusCode == 401) {
                               // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
