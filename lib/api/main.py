@@ -742,7 +742,7 @@ async def freeRequest(user: freeUser):
         raise e
     except Exception as e:
         print(e)
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail="couldn't register")
 
 #@app.get("/checkUserFree/{userid}")   
 async def checkUserFree(userid):##used in /getPatientDetails and in /regPatient##

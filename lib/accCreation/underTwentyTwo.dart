@@ -329,32 +329,30 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
                               doctorCodeController.text.isNotEmpty &&
                               _frontIdImage != null &&
                               _backIdImage != null) {
+                            logger.info("working");
                             final bytes = await _frontIdImage!.readAsBytes();
                             final bytes2 = await _backIdImage!.readAsBytes();
 
                             final string = base64Encode(bytes);
                             final string2 = base64Encode(bytes2);
 
-                            final response = await http
-                                .post(
-                                  Uri.parse(
-                                      'http://$localhost:8000/freeRequest'),
-                                  headers: <String, String>{
-                                    'Content-Type':
-                                        'application/json; charset=UTF-8',
-                                  },
-                                  body: jsonEncode(<String, dynamic>{
-                                    'userId': pid_,
-                                    'birthDate': birthDateController.text,
-                                    'address': addressController.text,
-                                    'doctorCode': doctorCodeController.text,
-                                    'idCard1': string,
-                                    'idCard2': string2,
-                                  }),
-                                )
-                                .timeout(const Duration(seconds: 10));
-
-                            if (response.statusCode == 401) {
+                            final requestResponse = await http.post(
+                              Uri.parse('http://$localhost:8000/freeRequest'),
+                              headers: <String, String>{
+                                'Content-Type':
+                                    'application/json; charset=UTF-8',
+                              },
+                              body: jsonEncode(<String, dynamic>{
+                                'userId': pid_,
+                                'birthDate': birthDateController.text,
+                                'address': addressController.text,
+                                'doctorCode': doctorCodeController.text,
+                                'idCard1': string,
+                                'idCard2': string2,
+                              }),
+                            );
+                            logger.info("we did the request");
+                            if (requestResponse.statusCode == 401) {
                               // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -363,7 +361,7 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
                                 ),
                               );
                               logger.info('user already applied');
-                            } else if (response.statusCode == 200) {
+                            } else if (requestResponse.statusCode == 200) {
                               // ignore: use_build_context_synchronously
                               Navigator.push(
                                 context,
@@ -371,7 +369,7 @@ class _UnderTwentyTwoState extends State<UnderTwentyTwo> {
                                     builder: (context) => const SuccessPage()),
                               );
                               logger.info('Request sent successfully');
-                              logger.info(response.body);
+                              logger.info(requestResponse.body);
                             }
                           }
                         }
