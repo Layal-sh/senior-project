@@ -1097,7 +1097,7 @@ class _DashboardState extends State<Dashboard> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              '${entry['glucoseLevel']}',
+                                              '${double.parse(entry['glucoseLevel'].toStringAsFixed(2))}',
                                               style: TextStyle(
                                                 fontSize: MediaQuery.of(context)
                                                         .size
@@ -1225,7 +1225,9 @@ class _DashboardState extends State<Dashboard> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              entry['target'] == 2 ? '1' : '0',
+                                              entry['glucoseLevel'] > 120.0
+                                                  ? '1'
+                                                  : '0',
                                               style: TextStyle(
                                                 fontSize: MediaQuery.of(context)
                                                         .size
@@ -1251,7 +1253,9 @@ class _DashboardState extends State<Dashboard> {
                                               ),
                                             ),
                                             Text(
-                                              entry['target'] == 1 ? '1' : '0',
+                                              entry['glucoseLevel'] < 80.0
+                                                  ? '1'
+                                                  : '0',
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
                                                 fontSize: MediaQuery.of(context)
@@ -1490,7 +1494,7 @@ class _DashboardState extends State<Dashboard> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              '${entry['glucoseLevel']}',
+                                              '${double.parse(entry['glucoseLevel'].toStringAsFixed(2))}',
                                               style: TextStyle(
                                                 fontSize: MediaQuery.of(context)
                                                         .size
@@ -1626,7 +1630,9 @@ class _DashboardState extends State<Dashboard> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              entry['target'] == 2 ? '1' : '0',
+                                              entry['glucoseLevel'] > 120.0
+                                                  ? '1'
+                                                  : '0',
                                               style: TextStyle(
                                                 fontSize: MediaQuery.of(context)
                                                         .size
@@ -1655,7 +1661,9 @@ class _DashboardState extends State<Dashboard> {
                                               ),
                                             ),
                                             Text(
-                                              entry['target'] == 1 ? '1' : '0',
+                                              entry['glucoseLevel'] < 80.0
+                                                  ? '1'
+                                                  : '0',
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
                                                 fontSize: MediaQuery.of(context)

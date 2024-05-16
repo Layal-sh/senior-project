@@ -49,12 +49,12 @@ class _ArticlesState extends State<Articles> {
         ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
-      body: SingleChildScrollView(
+      body: const SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(
+              padding: EdgeInsets.only(
                 left: 25.0,
                 right: 25,
                 top: 30,
@@ -63,7 +63,7 @@ class _ArticlesState extends State<Articles> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Todays Read',
                     style: TextStyle(
                       fontSize: 27,
@@ -72,7 +72,7 @@ class _ArticlesState extends State<Articles> {
                       fontWeight: FontWeight.w900,
                     ),
                   ),
-                  GestureDetector(
+                  /*GestureDetector(
                     onTap: () {
                       setState(() {
                         _isPressed = !_isPressed;
@@ -85,7 +85,7 @@ class _ArticlesState extends State<Articles> {
                       size: 30,
                       color: const Color.fromARGB(255, 38, 20, 84),
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             ),
