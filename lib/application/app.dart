@@ -152,7 +152,7 @@ passwordUpdate(String old, String newpass) async {
 }
 
 class _AppState extends State<App> {
-  /*void fetchArticles() async {
+  void fetchArticles() async {
     List<String> searches = [
       'diabetes type 1',
       'diabetes lifestyle',
@@ -222,7 +222,7 @@ class _AppState extends State<App> {
     finalList = [...filteredArticles, ...restArticles];
     //print(restArticles);
     logger.info(restArticles);
-  }*/
+  }
 
   @override
   void initState() {
@@ -233,7 +233,7 @@ class _AppState extends State<App> {
     restArticles = [];
     finalList = [];
     starred = [];
-    //fetchArticles();
+    fetchArticles();
     AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
       if (!isAllowed) {
         showDialog(

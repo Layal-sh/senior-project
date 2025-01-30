@@ -49,7 +49,7 @@ class _ArticlesState extends State<Articles> {
         ),
         backgroundColor: const Color.fromARGB(255, 38, 20, 84),
       ),
-      body: const SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -89,7 +89,7 @@ class _ArticlesState extends State<Articles> {
                 ],
               ),
             ),
-            /*(filteredArticles.isEmpty || starred == null)
+            (filteredArticles.isEmpty || starred == null)
                 ? const Center(child: CircularProgressIndicator())
                 : Padding(
                     padding: const EdgeInsets.only(left: 5.0),
@@ -409,7 +409,6 @@ class _ArticlesState extends State<Articles> {
                       ),
                     ),
                   ),
-          */
           ],
         ),
       ),

@@ -178,7 +178,7 @@ class _CreateMealState extends State<CreateMeal> {
                             DBHelper dbHelper = DBHelper.instance;
                             String image = "";
                             if (_selectedImage == null) {
-                              image = "All.png";
+                              image = "assets/All.png";
                             } else {
                               image = _selectedImage!.path;
                             }
@@ -489,9 +489,10 @@ class _CreateMealState extends State<CreateMeal> {
                         Row(
                           children: [
                             SizedBox(
-                              width: 50,
+                              width: 75,
                               child: Text(
                                 '${carbUnit_ == 0 ? ingredientCarbs : ingredientCarbs / 15}',
+                                textAlign: TextAlign.end,
                                 style: const TextStyle(
                                   fontSize: 20,
                                   color: Color.fromARGB(255, 38, 20, 84),
@@ -561,9 +562,10 @@ class _CreateMealState extends State<CreateMeal> {
                         Row(
                           children: [
                             SizedBox(
-                              width: 50,
+                              width: 75,
                               child: Text(
                                 '${carbUnit_ == 0 ? totalCarbs : totalCarbs / 15}',
+                                textAlign: TextAlign.end,
                                 style: const TextStyle(
                                   fontSize: 20,
                                   color: Color.fromARGB(255, 38, 20, 84),

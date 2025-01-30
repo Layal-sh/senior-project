@@ -1055,7 +1055,7 @@ class _MealBoxState extends State<MealBox> {
                               topRight: Radius.circular(5),
                             ),
                             child: Image.asset(
-                              'assets/AddDish.png',
+                              'assets/All.png',
                               width: MediaQuery.of(context).size.width,
                               fit: BoxFit.cover,
                             ),

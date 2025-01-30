@@ -9,7 +9,9 @@ import Models.personModel.person as Pmodel
 from fastapi.middleware.cors import CORSMiddleware
 import hashlib
 import requests
-from serpapi import GoogleSearch
+#from serpapi import GoogleSearch
+
+
 import time
 import threading
 import platform
@@ -770,7 +772,7 @@ async def getBirthday(userid):##used in /getPatientDetails and in /regPatient##
 #6947fb817c89933b817e45fc405c8ac73f6ebcd227ce30702e943fab23304733 layal
 
 apiKey = '6947fb817c89933b817e45fc405c8ac73f6ebcd227ce30702e943fab23304733'
-def get_results(search):
+'''def get_results(search):
     global results
     results = search.get_dict()
     
@@ -796,7 +798,7 @@ async def get_news(query: str):
             
             return results["organic_results"]
     return {"error": "Failed to get results after 3 attempts"}   
-
+'''
 ###########################################
 ########|SYNCING AAAAAAAAAAAAAAAA|#########
 ###########################################
