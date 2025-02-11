@@ -151,11 +151,7 @@ class MyApp extends StatelessWidget {
     ));
     return MaterialApp(debugShowCheckedModeBanner: false, routes: {
       "/": (context) => const Splash(),
-      '''
-username:layal
-pass:Mom&dadloveme2
-'''
-          '/start': (context) => const Start(),
+      '/start': (context) => const Start(),
       '/login': (context) => const Login(),
       '/signup': (context) => const SignUp(),
       '/app': (context) => const App(),
